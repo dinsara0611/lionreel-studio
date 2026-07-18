@@ -70,8 +70,9 @@ from PIL import Image, ImageDraw, ImageFont
 # ───────────────────────────────────────────────────────────────
 # CONFIG
 # ───────────────────────────────────────────────────────────────
-RAW_FOLDER      = r"G:\My Drive\Cat make\raw\\"
-OUT_FOLDER      = r"G:\My Drive\Cat make\finished\\"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+RAW_FOLDER      = os.path.join(BASE_DIR, "raw", "")
+OUT_FOLDER      = os.path.join(BASE_DIR, "finished", "")
 HISTORY_FILE    = "used_videos.txt"
 USED_META_FILE  = "used_metadata.json"
 LOGO_FILE       = "lion_logo.png"

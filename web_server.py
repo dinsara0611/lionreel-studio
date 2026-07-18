@@ -10,6 +10,9 @@ PORT = 8000
 RUNNING_PROCESS = None
 LOG_FILE = "gui_run.log"
 CONFIG_FILE = "config.json"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+FINISHED_DIR = os.path.join(BASE_DIR, "finished")
+RAW_DIR = os.path.join(BASE_DIR, "raw")
 
 DEFAULT_CONFIG = {
     "VIDEO_MODE": "mix",
@@ -120,7 +123,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             return
 
         elif self.path.startswith("/api/finished"):
-            finished_dir = r"G:\My Drive\Cat make\finished"
+            finished_dir = FINISHED_DIR
             files = []
             if os.path.exists(finished_dir):
                 for f in sorted(os.listdir(finished_dir), key=lambda x: os.path.getmtime(os.path.join(finished_dir, x)) if os.path.exists(os.path.join(finished_dir, x)) else 0, reverse=True):
@@ -136,7 +139,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             return
 
         elif self.path == "/lion_logo.png":
-            filepath = os.path.join(r"G:\My Drive\Cat make", "lion_logo.png")
+            filepath = os.path.join(BASE_DIR, "lion_logo.png")
             if os.path.exists(filepath):
                 self.send_response(200)
                 self.send_header("Content-Type", "image/png")
@@ -155,7 +158,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         elif self.path.startswith("/finished/"):
             # Serve files from finished directory directly
             filename = self.path.replace("/finished/", "")
-            filepath = os.path.join(r"G:\My Drive\Cat make\finished", filename)
+            filepath = os.path.join(FINISHED_DIR, filename)
             if os.path.exists(filepath):
                 self.send_response(200)
                 if filename.endswith(".mp4"):
@@ -212,7 +215,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 filename = params.get("filename")
                 if filename:
                     filename = os.path.basename(filename)
-                    filepath = os.path.join(r"G:\My Drive\Cat make\finished", filename)
+                    filepath = os.path.join(FINISHED_DIR, filename)
                     if os.path.exists(filepath):
                         try:
                             os.remove(filepath)
@@ -221,13 +224,13 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                         # Also delete corresponding metadata file if it exists
                         if filename.endswith(".mp4"):
                             meta_name = filename.replace("lion_dog_", "lion_metadata_dog_").replace("lion_cat_", "lion_metadata_cat_").replace("lion_mix_", "lion_metadata_mix_").replace(".mp4", ".txt")
-                            meta_path = os.path.join(r"G:\My Drive\Cat make\finished", meta_name)
+                            meta_path = os.path.join(FINISHED_DIR, meta_name)
                             if os.path.exists(meta_path):
                                 try: os.remove(meta_path)
                                 except: pass
                         elif filename.endswith(".txt"):
                             vid_name = filename.replace("lion_metadata_dog_", "lion_dog_").replace("lion_metadata_cat_", "lion_cat_").replace("lion_metadata_mix_", "lion_mix_").replace(".txt", ".mp4")
-                            vid_path = os.path.join(r"G:\My Drive\Cat make\finished", vid_name)
+                            vid_path = os.path.join(FINISHED_DIR, vid_name)
                             if os.path.exists(vid_path):
                                 try: os.remove(vid_path)
                                 except: pass
@@ -248,7 +251,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
 
         elif self.path.startswith("/api/clear-finished"):
             try:
-                finished_dir = r"G:\My Drive\Cat make\finished"
+                finished_dir = FINISHED_DIR
                 if os.path.exists(finished_dir):
                     for f in os.listdir(finished_dir):
                         path = os.path.join(finished_dir, f)
@@ -267,7 +270,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
 
         elif self.path.startswith("/api/clear-raw"):
             try:
-                raw_dir = r"G:\My Drive\Cat make\raw"
+                raw_dir = RAW_DIR
                 if os.path.exists(raw_dir):
                     for f in os.listdir(raw_dir):
                         path = os.path.join(raw_dir, f)
@@ -413,8 +416,8 @@ class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 
 if __name__ == "__main__":
     # Ensure raw and finished folders exist
-    os.makedirs(r"G:\My Drive\Cat make\finished", exist_ok=True)
-    os.makedirs(r"G:\My Drive\Cat make\raw", exist_ok=True)
+    os.makedirs(FINISHED_DIR, exist_ok=True)
+    os.makedirs(RAW_DIR, exist_ok=True)
     
     server = ThreadedTCPServer(("", PORT), DashboardHandler)
     print(f"============================================================")

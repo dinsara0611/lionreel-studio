@@ -1,0 +1,5 @@
+numpy
+opencv-python
+yt-dlp
+moviepy
+Pillow
