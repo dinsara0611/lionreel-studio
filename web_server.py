@@ -392,7 +392,12 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 
                 ps_command += '\n$Shortcut.Description = "Launch LionReel Dashboard Server"\n$Shortcut.Save()'
                 
-                res = subprocess.run(["powershell", "-NoProfile", "-Command", ps_command], capture_output=True, text=True)
+                system_root = os.environ.get("SystemRoot", "C:\\Windows")
+                powershell_exe = os.path.join(system_root, "System32", "WindowsPowerShell", "v1.0", "powershell.exe")
+                if not os.path.exists(powershell_exe):
+                    powershell_exe = "powershell.exe"
+                
+                res = subprocess.run([powershell_exe, "-NoProfile", "-Command", ps_command], capture_output=True, text=True)
                 
                 if res.returncode == 0:
                     self.send_response(200)
