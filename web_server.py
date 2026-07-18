@@ -6,7 +6,7 @@ import threading
 import socketserver
 from http.server import SimpleHTTPRequestHandler
 
-PORT = 8000
+PORT = int(os.environ.get("PORT", 8000))
 RUNNING_PROCESS = None
 LOG_FILE = "gui_run.log"
 CONFIG_FILE = "config.json"
