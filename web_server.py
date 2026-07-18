@@ -354,6 +354,12 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             return
 
         elif self.path.startswith("/api/create-shortcut"):
+            if os.name != 'nt':
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps({"success": False, "error": "Creating desktop shortcuts is only supported on Windows. Since this is running in the cloud (Linux/Codespaces), please bookmark this webpage in your browser instead!"}).encode())
+                return
             try:
                 params = json.loads(post_data)
                 hotkey = params.get("hotkey", "CTRL+ALT+L").upper()
