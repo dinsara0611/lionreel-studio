@@ -108,11 +108,11 @@ class AutoReframeEngine:
     def __init__(self, detector=None):
         self.detector = detector or PetDetector()
 
-    def plan_reframe(self, video_path, start_s, dur_s, animal_mode="cat", layout_mode="smart_crop", stricter=False):
+    def plan_reframe(self, video_path, start_s, dur_s, animal_mode="cat", layout_mode="smart_crop", stricter=False, allow_slide=True, max_slide_s=4.0, step_s=0.5):
         """
         Analyzes source clip and computes a smooth camera trajectory.
-        Returns:
-            dict containing crop plan, or rejection reason.
+        Includes feasibility check, clamp-aware centering, area visibility,
+        single-pass buffered sliding window search (+/-4s), and exact failing frame diagnostics.
         """
         if not os.path.exists(video_path):
             return {"status": "reject", "reason": "Source file not found"}
@@ -122,6 +122,7 @@ class AutoReframeEngine:
         total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         orig_w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         orig_h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        total_sec = total_frames / max(1.0, fps)
         cap.release()
 
         if total_frames <= 0 or orig_w <= 0 or orig_h <= 0:
@@ -137,7 +138,6 @@ class AutoReframeEngine:
         # 2. Check if source is already vertical (9:16)
         src_aspect = orig_w / max(1.0, float(orig_h))
         if src_aspect <= 0.60:
-            # Already vertical: scale to 1080x1920 directly
             return {
                 "status": "pass",
                 "mode": "vertical_direct",
@@ -147,17 +147,27 @@ class AutoReframeEngine:
                 "keyframes_t": [0.0],
                 "keyframes_x": [0],
                 "keyframes_y": [0],
-                "keyframes_zoom": [1.0]
+                "keyframes_zoom": [1.0],
+                "framing_score": 1.0,
+                "sharpness": 200.0,
+                "pet_detected_ratio": 1.0,
+                "details": {"vis": 1.0, "horiz": 1.0, "vert": 1.0, "size": 1.0},
+                "failing_frames": [],
+                "best_start_s": start_s,
+                "best_dur_s": dur_s,
+                "best_offset": 0.0
             }
 
-        # 3. Compute base 9:16 crop window at full source height (for smart crop)
+        # 3. Base 9:16 crop window at full source height
         crop_h = orig_h
         crop_w = int(round(orig_h * 9.0 / 16.0))
         if crop_w % 2 != 0:
             crop_w += 1
         crop_w = min(crop_w, orig_w)
+        max_x = orig_w - crop_w
+        max_y = orig_h - crop_h
 
-        # Upscale factor check (smart crop only)
+        # Upscale factor check
         if layout_mode != "blur_fit":
             upscale_factor = 1080.0 / float(crop_w)
             if upscale_factor > 2.05:
@@ -167,14 +177,27 @@ class AutoReframeEngine:
                     "framing_score": 0.0,
                     "sharpness": 0.0,
                     "pet_detected_ratio": 0.0,
-                    "details": {"vis": 0.0, "horiz": 0.0, "vert": 0.0, "size": 0.0}
+                    "details": {"vis": 0.0, "horiz": 0.0, "vert": 0.0, "size": 0.0},
+                    "failing_frames": []
                 }
 
-        # 4. Dense Subject Tracking across clip interval via FFmpeg pipe (320x180 low-res stream)
-        n_samples = max(6, min(10, int(dur_s * 1.0)))
+        # Determine buffered analysis window
+        if allow_slide and layout_mode == "smart_crop":
+            buf_start = max(0.0, start_s - max_slide_s)
+            buf_end = min(total_sec, start_s + dur_s + max_slide_s)
+        else:
+            buf_start = max(0.0, start_s)
+            buf_end = min(total_sec, start_s + dur_s)
+        buf_dur = buf_end - buf_start
+
+        if buf_dur <= 0:
+            return {"status": "reject", "reason": "INVALID_SPAN"}
+
+        # Decode low-res 320x180 stream at ~2 fps
+        n_samples = max(6, int(round(buf_dur * 2.0)))
         target_w, target_h = 320, 180
         frames = decode_frames_ffmpeg_pipe(
-            video_path, start_s, dur_s,
+            video_path, buf_start, buf_dur,
             n_frames=n_samples, target_w=target_w, target_h=target_h
         )
         if not frames:
@@ -184,44 +207,41 @@ class AutoReframeEngine:
                 "framing_score": 0.0,
                 "sharpness": 0.0,
                 "pet_detected_ratio": 0.0,
-                "details": {"vis": 0.0, "horiz": 0.0, "vert": 0.0, "size": 0.0}
+                "details": {"vis": 0.0, "horiz": 0.0, "vert": 0.0, "size": 0.0},
+                "failing_frames": []
             }
 
-        sample_times = [start_s + (i / max(1, len(frames) - 1)) * dur_s for i in range(len(frames))]
+        frame_times = [buf_start + (i / max(1, len(frames) - 1)) * buf_dur for i in range(len(frames))]
         scale_x = orig_w / float(target_w)
         scale_y = orig_h / float(target_h)
 
-        detections_per_time = []
+        frame_dets = []
+        frame_sharp = []
         motion_energies = []
-        sample_sharpness = []
+        pet_widths = []
         prev_gray = None
 
         for frame in frames:
-            # Raw crop sharpness (center 9:16 slice or center 60% slice for blur-fit)
             hf, wf = frame.shape[:2]
             cwf = int(hf * 9 / 16) if layout_mode != "blur_fit" else int(wf * 0.60)
             cxf = (wf - cwf) // 2
             crop_sample = frame[:, cxf:cxf+cwf]
             gs = cv2.cvtColor(crop_sample, cv2.COLOR_BGR2GRAY)
-            sample_sharpness.append(float(cv2.Laplacian(gs, cv2.CV_64F).var()))
+            frame_sharp.append(float(cv2.Laplacian(gs, cv2.CV_64F).var()))
 
-            # Motion energy via frame diff
             small = cv2.resize(frame, (160, 90))
             gray = cv2.cvtColor(small, cv2.COLOR_BGR2GRAY)
             if prev_gray is not None:
-                diff = cv2.absdiff(gray, prev_gray)
-                motion_energy = float(np.mean(diff))
+                motion_energy = float(np.mean(cv2.absdiff(gray, prev_gray)))
             else:
                 motion_energy = 0.0
             prev_gray = gray
             motion_energies.append(motion_energy)
 
-            # Detect pets (cat=15, dog=16, hands/humans excluded)
             dets = self.detector.detect(frame, conf_threshold=0.20)
             filtered = []
             for d in dets:
-                cname = d["class_name"]
-                if cname not in ("cat", "dog"):
+                if d["class_name"] not in ("cat", "dog"):
                     continue
                 bx1, by1, bx2, by2 = d["box"]
                 scaled_d = dict(d)
@@ -229,31 +249,33 @@ class AutoReframeEngine:
                 scaled_d["center"] = (d["center"][0] * scale_x, d["center"][1] * scale_y)
                 scaled_d["area_frac"] = (scaled_d["box"][2] - scaled_d["box"][0]) * (scaled_d["box"][3] - scaled_d["box"][1]) / float(orig_w * orig_h)
                 filtered.append(scaled_d)
-            detections_per_time.append(filtered)
+                pet_widths.append(scaled_d["box"][2] - scaled_d["box"][0])
+            frame_dets.append(filtered)
 
-        med_sharp = float(np.median(sample_sharpness)) if sample_sharpness else 0.0
+        med_sharp = float(np.median(frame_sharp)) if frame_sharp else 0.0
 
-        # Check total pet presence
-        frames_with_pets = sum(1 for d in detections_per_time if len(d) > 0)
-        presence_ratio = frames_with_pets / max(1, len(sample_times))
-        if presence_ratio < 0.35:
-            return {
-                "status": "reject",
-                "reason": f"NO_PET_TRACKED (Presence {presence_ratio:.1%} < 35%)",
-                "framing_score": 0.0,
-                "sharpness": round(med_sharp, 1),
-                "pet_detected_ratio": round(presence_ratio, 3),
-                "details": {"vis": 0.0, "horiz": 0.0, "vert": 0.0, "size": 0.0}
-            }
+        # Step 4a: Feasibility check (Median pet box width > 92% crop width -> FRAMING_INFEASIBLE)
+        if pet_widths:
+            med_pet_w = float(np.median(pet_widths))
+            if med_pet_w > 0.92 * float(crop_w):
+                return {
+                    "status": "reject",
+                    "reason": f"FRAMING_INFEASIBLE (Median pet box width {med_pet_w:.1f}px > 92% crop {crop_w}px)",
+                    "framing_score": 0.0,
+                    "sharpness": round(med_sharp, 1),
+                    "pet_detected_ratio": 0.0,
+                    "details": {"vis": 0.0, "horiz": 0.0, "vert": 0.0, "size": 0.0},
+                    "failing_frames": []
+                }
 
-        # 4b. Evaluate Blur-Fit Layout Mode
+        # 4b. Blur-fit evaluation mode
         if layout_mode == "blur_fit":
             S = 1080.0 / float(orig_w)
             Y_offset = (1920.0 - orig_h * S) / 2.0
             vis_ok, horiz_ok, vert_ok, size_ok, all_ok = 0, 0, 0, 0, 0
             total_eval = 0
 
-            for i, dets in enumerate(detections_per_time):
+            for i, dets in enumerate(frame_dets):
                 if not dets:
                     continue
                 total_eval += 1
@@ -283,24 +305,25 @@ class AutoReframeEngine:
             pred_s = size_ok / eval_count
 
             predicted_pass = bool(
-                (pred_compliance >= 0.88 or (pred_vis >= 0.88 and pred_h >= 0.88 and pred_v >= 0.88 and pred_s >= 0.88))
-                and (total_eval >= len(sample_times) * 0.35)
+                (pred_compliance >= 0.90 or (pred_vis >= 0.90 and pred_h >= 0.90 and pred_v >= 0.90 and pred_s >= 0.90))
+                and (total_eval >= len(frame_times) * 0.35)
             )
 
             if not predicted_pass:
                 return {
                     "status": "reject",
                     "reason": (
-                        f"PREDICTED_BAD_FRAMING (Score: {pred_compliance:.1%} < 88% — "
+                        f"PREDICTED_BAD_FRAMING (Score: {pred_compliance:.1%} < 90% — "
                         f"Vis:{pred_vis:.1%}, H:{pred_h:.1%}, V:{pred_v:.1%}, S:{pred_s:.1%})"
                     ),
                     "framing_score": round(pred_compliance, 3),
                     "sharpness": round(med_sharp, 1),
-                    "pet_detected_ratio": round(presence_ratio, 3),
+                    "pet_detected_ratio": round(total_eval / max(1, len(frame_times)), 3),
                     "details": {
                         "vis": round(pred_vis, 3), "horiz": round(pred_h, 3),
                         "vert": round(pred_v, 3), "size": round(pred_s, 3)
-                    }
+                    },
+                    "failing_frames": []
                 }
 
             if med_sharp < 15.0:
@@ -309,327 +332,382 @@ class AutoReframeEngine:
                     "reason": f"LOW_SOURCE_SHARPNESS (Median raw LapVar {med_sharp:.1f} < 15.0)",
                     "framing_score": round(pred_compliance, 3),
                     "sharpness": round(med_sharp, 1),
-                    "pet_detected_ratio": round(presence_ratio, 3),
+                    "pet_detected_ratio": round(total_eval / max(1, len(frame_times)), 3),
                     "details": {
                         "vis": round(pred_vis, 3), "horiz": round(pred_h, 3),
                         "vert": round(pred_v, 3), "size": round(pred_s, 3)
-                    }
+                    },
+                    "failing_frames": []
                 }
 
             return {
                 "status": "pass",
                 "mode": "blur_fit",
                 "orig_size": (orig_w, orig_h),
+                "crop_w": orig_w,
+                "crop_h": orig_h,
+                "keyframes_t": [0.0],
+                "keyframes_x": [0],
+                "keyframes_y": [0],
+                "keyframes_zoom": [1.0],
                 "framing_score": round(pred_compliance, 3),
                 "sharpness": round(med_sharp, 1),
-                "pet_detected_ratio": round(presence_ratio, 3),
+                "pet_detected_ratio": round(total_eval / max(1, len(frame_times)), 3),
                 "details": {
                     "vis": round(pred_vis, 3), "horiz": round(pred_h, 3),
                     "vert": round(pred_v, 3), "size": round(pred_s, 3)
-                }
+                },
+                "failing_frames": [],
+                "best_start_s": start_s,
+                "best_dur_s": dur_s,
+                "best_offset": 0.0
             }
 
+        # Helper to evaluate and plan a specific subwindow
+        def eval_and_plan(win_start, win_dur):
+            win_end = win_start + win_dur
+            idxs = [i for i, t in enumerate(frame_times) if win_start - 0.1 <= t <= win_end + 0.1]
+            if len(idxs) < 5:
+                return None
 
-        # 5. Multi-Pet Prioritization & Target Center Computation with Gap Interpolation
-        # Priority = motion + size + confidence + tracking persistence
-        raw_targets_x = [None] * len(sample_times)
-        raw_targets_y = [None] * len(sample_times)
-        pet_heights = [None] * len(sample_times)
-        two_pets_far_apart_count = 0
+            sub_times = [frame_times[i] for i in idxs]
+            sub_dets = [frame_dets[i] for i in idxs]
+            sub_motions = [motion_energies[i] for i in idxs]
 
-        last_known_x = orig_w / 2.0
-        last_known_y = orig_h / 2.0
+            raw_targets_x = [None] * len(idxs)
+            raw_targets_y = [None] * len(idxs)
+            pet_heights = [None] * len(idxs)
+            two_pets_far_apart = 0
 
-        for i, dets in enumerate(detections_per_time):
-            if not dets:
-                continue
+            last_kx = orig_w / 2.0
+            last_ky = orig_h / 2.0
 
-            # Check if two pets are far apart (> 70% source width)
-            if len(dets) >= 2:
-                xs = [d["center"][0] for d in dets[:2]]
-                if abs(xs[0] - xs[1]) > (orig_w * 0.70):
-                    two_pets_far_apart_count += 1
+            for k, dlist in enumerate(sub_dets):
+                if not dlist:
+                    continue
+                if len(dlist) >= 2:
+                    xs = [d["center"][0] for d in dlist[:2]]
+                    if abs(xs[0] - xs[1]) > (orig_w * 0.70):
+                        two_pets_far_apart += 1
 
-            # Score each pet: motion + size + confidence + identity persistence
-            best_det = None
-            best_score = -1.0
-            for d in dets:
-                area_frac = d["area_frac"]
-                conf = d["conf"]
-                motion = motion_energies[i]
-                dist = math.hypot(d["center"][0] - last_known_x, d["center"][1] - last_known_y)
-                proximity = max(0.0, 1.0 - (dist / float(orig_w * 0.35)))
-                score = (area_frac * 3.0) + (conf * 1.5) + (motion * 0.05) + (proximity * 2.5)
-                if animal_mode and d["class_name"] == animal_mode:
-                    score += 0.5
+                best_d = None
+                best_score = -1.0
+                for d in dlist:
+                    area_frac = d["area_frac"]
+                    conf = d["conf"]
+                    motion = sub_motions[k]
+                    dist = math.hypot(d["center"][0] - last_kx, d["center"][1] - last_ky)
+                    proximity = max(0.0, 1.0 - (dist / float(orig_w * 0.35)))
+                    sc = (area_frac * 3.0) + (conf * 1.5) + (motion * 0.05) + (proximity * 2.5)
+                    if animal_mode and d["class_name"] == animal_mode:
+                        sc += 0.5
+                    if sc > best_score:
+                        best_score = sc
+                        best_d = d
 
-                if score > best_score:
-                    best_score = score
-                    best_det = d
+                box = best_d["box"]
+                pet_h = box[3] - box[1]
+                pet_heights[k] = pet_h / float(orig_h)
+                tcx = (box[0] + box[2]) / 2.0
+                tcy = (box[1] + box[3]) / 2.0
+                raw_targets_x[k] = tcx
+                raw_targets_y[k] = tcy
+                last_kx = tcx
+                last_ky = tcy
 
-            box = best_det["box"]
-            pet_w = box[2] - box[0]
-            pet_h = box[3] - box[1]
-            pet_heights[i] = pet_h / float(orig_h)
-
-            # Pet body center x & y
-            target_cx = (box[0] + box[2]) / 2.0
-            target_cy = (box[1] + box[3]) / 2.0
-            raw_targets_x[i] = target_cx
-            raw_targets_y[i] = target_cy
-            last_known_x = target_cx
-            last_known_y = target_cy
-
-        # Bridge short detection gaps with smooth linear interpolation
-        valid_indices = [i for i, x in enumerate(raw_targets_x) if x is not None]
-        if not valid_indices:
-            return {"status": "reject", "reason": "NO_PET_TRACKED (Zero pet detections)"}
-
-        all_indices = np.arange(len(sample_times))
-        clean_targets_x = list(np.interp(all_indices, valid_indices, [raw_targets_x[i] for i in valid_indices]))
-        clean_targets_y = list(np.interp(all_indices, valid_indices, [raw_targets_y[i] for i in valid_indices]))
-        clean_heights = list(np.interp(all_indices, valid_indices, [pet_heights[i] if pet_heights[i] is not None else 0.35 for i in valid_indices]))
-
-        raw_targets_x = clean_targets_x
-        raw_targets_y = clean_targets_y
-        pet_heights = clean_heights
-
-        # Check rare blur-fit fallback rule (Requirement 3):
-        # Two important pets > 70% width apart for > 25% of clip
-        far_apart_ratio = two_pets_far_apart_count / max(1, len(sample_times))
-        if far_apart_ratio > 0.25:
-            if layout_mode == "smart_crop":
+            valid_indices = [k for k, x in enumerate(raw_targets_x) if x is not None]
+            presence_ratio = len(valid_indices) / max(1, len(idxs))
+            if presence_ratio < 0.35:
                 return {
                     "status": "reject",
-                    "reason": f"REJECT_TWO_PETS_FAR_APART (Pets separated by > 70% frame for {far_apart_ratio:.1%}, blur-fit disabled in Smart Crop mode)",
+                    "reason": f"NO_PET_TRACKED (Presence {presence_ratio:.1%} < 35%)",
                     "framing_score": 0.0,
                     "sharpness": round(med_sharp, 1),
                     "pet_detected_ratio": round(presence_ratio, 3),
-                    "details": {"vis": 0.0, "horiz": 0.0, "vert": 0.0, "size": 0.0}
+                    "details": {"vis": 0.0, "horiz": 0.0, "vert": 0.0, "size": 0.0},
+                    "failing_frames": []
                 }
-            else:
+
+            all_idx = np.arange(len(idxs))
+            clean_targets_x = list(np.interp(all_idx, valid_indices, [raw_targets_x[k] for k in valid_indices]))
+            clean_targets_y = list(np.interp(all_idx, valid_indices, [raw_targets_y[k] for k in valid_indices]))
+            clean_heights = list(np.interp(all_idx, valid_indices, [pet_heights[k] if pet_heights[k] is not None else 0.35 for k in valid_indices]))
+
+            if (two_pets_far_apart / max(1, len(idxs))) > 0.25 and layout_mode == "smart_crop":
                 return {
-                    "status": "pass",
-                    "mode": "blur_fit",
-                    "orig_size": (orig_w, orig_h),
-                    "framing_score": 0.90,
+                    "status": "reject",
+                    "reason": "REJECT_TWO_PETS_FAR_APART",
+                    "framing_score": 0.0,
                     "sharpness": round(med_sharp, 1),
                     "pet_detected_ratio": round(presence_ratio, 3),
-                    "details": {"vis": 1.0, "horiz": 1.0, "vert": 1.0, "size": 1.0},
-                    "reason": f"LAYOUT_BLURFIT (Two pets separated > 70% source width for {far_apart_ratio:.1%} of duration)"
+                    "details": {"vis": 0.0, "horiz": 0.0, "vert": 0.0, "size": 0.0},
+                    "failing_frames": []
                 }
 
-        # Check average pet vertical position in source
-        avg_pet_y = float(np.mean(raw_targets_y)) if raw_targets_y else orig_h / 2.0
-        vert_frac = avg_pet_y / float(orig_h)
+            avg_pet_y = float(np.mean(clean_targets_y))
+            vert_frac = avg_pet_y / float(orig_h)
+            base_zoom = 1.12 if abs(vert_frac - 0.50) > 0.08 else 1.0
 
-        # Upscale budget: max upscale 2.0x (1080 / 540 = 2.0)
-        # If pet is off-center vertically, apply mild zoom within upscale budget to gain vertical freedom
-        base_zoom = 1.0
-        if abs(vert_frac - 0.50) > 0.08:
-            base_zoom = 1.12  # Upscale = 1.78 * 1.12 = 1.99x <= 2.0x limit
+            sub_crop_h = int(round(orig_h / base_zoom))
+            sub_crop_w = int(round(sub_crop_h * 9.0 / 16.0))
+            if sub_crop_w % 2 != 0: sub_crop_w += 1
+            if sub_crop_h % 2 != 0: sub_crop_h += 1
+            sub_crop_w = min(sub_crop_w, orig_w)
+            sub_crop_h = min(sub_crop_h, orig_h)
+            sub_max_x = orig_w - sub_crop_w
+            sub_max_y = orig_h - sub_crop_h
 
-        crop_h = int(round(orig_h / base_zoom))
-        crop_w = int(round(crop_h * 9.0 / 16.0))
-        if crop_w % 2 != 0:
-            crop_w += 1
-        if crop_h % 2 != 0:
-            crop_h += 1
-        crop_w = min(crop_w, orig_w)
-        crop_h = min(crop_h, orig_h)
-        max_y = orig_h - crop_h
-        max_x = orig_w - crop_w
+            rel_times = [t - win_start for t in sub_times]
+            dt = (rel_times[1] - rel_times[0]) if len(rel_times) > 1 else 0.5
+            target_crop_x = np.clip(np.array([x - (sub_crop_w / 2.0) for x in clean_targets_x]), 0, sub_max_x)
 
-        # 6. Smooth Trajectory with Adaptive Velocity & Lookahead
-        rel_times = [t - start_s for t in sample_times]
-        dt = (rel_times[1] - rel_times[0]) if len(rel_times) > 1 else 1.0
-        sample_fps = 1.0 / max(1e-4, dt)
+            kernel_size = 5
+            sigma = 1.8
+            kx = np.arange(-(kernel_size // 2), kernel_size // 2 + 1)
+            kernel = np.exp(-0.5 * (kx / sigma) ** 2)
+            kernel /= np.sum(kernel)
+            padded_x = np.pad(target_crop_x, (kernel_size // 2, kernel_size // 2), mode='edge')
+            smoothed_x_arr = np.convolve(padded_x, kernel, mode='valid')
+            smoothed_x_arr = np.clip(smoothed_x_arr, 0, sub_max_x)
 
-        # Offline target crop position: center pet in crop
-        target_crop_x = np.array([x - (crop_w / 2.0) for x in raw_targets_x])
-        target_crop_x = np.clip(target_crop_x, 0, max_x)
+            max_speed = 0.25 * float(sub_crop_w)
+            dead_zone_px = 0.015 * float(sub_crop_w)
+            smoothed_x = []
+            cur_x = smoothed_x_arr[0]
+            for k in range(len(sub_times)):
+                tval = smoothed_x_arr[k]
+                diff = tval - cur_x
+                if abs(diff) >= dead_zone_px:
+                    mstep = max_speed * dt
+                    if abs(diff) > sub_crop_w * 0.15:
+                        mstep *= 1.4
+                    step = math.copysign(min(abs(diff), mstep), diff)
+                    cur_x += step
+                cur_x = max(0.0, min(float(sub_max_x), cur_x))
+                smoothed_x.append(cur_x)
 
-        # Lookahead: start moving before pet accelerates
-        lookahead_steps = int(0.35 * sample_fps)
-        advanced_x = np.copy(target_crop_x)
-        for i in range(len(target_crop_x)):
-            future_idx = min(len(target_crop_x) - 1, i + lookahead_steps)
-            advanced_x[i] = target_crop_x[future_idx]
+            zoom_factors = [1.0] * len(rel_times)
+            med_ph = float(np.median(clean_heights))
+            if win_dur >= 4.0 and med_ph <= 0.50 and max(sub_motions) > 6.0:
+                mid_s = int(len(sub_motions) * 0.20)
+                mid_e = int(len(sub_motions) * 0.80)
+                peak_idx = mid_s + int(np.argmax(sub_motions[mid_s:mid_e])) if mid_e > mid_s else len(sub_motions) // 2
+                peak_t = rel_times[peak_idx]
+                p_dur = 1.8
+                max_punch = 1.12
+                for k, tr in enumerate(rel_times):
+                    dist_p = abs(tr - peak_t)
+                    if dist_p < (p_dur / 2.0):
+                        u = (dist_p / (p_dur / 2.0)) * math.pi
+                        zoom_factors[k] = round(1.0 + (max_punch - 1.0) * (0.5 + 0.5 * math.cos(u)), 3)
 
-        # Bidirectional Gaussian smoothing over the offline trajectory
-        kernel_size = 5
-        sigma = 1.8
-        kx = np.arange(-(kernel_size // 2), kernel_size // 2 + 1)
-        kernel = np.exp(-0.5 * (kx / sigma) ** 2)
-        kernel /= np.sum(kernel)
+            n_kf = max(4, min(8, int(win_dur * 1.5)))
+            key_indices = [int(i * (len(rel_times) - 1) / (n_kf - 1)) for i in range(n_kf)]
+            kf_times = [round(rel_times[idx], 3) for idx in key_indices]
+            kf_x = [round(smoothed_x[idx], 1) for idx in key_indices]
+            kf_zoom = [zoom_factors[idx] for idx in key_indices]
+            kf_y = [int(max(0, min(sub_max_y, clean_targets_y[idx] - (sub_crop_h * 0.45)))) for idx in key_indices]
 
-        padded_x = np.pad(advanced_x, (kernel_size // 2, kernel_size // 2), mode='edge')
-        smoothed_x_arr = np.convolve(padded_x, kernel, mode='valid')
-        smoothed_x_arr = np.clip(smoothed_x_arr, 0, max_x)
+            vis_ok, horiz_ok, vert_ok, size_ok, all_ok = 0, 0, 0, 0, 0
+            total_eval = 0
+            current_failing_run = 0
+            max_failing_run = 0
+            failing_details = []
 
-        # Adaptive velocity clamping (up to 25% crop width/sec with ease-in/ease-out)
-        max_speed = 0.25 * float(crop_w)
-        dead_zone_px = 0.015 * float(crop_w)
+            for k, orig_idx in enumerate(idxs):
+                dlist = frame_dets[orig_idx]
+                cats = [d for d in dlist if d["class_name"] in ("cat", "dog")]
+                if not cats:
+                    continue
+                total_eval += 1
+                best_cat = max(cats, key=lambda d: d["area_frac"] * 2.0 + d["conf"])
+                bx1, by1, bx2, by2 = best_cat["box"]
 
-        smoothed_x = []
-        cur_x = smoothed_x_arr[0]
-        for i in range(len(sample_times)):
-            target_val = smoothed_x_arr[i]
-            diff = target_val - cur_x
-            if abs(diff) < dead_zone_px:
-                pass
-            else:
-                max_step = max_speed * dt
-                # Adaptive acceleration if pet moves fast
-                if abs(diff) > crop_w * 0.15:
-                    max_step *= 1.4
-                step = math.copysign(min(abs(diff), max_step), diff)
-                cur_x += step
-            cur_x = max(0.0, min(float(max_x), cur_x))
-            smoothed_x.append(cur_x)
+                cam_x = smoothed_x[k]
+                cam_y = float(np.interp(rel_times[k], kf_times, kf_y)) if len(kf_times) > 1 else float(kf_y[0])
 
-        # 7. Pro Touch: Funniest Moment Punch-in (+10% to +12% zoom)
-        # Find peak motion energy in the middle 60% of the clip
-        mid_start = int(len(motion_energies) * 0.20)
-        mid_end = int(len(motion_energies) * 0.80)
-        if mid_end > mid_start:
-            peak_idx = mid_start + int(np.argmax(motion_energies[mid_start:mid_end]))
-            peak_val = motion_energies[peak_idx]
-        else:
-            peak_idx = len(motion_energies) // 2
-            peak_val = 0.0
+                cbx1 = bx1 - cam_x
+                cby1 = by1 - cam_y
+                cbx2 = bx2 - cam_x
+                cby2 = by2 - cam_y
 
-        # Punch-in zoom if noticeable motion burst exists AND pet is not already large
-        zoom_factors = [1.0] * len(rel_times)
-        med_pet_h = float(np.median(pet_heights)) if pet_heights else 0.35
-        if peak_val > 6.0 and dur_s >= 4.0 and med_pet_h <= 0.50:
-            peak_t = rel_times[peak_idx]
-            punch_duration = 1.8  # seconds
-            max_punch = 1.12  # +12% zoom
+                # Area visibility >= 95%
+                inter_x1 = max(0.0, cbx1)
+                inter_y1 = max(0.0, cby1)
+                inter_x2 = min(float(sub_crop_w), cbx2)
+                inter_y2 = min(float(sub_crop_h), cby2)
+                inter_area = max(0.0, inter_x2 - inter_x1) * max(0.0, inter_y2 - inter_y1)
+                box_area = max(1e-4, (cbx2 - cbx1) * (cby2 - cby1))
+                vis_area_frac = inter_area / box_area
+                is_vis = (vis_area_frac >= 0.95)
 
-            for i, t_rel in enumerate(rel_times):
-                dist = abs(t_rel - peak_t)
-                if dist < (punch_duration / 2.0):
-                    # Smooth cosine bell curve
-                    u = (dist / (punch_duration / 2.0)) * math.pi
-                    zoom = 1.0 + (max_punch - 1.0) * (0.5 + 0.5 * math.cos(u))
-                    zoom_factors[i] = round(zoom, 3)
+                cx = ((cbx1 + cbx2) / 2.0) / float(sub_crop_w)
+                cy = ((cby1 + cby2) / 2.0) / float(sub_crop_h)
+                h_frac = (cby2 - cby1) / float(sub_crop_h)
 
-        # 8. Sample ~6 keyframes for the continuous FFmpeg expression
-        n_keyframes = max(4, min(8, int(dur_s * 1.5)))
-        key_indices = [int(i * (len(rel_times) - 1) / (n_keyframes - 1)) for i in range(n_keyframes)]
-        
-        kf_times = [rel_times[idx] for idx in key_indices]
-        kf_x = [smoothed_x[idx] for idx in key_indices]
-        kf_zoom = [zoom_factors[idx] for idx in key_indices]
+                # Clamp-aware horizontal centering
+                is_clamped = (cam_x <= 2.0 or cam_x >= sub_max_x - 2.0)
+                if 0.38 <= cx <= 0.62:
+                    is_h = True
+                elif is_clamped and is_vis:
+                    is_h = True # CLAMPED_OK
+                else:
+                    is_h = False
 
-        # Calculate Y offset: keep pet center at 45% of crop height
-        kf_y = []
-        for idx in key_indices:
-            target_y = raw_targets_y[idx] if raw_targets_y else avg_pet_y
-            y_val = int(max(0, min(max_y, target_y - (crop_h * 0.45))))
-            kf_y.append(y_val)
+                if sub_max_y > 0:
+                    is_v = (0.30 <= cy <= 0.62)
+                else:
+                    is_v = (0.20 <= cy <= 0.75) and (cby1 >= -3 and cby2 <= sub_crop_h + 3)
 
-        # 9. Pre-Score Framing Before Any Render (Requirement 4)
-        vis_ok, horiz_ok, vert_ok, size_ok, all_ok = 0, 0, 0, 0, 0
-        total_eval = 0
+                is_s = (0.28 <= h_frac <= 0.72)
 
-        for i, t_rel in enumerate(rel_times):
-            dets = detections_per_time[i]
-            cats = [d for d in dets if d["class_name"] in ("cat", "dog")]
-            if not cats:
-                continue
-            total_eval += 1
-            best_cat = max(cats, key=lambda d: d["area_frac"] * 2.0 + d["conf"])
-            bx1, by1, bx2, by2 = best_cat["box"]
+                if is_vis: vis_ok += 1
+                if is_h: horiz_ok += 1
+                if is_v: vert_ok += 1
+                if is_s: size_ok += 1
 
-            cam_x = smoothed_x[i]
-            cam_y = float(np.interp(t_rel, kf_times, kf_y)) if len(kf_times) > 1 else float(kf_y[0])
+                frame_ok = (is_vis and is_h and is_v and is_s)
+                if frame_ok:
+                    all_ok += 1
+                    current_failing_run = 0
+                else:
+                    current_failing_run += 1
+                    max_failing_run = max(max_failing_run, current_failing_run)
+                    reasons = []
+                    if not is_vis: reasons.append(f"Vis {vis_area_frac:.1%}")
+                    if not is_h: reasons.append(f"H {cx:.1%}")
+                    if not is_v: reasons.append(f"V {cy:.1%}")
+                    if not is_s: reasons.append(f"Size {h_frac:.1%}")
+                    failing_details.append({
+                        "frame_idx": k,
+                        "t": round(rel_times[k], 2),
+                        "abs_t": round(sub_times[k], 2),
+                        "reasons": reasons
+                    })
 
-            cbx1 = bx1 - cam_x
-            cby1 = by1 - cam_y
-            cbx2 = bx2 - cam_x
-            cby2 = by2 - cam_y
+            eval_count = max(total_eval, 1)
+            pred_compliance = all_ok / eval_count
+            pred_vis = vis_ok / eval_count
+            pred_h = horiz_ok / eval_count
+            pred_v = vert_ok / eval_count
+            pred_s = size_ok / eval_count
 
-            is_vis = (cbx1 >= -3 and cby1 >= -3 and cbx2 <= crop_w + 3 and cby2 <= crop_h + 3)
-            cx = ((cbx1 + cbx2) / 2.0) / float(crop_w)
-            cy = ((cby1 + cby2) / 2.0) / float(crop_h)
-            h_frac = (cby2 - cby1) / float(crop_h)
+            threshold = 0.90
+            passed = bool(
+                (pred_compliance >= threshold) and
+                (max_failing_run <= 1) and
+                (total_eval >= len(sub_times) * 0.35)
+            )
 
-            is_h = (0.38 <= cx <= 0.62)
-            if max_y > 0:
-                is_v = (0.30 <= cy <= 0.62)
-            else:
-                is_v = (0.20 <= cy <= 0.75) and (cby1 >= -3 and cby2 <= crop_h + 3)
-            is_s = (0.28 <= h_frac <= 0.72)
+            status = "pass" if passed else "reject"
+            reason = "PREDICT_PASS" if passed else (
+                f"PREDICTED_BAD_FRAMING (Score: {pred_compliance:.1%} < 90% — "
+                f"Vis:{pred_vis:.1%}, H:{pred_h:.1%}, V:{pred_v:.1%}, Size:{pred_s:.1%})"
+            )
 
-            if is_vis: vis_ok += 1
-            if is_h: horiz_ok += 1
-            if is_v: vert_ok += 1
-            if is_s: size_ok += 1
-            if is_vis and is_h and is_v and is_s:
-                all_ok += 1
-
-        eval_count = max(total_eval, 1)
-        pred_compliance = all_ok / eval_count
-        pred_vis = vis_ok / eval_count
-        pred_h = horiz_ok / eval_count
-        pred_v = vert_ok / eval_count
-        pred_s = size_ok / eval_count
-
-        predicted_pass = bool(
-            (pred_compliance >= 0.88 or (pred_vis >= 0.88 and pred_h >= 0.88 and pred_v >= 0.88 and pred_s >= 0.88))
-            and (total_eval >= len(sample_times) * 0.35)
-        )
-
-        if not predicted_pass:
             return {
-                "status": "reject",
-                "reason": (
-                    f"PREDICTED_BAD_FRAMING (Score: {pred_compliance:.1%} < 88% — "
-                    f"Vis:{pred_vis:.1%}, H:{pred_h:.1%}, V:{pred_v:.1%}, S:{pred_s:.1%})"
-                ),
+                "status": status,
+                "reason": reason,
+                "mode": "smart_crop",
+                "orig_size": (orig_w, orig_h),
+                "crop_w": sub_crop_w,
+                "crop_h": sub_crop_h,
+                "keyframes_t": kf_times,
+                "keyframes_x": kf_x,
+                "keyframes_y": kf_y,
+                "keyframes_zoom": kf_zoom,
                 "framing_score": round(pred_compliance, 3),
                 "sharpness": round(med_sharp, 1),
                 "pet_detected_ratio": round(presence_ratio, 3),
                 "details": {
-                    "vis": round(pred_vis, 3), "horiz": round(pred_h, 3),
-                    "vert": round(pred_v, 3), "size": round(pred_s, 3)
-                }
+                    "vis": round(pred_vis, 3),
+                    "horiz": round(pred_h, 3),
+                    "vert": round(pred_v, 3),
+                    "size": round(pred_s, 3)
+                },
+                "max_fail_run": max_failing_run,
+                "failing_frames": failing_details,
+                "win_start": round(win_start, 2),
+                "win_dur": round(win_dur, 2)
             }
 
-        med_sharp = float(np.median(sample_sharpness)) if sample_sharpness else 0.0
-        if med_sharp < 15.0:
-            return {
+        # 1. Base evaluation at offset 0.0
+        base_plan = eval_and_plan(start_s, dur_s)
+        if not base_plan:
+            base_plan = {
                 "status": "reject",
-                "reason": f"LOW_SOURCE_SHARPNESS (Median raw LapVar {med_sharp:.1f} < 15.0)",
-                "framing_score": round(pred_compliance, 3),
+                "reason": "ANALYSIS_FAILED",
+                "framing_score": 0.0,
                 "sharpness": round(med_sharp, 1),
-                "pet_detected_ratio": round(presence_ratio, 3),
-                "details": {
-                    "vis": round(pred_vis, 3), "horiz": round(pred_h, 3),
-                    "vert": round(pred_v, 3), "size": round(pred_s, 3)
-                }
+                "pet_detected_ratio": 0.0,
+                "details": {"vis": 0.0, "horiz": 0.0, "vert": 0.0, "size": 0.0},
+                "failing_frames": [],
+                "win_start": start_s,
+                "win_dur": dur_s
             }
 
-        return {
-            "status": "pass",
-            "mode": "smart_crop",
-            "orig_size": (orig_w, orig_h),
-            "crop_w": crop_w,
-            "crop_h": crop_h,
-            "keyframes_t": kf_times,
-            "keyframes_x": kf_x,
-            "keyframes_y": kf_y,
-            "keyframes_zoom": kf_zoom,
-            "framing_score": round(pred_compliance, 3),
-            "sharpness": round(med_sharp, 1),
-            "pet_detected_ratio": round(presence_ratio, 3),
-            "details": {
-                "vis": round(pred_vis, 3), "horiz": round(pred_h, 3),
-                "vert": round(pred_v, 3), "size": round(pred_s, 3)
-            }
-        }
+        # Fast exit if base plan already achieves 100% pass with 0 failing frames
+        if base_plan["status"] == "pass" and base_plan["framing_score"] >= 1.0 and len(base_plan.get("failing_frames", [])) == 0:
+            base_plan["best_offset"] = 0.0
+            base_plan["best_start_s"] = start_s
+            base_plan["best_dur_s"] = dur_s
+            return base_plan
+
+        if not allow_slide or layout_mode != "smart_crop":
+            base_plan["best_offset"] = 0.0
+            base_plan["best_start_s"] = start_s
+            base_plan["best_dur_s"] = dur_s
+            return base_plan
+
+        # 2. Search sliding offsets and durations
+        offsets = [0.0]
+        curr = step_s
+        while curr <= max_slide_s + 1e-5:
+            offsets.append(curr)
+            offsets.append(-curr)
+            curr += step_s
+
+        durations_to_try = [dur_s, dur_s - 0.5, dur_s + 0.5]
+
+        best_plan = base_plan
+        best_score = base_plan.get("framing_score", 0.0)
+        best_offset = 0.0
+        best_dur = dur_s
+
+        for d_try in durations_to_try:
+            for off in offsets:
+                w_start = start_s + off
+                if w_start < 0 or (w_start + d_try) > total_sec:
+                    continue
+                cand_plan = eval_and_plan(w_start, d_try)
+                if not cand_plan:
+                    continue
+
+                c_score = cand_plan.get("framing_score", 0.0)
+                c_pass = (cand_plan.get("status") == "pass")
+                b_pass = (best_plan.get("status") == "pass")
+
+                is_better = False
+                if c_pass and not b_pass:
+                    is_better = True
+                elif c_pass == b_pass:
+                    if c_score > best_score:
+                        is_better = True
+                    elif c_score == best_score and abs(off) < abs(best_offset):
+                        is_better = True
+
+                if is_better:
+                    best_score = c_score
+                    best_plan = cand_plan
+                    best_offset = off
+                    best_dur = d_try
+                    if c_pass and c_score >= 1.0 and abs(off) == 0.0:
+                        break
+
+        best_plan["best_offset"] = round(best_offset, 2)
+        best_plan["best_start_s"] = round(start_s + best_offset, 2)
+        best_plan["best_dur_s"] = round(best_dur, 2)
+        return best_plan
 
     def build_ffmpeg_crop_expression(self, plan):
         """

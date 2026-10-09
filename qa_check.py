@@ -224,8 +224,15 @@ def check_pet_centering(video_path, n_samples=24, has_vertical_slack=True, layou
         cy = ((by1 + by2) / 2.0) / h
         box_h_frac = (by2 - by1) / h
         
-        # 1. Visibility: pet box is fully inside output frame (tolerance 3px)
-        is_inside = (bx1 >= -3 and by1 >= -3 and bx2 <= w + 3 and by2 <= h + 3)
+        # 1. Visibility: pet box is inside output frame (tolerance 3px or area >= 95%)
+        is_inside_px = (bx1 >= -3 and by1 >= -3 and bx2 <= w + 3 and by2 <= h + 3)
+        inter_x1 = max(0.0, bx1)
+        inter_y1 = max(0.0, by1)
+        inter_x2 = min(float(w), bx2)
+        inter_y2 = min(float(h), by2)
+        inter_area = max(0.0, inter_x2 - inter_x1) * max(0.0, inter_y2 - inter_y1)
+        box_area = max(1e-4, (bx2 - bx1) * (by2 - by1))
+        is_inside = is_inside_px or (inter_area / box_area >= 0.95)
         if is_inside:
             vis_passed_frames += 1
 
@@ -281,9 +288,9 @@ def check_pet_centering(video_path, n_samples=24, has_vertical_slack=True, layou
     vert_ratio = vert_passed_frames / eval_count
     size_ratio = size_passed_frames / eval_count
 
-    # Passed if composite compliance >= 0.88 or individual sub-checks all meet the high quality bar
+    # Passed if composite compliance >= 0.90 or individual sub-checks all meet the high quality bar (90%)
     passed = bool(
-        (compliance_ratio >= 0.88 or (vis_ratio >= 0.88 and horiz_ratio >= 0.88 and vert_ratio >= 0.88 and size_ratio >= 0.88))
+        (compliance_ratio >= 0.90 or (vis_ratio >= 0.90 and horiz_ratio >= 0.90 and vert_ratio >= 0.90 and size_ratio >= 0.90))
         and (detected_frames >= n_samples * 0.35)
     )
     return {
