@@ -2361,15 +2361,17 @@ function appendSequentialLogs(lines, jobId) {
     if (!body || !lines || lines.length === 0) return;
 
     if (!state.seenLogKeys) state.seenLogKeys = new Set();
-    const activeJobId = jobId || state.currentJobId || "default";
+    const activeJobId = jobId || state.currentJobId || state.lastActiveJobId || "default";
 
-    // If job changed, reset set and clear terminal body
-    if (state.lastActiveJobId && state.lastActiveJobId !== activeJobId) {
-        state.seenLogKeys.clear();
-        state.lastLogSeq = 0;
-        body.innerText = "";
+    // Only reset terminal when transitioning between two distinct real job IDs
+    if (activeJobId && activeJobId !== "default") {
+        if (state.lastActiveJobId && state.lastActiveJobId !== "default" && state.lastActiveJobId !== activeJobId) {
+            state.seenLogKeys.clear();
+            state.lastLogSeq = 0;
+            body.innerText = "";
+        }
+        state.lastActiveJobId = activeJobId;
     }
-    state.lastActiveJobId = activeJobId;
 
     let newChunk = "";
     for (const item of lines) {

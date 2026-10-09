@@ -13,6 +13,8 @@ import urllib.parse
 from http.server import SimpleHTTPRequestHandler
 
 
+import atexit
+
 PORT = int(os.environ.get("PORT", 8000))
 RUNNING_PROCESS = None
 RUNNING_PROCESS_START_TIME = None
@@ -24,6 +26,46 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FINISHED_DIR = os.path.join(BASE_DIR, "finished")
 RAW_DIR = os.path.join(BASE_DIR, "raw")
 OWN_FOOTAGE_DIR = os.path.join(BASE_DIR, "own_footage")
+LOCK_FILE = os.path.join(BASE_DIR, "web_server.lock")
+
+def acquire_server_lock():
+    pid = os.getpid()
+    if os.path.exists(LOCK_FILE):
+        try:
+            with open(LOCK_FILE, "r", encoding="utf-8") as f:
+                content = f.read().strip()
+            if content:
+                existing_pid = int(content)
+                if existing_pid != pid:
+                    import ctypes
+                    PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
+                    h = ctypes.windll.kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, False, existing_pid)
+                    if h:
+                        ctypes.windll.kernel32.CloseHandle(h)
+                        print(f"[FATAL] Another instance of LionReel Web Server is already running (PID: {existing_pid}).")
+                        print(f"       Exiting immediately to prevent port collision and duplicate logging.")
+                        sys.exit(1)
+        except (ValueError, OSError):
+            pass
+        except Exception as e_lk:
+            print(f"Notice during lock check: {e_lk}")
+    try:
+        with open(LOCK_FILE, "w", encoding="utf-8") as f:
+            f.write(str(pid))
+    except Exception:
+        pass
+
+def release_server_lock():
+    try:
+        if os.path.exists(LOCK_FILE):
+            with open(LOCK_FILE, "r", encoding="utf-8") as f:
+                content = f.read().strip()
+            if content == str(os.getpid()):
+                os.remove(LOCK_FILE)
+    except Exception:
+        pass
+
+atexit.register(release_server_lock)
 
 def get_local_work_dir():
     try:
@@ -423,12 +465,19 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                         except Exception:
                             pass
 
+            real_elapsed = round(time.time() - RUNNING_PROCESS_START_TIME, 1) if (is_running and RUNNING_PROCESS_START_TIME) else elapsed_sec
+            active_pid = RUNNING_PROCESS.pid if (RUNNING_PROCESS and RUNNING_PROCESS.poll() is None) else None
+            running_procs = [active_pid] if active_pid else []
+
             resp_data = {
                 "status": computed_status,
                 "job_id": job_id,
                 "isRunning": is_running,
+                "runningPid": active_pid,
+                "runningProcesses": running_procs,
                 "startTimeMs": start_time_ms,
-                "elapsedSeconds": elapsed_sec,
+                "elapsedSeconds": real_elapsed,
+                "realElapsedSec": real_elapsed,
                 "stageIndex": (job_res.get("stage_index") if job_res else (10 if computed_status == "completed" else 1)),
                 "stageName": (job_res.get("stage_name") if job_res else ""),
                 "progressPct": (job_res.get("progress_pct") if job_res else (100 if computed_status == "completed" else 5)),
@@ -1472,16 +1521,17 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             return
 
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
-    allow_reuse_address = True
+    allow_reuse_address = False if os.name == "nt" else True
 
 if __name__ == "__main__":
+    acquire_server_lock()
     # Ensure raw and finished folders exist
     os.makedirs(FINISHED_DIR, exist_ok=True)
     os.makedirs(RAW_DIR, exist_ok=True)
     
     server = ThreadedTCPServer(("", PORT), DashboardHandler)
     print(f"============================================================")
-    print(f"  LionReel GUI Dashboard Server launched successfully! 🦁")
+    print(f"  LionReel GUI Dashboard Server launched successfully! (PID: {os.getpid()})")
     print(f"  --> Open: http://localhost:{PORT} in your web browser")
     print(f"============================================================")
     
