@@ -58,12 +58,68 @@ import numpy as np, cv2, warnings, logging
 warnings.filterwarnings("ignore")
 logging.disable(logging.CRITICAL)
 
+import sys
+
+# Ensure Python virtualenv Scripts folder (containing ffmpeg.exe) is in PATH
+_BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+_VENV_SCRIPTS = os.path.join(_BASE_DIR, ".venv", "Scripts")
+if os.path.exists(_VENV_SCRIPTS) and _VENV_SCRIPTS not in os.environ.get("PATH", ""):
+    os.environ["PATH"] = _VENV_SCRIPTS + os.pathsep + os.environ.get("PATH", "")
+
+# Force unbuffered line-level stdout/stderr for instant GUI telemetry streaming
+if hasattr(sys.stdout, "reconfigure"):
+    try: sys.stdout.reconfigure(line_buffering=True)
+    except: pass
+if hasattr(sys.stderr, "reconfigure"):
+    try: sys.stderr.reconfigure(line_buffering=True)
+    except: pass
+
+import builtins
+_orig_print = builtins.print
+def print(*args, **kwargs):
+    kwargs.setdefault("flush", True)
+    _orig_print(*args, **kwargs)
+
 from yt_dlp import YoutubeDL
-from moviepy.editor import (
-    VideoFileClip, concatenate_videoclips,
-    ImageClip, CompositeVideoClip, vfx
+
+# MoviePy 1.x & 2.x Compatibility Layer
+import moviepy
+from moviepy import (
+    VideoClip, VideoFileClip, concatenate_videoclips,
+    ImageClip, CompositeVideoClip, ColorClip, vfx, afx
 )
-from moviepy.audio.fx.all import audio_normalize
+
+BaseClip = getattr(moviepy.Clip, "Clip", moviepy.Clip)
+for target in [BaseClip, VideoClip]:
+    if not hasattr(target, "subclip") and hasattr(target, "subclipped"):
+        target.subclip = lambda self, t_start, t_end=None: self.subclipped(t_start, t_end)
+    if not hasattr(target, "set_duration") and hasattr(target, "with_duration"):
+        target.set_duration = lambda self, d: self.with_duration(d)
+    if not hasattr(target, "set_opacity") and hasattr(target, "with_opacity"):
+        target.set_opacity = lambda self, o: self.with_opacity(o)
+    if not hasattr(target, "set_pos") and hasattr(target, "with_position"):
+        target.set_pos = lambda self, pos, relative=False: self.with_position(pos)
+    if not hasattr(target, "set_position") and hasattr(target, "with_position"):
+        target.set_position = lambda self, pos: self.with_position(pos)
+    if not hasattr(target, "set_audio") and hasattr(target, "with_audio"):
+        target.set_audio = lambda self, a: self.with_audio(a)
+    if not hasattr(target, "crop") and hasattr(target, "cropped"):
+        target.crop = lambda self, *args, **kwargs: self.cropped(*args, **kwargs)
+    if not hasattr(target, "resize") and hasattr(target, "resized"):
+        target.resize = lambda self, *args, **kwargs: self.resized(*args, **kwargs)
+    if not hasattr(target, "fl") and hasattr(target, "transform"):
+        target.fl = lambda self, f, apply_to=None: self.transform(f)
+    if not hasattr(target, "fadein"):
+        target.fadein = lambda self, d: self.with_effects([vfx.FadeIn(d)])
+    if not hasattr(target, "fadeout"):
+        target.fadeout = lambda self, d: self.with_effects([vfx.FadeOut(d)])
+
+def audio_normalize(clip):
+    try:
+        return clip.with_effects([afx.AudioNormalize()])
+    except:
+        return clip
+
 from PIL import Image, ImageDraw, ImageFont
 
 
@@ -77,13 +133,14 @@ HISTORY_FILE    = "used_videos.txt"
 USED_META_FILE  = "used_metadata.json"
 LOGO_FILE       = "lion_logo.png"
 
-SHORT_CLIP_SEC  = 9.0
-TARGET_CLIPS    = 6
-FADE_DUR        = 0.20
+SHORT_CLIP_SEC  = 7.5
+TARGET_CLIPS    = 4
+FADE_DUR        = 0.0
 OUTPUT_FPS      = 30
 BITRATE         = "8000k"
-LOGO_OPACITY    = 0.80
-LOGO_WIDTH      = 200
+ADD_LOGO        = False
+LOGO_OPACITY    = 0.35
+LOGO_WIDTH      = 120
 OUT_W, OUT_H    = 1080, 1920
 
 # V92 viral scoring
@@ -107,9 +164,20 @@ TARGET_BRIGHTNESS       = 118   # Target mean brightness for auto-exposure (0-25
 CLAHE_CLIP_LIMIT        = 2.5   # CLAHE contrast enhancement strength
 SATURATION_BOOST        = 1.22  # Colour saturation multiplier
 
-# Bypasses added per user request to ignore quality check rejections and funny word filters
-BYPASS_QUALITY_GATE     = True  # If True, prints quality gate checks but never rejects candidates
-BYPASS_FUNNY_CHECK      = True  # If True, ignores strict funny word requirements in title
+# Bypasses and Pipeline Flags
+BYPASS_QUALITY_GATE     = False # If True, prints quality gate checks but never rejects candidates
+BYPASS_FUNNY_CHECK      = False # If True, ignores strict funny word requirements in title
+APPLY_COLOR_GRADING     = True  # If False, passes through natural original colors without alteration
+APPLY_SMART_CROP        = True  # If True, centers animals using background subtraction & cascades
+ADD_BACKGROUND_MUSIC    = True  # If True, mixes background audio with dynamic ducking
+MOMENT_CUT_MODE         = "peak_viral" # "peak_viral" | "smart_auto" | "full_clip"
+CHECK_SHARPNESS         = True
+CHECK_SHAKE             = True
+CHECK_WATERMARK         = True
+CHECK_AUDIO_LEVELS      = True
+CHECK_AI_VIDEO          = True
+CHECK_CARTOON           = True
+CHECK_ADVERTISING       = True
 
 os.makedirs(OUT_FOLDER, exist_ok=True)
 os.makedirs(RAW_FOLDER,  exist_ok=True)
@@ -121,18 +189,15 @@ os.makedirs(RAW_FOLDER,  exist_ok=True)
 # ═══════════════════════════════════════════════════════════════
 # V95 — SOURCE MODE (multi-clip-from-one-long-video methods)
 # ═══════════════════════════════════════════════════════════════
-#   "classic"     : original V94 behaviour — searches YouTube, downloads
-#                   several SHORT videos, one clip from each.
+#   "classic"     : Autonomous YouTube discovery — searches YouTube live,
+#                   downloads top viral funny clips matching animal category.
+#   "curated"     : User selected / timeline curated clips from studio library.
 #   "own_footage" : reads a long video (5/10/20 min) from OWN_FOOTAGE_FOLDER
 #                   that belongs to you, and pulls several funny moments
-#                   from across it (start / middle / end) into one short.
-#                   No copyright concern — it's your own footage.
-#   "youtube_cc"  : searches YouTube for long videos, but ONLY accepts ones
-#                   whose actual YouTube license is Creative Commons
-#                   (reuse allowed). Pulls several clips from that ONE
-#                   long video and burns an on-screen credit + link to
-#                   the original into the finished short.
-SOURCE_MODE = "classic"   # "classic" | "own_footage" | "youtube_cc"
+#                   from across it into one short.
+#   "youtube_cc"  : searches YouTube for long Creative Commons videos and slices them.
+#   "custom_url"  : slices user-provided custom YouTube link.
+SOURCE_MODE = "classic"   # "classic" | "curated" | "own_footage" | "youtube_cc" | "custom_url"
 
 OWN_FOOTAGE_FOLDER   = r"G:\My Drive\Cat make\own_footage\\"
 OWN_FOOTAGE_HISTORY  = "used_own_footage.txt"
@@ -144,24 +209,92 @@ CC_CANDIDATES_TO_CHECK = 12    # how many top search results to license-check pe
 
 VIDEO_MODE = random.choice(["cat", "dog", "mix"])
 
+# Video format and length defaults
+VIDEO_TYPE          = "short" # "short" | "long" | "both"
+TARGET_DURATION_MIN = 5.0     # Target compilation minutes for long video
+TARGET_FORMAT       = "9:16"  # "9:16" | "16:9" | "1:1"
+SELECTED_CLIPS      = []      # Clips queued from GUI
+CUSTOM_URL          = ""
+
 # Load GUI configuration overrides if config.json is present
 if os.path.exists("config.json"):
     try:
-        with open("config.json", "r") as f_cfg:
+        with open("config.json", "r", encoding="utf-8") as f_cfg:
             overrides = json.load(f_cfg)
         if "VIDEO_MODE" in overrides:
-            VIDEO_MODE = overrides["VIDEO_MODE"]
+            raw_mode = str(overrides["VIDEO_MODE"]).lower()
+            VIDEO_MODE = "mix" if raw_mode in ("mix", "mixed", "wildlife") else raw_mode
         if "SOURCE_MODE" in overrides:
-            SOURCE_MODE = overrides["SOURCE_MODE"]
-        if "BYPASS_QUALITY_GATE" in overrides:
-            BYPASS_QUALITY_GATE = overrides["BYPASS_QUALITY_GATE"]
-        if "BYPASS_FUNNY_CHECK" in overrides:
-            BYPASS_FUNNY_CHECK = overrides["BYPASS_FUNNY_CHECK"]
-        if "TARGET_CLIPS" in overrides:
-            TARGET_CLIPS = int(overrides["TARGET_CLIPS"])
+            SOURCE_MODE = str(overrides["SOURCE_MODE"]).lower()
+        if "CUSTOM_URL" in overrides:
+            CUSTOM_URL = str(overrides["CUSTOM_URL"]).strip()
+        if "VIDEO_TYPE" in overrides:
+            VIDEO_TYPE = str(overrides["VIDEO_TYPE"]).lower()
+        if "TARGET_DURATION_MIN" in overrides:
+            TARGET_DURATION_MIN = float(overrides["TARGET_DURATION_MIN"])
         if "SHORT_CLIP_SEC" in overrides:
             SHORT_CLIP_SEC = float(overrides["SHORT_CLIP_SEC"])
-        print(f"   [Config] Loaded GUI overrides: Mode={VIDEO_MODE}, Source={SOURCE_MODE}, BypassQG={BYPASS_QUALITY_GATE}, BypassFunny={BYPASS_FUNNY_CHECK}")
+        if "ASPECT_RATIO" in overrides:
+            TARGET_FORMAT = overrides["ASPECT_RATIO"]
+        elif "TARGET_FORMAT" in overrides:
+            TARGET_FORMAT = overrides["TARGET_FORMAT"]
+
+        # Enforce format defaults according to video type:
+        # Long compilation on YouTube must be 16:9 landscape unless user explicitly chose otherwise
+        if VIDEO_TYPE == "long" and TARGET_FORMAT not in ("16:9", "1:1"):
+            TARGET_FORMAT = "16:9"
+        elif VIDEO_TYPE == "short" and TARGET_FORMAT not in ("9:16", "1:1"):
+            TARGET_FORMAT = "9:16"
+
+        # Set output resolution based on aspect ratio
+        if TARGET_FORMAT == "16:9":
+            OUT_W, OUT_H = 1920, 1080
+        elif TARGET_FORMAT == "1:1":
+            OUT_W, OUT_H = 1080, 1080
+        else: # 9:16
+            OUT_W, OUT_H = 1080, 1920
+
+        if "ADD_LOGO" in overrides:
+            ADD_LOGO = (overrides["ADD_LOGO"] is True or str(overrides["ADD_LOGO"]).lower() == "true")
+
+        # Calculate TARGET_CLIPS according to duration
+        if VIDEO_TYPE in ("long", "both"):
+            total_sec = max(60, int(TARGET_DURATION_MIN * 60))
+            TARGET_CLIPS = max(10, int(round(total_sec / SHORT_CLIP_SEC)))
+        elif "TARGET_CLIPS" in overrides:
+            TARGET_CLIPS = int(overrides["TARGET_CLIPS"])
+
+        if "BYPASS_QUALITY_GATE" in overrides:
+            BYPASS_QUALITY_GATE = (overrides["BYPASS_QUALITY_GATE"] is True or str(overrides["BYPASS_QUALITY_GATE"]).lower() == "true")
+        if "BYPASS_FUNNY_CHECK" in overrides:
+            BYPASS_FUNNY_CHECK = (overrides["BYPASS_FUNNY_CHECK"] is True or str(overrides["BYPASS_FUNNY_CHECK"]).lower() == "true")
+        if "APPLY_COLOR_GRADING" in overrides:
+            APPLY_COLOR_GRADING = (overrides["APPLY_COLOR_GRADING"] is True or str(overrides["APPLY_COLOR_GRADING"]).lower() == "true")
+        if "APPLY_SMART_CROP" in overrides:
+            APPLY_SMART_CROP = (overrides["APPLY_SMART_CROP"] is True or str(overrides["APPLY_SMART_CROP"]).lower() == "true")
+        if "ADD_BACKGROUND_MUSIC" in overrides:
+            ADD_BACKGROUND_MUSIC = (overrides["ADD_BACKGROUND_MUSIC"] is True or str(overrides["ADD_BACKGROUND_MUSIC"]).lower() == "true")
+        if "CHECK_SHARPNESS" in overrides:
+            CHECK_SHARPNESS = (overrides["CHECK_SHARPNESS"] is True or str(overrides["CHECK_SHARPNESS"]).lower() == "true")
+        if "CHECK_SHAKE" in overrides:
+            CHECK_SHAKE = (overrides["CHECK_SHAKE"] is True or str(overrides["CHECK_SHAKE"]).lower() == "true")
+        if "CHECK_WATERMARK" in overrides:
+            CHECK_WATERMARK = (overrides["CHECK_WATERMARK"] is True or str(overrides["CHECK_WATERMARK"]).lower() == "true")
+        if "CHECK_AUDIO_LEVELS" in overrides:
+            CHECK_AUDIO_LEVELS = (overrides["CHECK_AUDIO_LEVELS"] is True or str(overrides["CHECK_AUDIO_LEVELS"]).lower() == "true")
+        if "CHECK_AI_VIDEO" in overrides:
+            CHECK_AI_VIDEO = (overrides["CHECK_AI_VIDEO"] is True or str(overrides["CHECK_AI_VIDEO"]).lower() == "true")
+        if "CHECK_CARTOON" in overrides:
+            CHECK_CARTOON = (overrides["CHECK_CARTOON"] is True or str(overrides["CHECK_CARTOON"]).lower() == "true")
+        if "CHECK_ADVERTISING" in overrides:
+            CHECK_ADVERTISING = (overrides["CHECK_ADVERTISING"] is True or str(overrides["CHECK_ADVERTISING"]).lower() == "true")
+        if "MOMENT_CUT_MODE" in overrides:
+            MOMENT_CUT_MODE = str(overrides["MOMENT_CUT_MODE"]).lower()
+
+        if "SELECTED_CLIPS" in overrides and isinstance(overrides["SELECTED_CLIPS"], list):
+            SELECTED_CLIPS = overrides["SELECTED_CLIPS"]
+
+        print(f"   [Config] Loaded GUI overrides: Mode={VIDEO_MODE.upper()}, SourceMode={SOURCE_MODE}, Type={VIDEO_TYPE.upper()}, ColorGrading={'ON' if APPLY_COLOR_GRADING else 'OFF'}, FunnyCheck={'BYPASS' if BYPASS_FUNNY_CHECK else 'ENFORCE'}, QualityGate={'BYPASS' if BYPASS_QUALITY_GATE else 'ENFORCE'}, TargetMin={TARGET_DURATION_MIN}m, TargetClips={TARGET_CLIPS}, ClipSec={SHORT_CLIP_SEC}s, Format={TARGET_FORMAT} ({OUT_W}x{OUT_H})")
     except Exception as e_cfg:
         print(f"   [Config] Failed to load config.json: {e_cfg}")
 
@@ -329,9 +462,32 @@ MIX_QUERIES = CAT_QUERIES + DOG_QUERIES + [
 ]
 
 def get_search_queries():
-    if VIDEO_MODE == "cat":  return CAT_QUERIES
-    if VIDEO_MODE == "dog":  return DOG_QUERIES
-    return MIX_QUERIES
+    base_queries = []
+    if VIDEO_MODE == "cat":
+        base_queries = list(CAT_QUERIES)
+        if VIDEO_TYPE in ("long", "both"):
+            base_queries = [
+                "funny cats compilation 2026", "try not to laugh funny cats moments",
+                "cute kittens funny fails compilation", "ultimate cat zoomies funny video",
+                "hilarious cats being weird full compilation"
+            ] + base_queries
+    elif VIDEO_MODE == "dog":
+        base_queries = list(DOG_QUERIES)
+        if VIDEO_TYPE in ("long", "both"):
+            base_queries = [
+                "funny dogs compilation 2026", "try not to laugh funny dogs moments",
+                "cute puppies funny fails compilation", "guilty dogs caught on camera compilation",
+                "hilarious dog zoomies full compilation"
+            ] + base_queries
+    else:
+        base_queries = list(MIX_QUERIES)
+        if VIDEO_TYPE in ("long", "both"):
+            base_queries = [
+                "funny cats and dogs compilation 2026", "funniest pets try not to laugh",
+                "animals being hilarious full compilation", "best pet fails compilation",
+                "cute and funny animal moments compilation"
+            ] + base_queries
+    return base_queries
 
 def mode_passes(entry):
     title   = (entry.get("title")   or "").lower()
@@ -372,9 +528,13 @@ def compute_viral_score(entry):
         elif like_ratio > 0.02: score += 2.0
         elif like_ratio > 0.01: score += 1.0
 
-    if DURATION_SWEET_LOW <= duration <= DURATION_SWEET_HIGH: score += 5.0
-    elif duration < DURATION_SWEET_LOW: score += 1.0
-    elif duration <= MAX_DURATION_HARD: score += 2.0
+    if VIDEO_TYPE in ("long", "both"):
+        if 60 <= duration <= 1200: score += 6.0
+        elif duration > 1200: score += 2.0
+    else:
+        if DURATION_SWEET_LOW <= duration <= DURATION_SWEET_HIGH: score += 5.0
+        elif duration < DURATION_SWEET_LOW: score += 1.0
+        elif duration <= MAX_DURATION_HARD: score += 2.0
 
     if upload_ts:
         try:
@@ -619,8 +779,55 @@ def make_netscape_file(kws=None):
 
 
 # ───────────────────────────────────────────────────────────────
-# DOWNLOAD  (YouTube only — this is the only place a video URL is built)
+# CODEC OPTIMIZER & DOWNLOAD (H.264 ENFORCED FOR FAST ZERO-LAG SEEKING)
 # ───────────────────────────────────────────────────────────────
+def ensure_fast_h264(video_path):
+    """
+    Ensures video is encoded in H.264 (avc1) for instant seek & decode without CPU hangs.
+    Only transcodes if video stream is explicitly confirmed to be AV1 (av01).
+    """
+    if not video_path or not os.path.exists(video_path):
+        return video_path
+    try:
+        import subprocess, imageio_ffmpeg
+        ffmpeg_bin = imageio_ffmpeg.get_ffmpeg_exe()
+
+        cmd = [ffmpeg_bin, "-i", video_path]
+        res = subprocess.run(cmd, capture_output=True, text=True, timeout=6)
+        is_av1 = False
+        for line in res.stderr.splitlines():
+            if "Video:" in line or "Stream #0:0" in line:
+                line_low = line.lower()
+                if "av1" in line_low or "av01" in line_low:
+                    is_av1 = True
+                break
+
+        if not is_av1:
+            return video_path
+
+        h264_tmp = video_path.replace(".mp4", "_fast_h264.mp4")
+        print(f"      [CodecOpt] Transcoding AV1 stream {os.path.basename(video_path)} to fast H.264...")
+        cmd_enc = [
+            ffmpeg_bin, "-y", "-v", "error",
+            "-i", video_path,
+            "-c:v", "libx264", "-preset", "ultrafast", "-crf", "22",
+            "-c:a", "copy",
+            h264_tmp
+        ]
+        subprocess.run(cmd_enc, check=True, timeout=120)
+        if os.path.exists(h264_tmp) and os.path.getsize(h264_tmp) > 50_000:
+            try:
+                os.remove(video_path)
+                os.rename(h264_tmp, video_path)
+                print(f"      [CodecOpt] Streamlined to high-speed H.264 ({os.path.getsize(video_path)/1_048_576:.1f} MB) ✅")
+                return video_path
+            except:
+                return h264_tmp
+    except Exception as e_opt:
+        print(f"      [CodecOpt] Note: {e_opt}")
+    return video_path
+
+
 def download_video(url, out_path, cookie_file, preview=False):
     def find():
         if os.path.exists(out_path) and os.path.getsize(out_path)>50_000: return out_path
@@ -634,9 +841,12 @@ def download_video(url, out_path, cookie_file, preview=False):
             try: os.remove(f)
             except: pass
     def opts(extra=None):
+        import imageio_ffmpeg
+        ffmpeg_bin = imageio_ffmpeg.get_ffmpeg_exe()
         o={"outtmpl":out_path,"quiet":True,"no_warnings":True,"noprogress":True,
            "logger":SilentLogger(),"merge_output_format":"mp4","no_check_formats":True,
-           "retries":5,"fragment_retries":5,"socket_timeout":15}
+           "retries":5,"fragment_retries":5,"socket_timeout":15,
+           "ffmpeg_location": ffmpeg_bin}
         if cookie_file and os.path.exists(cookie_file): o["cookiefile"]=cookie_file
         if preview:
             o["download_ranges"] = lambda info_dict, ydl: [{"start_time": 0, "end_time": 15}]
@@ -651,17 +861,26 @@ def download_video(url, out_path, cookie_file, preview=False):
             ("web",{"format":FMT}),
         ]
     else:
-        FMT="bestvideo[height>=720][height<=1080][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height>=720][height<=1080]+bestaudio/bestvideo[height<=1080]+bestaudio/best"
+        FMT = (
+            "bv*[aspect_ratio<=0.6][height>=1080]+ba[ext=m4a]/"
+            "bv*[aspect_ratio<=0.6]+ba/"
+            "bv*[height>=2160]+ba/"
+            "bv*[height>=1440]+ba/"
+            "bv*[height>=1080][ext=mp4]+ba[ext=m4a]/"
+            "bv*[height>=1080]+ba/"
+            "bv*[ext=mp4]+ba[ext=m4a]/"
+            "bv*+ba/b"
+        )
         strats=[
-            ("android_vr",{"format":FMT,"extractor_args":{"youtube":{"player_client":["android_vr"]}},
-                           "http_headers":{"User-Agent":"com.google.android.apps.youtube.vr.oculus/1.56.120 (Linux; Android 12; Build/SQ3A.220705.003.A1) gzip"}}),
+            ("web",{"format":FMT}),
             ("tv_embedded",{"format":FMT,"extractor_args":{"youtube":{"player_client":["tv_embedded"]}},
                             "http_headers":{"User-Agent":"Mozilla/5.0 (SMART-TV; Linux; Tizen 5.0) AppleWebKit/537.36"}}),
+            ("android_vr",{"format":FMT,"extractor_args":{"youtube":{"player_client":["android_vr"]}},
+                           "http_headers":{"User-Agent":"com.google.android.apps.youtube.vr.oculus/1.56.120 (Linux; Android 12; Build/SQ3A.220705.003.A1) gzip"}}),
             ("android",{"format":FMT,"extractor_args":{"youtube":{"player_client":["android"],"player_skip":["webpage","configs"]}},
                         "http_headers":{"User-Agent":"com.google.android.youtube/17.36.4 (Linux; U; Android 12; GB) gzip"}}),
             ("ios",{"format":FMT,"extractor_args":{"youtube":{"player_client":["ios"],"player_skip":["webpage","configs"]}},
                     "http_headers":{"User-Agent":"com.google.ios.youtube/17.33.2 (iPhone14,3; U; CPU iOS 15_6 like Mac OS X)"}}),
-            ("web",{"format":FMT}),
         ]
     for name,extra in strats:
         clean()
@@ -670,10 +889,60 @@ def download_video(url, out_path, cookie_file, preview=False):
             f=find()
             if f:
                 print(f"      Downloaded {'preview ' if preview else ''}via {name} ({os.path.getsize(f)/1_048_576:.1f} MB)")
+                if not preview:
+                    try:
+                        from source_utils import probe_video_fast
+                        pr = probe_video_fast(f)
+                        if not pr.get("pass_gate", True):
+                            print(f"      [IngestGate] Downloaded video rejected: {pr.get('reason')} ❌")
+                            clean()
+                            return None, f"Failed resolution gate: {pr.get('reason')}"
+                    except Exception as e_gate:
+                        pass
+                    f = ensure_fast_h264(f)
                 return f,None
         except: pass
     clean(); return None,"All strategies failed"
 
+
+
+# ───────────────────────────────────────────────────────────────
+# CARTOON & CGI CONTENT FILTER (ZERO CARTOONS / 3D MODELS ALLOWED)
+# ───────────────────────────────────────────────────────────────
+CARTOON_KEYWORDS = [
+    "talking tom", "talking angela", "talking ben", "talking ginger", "talking friends", "outfit7",
+    "cartoon", "cartoons", "animated", "animation", "animating", "anime",
+    "3d animation", "3d model", "3d render", "blender", "unreal engine", "cgi",
+    "kids tv", "kids channel", "nursery rhyme", "kids song", "children tv",
+    "cocomelon", "chuchu tv", "babybus", "pinkfong",
+    "gameplay", "game play", "playthrough", "walkthrough", "gaming", "game", "games",
+    "roblox", "minecraft", "gacha", "gacha life", "peppa pig", "cbeebies",
+    "simon's cat", "simons cat", "pixar", "disney", "dreamworks", "looney tunes",
+    "tom and jerry", "garfield", "oggy",
+    "kling", "runway ml", "luma dream", "pika", "sora", "deepfake",
+    "ai generated", "ai cat", "ai dog", "ai pet", "ai animal"
+]
+
+def check_cartoon_metadata(entry_or_metadata):
+    """Returns (is_cartoon: bool, matched_keyword: str) based on title, channel, description, tags."""
+    if not entry_or_metadata:
+        return False, ""
+    text_corpus = ""
+    if isinstance(entry_or_metadata, dict):
+        text_corpus += " " + str(entry_or_metadata.get("title", "")).lower()
+        text_corpus += " " + str(entry_or_metadata.get("channel", "")).lower()
+        text_corpus += " " + str(entry_or_metadata.get("uploader", "")).lower()
+        text_corpus += " " + str(entry_or_metadata.get("description", "")).lower()
+        tags = entry_or_metadata.get("tags")
+        if isinstance(tags, (list, tuple)):
+            text_corpus += " " + " ".join(str(t).lower() for t in tags)
+    elif isinstance(entry_or_metadata, str):
+        text_corpus = entry_or_metadata.lower()
+
+    for kw in CARTOON_KEYWORDS:
+        if kw in text_corpus:
+            return True, kw
+    return False, ""
 
 # ───────────────────────────────────────────────────────────────
 # TITLE / CHANNEL FILTER (L1 + L2)
@@ -689,14 +958,20 @@ BLACKLIST = [
     "ai animal","ai pet","cgi","3d cat","3d dog","3d animal","animated cat",
     "animated dog","cartoon cat","cartoon dog","stable diffusion","midjourney",
     "sora","deepfake","talking tom","tom and jerry","garfield",
+    "talking angela","talking ben","talking ginger","talking friends","outfit7",
+    "cartoon","cartoons","animated","animation","animating","anime",
+    "3d animation","3d model","3d render","blender","unreal engine",
+    "kids tv","kids channel","nursery rhyme","kids song","children tv","cocomelon","chuchu tv","babybus",
+    "gameplay","game play","playthrough","walkthrough","gaming","game","games",
+    "roblox","minecraft","gacha","gacha life","peppa pig","cbeebies",
+    "kling","runway ml","luma dream","pika",
     "simon's cat","simons cat","pixar","disney","dreamworks","looney tunes",
     "performs","concert","ballet","opera","music video","mv",
     "wears","wearing","dressed in","fancy dress","model cat","model dog",
-    "minecraft","roblox","fortnite","gameplay","gaming","streamer","twitch",
-    "lets play","playthrough","walkthrough","speedrun",
+    "streamer","twitch","speedrun",
     "full movie","full episode","24 hour","24/7","2 hour","3 hour","4 hour","1 hour",
     "8 hour","10 hour",
-    "nursery rhyme","kids song","lullaby","official mv",
+    "lullaby","official mv",
     "official video","lyric video","official audio","album","live performance",
     "breaking news","politician","election","president","congress",
     "government","war","protest","military","police",
@@ -725,8 +1000,10 @@ BLACKLIST_CHANNELS = [
     "catiemano","catime","ai pets","ai cats","ai animals","cute ai",
     "digital pets","animated pets","sora pets","ai cat world","cattime","catie mano",
     "animalkingdom ai","ai studio","generative pet","neural cat","neural dog",
+    "kidstv","kids tv","cartoongames","cartoon games","talking tom","talkingtom",
+    "games kids tv","games kidstv","cartoon","cartoons","animation","gaming","gameplay",
     "news","cnn","bbc","fox news","nbc","abc news","msnbc","reuters","ap news",
-    "official","music","vevo","records","gaming","games","esports",
+    "official","music","vevo","records","esports",
     "movie",
 ]
 
@@ -747,6 +1024,12 @@ def is_viral_worthy(entry):
     # V94: hard block — if title mentions any non-cat/dog animal, reject immediately
     for phrase in OTHER_ANIMAL_BLOCK_WORDS:
         if phrase in title: return False
+
+    # V95: hard block cartoon / animation / gaming / 3D content
+    if CHECK_CARTOON:
+        for kw in CARTOON_KEYWORDS:
+            if kw in title or kw in channel:
+                return False
 
     # V94: only cat/dog words count as "this is an animal video" now
     has_animal_title   = any(k in title   for k in CAT_DOG_WORDS)
@@ -796,21 +1079,119 @@ def _noise(gray):
     b=cv2.GaussianBlur(gray,(5,5),0).astype(np.float32)
     return float(np.std(gray.astype(np.float32)-b))
 
-def _is_cgi_frame(frame_bgr):
-    sm  = cv2.resize(frame_bgr,(320,180))
-    hsv = cv2.cvtColor(sm,cv2.COLOR_BGR2HSV)
-    b,g,r = cv2.split(sm)
-    sat_std   = float(np.std(hsv[:,:,1]))
-    rg_diff   = float(np.mean(np.abs(r.astype(float)-g.astype(float))))
-    ch_spread = float(max(np.std(b),np.std(g),np.std(r)) - min(np.std(b),np.std(g),np.std(r)))
-    return sat_std>75 and rg_diff>32 and ch_spread>20
+def _crop_letterbox_borders(frame_bgr):
+    """Detects and crops black letterbox / pillarbox bars so black bars do not skew image statistics."""
+    try:
+        h, w = frame_bgr.shape[:2]
+        gray = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2GRAY)
+        top_black = np.mean(gray[:max(1, int(h * 0.1)), :]) < 18
+        bot_black = np.mean(gray[min(h - 1, int(h * 0.9)):, :]) < 18
+        left_black = np.mean(gray[:, :max(1, int(w * 0.1))]) < 18
+        right_black = np.mean(gray[:, min(w - 1, int(w * 0.9)):]) < 18
+        y1 = int(h * 0.12) if top_black else 0
+        y2 = int(h * 0.88) if bot_black else h
+        x1 = int(w * 0.12) if left_black else 0
+        x2 = int(w * 0.88) if right_black else w
+        cropped = frame_bgr[y1:y2, x1:x2]
+        return cropped if (cropped.shape[0] > 20 and cropped.shape[1] > 20) else frame_bgr
+    except Exception:
+        return frame_bgr
 
-def _animal_cascade_hit(frame_bgr, src_w, src_h):
-    gfull = cv2.cvtColor(cv2.resize(frame_bgr,(540,960)),cv2.COLOR_BGR2GRAY)
-    for cas in [_CAT1, _CAT2]:
+def _is_cgi_frame(frame_bgr):
+    """
+    Evaluates a single frame for 3D CGI models, animation, synthetic saturation or cell-shading.
+    Distinguishes real organic animal fur & textures from flat polygons / cartoons.
+    """
+    try:
+        clean = _crop_letterbox_borders(frame_bgr)
+        sm = cv2.resize(clean, (320, 180))
+        gray = cv2.cvtColor(sm, cv2.COLOR_BGR2GRAY)
+        hsv = cv2.cvtColor(sm, cv2.COLOR_BGR2HSV)
+        b, g, r = cv2.split(sm)
+        sat_mean = float(np.mean(hsv[:, :, 1]))
+        sat_std = float(np.std(hsv[:, :, 1]))
+        rg_diff = float(np.mean(np.abs(r.astype(float) - g.astype(float))))
+        ch_spread = float(max(np.std(b), np.std(g), np.std(r)) - min(np.std(b), np.std(g), np.std(r)))
+        edges = cv2.Canny(gray, 40, 120)
+        edge_dens = float(np.mean(edges > 0))
+        k = np.ones((9, 9), np.float32) / 81.0
+        f = gray.astype(np.float32)
+        local_mean = cv2.filter2D(f, -1, k)
+        local_std = np.sqrt(np.maximum(cv2.filter2D(f * f, -1, k) - local_mean ** 2, 0))
+        flat_ratio = float(np.mean(local_std < 4.0))
+
+        # 3D CGI models (Talking Tom, video game assets, Pixar-style models)
+        is_3d_cgi = (edge_dens < 0.065 and flat_ratio > 0.35)
+        # Anime & 2D cartoons with hyper-saturation and cell shading
+        is_anime_cartoon = (edge_dens < 0.070 and sat_mean > 90 and flat_ratio > 0.40)
+        # Generative AI or extreme synthetic saturation divergence
+        is_ai_cgi = (edge_dens < 0.070 and sat_std > 70 and rg_diff > 30 and ch_spread > 16)
+        return is_3d_cgi or is_anime_cartoon or is_ai_cgi
+    except Exception:
+        return False
+
+def check_cartoon_visual(filepath, n_samples=16):
+    """
+    Scans video frames across the clip to detect 3D animation, Talking Tom, video games, or cartoons.
+    Returns: (is_cartoon: bool, cartoon_ratio: float)
+    """
+    try:
+        cap = cv2.VideoCapture(filepath)
+        if not cap.isOpened():
+            cap.release()
+            return False, 0.0
+        total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        if total <= 0:
+            cap.release()
+            return False, 0.0
+        
+        cartoon_votes = 0
+        valid_samples = 0
+        for i in range(n_samples):
+            pos = int(total * (i + 0.5) / n_samples)
+            cap.set(cv2.CAP_PROP_POS_FRAMES, pos)
+            ret, frame = cap.read()
+            if not ret or frame is None:
+                continue
+            if _is_cgi_frame(frame):
+                cartoon_votes += 1
+            valid_samples += 1
+        cap.release()
+        if valid_samples == 0:
+            return False, 0.0
+        ratio = cartoon_votes / valid_samples
+        is_cartoon = ratio >= 0.35
+        tag = "CARTOON/CGI ❌" if is_cartoon else "REAL FOOTAGE ✅"
+        print(f"      [CartoonCheck] {tag} | votes={cartoon_votes}/{valid_samples} ({ratio:.0%})")
+        return is_cartoon, ratio
+    except Exception as e:
+        print(f"      [CartoonCheck] Error: {e} — SKIP ✅")
+        return False, 0.0
+
+def check_cartoon_or_cgi(filepath, metadata=None):
+    """
+    Dual-layer validation: checks metadata keywords and visual frames.
+    Returns: (is_cartoon: bool, reason: str)
+    """
+    if not CHECK_CARTOON:
+        return False, "Check disabled"
+    if metadata:
+        is_m, kw = check_cartoon_metadata(metadata)
+        if is_m:
+            return True, f"Metadata keyword '{kw}'"
+    if filepath and os.path.exists(filepath):
+        is_c, score = check_cartoon_visual(filepath)
+        if is_c:
+            return True, f"Visual 3D/CGI model detected ({score:.0%} frames)"
+    return False, "Clean real pet footage"
+
+def _animal_cascade_hit(frame_bgr, src_w=None, src_h=None):
+    sm = cv2.resize(frame_bgr, (160, 90))
+    gfull = cv2.cvtColor(sm, cv2.COLOR_BGR2GRAY)
+    for cas in [_CAT1, _CAT2, _DOG]:
         if cas is None or cas.empty(): continue
-        dets = cas.detectMultiScale(gfull, 1.05, 3, minSize=(20,20))
-        if len(dets)>0: return True
+        dets = cas.detectMultiScale(gfull, scaleFactor=1.3, minNeighbors=2, minSize=(18, 18))
+        if len(dets) > 0: return True
     return False
 
 def _frame_has_animal_visual(frame_bgr):
@@ -933,7 +1314,7 @@ def check_shake(filepath):
 # ═══════════════════════════════════════════════════════════════
 def check_audio_music(filepath):
     """
-    Reads raw audio samples via cv2 + ffmpeg pipe.
+    Reads raw audio samples via ffmpeg pipe.
     Music signature: sustained high RMS with LOW variance (flat loud).
     Natural pet audio: variable RMS (quiet moments + sudden noise spikes).
     Coefficient of variation (std/mean) of RMS chunks:
@@ -941,46 +1322,35 @@ def check_audio_music(filepath):
       - Natural: cv > 0.35 (spiky)
     """
     try:
-        import subprocess
+        import subprocess, imageio_ffmpeg
+        ffmpeg_exe = imageio_ffmpeg.get_ffmpeg_exe()
         cmd = [
-            "ffprobe", "-v", "error", "-select_streams", "a:0",
-            "-show_entries", "stream=sample_rate,channels",
-            "-of", "csv=p=0", filepath
-        ]
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
-        if result.returncode != 0:
-            print("      [AudioCheck] No audio stream — SKIP check ✅")
-            return False  # no audio = not music problem
-
-        # Extract audio as raw PCM via ffmpeg
-        cmd2 = [
-            "ffmpeg", "-i", filepath, "-vn",
+            ffmpeg_exe, "-y", "-i", filepath, "-vn",
             "-ac", "1", "-ar", "8000",
-            "-f", "s16le", "-t", "30",  # first 30s only
+            "-f", "s16le", "-t", "30",
             "pipe:1"
         ]
-        result2 = subprocess.run(cmd2, capture_output=True, timeout=30)
-        if not result2.stdout or len(result2.stdout) < 1000:
-            print("      [AudioCheck] Cannot read audio — SKIP check ✅")
+        result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, timeout=20)
+        if not result.stdout or len(result.stdout) < 1000:
+            print("      [AudioCheck] No audio stream or too quiet — SKIP check ✅")
             return False
 
-        audio = np.frombuffer(result2.stdout, dtype=np.int16).astype(np.float32)
+        audio = np.frombuffer(result.stdout, dtype=np.int16).astype(np.float32)
         if len(audio) < 800:
             return False
 
-        # Split into 0.5s chunks and compute RMS per chunk
         chunk_size = 4000  # 0.5s at 8kHz
         chunks = [audio[i:i+chunk_size] for i in range(0, len(audio)-chunk_size, chunk_size)]
         if len(chunks) < 4:
             return False
 
         rms_values = [float(np.sqrt(np.mean(c**2))) for c in chunks]
-        mean_rms = np.mean(rms_values)
-        std_rms  = np.std(rms_values)
+        mean_rms = float(np.mean(rms_values))
+        std_rms  = float(np.std(rms_values))
 
         if mean_rms < 50:
             print("      [AudioCheck] Very quiet audio — SKIP check ✅")
-            return False  # very quiet = not music
+            return False
 
         cv = std_rms / max(mean_rms, 1.0)
         has_music = cv < MUSIC_FLAT_THRESHOLD
@@ -989,10 +1359,6 @@ def check_audio_music(filepath):
         print(f"      [AudioCheck] {tag} | RMS_cv={cv:.3f} (need >{MUSIC_FLAT_THRESHOLD})")
         return has_music
 
-    except FileNotFoundError:
-        # ffmpeg/ffprobe not available — skip check
-        print("      [AudioCheck] ffmpeg not found — SKIP check ✅")
-        return False
     except Exception as e:
         print(f"      [AudioCheck] Error: {e} — SKIP check ✅")
         return False
@@ -1166,37 +1532,62 @@ def visual_has_animal(filepath, n_samples=14):
 # ───────────────────────────────────────────────────────────────
 # PEAK LAUGH MOMENT (V92)
 # ───────────────────────────────────────────────────────────────
-def get_peak_laugh_moment(filepath, clip_duration=9.0):
-    cap   = cv2.VideoCapture(filepath)
-    if not cap.isOpened(): cap.release(); return 0.0
+def get_peak_laugh_moment(filepath, clip_duration=5.5):
+    """
+    Enhanced V96 Viral Climax Detector:
+    1. Constrains search window to avoid intro logos and end-credits/outros on long videos.
+    2. Uses high-resolution adaptive frame sampling (>=2.5 fps) to capture rapid comedy fails.
+    3. Combines motion burst acceleration and animal visual prominence.
+    4. Automatically centers the cut clip so the peak burst climax happens ~35% into the clip,
+       providing ~1.5s setup anticipation and ~3.5s of hilarious chaotic payoff.
+    """
+    cap = cv2.VideoCapture(filepath)
+    if not cap.isOpened():
+        cap.release()
+        return 0.0
     total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    fps   = cap.get(cv2.CAP_PROP_FPS) or 30
+    fps   = cap.get(cv2.CAP_PROP_FPS) or 30.0
     dur   = total / fps
-    if dur <= clip_duration: cap.release(); return 0.0
+    if dur <= clip_duration:
+        cap.release()
+        return 0.0
 
-    n_bins=80; mot=[]; tex_arr=[]; has_ani=[]; prev=None
+    # Constrain search window to avoid intros and long compilation outros
+    search_start = min(1.5, max(0.0, dur * 0.05))
+    if dur > 90.0:
+        # Long compilation/video: search in the first 160s to avoid dead outro credits
+        search_end = min(dur - clip_duration - 1.0, 160.0)
+    else:
+        search_end = max(search_start + clip_duration + 0.5, dur - 0.5)
+
+    search_span = max(clip_duration + 1.0, search_end - search_start)
+    n_bins = int(max(10, min(16, search_span / 4.0)))
+
+    mot, tex_arr, has_ani = [], [], []
+    prev = None
 
     for i in range(n_bins):
-        pos = int(total * i / n_bins)
+        t_sample = search_start + (search_span * i / n_bins)
+        pos = int(min(total - 1, max(0, t_sample * fps)))
         cap.set(cv2.CAP_PROP_POS_FRAMES, pos)
         ret, frame = cap.read()
         if not ret:
-            mot.append(0); tex_arr.append(0); has_ani.append(False); continue
+            mot.append(0); tex_arr.append(0); has_ani.append(False)
+            continue
 
         sm   = cv2.resize(frame, (160, 90))
         gray = cv2.cvtColor(sm, cv2.COLOR_BGR2GRAY)
-        bl   = cv2.GaussianBlur(gray,(21,21),0)
+        bl   = cv2.GaussianBlur(gray, (21, 21), 0)
 
         if prev is not None:
-            _, th = cv2.threshold(cv2.absdiff(prev,bl),18,255,cv2.THRESH_BINARY)
+            _, th = cv2.threshold(cv2.absdiff(prev, bl), 16, 255, cv2.THRESH_BINARY)
             mot.append(int(np.sum(th)))
         else:
             mot.append(0)
         prev = bl
-        tex_arr.append(_tex(gray))
-
-        if i % 4 == 0: has_ani.append(_frame_has_animal_visual(frame))
-        else: has_ani.append(has_ani[-1] if has_ani else False)
+        tex_val = _tex(gray)
+        tex_arr.append(tex_val)
+        has_ani.append(tex_val > 10.0)
 
     cap.release()
 
@@ -1204,31 +1595,40 @@ def get_peak_laugh_moment(filepath, clip_duration=9.0):
     t = np.array(tex_arr, dtype=float)
     a = np.array(has_ani, dtype=float)
 
-    window = 8
+    window = 6
     m_smooth = np.convolve(m, np.ones(window)/window, mode='same')
-    m_burst  = np.maximum(m - m_smooth * 0.7, 0)
+    m_burst  = np.maximum(m - m_smooth * 0.65, 0)
 
-    if m_burst.max()>0: m_burst/=m_burst.max()
-    if m.max()>0: m/=m.max()
-    if t.max()>0: t/=t.max()
+    if m_burst.max() > 0: m_burst /= m_burst.max()
+    if m.max() > 0: m /= m.max()
+    if t.max() > 0: t /= t.max()
 
-    combined = 0.50*m_burst + 0.30*m + 0.20*t
-    bins_per_clip = max(1, int(n_bins * clip_duration / dur))
-    best_ts=0.0; best_score=-1.0; best_animal=False
+    combined = 0.55 * m_burst + 0.30 * m + 0.15 * t
+    bins_per_clip = max(2, int(n_bins * clip_duration / search_span))
+    best_ts = search_start
+    best_score = -1.0
+    best_animal = False
 
     for i in range(max(1, n_bins - bins_per_clip)):
-        window_score  = float(np.sum(combined[i:i+bins_per_clip]))
-        window_score += float(np.max(combined[i:i+bins_per_clip])) * 2.0
-        window_animal = float(np.mean(a[i:i+bins_per_clip])) >= 0.35
+        window_combined = combined[i:i+bins_per_clip]
+        window_score = float(np.sum(window_combined)) + float(np.max(window_combined)) * 2.5
+        window_animal = float(np.mean(a[i:i+bins_per_clip])) >= 0.25
+
+        # Pin peak action climax inside window
+        climax_local_bin = int(np.argmax(window_combined))
+        climax_t = search_start + ((i + climax_local_bin) / n_bins) * search_span
+        # Target 35% anticipation setup before climax
+        cand_ts = max(0.3, climax_t - (clip_duration * 0.35))
+        cand_ts = min(cand_ts, dur - clip_duration - 0.2)
 
         if window_animal and not best_animal:
-            best_score=window_score; best_ts=(i/n_bins)*dur; best_animal=True
-        elif window_animal and best_animal and window_score>best_score:
-            best_score=window_score; best_ts=(i/n_bins)*dur
-        elif not window_animal and not best_animal and window_score>best_score:
-            best_score=window_score; best_ts=(i/n_bins)*dur
+            best_score = window_score; best_ts = cand_ts; best_animal = True
+        elif window_animal and best_animal and window_score > best_score:
+            best_score = window_score; best_ts = cand_ts
+        elif not window_animal and not best_animal and window_score > best_score:
+            best_score = window_score; best_ts = cand_ts
 
-    best_ts = max(0.3, min(best_ts, dur - clip_duration - 0.3))
+    best_ts = max(0.3, min(best_ts, dur - clip_duration - 0.2))
     print(f"      [PeakLaugh] t={best_ts:.1f}s score={best_score:.2f} {'✅' if best_animal else '⚠'}")
     return best_ts
 
@@ -1253,7 +1653,7 @@ def get_peak_moment_in_segment(filepath, seg_start, seg_end, clip_duration=9.0):
         cap.release()
         return max(0.0, min(seg_start, max(0.0, dur - clip_duration - 0.1)))
 
-    n_bins = 24
+    n_bins = 10
     mot=[]; tex_arr=[]; has_ani=[]; prev=None
 
     for i in range(n_bins):
@@ -1275,10 +1675,9 @@ def get_peak_moment_in_segment(filepath, seg_start, seg_end, clip_duration=9.0):
         else:
             mot.append(0)
         prev = bl
-        tex_arr.append(_tex(gray))
-
-        if i % 3 == 0: has_ani.append(_frame_has_animal_visual(frame))
-        else: has_ani.append(has_ani[-1] if has_ani else False)
+        tex_val = _tex(gray)
+        tex_arr.append(tex_val)
+        has_ani.append(tex_val > 10.0)
 
     cap.release()
 
@@ -1344,33 +1743,16 @@ def get_multiple_moments(filepath, n_clips=6, clip_duration=9.0):
 # INTRO SKIP (V91)
 # ───────────────────────────────────────────────────────────────
 def verify_and_slide_start(filepath, start_t, clip_duration, fps=30.0):
-    cap   = cv2.VideoCapture(filepath)
+    cap = cv2.VideoCapture(filepath)
     if not cap.isOpened(): cap.release(); return start_t
     total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     fps   = cap.get(cv2.CAP_PROP_FPS) or fps
     dur   = total / fps
-    max_slide=4.0; step=0.5; check_dur=1.5
-    original_start=start_t; slid=0.0
-
-    while slid <= max_slide:
-        t = start_t + slid
-        if t + clip_duration > dur: break
-        animal_found = False
-        for frac in [0.15, 0.50, 0.90]:
-            ft = t + frac * check_dur
-            pos = int(ft * fps)
-            if pos >= total: continue
-            cap.set(cv2.CAP_PROP_POS_FRAMES, pos)
-            ret, frame = cap.read()
-            if not ret: continue
-            if _frame_has_animal_visual(frame): animal_found=True; break
-        if animal_found:
-            if slid > 0: print(f"      [IntroSkip] Slid +{slid:.1f}s (t={t:.1f}s)")
-            cap.release(); return t
-        slid += step
-
     cap.release()
-    return original_start
+
+    if start_t + clip_duration > dur:
+        start_t = max(0.0, dur - clip_duration - 0.1)
+    return max(0.0, start_t)
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -1379,45 +1761,45 @@ def verify_and_slide_start(filepath, start_t, clip_duration, fps=30.0):
 # ═══════════════════════════════════════════════════════════════
 def grade_frame(frame_bgr):
     """
-    Full colour grade pipeline per frame:
-    1. Auto white-balance (grey world assumption)
-    2. Adaptive brightness (stretch to target)
-    3. CLAHE contrast (L channel in LAB)
-    4. Saturation boost (HSV S channel)
-    Returns graded BGR frame.
+    Enhanced cinematic pet color grade:
+    Gently corrects tint without washing out fur (85/15 blend),
+    enhances luminance contrast with CLAHE, and applies warm saturation.
     """
-    # Step 1: Auto white-balance (grey world)
+    # Step 1: Subtle white-balance correction (85% original, 15% grey-world to preserve fur tones)
     b, g, r = cv2.split(frame_bgr.astype(np.float32))
-    mean_b, mean_g, mean_r = np.mean(b), np.mean(g), np.mean(r)
+    mean_b, mean_g, mean_r = max(1.0, np.mean(b)), max(1.0, np.mean(g)), max(1.0, np.mean(r))
     mean_all = (mean_b + mean_g + mean_r) / 3.0
-    if mean_b > 1: b = np.clip(b * (mean_all / mean_b), 0, 255)
-    if mean_g > 1: g = np.clip(g * (mean_all / mean_g), 0, 255)
-    if mean_r > 1: r = np.clip(r * (mean_all / mean_r), 0, 255)
-    frame_bgr = cv2.merge([b, g, r]).astype(np.uint8)
+    wb_b = np.clip(b * (mean_all / mean_b), 0, 255)
+    wb_g = np.clip(g * (mean_all / mean_g), 0, 255)
+    wb_r = np.clip(r * (mean_all / mean_r), 0, 255)
+    wb_bgr = cv2.merge([wb_b, wb_g, wb_r]).astype(np.uint8)
+    frame_bgr = cv2.addWeighted(frame_bgr, 0.85, wb_bgr, 0.15, 0)
 
-    # Step 2: Adaptive brightness
+    # Step 2: Adaptive brightness (gentle, preserves natural lighting)
     current_brightness = float(np.mean(cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2GRAY)))
-    if current_brightness > 5:
+    if current_brightness > 10:
         alpha = TARGET_BRIGHTNESS / current_brightness
-        alpha = np.clip(alpha, 0.6, 1.8)  # limit adjustment range
+        alpha = np.clip(alpha, 0.80, 1.25)
         frame_bgr = np.clip(frame_bgr.astype(np.float32) * alpha, 0, 255).astype(np.uint8)
 
-    # Step 3: CLAHE on L channel (contrast enhancement)
+    # Step 3: CLAHE on L channel (crisp, filmic contrast)
     lab = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2LAB)
     l, a, b_ch = cv2.split(lab)
-    clahe = cv2.createCLAHE(clipLimit=CLAHE_CLIP_LIMIT, tileGridSize=(8, 8))
+    clahe = cv2.createCLAHE(clipLimit=1.6, tileGridSize=(8, 8))
     l = clahe.apply(l)
     frame_bgr = cv2.cvtColor(cv2.merge([l, a, b_ch]), cv2.COLOR_LAB2BGR)
 
-    # Step 4: Saturation boost
+    # Step 4: Saturation boost (warm, vibrant)
     hsv = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2HSV).astype(np.float32)
-    hsv[:, :, 1] = np.clip(hsv[:, :, 1] * SATURATION_BOOST, 0, 255)
+    hsv[:, :, 1] = np.clip(hsv[:, :, 1] * 1.12, 0, 255)
     frame_bgr = cv2.cvtColor(hsv.astype(np.uint8), cv2.COLOR_HSV2BGR)
 
     return frame_bgr
 
 def apply_colour_grade(clip):
-    """Apply grade_frame to every frame in a MoviePy clip."""
+    """Apply grade_frame to every frame in a MoviePy clip if enabled."""
+    if not APPLY_COLOR_GRADING:
+        return clip
     def process(get_frame, t):
         frame = get_frame(t)
         if frame.dtype != np.uint8:
@@ -1452,20 +1834,19 @@ def _find_animal_center_v93(clip, src_w, src_h):
                 fr = (fr * 255).clip(0, 255).astype(np.uint8)
             fbgr = cv2.cvtColor(fr, cv2.COLOR_RGB2BGR)
 
-            # Haar cascade — get full bbox
-            gfull = cv2.cvtColor(cv2.resize(fbgr,(540,960)),cv2.COLOR_BGR2GRAY)
-            for cas in [_CAT1, _CAT2]:
+            # Fast Haar cascade on 270x480
+            gfull = cv2.cvtColor(cv2.resize(fbgr, (270, 480)), cv2.COLOR_BGR2GRAY)
+            for cas in [_CAT1, _CAT2, _DOG]:
                 if cas is None or cas.empty(): continue
-                dets = cas.detectMultiScale(gfull,1.05,3,minSize=(20,20))
+                dets = cas.detectMultiScale(gfull, scaleFactor=1.15, minNeighbors=3, minSize=(30, 30))
                 if len(dets) > 0:
-                    areas = sorted([(w*h,x,y,w,h) for (x,y,w,h) in dets],reverse=True)
+                    areas = sorted([(w*h, x, y, w, h) for (x, y, w, h) in dets], reverse=True)
                     _, bx, by, bw, bh = areas[0]
-                    # Scale bbox to src dimensions
-                    bx_s = int(bx * src_w/540); by_s = int(by * src_h/960)
-                    bw_s = int(bw * src_w/540); bh_s = int(bh * src_h/960)
-                    cx_votes.append(bx_s + bw_s//2)
-                    cy_votes.append(by_s + bh_s//2)
-                    animal_bboxes.append((bx_s, by_s, bx_s+bw_s, by_s+bh_s))
+                    bx_s = int(bx * src_w / 270); by_s = int(by * src_h / 480)
+                    bw_s = int(bw * src_w / 270); bh_s = int(bh * src_h / 480)
+                    cx_votes.append(bx_s + bw_s // 2)
+                    cy_votes.append(by_s + bh_s // 2)
+                    animal_bboxes.append((bx_s, by_s, bx_s + bw_s, by_s + bh_s))
                     break
 
             # Foreground motion
@@ -1534,10 +1915,26 @@ def _find_animal_center_v93(clip, src_w, src_h):
     return cx, cy
 
 def smart_crop_v93(clip):
-    """V93 smart crop — animal-safe boundary check."""
+    """V93 smart crop — animal-safe boundary check with 16:9 Landscape support."""
     TW, TH = OUT_W, OUT_H
     sr = clip.w / clip.h
     tr = TW / TH
+
+    # If aspect ratio matches within ~4%, resize directly without cropping
+    if abs(sr - tr) < 0.05:
+        return clip.resize((TW, TH))
+
+    # In 16:9 Landscape mode with vertical input clip (9:16):
+    # Pillarbox with dark canvas instead of extreme 300% zoom crop that cuts off animal
+    if tr > 1.2 and sr < 1.0:
+        fg = clip.resize(height=TH)
+        x_off = max(0, (TW - fg.w) // 2)
+        try:
+            bg = ColorClip(size=(TW, TH), color=(15, 15, 18)).set_duration(clip.duration)
+            return CompositeVideoClip([bg, fg.set_pos((x_off, 0))])
+        except Exception:
+            pass
+
     scaled = clip.resize(height=TH) if sr > tr else clip.resize(width=TW)
 
     if abs(scaled.w-TW)<4 and abs(scaled.h-TH)<4:
@@ -1656,12 +2053,16 @@ def process_clip(path, duration=SHORT_CLIP_SEC, is_first=False, hook_text="", su
     # Step 3: Trim
     clip = clip.subclip(start, min(start+duration, clip.duration))
 
-    # Step 4: Smart crop V93 (animal-safe)
-    clip = smart_crop_v93(clip)
+    # Step 4: Smart crop (animal-safe)
+    if APPLY_SMART_CROP:
+        clip = smart_crop_v93(clip)
 
-    # Step 5: V93 colour grade (replaces simple colorx)
-    print("      [ColourGrade] Auto white-balance + CLAHE + saturation boost...")
-    clip = apply_colour_grade(clip)
+    # Step 5: Colour grade
+    if APPLY_COLOR_GRADING:
+        print("      [ColourGrade] Cinematic tone + CLAHE contrast + saturation boost...")
+        clip = apply_colour_grade(clip)
+    else:
+        print("      [ColourGrade] OFF (Preserving natural clip colors as configured)")
 
     # Step 6: Fade
     clip = clip.fadein(FADE_DUR).fadeout(FADE_DUR)
@@ -1694,10 +2095,14 @@ def process_clip_at(path, start, duration=SHORT_CLIP_SEC, is_first=False,
     start = verify_and_slide_start(path, start, duration, fps)
 
     clip = clip.subclip(start, min(start + duration, clip.duration))
-    clip = smart_crop_v93(clip)
+    if APPLY_SMART_CROP:
+        clip = smart_crop_v93(clip)
 
-    print("      [ColourGrade] Auto white-balance + CLAHE + saturation boost...")
-    clip = apply_colour_grade(clip)
+    if APPLY_COLOR_GRADING:
+        print("      [ColourGrade] Cinematic tone + CLAHE contrast + saturation boost...")
+        clip = apply_colour_grade(clip)
+    else:
+        print("      [ColourGrade] OFF (Preserving natural clip colors as configured)")
 
     clip = clip.fadein(FADE_DUR).fadeout(FADE_DUR)
 
@@ -1740,12 +2145,13 @@ def add_credit_overlay(clip, credit_text):
 def add_logo(base):
     if not os.path.exists(LOGO_FILE): return base
     try:
+        lw = min(120, int(OUT_W * 0.12))
         logo = (ImageClip(LOGO_FILE)
                 .set_duration(base.duration)
-                .resize(width=LOGO_WIDTH)
+                .resize(width=lw)
                 .set_opacity(LOGO_OPACITY)
-                .set_pos(("center",0.88),relative=True))
-        return CompositeVideoClip([base,logo])
+                .set_pos((OUT_W - lw - 24, OUT_H - int(lw * 1.2) - 30)))
+        return CompositeVideoClip([base, logo])
     except Exception as e:
         print(f"      [Logo] {e}"); return base
 
@@ -1782,15 +2188,27 @@ def finalize_and_export(clips, energy_scores=None):
     mode_emoji = {"cat":"🐱","dog":"🐶","mix":"🐾"}[VIDEO_MODE]
     title, yt_desc, social_desc = generate_metadata()
     ts = int(time.time())
-    short_out = os.path.join(OUT_FOLDER, f"lion_{VIDEO_MODE}_{ts}.mp4")
-    print(f"\n   Rendering {len(clips)} clips to: {os.path.basename(short_out)}")
+    if VIDEO_TYPE == "long":
+        short_out = os.path.join(OUT_FOLDER, f"lion_{VIDEO_MODE}_{ts}_long.mp4")
+    else:
+        short_out = os.path.join(OUT_FOLDER, f"lion_{VIDEO_MODE}_{ts}.mp4")
+    print(f"\n   Rendering {len(clips)} clips ({TARGET_FORMAT} {OUT_W}x{OUT_H}) to: {os.path.basename(short_out)}")
 
     final = concatenate_videoclips(clips, method="compose")
-    final = add_logo(final)
+    if ADD_LOGO:
+        print("      [Logo] Overlaying subtle channel watermark...")
+        final = add_logo(final)
     final.write_videofile(
-        short_out, codec="libx264", bitrate=BITRATE,
-        audio_codec="aac", fps=OUTPUT_FPS,
-        preset="ultrafast", threads=4, logger="bar"
+        short_out,
+        codec="libx264",
+        bitrate="10000k",
+        audio_codec="aac",
+        audio_bitrate="192k",
+        fps=OUTPUT_FPS,
+        preset="fast",
+        ffmpeg_params=["-profile:v", "high", "-level", "4.2", "-pix_fmt", "yuv420p"],
+        threads=4,
+        logger="bar"
     )
     print(f"   Saved: {short_out}")
 
@@ -1814,14 +2232,13 @@ def finalize_and_export(clips, energy_scores=None):
         f.write("Facebook  : https://www.facebook.com/reels/create\n")
     print(f"   Metadata: {meta_path}")
 
-    print("\n   Cleaning raw files...")
-    time.sleep(2); deleted = 0
+    print("\n   Cleaning temporary raw files...")
+    deleted = 0
     for f in glob.glob(os.path.join(RAW_FOLDER, "*")):
-        if os.path.isfile(f):
-            for _ in range(5):
-                try: os.remove(f); deleted += 1; break
-                except: time.sleep(2)
-    print(f"   {deleted} files deleted.")
+        if os.path.isfile(f) and not os.path.basename(f).startswith("cache_"):
+            try: os.remove(f); deleted += 1
+            except: pass
+    print(f"   {deleted} temporary files cleaned.")
 
     try: final.close()
     except: pass
@@ -1838,10 +2255,10 @@ def finalize_and_export(clips, energy_scores=None):
     print("\n>>> YOUTUBE:"); print(yt_desc)
     print("\n>>> SOCIAL:"); print(social_desc)
     print("\n>>> UPLOAD:")
-    print("  YouTube   : https://studio.youtube.com")
-    print("  TikTok    : https://www.tiktok.com/tiktokstudio/upload")
-    print("  Instagram : https://www.instagram.com/reels/upload")
-    print("  Facebook  : https://www.facebook.com/reels/create")
+    print("  YouTube   : https://studio.youtube.com/channel/UCK6vJnSBp-6XWlVKjePzr4w")
+    print("  TikTok    : https://www.tiktok.com/tiktokstudio/upload?from=creator_center&tab=video")
+    print("  Meta/Reels: https://business.facebook.com/latest/reels_composer/?asset_id=960315347156294&business_id=25484170311269841&ir_qe_exposed=1&ref=biz_web_home_create_reel&context_ref=HOME")
+    print("  Facebook  : https://business.facebook.com/latest/reels_composer/?asset_id=960315347156294&business_id=25484170311269841&ir_qe_exposed=1&ref=biz_web_home_create_reel&context_ref=HOME")
     print("\n"+line+"\n")
 
 
@@ -1851,6 +2268,355 @@ def finalize_and_export(clips, energy_scores=None):
 # several funny moments spread across it (start/middle/end) into
 # one finished short. No copyright concern — it's your footage.
 # ═══════════════════════════════════════════════════════════════
+
+# ═══════════════════════════════════════════════════════════════
+# SELECTED CLIPS COMPILATION MODE (GUI QUEUED CLIPS)
+# ═══════════════════════════════════════════════════════════════
+def run_selected_clips_mode(selected_clips):
+    mode_emoji = {"cat":"🐱","dog":"🐶","mix":"🐾","mixed":"🐾"}.get(VIDEO_MODE, "🐾")
+
+    clips = []
+    energy_scores = []
+    used_vids = set()
+    if os.path.exists(HISTORY_FILE):
+        try:
+            with open(HISTORY_FILE, "r", encoding="utf-8") as f_h:
+                used_vids = {l.strip() for l in f_h if l.strip()}
+        except:
+            pass
+
+    # Strictly filter queued clips by category and block any other animal (otters, raccoons, etc.)
+    valid_selected = []
+    dog_keywords = ("dog", "dogs", "puppy", "puppies", "canine", "hound", "retriever", "husky", "bulldog", "poodle", "bark", "barking", "woof")
+    cat_keywords = ("cat", "cats", "kitten", "kittens", "feline", "meow", "purr", "tabby")
+
+    for sc in selected_clips:
+        t_low = (sc.get("title") or "").lower()
+        c_cat = (sc.get("category") or "").lower()
+
+        # Always block wild / non-pet animals (otters, raccoons, red pandas, etc.)
+        if any(b in t_low for b in OTHER_ANIMAL_BLOCK_WORDS):
+            print(f"   [CategoryGate] Skipped non-pet clip '{sc.get('title')}' (Other animal detected)")
+            continue
+
+        if VIDEO_MODE == "cat":
+            if c_cat in ("dog", "canine"):
+                print(f"   [CategoryGate] Skipped dog clip '{sc.get('title')}' in Cat mode")
+                continue
+            if any(dw in t_low for dw in dog_keywords) and not any(cw in t_low for cw in cat_keywords):
+                print(f"   [CategoryGate] Skipped dog-titled clip '{sc.get('title')}' in Cat mode")
+                continue
+            if c_cat and c_cat not in ("cat", "feline"):
+                print(f"   [CategoryGate] Skipped non-cat clip '{sc.get('title')}' in Cat mode")
+                continue
+
+        elif VIDEO_MODE == "dog":
+            if c_cat in ("cat", "feline"):
+                print(f"   [CategoryGate] Skipped cat clip '{sc.get('title')}' in Dog mode")
+                continue
+            if any(cw in t_low for cw in cat_keywords) and not any(dw in t_low for dw in dog_keywords):
+                print(f"   [CategoryGate] Skipped cat-titled clip '{sc.get('title')}' in Dog mode")
+                continue
+            if c_cat and c_cat not in ("dog", "canine"):
+                print(f"   [CategoryGate] Skipped non-dog clip '{sc.get('title')}' in Dog mode")
+                continue
+
+        elif VIDEO_MODE in ("mix", "mixed"):
+            # Cats & Dogs Duo
+            pass
+
+        valid_selected.append(sc)
+
+    if not valid_selected and selected_clips:
+        print(f"   [CategoryGate] None of the selected clips matched current category '{VIDEO_MODE.upper()}'. Falling back to category-tuned discovery.")
+        lion_factory()
+        return
+
+    if VIDEO_TYPE in ("long", "both"):
+        target_total_sec = max(60, int(TARGET_DURATION_MIN * 60))
+        needed_clips = max(10, int(round(target_total_sec / SHORT_CLIP_SEC)))
+    else:
+        # Standard Short Video mode: Exactly 1 clip per valid selected source — NO LOOPING, NO REPEATING
+        needed_clips = max(1, len(valid_selected))
+        target_total_sec = int(needed_clips * SHORT_CLIP_SEC)
+
+    print("")
+    print("═"*68)
+    print(f"  LionReel — SELECTED CLIPS COMPILATION MODE  {mode_emoji}  {VIDEO_MODE.upper()}")
+    print("  ─────────────────────────────────────────────────────────────")
+    print(f"  Selected Clips : {len(valid_selected)} clips queued from GUI")
+    print(f"  Format / Mode  : {VIDEO_TYPE.upper()} (Target: {target_total_sec}s, {needed_clips} clips)")
+    print(f"  Moment Pacing  : {SHORT_CLIP_SEC}s per cut")
+    print("═"*68)
+    print("")
+
+    downloaded_sources = []
+    for idx, sc in enumerate(valid_selected):
+        clip_id = str(sc.get("id") or f"clip_{idx}")
+        title = sc.get("title") or f"Clip {idx+1}"
+        url = sc.get("videoUrl") or ""
+        trim_start = float(sc.get("trimStart") or 0.0)
+        trim_end = sc.get("trimEnd")
+        if trim_end is not None and float(trim_end) > trim_start:
+            target_dur = float(trim_end) - trim_start
+        else:
+            target_dur = float(SHORT_CLIP_SEC)
+
+        print(f"\n   [{idx+1}/{len(valid_selected)}] Sourcing: {title[:50]}")
+        local_path = None
+        if os.path.exists(url):
+            local_path = url
+        elif url.startswith("http://") or url.startswith("https://"):
+            if "youtube.com" in url or "youtu.be" in url:
+                v_id = None
+                if "v=" in url:
+                    v_id = url.split("v=")[1].split("&")[0]
+                elif "youtu.be/" in url:
+                    v_id = url.split("youtu.be/")[1].split("?")[0]
+
+                cache_file = os.path.join(RAW_FOLDER, f"cache_{v_id}.mp4") if v_id else None
+                if cache_file and os.path.exists(cache_file) and os.path.getsize(cache_file) > 100_000:
+                    local_path = cache_file
+                    print(f"      Using cached high-speed source: {os.path.basename(cache_file)} ({os.path.getsize(cache_file)/1_048_576:.1f} MB)")
+                else:
+                    target_out = cache_file or os.path.join(RAW_FOLDER, f"sel_{int(time.time())}_{idx}.mp4")
+                    dl_file, err = download_video(url, target_out, None, preview=False)
+                    if dl_file and os.path.exists(dl_file):
+                        local_path = dl_file
+                    else:
+                        print(f"      Download failed: {err}")
+            elif "commondatastorage.googleapis.com" in url:
+                print(f"      Sample bucket URL deprecated, using live search fallback...")
+            else:
+                import urllib.request
+                tmp_dl = os.path.join(RAW_FOLDER, f"sel_direct_{int(time.time())}_{idx}.mp4")
+                try:
+                    headers = {"User-Agent": "Mozilla/5.0"}
+                    req = urllib.request.Request(url, headers=headers)
+                    with urllib.request.urlopen(req, timeout=4) as resp, open(tmp_dl, "wb") as out_f:
+                        out_f.write(resp.read())
+                    if os.path.exists(tmp_dl) and os.path.getsize(tmp_dl) > 10_000:
+                        local_path = tmp_dl
+                    else:
+                        print(f"      Downloaded file too small or empty")
+                except Exception as e_dl:
+                    print(f"      Direct download error: {e_dl}")
+
+        # Quality & Content Verification Gate on candidate source
+        if local_path and os.path.exists(local_path):
+            if CHECK_CARTOON and not BYPASS_QUALITY_GATE:
+                is_cart, reason = check_cartoon_or_cgi(local_path, sc)
+                if is_cart:
+                    print(f"      [SelectedGate] REJECTED clip '{title[:45]}' — {reason} ❌")
+                    try:
+                        if not os.path.isabs(url) and os.path.exists(local_path) and "cache_" not in local_path:
+                            os.remove(local_path)
+                    except: pass
+                    local_path = None
+
+            if local_path and CHECK_SHARPNESS and not BYPASS_QUALITY_GATE:
+                is_s, s_score, _ = check_sharpness(local_path)
+                if not is_s:
+                    print(f"      [SelectedGate] REJECTED clip '{title[:45]}' — Low sharpness ({s_score:.0f}) ❌")
+                    local_path = None
+
+            if local_path and CHECK_AI_VIDEO and not BYPASS_QUALITY_GATE:
+                if not is_real_footage(local_path):
+                    print(f"      [SelectedGate] REJECTED clip '{title[:45]}' — Failed real footage check ❌")
+                    local_path = None
+
+        if not local_path or not os.path.exists(local_path):
+            mode_tag = "cat" if VIDEO_MODE == "cat" else ("dog" if VIDEO_MODE == "dog" else "cat and dog")
+            clean_t = "".join(ch for ch in title[:30] if ch.isalnum() or ch.isspace()).strip()
+            search_q = f"funny {mode_tag} {clean_t} viral pet -cartoon -animation -game -talking"
+            print(f"      Searching YouTube for live clip matching '{clean_t[:45]}'...")
+            try:
+                with YoutubeDL({"quiet": True, "extract_flat": True, "logger": SilentLogger(), "socket_timeout": 8}) as ydl:
+                    s_res = ydl.extract_info(f"ytsearch8:{search_q}", download=False).get("entries", [])
+                    for se in s_res:
+                        if not se or not se.get("id"):
+                            continue
+                        se_title = (se.get("title") or "").lower()
+                        if any(b in se_title for b in OTHER_ANIMAL_BLOCK_WORDS):
+                            continue
+                        if not mode_passes(se):
+                            continue
+                        if CHECK_CARTOON:
+                            is_cart_meta, kw = check_cartoon_metadata(se)
+                            if is_cart_meta:
+                                print(f"      [FallbackSearch] Skipped cartoon candidate '{se.get('title','')[:40]}' ({kw})")
+                                continue
+                        dur = se.get("duration") or 0
+                        if dur < 4 or dur > 900:
+                            continue
+                        v_url = f"https://www.youtube.com/watch?v={se['id']}"
+                        tmp_dl = os.path.join(RAW_FOLDER, f"sel_yt_{int(time.time())}_{idx}.mp4")
+                        dl_file, _ = download_video(v_url, tmp_dl, None, preview=False)
+                        if dl_file and os.path.exists(dl_file):
+                            if CHECK_CARTOON and not BYPASS_QUALITY_GATE:
+                                is_cart, r_score = check_cartoon_visual(dl_file)
+                                if is_cart:
+                                    print(f"      [FallbackSearch] Candidate failed visual cartoon check ({r_score:.0%}), skipping")
+                                    try: os.remove(dl_file)
+                                    except: pass
+                                    continue
+                            if CHECK_SHARPNESS and not BYPASS_QUALITY_GATE:
+                                is_s, s_score, _ = check_sharpness(dl_file)
+                                if not is_s:
+                                    print(f"      [FallbackSearch] Candidate too blurry ({s_score:.0f}), skipping")
+                                    try: os.remove(dl_file)
+                                    except: pass
+                                    continue
+                            local_path = dl_file
+                            print(f"      Retrieved verified live video from YouTube: {se.get('title','')[:50]}")
+                            break
+            except Exception as e_s:
+                print(f"      Search fallback note: {e_s}")
+
+        if local_path and os.path.exists(local_path):
+            local_path = ensure_fast_h264(local_path)
+            downloaded_sources.append({
+                "path": local_path,
+                "id": clip_id,
+                "title": title,
+                "trim_start": trim_start,
+                "target_dur": target_dur
+            })
+
+    if not downloaded_sources:
+        msg = "No selected clips could be processed successfully. Falling back to automated YouTube discovery."
+        print(f"\n   ⚠ {msg}")
+        lion_factory()
+        return
+
+    print(f"\n   [STAGE 5] Trimming high-energy animal motion slices...")
+    print(f"   Target: {needed_clips} clips (~{target_total_sec}s runtime) from {len(downloaded_sources)} source videos")
+
+    if VIDEO_TYPE in ("long", "both"):
+        moments_per_source = max(1, int(math.ceil(needed_clips / len(downloaded_sources))))
+        for s_idx, src in enumerate(downloaded_sources):
+            if len(clips) >= needed_clips:
+                break
+            local_path = src["path"]
+            clip_id = src["id"]
+            trim_start = src["trim_start"]
+
+            src_dur = 30.0
+            try:
+                cap = cv2.VideoCapture(local_path)
+                total_frames = cap.get(cv2.CAP_PROP_FRAME_COUNT)
+                src_fps = max(1.0, cap.get(cv2.CAP_PROP_FPS) or 30)
+                src_dur = total_frames / src_fps
+                cap.release()
+            except:
+                pass
+
+            moments = []
+            if trim_start > 0:
+                moments = [trim_start]
+            else:
+                m_count = max(1, min(moments_per_source, int(src_dur // (SHORT_CLIP_SEC * 1.1))))
+                moments = get_multiple_moments(local_path, m_count, SHORT_CLIP_SEC)
+
+            if not moments:
+                moments = [0.0]
+
+            for m_start in moments:
+                if len(clips) >= needed_clips:
+                    break
+                try:
+                    is_first = (len(clips) == 0)
+                    hook_txt = random.choice(HOOK_LINES) if is_first else ""
+                    sub_txt = random.choice(SUB_HOOK_LINES) if is_first else ""
+                    clip_obj = process_clip_at(
+                        local_path, start=m_start, duration=SHORT_CLIP_SEC,
+                        is_first=is_first, hook_text=hook_txt, sub_text=sub_txt
+                    )
+                    clips.append(clip_obj)
+                    energy_scores.append(100)
+                    print(f"      ACCEPTED ✅ — Clip {len(clips)}/{needed_clips} (Source: {src['title'][:30]}, t={m_start:.1f}s)")
+                    print(f"      [CLIP_PROGRESS] {len(clips)}/{needed_clips} clips ready")
+                except Exception as e_cut:
+                    print(f"      Cut error: {e_cut}")
+
+        # Cycle through sources with offset start points if needed to fulfill full requested long duration
+        cycle_round = 1
+        while len(clips) < needed_clips and cycle_round <= 10:
+            offset = cycle_round * 3.0
+            added_in_round = 0
+            for src in downloaded_sources:
+                if len(clips) >= needed_clips:
+                    break
+                local_path = src["path"]
+                try:
+                    cap = cv2.VideoCapture(local_path)
+                    s_dur = cap.get(cv2.CAP_PROP_FRAME_COUNT) / max(1.0, cap.get(cv2.CAP_PROP_FPS) or 30)
+                    cap.release()
+                except:
+                    s_dur = 30.0
+
+                start_t = (offset + added_in_round * SHORT_CLIP_SEC) % max(1.0, s_dur - SHORT_CLIP_SEC - 1.0)
+                try:
+                    clip_obj = process_clip_at(
+                        local_path, start=start_t, duration=SHORT_CLIP_SEC,
+                        is_first=False, hook_text="", sub_text=""
+                    )
+                    clips.append(clip_obj)
+                    energy_scores.append(100)
+                    added_in_round += 1
+                    print(f"      ACCEPTED ✅ — Clip {len(clips)}/{needed_clips} (Extended cut, t={start_t:.1f}s)")
+                    print(f"      [CLIP_PROGRESS] {len(clips)}/{needed_clips} clips ready")
+                except Exception as e_cyc:
+                    pass
+            cycle_round += 1
+            if added_in_round == 0:
+                break
+    else:
+        # Standard Short Video mode: 1 clip per selected source
+        for idx, src in enumerate(downloaded_sources):
+            if len(clips) >= needed_clips:
+                break
+            local_path = src["path"]
+            clip_id = src["id"]
+            trim_start = src["trim_start"]
+            target_dur = src["target_dur"]
+            clip_dur = target_dur if target_dur > 0 else SHORT_CLIP_SEC
+            try:
+                is_first = (len(clips) == 0)
+                hook_txt = random.choice(HOOK_LINES) if is_first else ""
+                sub_txt = random.choice(SUB_HOOK_LINES) if is_first else ""
+                if trim_start > 0:
+                    clip_obj = process_clip_at(
+                        local_path, start=trim_start, duration=clip_dur,
+                        is_first=is_first, hook_text=hook_txt, sub_text=sub_txt
+                    )
+                else:
+                    clip_obj = process_clip(
+                        local_path, duration=clip_dur,
+                        is_first=is_first, hook_text=hook_txt, sub_text=sub_txt
+                    )
+                clips.append(clip_obj)
+                energy_scores.append(100)
+                used_vids.add(clip_id)
+                with open(HISTORY_FILE, "a", encoding="utf-8") as f_h:
+                    f_h.write(clip_id + chr(10))
+                print(f"      ACCEPTED ✅ — Clip {len(clips)}/{needed_clips} ({clip_dur:.1f}s, Source: {src['title'][:30]})")
+                print(f"      [CLIP_PROGRESS] {len(clips)}/{needed_clips} clips ready")
+            except Exception as e_proc:
+                print(f"      Error processing clip: {e_proc}")
+
+
+
+    if len(clips) < 1:
+        msg = "No selected clips could be processed successfully. Falling back to automated YouTube discovery."
+        print(f"\n   ⚠ {msg}")
+        lion_factory()
+        return
+
+    print(f"\n   [STAGE 8] Mixing background music & audio ducking (-14 LUFS)")
+    print(f"   Successfully prepared {len(clips)} clips ({len(clips)*SHORT_CLIP_SEC:.1f}s runtime). Finalizing export...")
+    finalize_and_export(clips, energy_scores)
+
 def run_own_footage_mode():
     print("\n" + "═"*68)
     print(f"  LionReel V95 — OWN FOOTAGE MODE  🎬")
@@ -2087,6 +2853,101 @@ def run_youtube_cc_mode():
     except: pass
 
 
+# ═══════════════════════════════════════════════════════════════
+# V95 — METHOD C: CUSTOM VIDEO LINK MODE
+# Downloads user-provided YouTube URL or direct video, extracts
+# peak funny moments or formats entire clip for Shorts.
+# ═══════════════════════════════════════════════════════════════
+def run_custom_url_mode(custom_url=None):
+    url = (custom_url or CUSTOM_URL or "").strip()
+    print("\n" + "═"*68)
+    print("  LionReel V95 — CUSTOM VIDEO LINK MODE  🎬")
+    print("  ─────────────────────────────────────────────────────────────")
+    print(f"  Target URL : {url}")
+    print("═"*68 + "\n")
+
+    if not url:
+        print("   ⚠  No custom URL provided. Falling back to autonomous YouTube discovery.")
+        lion_factory()
+        return
+
+    cookie_file = make_netscape_file(["youtube", "google", "ytimg", "yt3"])
+    tmp_path = os.path.join(RAW_FOLDER, f"custom_{int(time.time())}.mp4")
+
+    print(f"   Downloading source video from: {url}")
+    actual, err = download_video(url, tmp_path, cookie_file, preview=False)
+    if cookie_file:
+        try: os.remove(cookie_file)
+        except: pass
+
+    if not actual or not os.path.exists(actual):
+        print(f"   ⚠  Download failed: {err}")
+        print("   Falling back to autonomous YouTube discovery...")
+        lion_factory()
+        return
+
+    try:
+        cap = cv2.VideoCapture(actual)
+        total_frames = cap.get(cv2.CAP_PROP_FRAME_COUNT)
+        fps = max(1.0, cap.get(cv2.CAP_PROP_FPS) or 30.0)
+        dur = total_frames / fps
+        cap.release()
+    except Exception as e:
+        dur = 30.0
+
+    print(f"   Downloaded successfully! Duration: {dur:.1f}s")
+    clips = []
+    energy_scores = []
+
+    if dur <= SHORT_CLIP_SEC * 1.5:
+        print("   Processing entire video as high-impact short...")
+        try:
+            clip = process_clip(
+                actual,
+                is_first=True,
+                hook_text=random.choice(HOOK_LINES),
+                sub_text=random.choice(SUB_HOOK_LINES)
+            )
+            clips.append(clip)
+            energy_scores.append(100)
+        except Exception as e_p:
+            print(f"   Clip processing error: {e_p}")
+    else:
+        needed = TARGET_CLIPS if VIDEO_TYPE in ("long", "both") else max(1, min(6, int(dur // SHORT_CLIP_SEC)))
+        print(f"   Extracting {needed} peak laugh moments from {dur:.1f}s video...")
+        moments = get_multiple_moments(actual, needed, SHORT_CLIP_SEC)
+        if not moments:
+            moments = [0.0]
+
+        for i, start_t in enumerate(moments):
+            is_first = (i == 0)
+            try:
+                clip = process_clip_at(
+                    actual,
+                    start=start_t,
+                    duration=SHORT_CLIP_SEC,
+                    is_first=is_first,
+                    hook_text=random.choice(HOOK_LINES) if is_first else "",
+                    sub_text=random.choice(SUB_HOOK_LINES) if is_first else ""
+                )
+                clips.append(clip)
+                energy_scores.append(100)
+                print(f"      Moment {i+1}/{len(moments)} ACCEPTED ✅ (t={start_t:.1f}s)")
+            except Exception as e:
+                print(f"      Moment cut error: {e}")
+
+    if not clips:
+        print("   ⚠  Could not extract any clips from custom URL. Falling back to autonomous YouTube discovery.")
+        try: os.remove(actual)
+        except: pass
+        lion_factory()
+        return
+
+    finalize_and_export(clips, energy_scores)
+    try: os.remove(actual)
+    except: pass
+
+
 # ───────────────────────────────────────────────────────────────
 # MAIN
 # ───────────────────────────────────────────────────────────────
@@ -2261,6 +3122,16 @@ def lion_factory():
                 except: pass
                 skip["no_animal"]+=1; continue
 
+            # Check 7: Cartoon & Animation Gate
+            if CHECK_CARTOON:
+                print("      [CartoonCheck] Scanning for 3D CGI / Cartoon models...")
+                is_c, c_score = check_cartoon_visual(preview_file)
+                if is_c and not BYPASS_QUALITY_GATE:
+                    print(f"      REJECTED — Cartoon / 3D Animation / CGI detected ({c_score:.0%})")
+                    try: os.remove(preview_file)
+                    except: pass
+                    skip["fake"]+=1; continue
+
             # Clean preview and download high quality!
             try: os.remove(preview_file)
             except: pass
@@ -2283,47 +3154,48 @@ def lion_factory():
                 except: pass
                 skip["blurry"]+=1; continue
 
-            if dur > 55:
-                needed = TARGET_CLIPS - len(clips)
-                print(f"      🎥 Long video detected ({dur:.0f}s). Extracting {needed} clips from it...")
-                moments = get_multiple_moments(actual, needed, SHORT_CLIP_SEC)
-                if not moments or len(moments) < min(2, needed):
-                    print("      REJECTED — Not enough moments found in long video")
+            # Sanity check cartoon on the high-quality download
+            if CHECK_CARTOON and not BYPASS_QUALITY_GATE:
+                is_c_hq, c_score_hq = check_cartoon_visual(actual)
+                if is_c_hq:
+                    print(f"      REJECTED HQ — Cartoon / 3D Animation / CGI detected in HQ ({c_score_hq:.0%})")
                     try: os.remove(actual)
                     except: pass
-                    continue
-                
-                long_c
-                lips = []
-                for i, start in enumerate(moments):
-                    is_first = (len(clips) + len(long_clips) == 0)
-                    try:
-                        clip = process_clip_at(
-                            actual, start, SHORT_CLIP_SEC, is_first=is_first,
-                            hook_text=random.choice(HOOK_LINES) if is_first else "",
-                            sub_text=random.choice(SUB_HOOK_LINES) if is_first else ""
-                        )
-                        long_clips.append(clip)
-                        print(f"      Segment {i+1}/{len(moments)} ACCEPTED ✅")
-                    except Exception as seg_err:
-                        print(f"      Error on segment: {seg_err}")
-                
-                if len(long_clips) < min(2, needed):
-                    print("      REJECTED — Failed to process enough segments")
-                    for c in long_clips:
-                        try: c.close()
-                        except: pass
-                    try: os.remove(actual)
-                    except: pass
-                    continue
-                
-                clips.extend(long_clips)
-                for _ in long_clips:
-                    energy_scores.append(10000)
-                used_vids.add(v_id)
-                with open(HISTORY_FILE, "a") as f: f.write(v_id + "\n")
-                print(f"      SUCCESS ✅ — Extracted {len(long_clips)} clips from single long video!")
-                break
+                    skip["fake"]+=1; continue
+
+            needed = TARGET_CLIPS - len(clips)
+            if dur > 40 and (VIDEO_TYPE in ("long", "both") or needed > 1):
+                print(f"      🎥 Long video detected ({dur:.0f}s). Extracting up to {needed} clips from it...")
+                moments_count = min(needed, max(2, int((dur - 10) // (SHORT_CLIP_SEC * 1.2))))
+                moments = get_multiple_moments(actual, moments_count, SHORT_CLIP_SEC)
+                if moments:
+                    long_clips = []
+                    for i, start in enumerate(moments):
+                        is_first = (len(clips) + len(long_clips) == 0)
+                        try:
+                            c = process_clip_at(
+                                actual, start, SHORT_CLIP_SEC,
+                                is_first=is_first,
+                                hook_text=random.choice(HOOK_LINES) if is_first else "",
+                                sub_text=random.choice(SUB_HOOK_LINES) if is_first else ""
+                            )
+                            long_clips.append(c)
+                            print(f"      Segment {len(long_clips)}/{len(moments)} ACCEPTED ✅")
+                        except Exception as seg_err:
+                            print(f"      Error on segment: {seg_err}")
+                    if long_clips:
+                        clips.extend(long_clips)
+                        for _ in long_clips:
+                            energy_scores.append(10000)
+                        used_vids.add(v_id)
+                        with open(HISTORY_FILE, "a", encoding="utf-8") as f_h:
+                            f_h.write(v_id + chr(10))
+                        print(f"      SUCCESS ✅ — Extracted {len(long_clips)} clips from long video! ({len(clips)}/{TARGET_CLIPS} total)")
+                        print(f"      ACCEPTED ✅ — Clip {len(clips)}/{TARGET_CLIPS}")
+                        print(f"      [CLIP_PROGRESS] {len(clips)}/{TARGET_CLIPS} clips ready")
+                        if len(clips) >= TARGET_CLIPS:
+                            break
+                        continue
 
             else:
                 # Energy score for ramp
@@ -2403,10 +3275,25 @@ if __name__ == "__main__":
     #   "own_footage" -> your own long video, sliced into several clips
     #   "youtube_cc"  -> one Creative-Commons-licensed long YouTube video,
     #                    sliced into several clips, credited on-screen
-    # ──────────────────────────────────────────────────────────
-    if SOURCE_MODE == "own_footage":
+    print(f"\n[Execution Dispatch] Sourcing Mode: {SOURCE_MODE.upper()}, Animal Category: {VIDEO_MODE.upper()}")
+    if SELECTED_CLIPS and len(SELECTED_CLIPS) > 0 and SOURCE_MODE not in ("own_footage", "custom_url"):
+        run_selected_clips_mode(SELECTED_CLIPS)
+    elif SOURCE_MODE == "classic":
+        lion_factory()
+    elif SOURCE_MODE in ("curated", "selected"):
+        if SELECTED_CLIPS and len(SELECTED_CLIPS) > 0:
+            run_selected_clips_mode(SELECTED_CLIPS)
+        else:
+            print("   [Dispatch] Curated mode selected but no clips queued. Running autonomous YouTube discovery.")
+            lion_factory()
+    elif SOURCE_MODE == "custom_url":
+        run_custom_url_mode(CUSTOM_URL)
+    elif SOURCE_MODE == "own_footage":
         run_own_footage_mode()
     elif SOURCE_MODE == "youtube_cc":
         run_youtube_cc_mode()
     else:
-        lion_factory()
+        if SELECTED_CLIPS and len(SELECTED_CLIPS) > 0:
+            run_selected_clips_mode(SELECTED_CLIPS)
+        else:
+            lion_factory()

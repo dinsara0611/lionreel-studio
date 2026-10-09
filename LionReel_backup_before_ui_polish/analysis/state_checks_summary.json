@@ -1,0 +1,771 @@
+{
+  "statusEndpointIdle": {
+    "status": "idle",
+    "job_id": "test_fix1_2x75",
+    "isRunning": false,
+    "startTimeMs": null,
+    "elapsedSeconds": 0,
+    "stageIndex": 7,
+    "stageName": "Smart center-crop to 9:16 vertical shorts",
+    "progressPct": 75,
+    "candidateReports": [
+      {
+        "candidate": 1,
+        "clip_id": "c_cache_hY7m5jjJ9mM_1_6",
+        "source": "cache_hY7m5jjJ9mM.mp4",
+        "start_s": 0.34,
+        "dur_s": 7.5,
+        "score": 0,
+        "result": "REJECT",
+        "reason": "PREDICTED_BAD_FRAMING (Score: 0.0% < 88% — Vis:31.6%, H:0.0%, V:0.0%, S:36.8%)"
+      },
+      {
+        "candidate": 2,
+        "clip_id": "c_byh9_190_197",
+        "source": "cache_ByH9LuSILxU.mp4",
+        "start_s": 190.375,
+        "dur_s": 7.5,
+        "score": 0.919,
+        "result": "PASS",
+        "reason": "PREDICT_PASS",
+        "plan": {
+          "status": "pass",
+          "mode": "smart_crop",
+          "orig_size": [
+            1920,
+            1080
+          ],
+          "crop_w": 608,
+          "crop_h": 1080,
+          "keyframes_t": [
+            0,
+            1.0416666666666572,
+            2.083333333333343,
+            3.125,
+            4.166666666666657,
+            5.208333333333343,
+            6.25,
+            7.5
+          ],
+          "keyframes_x": [
+            828.9789128105589,
+            828.9789128105589,
+            828.9789128105589,
+            838.8258248243673,
+            862.7522485518399,
+            859.8926734863619,
+            849.196538788685,
+            750.495529369502
+          ],
+          "keyframes_y": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "keyframes_zoom": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "framing_score": 0.919,
+          "sharpness": 39.3
+        },
+        "clip_info": {
+          "clip_id": "c_byh9_190_197",
+          "source_id": "cache_ByH9LuSILxU",
+          "source_url_or_path": "G:\\My Drive\\Cat make\\raw\\cache_ByH9LuSILxU.mp4",
+          "license": "Creative Commons CC-BY 4.0",
+          "start_s": 190.375,
+          "end_s": 197.875,
+          "fingerprint": "[\"1001010000111010110111110011000000110001101110000011011011000001\", \"1001010000111010110111110011000000110001101110000011011011000001\", \"1001010000101010110111010011000000110001101110000011111011010001\", \"1001010000101010110111010011010000110001100110010011101011000011\", \"1001000000101010110111010011010000110001100110000011111011010001\"]",
+          "quality_score": 0.95,
+          "funny_score": 0.9,
+          "animal_type": "cat",
+          "times_used": 0,
+          "last_used_short_id": null,
+          "pending_short_id": null,
+          "pool_cycle": 1,
+          "computed_dur": 7.5
+        }
+      },
+      {
+        "candidate": 3,
+        "clip_id": "c_raw_x_rBfKdlGyQ_1791108652_70_76",
+        "source": "raw_x_rBfKdlGyQ_1791108652.mp4",
+        "start_s": 70.266,
+        "dur_s": 7.5,
+        "score": 0,
+        "result": "REJECT",
+        "reason": "WATERMARK (bottom_left: WOA Network logo detected in bottom-left corner)"
+      },
+      {
+        "candidate": 4,
+        "clip_id": "c_cache_hY7m5jjJ9mM_469_474",
+        "source": "cache_hY7m5jjJ9mM.mp4",
+        "start_s": 468.46,
+        "dur_s": 7.5,
+        "score": 0.636,
+        "result": "REJECT",
+        "reason": "PREDICTED_BAD_FRAMING (Score: 63.6% < 88% — Vis:63.6%, H:93.9%, V:100.0%, S:72.7%)"
+      },
+      {
+        "candidate": 5,
+        "clip_id": "c_cache_ByH9LuSILxU_140_145",
+        "source": "cache_ByH9LuSILxU.mp4",
+        "start_s": 139.575,
+        "dur_s": 7.5,
+        "score": 0,
+        "result": "REJECT",
+        "reason": "PREDICTED_BAD_FRAMING (Score: 0.0% < 88% — Vis:48.6%, H:89.2%, V:13.5%, S:100.0%)"
+      },
+      {
+        "candidate": 6,
+        "clip_id": "c_raw_x_rBfKdlGyQ_1791108652_53_58",
+        "source": "raw_x_rBfKdlGyQ_1791108652.mp4",
+        "start_s": 52.784,
+        "dur_s": 7.5,
+        "score": 0,
+        "result": "REJECT",
+        "reason": "WATERMARK (bottom_left: WOA Network logo detected in bottom-left corner)"
+      },
+      {
+        "candidate": 7,
+        "clip_id": "c_cache_ByH9LuSILxU_135_140",
+        "source": "cache_ByH9LuSILxU.mp4",
+        "start_s": 134.601,
+        "dur_s": 7.5,
+        "score": 0.767,
+        "result": "REJECT",
+        "reason": "PREDICTED_BAD_FRAMING (Score: 76.7% < 88% — Vis:96.7%, H:100.0%, V:80.0%, S:100.0%)"
+      },
+      {
+        "candidate": 8,
+        "clip_id": "c_raw_x_rBfKdlGyQ_1791108652_79_84",
+        "source": "raw_x_rBfKdlGyQ_1791108652.mp4",
+        "start_s": 79.007,
+        "dur_s": 7.5,
+        "score": 0,
+        "result": "REJECT",
+        "reason": "WATERMARK (bottom_left: WOA Network logo detected in bottom-left corner)"
+      },
+      {
+        "candidate": 9,
+        "clip_id": "c_byh9_121_128",
+        "source": "cache_ByH9LuSILxU.mp4",
+        "start_s": 121.675,
+        "dur_s": 7.500000000000014,
+        "score": 1,
+        "result": "PASS",
+        "reason": "PREDICT_PASS",
+        "plan": {
+          "status": "pass",
+          "mode": "smart_crop",
+          "orig_size": [
+            1920,
+            1080
+          ],
+          "crop_w": 608,
+          "crop_h": 1080,
+          "keyframes_t": [
+            0,
+            1.0416666666666714,
+            2.083333333333343,
+            3.125,
+            4.166666666666671,
+            5.208333333333343,
+            6.250000000000014,
+            7.500000000000014
+          ],
+          "keyframes_x": [
+            615.9622962516158,
+            615.9622962516158,
+            591.4706233697901,
+            567.8111365092624,
+            567.8111365092624,
+            567.8111365092624,
+            567.8111365092624,
+            567.8111365092624
+          ],
+          "keyframes_y": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "keyframes_zoom": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "framing_score": 1,
+          "sharpness": 22.5
+        },
+        "clip_info": {
+          "clip_id": "c_byh9_121_128",
+          "source_id": "cache_ByH9LuSILxU",
+          "source_url_or_path": "G:\\My Drive\\Cat make\\raw\\cache_ByH9LuSILxU.mp4",
+          "license": "Creative Commons CC-BY 4.0",
+          "start_s": 121.675,
+          "end_s": 129.175,
+          "fingerprint": "[\"1001010110110111110010011101000101001100100110010110001001100110\", \"1001010110110111110010011101000100011101000100000111001000110110\", \"1100010001101111000110011100010101000101101100110001100100011000\", \"1100011101101111000110011100010101000101101100010001100110011001\", \"1100011100101111000110011100010101000101101100010001100110111001\"]",
+          "quality_score": 0.95,
+          "funny_score": 0.9,
+          "animal_type": "cat",
+          "times_used": 0,
+          "last_used_short_id": null,
+          "pending_short_id": null,
+          "pool_cycle": 1,
+          "computed_dur": 7.500000000000014
+        }
+      },
+      {
+        "candidate": 10,
+        "clip_id": "c_raw_x_rBfKdlGyQ_1791108652_62_67",
+        "source": "raw_x_rBfKdlGyQ_1791108652.mp4",
+        "start_s": 61.525,
+        "dur_s": 7.500000000000007,
+        "score": 0,
+        "result": "REJECT",
+        "reason": "WATERMARK (bottom_left: WOA Network logo detected in bottom-left corner)"
+      },
+      {
+        "candidate": 11,
+        "clip_id": "c_byh9_96_103",
+        "source": "cache_ByH9LuSILxU.mp4",
+        "start_s": 96.375,
+        "dur_s": 7.5,
+        "score": 0.838,
+        "result": "REJECT",
+        "reason": "PREDICTED_BAD_FRAMING (Score: 83.8% < 88% — Vis:91.9%, H:97.3%, V:100.0%, S:83.8%)"
+      },
+      {
+        "candidate": 12,
+        "clip_id": "c_raw_x_rBfKdlGyQ_1791108652_44_49",
+        "source": "raw_x_rBfKdlGyQ_1791108652.mp4",
+        "start_s": 44.044,
+        "dur_s": 7.5,
+        "score": 0,
+        "result": "REJECT",
+        "reason": "WATERMARK (bottom_left: WOA Network logo detected in bottom-left corner)"
+      },
+      {
+        "candidate": 13,
+        "clip_id": "c_byh9_106_113",
+        "source": "cache_ByH9LuSILxU.mp4",
+        "start_s": 106.375,
+        "dur_s": 7.5,
+        "score": 0.757,
+        "result": "REJECT",
+        "reason": "PREDICTED_BAD_FRAMING (Score: 75.7% < 88% — Vis:81.1%, H:91.9%, V:100.0%, S:91.9%)"
+      },
+      {
+        "candidate": 14,
+        "clip_id": "c_cache_ByH9LuSILxU_96_101",
+        "source": "cache_ByH9LuSILxU.mp4",
+        "start_s": 95.816,
+        "dur_s": 7.5,
+        "score": 0.946,
+        "result": "PASS",
+        "reason": "PREDICT_PASS",
+        "plan": {
+          "status": "pass",
+          "mode": "smart_crop",
+          "orig_size": [
+            1920,
+            1080
+          ],
+          "crop_w": 542,
+          "crop_h": 964,
+          "keyframes_t": [
+            0,
+            1.0416666666666714,
+            2.0833333333333286,
+            3.125,
+            4.166666666666671,
+            5.208333333333329,
+            6.25,
+            7.5
+          ],
+          "keyframes_x": [
+            750.0333678148888,
+            750.0333678148888,
+            727.9794515985693,
+            737.256891556746,
+            737.9351926140605,
+            748.0583114920065,
+            738.0135842659022,
+            762.9333613898194
+          ],
+          "keyframes_y": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            9,
+            0
+          ],
+          "keyframes_zoom": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "framing_score": 0.946,
+          "sharpness": 36
+        },
+        "clip_info": {
+          "clip_id": "c_cache_ByH9LuSILxU_96_101",
+          "source_id": "cache_ByH9LuSILxU",
+          "source_url_or_path": "g:\\My Drive\\Cat make\\raw\\cache_ByH9LuSILxU.mp4",
+          "license": "CC-BY",
+          "start_s": 95.816,
+          "end_s": 103.316,
+          "fingerprint": "[\"1110011111001000010100110110010110000110001110111100110011101010\", \"1110011110001000010100110111010110000100001110110100110111101010\", \"1110011110001000010101110111010110000010001110011100010011111011\", \"1110011111001000011101111110010010001010001110011100100000111011\", \"1110011111001000010101111110010010011010001110011100011010111001\"]",
+          "quality_score": 1.7663928480226287,
+          "funny_score": 0.85,
+          "animal_type": "cat",
+          "times_used": 0,
+          "last_used_short_id": null,
+          "pending_short_id": null,
+          "pool_cycle": 3,
+          "computed_dur": 7.5
+        }
+      },
+      {
+        "candidate": 15,
+        "clip_id": "c_byh9_180_187",
+        "source": "cache_ByH9LuSILxU.mp4",
+        "start_s": 180.375,
+        "dur_s": 7.5,
+        "score": 0.774,
+        "result": "REJECT",
+        "reason": "PREDICTED_BAD_FRAMING (Score: 77.4% < 88% — Vis:80.6%, H:87.1%, V:87.1%, S:90.3%)"
+      }
+    ],
+    "failedStage": null,
+    "exitCode": null,
+    "jobResult": {
+      "job_id": "test_fix1_2x75",
+      "status": "running",
+      "success": null,
+      "stage_index": 7,
+      "stage_name": "Smart center-crop to 9:16 vertical shorts",
+      "progress_pct": 75,
+      "candidate_reports": [
+        {
+          "candidate": 1,
+          "clip_id": "c_cache_hY7m5jjJ9mM_1_6",
+          "source": "cache_hY7m5jjJ9mM.mp4",
+          "start_s": 0.34,
+          "dur_s": 7.5,
+          "score": 0,
+          "result": "REJECT",
+          "reason": "PREDICTED_BAD_FRAMING (Score: 0.0% < 88% — Vis:31.6%, H:0.0%, V:0.0%, S:36.8%)"
+        },
+        {
+          "candidate": 2,
+          "clip_id": "c_byh9_190_197",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 190.375,
+          "dur_s": 7.5,
+          "score": 0.919,
+          "result": "PASS",
+          "reason": "PREDICT_PASS",
+          "plan": {
+            "status": "pass",
+            "mode": "smart_crop",
+            "orig_size": [
+              1920,
+              1080
+            ],
+            "crop_w": 608,
+            "crop_h": 1080,
+            "keyframes_t": [
+              0,
+              1.0416666666666572,
+              2.083333333333343,
+              3.125,
+              4.166666666666657,
+              5.208333333333343,
+              6.25,
+              7.5
+            ],
+            "keyframes_x": [
+              828.9789128105589,
+              828.9789128105589,
+              828.9789128105589,
+              838.8258248243673,
+              862.7522485518399,
+              859.8926734863619,
+              849.196538788685,
+              750.495529369502
+            ],
+            "keyframes_y": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "keyframes_zoom": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            "framing_score": 0.919,
+            "sharpness": 39.3
+          },
+          "clip_info": {
+            "clip_id": "c_byh9_190_197",
+            "source_id": "cache_ByH9LuSILxU",
+            "source_url_or_path": "G:\\My Drive\\Cat make\\raw\\cache_ByH9LuSILxU.mp4",
+            "license": "Creative Commons CC-BY 4.0",
+            "start_s": 190.375,
+            "end_s": 197.875,
+            "fingerprint": "[\"1001010000111010110111110011000000110001101110000011011011000001\", \"1001010000111010110111110011000000110001101110000011011011000001\", \"1001010000101010110111010011000000110001101110000011111011010001\", \"1001010000101010110111010011010000110001100110010011101011000011\", \"1001000000101010110111010011010000110001100110000011111011010001\"]",
+            "quality_score": 0.95,
+            "funny_score": 0.9,
+            "animal_type": "cat",
+            "times_used": 0,
+            "last_used_short_id": null,
+            "pending_short_id": null,
+            "pool_cycle": 1,
+            "computed_dur": 7.5
+          }
+        },
+        {
+          "candidate": 3,
+          "clip_id": "c_raw_x_rBfKdlGyQ_1791108652_70_76",
+          "source": "raw_x_rBfKdlGyQ_1791108652.mp4",
+          "start_s": 70.266,
+          "dur_s": 7.5,
+          "score": 0,
+          "result": "REJECT",
+          "reason": "WATERMARK (bottom_left: WOA Network logo detected in bottom-left corner)"
+        },
+        {
+          "candidate": 4,
+          "clip_id": "c_cache_hY7m5jjJ9mM_469_474",
+          "source": "cache_hY7m5jjJ9mM.mp4",
+          "start_s": 468.46,
+          "dur_s": 7.5,
+          "score": 0.636,
+          "result": "REJECT",
+          "reason": "PREDICTED_BAD_FRAMING (Score: 63.6% < 88% — Vis:63.6%, H:93.9%, V:100.0%, S:72.7%)"
+        },
+        {
+          "candidate": 5,
+          "clip_id": "c_cache_ByH9LuSILxU_140_145",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 139.575,
+          "dur_s": 7.5,
+          "score": 0,
+          "result": "REJECT",
+          "reason": "PREDICTED_BAD_FRAMING (Score: 0.0% < 88% — Vis:48.6%, H:89.2%, V:13.5%, S:100.0%)"
+        },
+        {
+          "candidate": 6,
+          "clip_id": "c_raw_x_rBfKdlGyQ_1791108652_53_58",
+          "source": "raw_x_rBfKdlGyQ_1791108652.mp4",
+          "start_s": 52.784,
+          "dur_s": 7.5,
+          "score": 0,
+          "result": "REJECT",
+          "reason": "WATERMARK (bottom_left: WOA Network logo detected in bottom-left corner)"
+        },
+        {
+          "candidate": 7,
+          "clip_id": "c_cache_ByH9LuSILxU_135_140",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 134.601,
+          "dur_s": 7.5,
+          "score": 0.767,
+          "result": "REJECT",
+          "reason": "PREDICTED_BAD_FRAMING (Score: 76.7% < 88% — Vis:96.7%, H:100.0%, V:80.0%, S:100.0%)"
+        },
+        {
+          "candidate": 8,
+          "clip_id": "c_raw_x_rBfKdlGyQ_1791108652_79_84",
+          "source": "raw_x_rBfKdlGyQ_1791108652.mp4",
+          "start_s": 79.007,
+          "dur_s": 7.5,
+          "score": 0,
+          "result": "REJECT",
+          "reason": "WATERMARK (bottom_left: WOA Network logo detected in bottom-left corner)"
+        },
+        {
+          "candidate": 9,
+          "clip_id": "c_byh9_121_128",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 121.675,
+          "dur_s": 7.500000000000014,
+          "score": 1,
+          "result": "PASS",
+          "reason": "PREDICT_PASS",
+          "plan": {
+            "status": "pass",
+            "mode": "smart_crop",
+            "orig_size": [
+              1920,
+              1080
+            ],
+            "crop_w": 608,
+            "crop_h": 1080,
+            "keyframes_t": [
+              0,
+              1.0416666666666714,
+              2.083333333333343,
+              3.125,
+              4.166666666666671,
+              5.208333333333343,
+              6.250000000000014,
+              7.500000000000014
+            ],
+            "keyframes_x": [
+              615.9622962516158,
+              615.9622962516158,
+              591.4706233697901,
+              567.8111365092624,
+              567.8111365092624,
+              567.8111365092624,
+              567.8111365092624,
+              567.8111365092624
+            ],
+            "keyframes_y": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "keyframes_zoom": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            "framing_score": 1,
+            "sharpness": 22.5
+          },
+          "clip_info": {
+            "clip_id": "c_byh9_121_128",
+            "source_id": "cache_ByH9LuSILxU",
+            "source_url_or_path": "G:\\My Drive\\Cat make\\raw\\cache_ByH9LuSILxU.mp4",
+            "license": "Creative Commons CC-BY 4.0",
+            "start_s": 121.675,
+            "end_s": 129.175,
+            "fingerprint": "[\"1001010110110111110010011101000101001100100110010110001001100110\", \"1001010110110111110010011101000100011101000100000111001000110110\", \"1100010001101111000110011100010101000101101100110001100100011000\", \"1100011101101111000110011100010101000101101100010001100110011001\", \"1100011100101111000110011100010101000101101100010001100110111001\"]",
+            "quality_score": 0.95,
+            "funny_score": 0.9,
+            "animal_type": "cat",
+            "times_used": 0,
+            "last_used_short_id": null,
+            "pending_short_id": null,
+            "pool_cycle": 1,
+            "computed_dur": 7.500000000000014
+          }
+        },
+        {
+          "candidate": 10,
+          "clip_id": "c_raw_x_rBfKdlGyQ_1791108652_62_67",
+          "source": "raw_x_rBfKdlGyQ_1791108652.mp4",
+          "start_s": 61.525,
+          "dur_s": 7.500000000000007,
+          "score": 0,
+          "result": "REJECT",
+          "reason": "WATERMARK (bottom_left: WOA Network logo detected in bottom-left corner)"
+        },
+        {
+          "candidate": 11,
+          "clip_id": "c_byh9_96_103",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 96.375,
+          "dur_s": 7.5,
+          "score": 0.838,
+          "result": "REJECT",
+          "reason": "PREDICTED_BAD_FRAMING (Score: 83.8% < 88% — Vis:91.9%, H:97.3%, V:100.0%, S:83.8%)"
+        },
+        {
+          "candidate": 12,
+          "clip_id": "c_raw_x_rBfKdlGyQ_1791108652_44_49",
+          "source": "raw_x_rBfKdlGyQ_1791108652.mp4",
+          "start_s": 44.044,
+          "dur_s": 7.5,
+          "score": 0,
+          "result": "REJECT",
+          "reason": "WATERMARK (bottom_left: WOA Network logo detected in bottom-left corner)"
+        },
+        {
+          "candidate": 13,
+          "clip_id": "c_byh9_106_113",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 106.375,
+          "dur_s": 7.5,
+          "score": 0.757,
+          "result": "REJECT",
+          "reason": "PREDICTED_BAD_FRAMING (Score: 75.7% < 88% — Vis:81.1%, H:91.9%, V:100.0%, S:91.9%)"
+        },
+        {
+          "candidate": 14,
+          "clip_id": "c_cache_ByH9LuSILxU_96_101",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 95.816,
+          "dur_s": 7.5,
+          "score": 0.946,
+          "result": "PASS",
+          "reason": "PREDICT_PASS",
+          "plan": {
+            "status": "pass",
+            "mode": "smart_crop",
+            "orig_size": [
+              1920,
+              1080
+            ],
+            "crop_w": 542,
+            "crop_h": 964,
+            "keyframes_t": [
+              0,
+              1.0416666666666714,
+              2.0833333333333286,
+              3.125,
+              4.166666666666671,
+              5.208333333333329,
+              6.25,
+              7.5
+            ],
+            "keyframes_x": [
+              750.0333678148888,
+              750.0333678148888,
+              727.9794515985693,
+              737.256891556746,
+              737.9351926140605,
+              748.0583114920065,
+              738.0135842659022,
+              762.9333613898194
+            ],
+            "keyframes_y": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              9,
+              0
+            ],
+            "keyframes_zoom": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            "framing_score": 0.946,
+            "sharpness": 36
+          },
+          "clip_info": {
+            "clip_id": "c_cache_ByH9LuSILxU_96_101",
+            "source_id": "cache_ByH9LuSILxU",
+            "source_url_or_path": "g:\\My Drive\\Cat make\\raw\\cache_ByH9LuSILxU.mp4",
+            "license": "CC-BY",
+            "start_s": 95.816,
+            "end_s": 103.316,
+            "fingerprint": "[\"1110011111001000010100110110010110000110001110111100110011101010\", \"1110011110001000010100110111010110000100001110110100110111101010\", \"1110011110001000010101110111010110000010001110011100010011111011\", \"1110011111001000011101111110010010001010001110011100100000111011\", \"1110011111001000010101111110010010011010001110011100011010111001\"]",
+            "quality_score": 1.7663928480226287,
+            "funny_score": 0.85,
+            "animal_type": "cat",
+            "times_used": 0,
+            "last_used_short_id": null,
+            "pending_short_id": null,
+            "pool_cycle": 3,
+            "computed_dur": 7.5
+          }
+        },
+        {
+          "candidate": 15,
+          "clip_id": "c_byh9_180_187",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 180.375,
+          "dur_s": 7.5,
+          "score": 0.774,
+          "result": "REJECT",
+          "reason": "PREDICTED_BAD_FRAMING (Score: 77.4% < 88% — Vis:80.6%, H:87.1%, V:87.1%, S:90.3%)"
+        }
+      ],
+      "error": null,
+      "failed_stage": null,
+      "output_file": null
+    },
+    "harvestStatus": {
+      "is_harvesting": false,
+      "progress_pct": 100,
+      "status_msg": "Harvest complete! 0 new clips added. Pool: 1 available.",
+      "clips_ingested": 0,
+      "total_sources": 1,
+      "last_updated": 1791381962.3227792
+    },
+    "generatedFile": null,
+    "sha256": null,
+    "clipList": [],
+    "duration": null,
+    "renderTimeSec": null,
+    "error": null
+  },
+  "twoTabThemeSync": true,
+  "finishedFilesCount": 3,
+  "recentVideosAudit": [
+    {
+      "filename": "lionreel_cat_20261007_182131_1eb4d48b.mp4",
+      "apiDuration": 15.6,
+      "apiExpectedDuration": null,
+      "apiClipCount": 3,
+      "apiSizeBytes": 17250162,
+      "apiSizeMB": "16.45 MB",
+      "apiThumbnail": "/finished/lionreel_cat_20261007_182131_1eb4d48b_contact_sheet.png",
+      "aspectRatio": "9:16"
+    }
+  ]
+}

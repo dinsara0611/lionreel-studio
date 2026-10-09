@@ -1,0 +1,72 @@
+{
+  "job_id": "lionreel_cat_acceptance_fix7_1791472484",
+  "total_duration_sec": 220.3,
+  "stages": {
+    "startup_imports": {
+      "duration_sec": 6.34,
+      "duration_ms": 6337.0,
+      "percentage": 2.9
+    },
+    "folder_setup": {
+      "duration_sec": 0.02,
+      "duration_ms": 16.0,
+      "percentage": 0.0
+    },
+    "harvest": {
+      "duration_sec": 0.01,
+      "duration_ms": 7.5,
+      "percentage": 0.0
+    },
+    "ledger_reserve": {
+      "duration_sec": 0.18,
+      "duration_ms": 183.2,
+      "percentage": 0.1
+    },
+    "ffprobe": {
+      "duration_sec": 0.05,
+      "duration_ms": 53.7,
+      "percentage": 0.0
+    },
+    "watermark": {
+      "duration_sec": 13.36,
+      "duration_ms": 13361.4,
+      "percentage": 6.1
+    },
+    "tracking": {
+      "duration_sec": 61.42,
+      "duration_ms": 61415.4,
+      "percentage": 27.9
+    },
+    "reframe": {
+      "duration_sec": 51.94,
+      "duration_ms": 51941.1,
+      "percentage": 23.6
+    },
+    "caption": {
+      "duration_sec": 17.34,
+      "duration_ms": 17342.2,
+      "percentage": 7.9
+    },
+    "audio": {
+      "duration_sec": 12.12,
+      "duration_ms": 12115.4,
+      "percentage": 5.5
+    },
+    "render": {
+      "duration_sec": 33.1,
+      "duration_ms": 33097.2,
+      "percentage": 15.0
+    },
+    "qa": {
+      "duration_sec": 23.79,
+      "duration_ms": 23786.7,
+      "percentage": 10.8
+    },
+    "export_copy": {
+      "duration_sec": 0.64,
+      "duration_ms": 638.4,
+      "percentage": 0.3
+    }
+  },
+  "table": "====================================================================\n  STAGE TIMING BREAKDOWN \u2014 JOB: lionreel_cat_acceptance_fix7_1791472484\n====================================================================\nSTAGE                      | TIME (s)   | TIME (ms)    | SHARE   \n--------------------------------------------------------------------\nstartup_imports            | 6.34       | 6337.0       |   2.9%\nfolder_setup               | 0.02       | 16.0         |   0.0%\nledger_reserve             | 0.18       | 183.2        |   0.1%\nharvest                    | 0.01       | 7.5          |   0.0%\nffprobe                    | 0.05       | 53.7         |   0.0%\nwatermark                  | 13.36      | 13361.4      |   6.1%\ntracking                   | 61.42      | 61415.4      |  27.9%\nreframe                    | 51.94      | 51941.1      |  23.6%\ncaption                    | 17.34      | 17342.2      |   7.9%\naudio                      | 12.12      | 12115.4      |   5.5%\nrender                     | 33.10      | 33097.2      |  15.0%\nqa                         | 23.79      | 23786.7      |  10.8%\nexport_copy                | 0.64       | 638.4        |   0.3%\n--------------------------------------------------------------------\nTOTAL PIPELINE TIME        | 220.30     | 220295.3     | 100.0%\n===================================================================="
+}

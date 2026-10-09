@@ -1,0 +1,40 @@
+{
+  "output_file": "lionreel_cat_blurfit_test_1791473715.mp4",
+  "job_id": "lionreel_cat_blurfit_test_1791473715",
+  "video_type": "short",
+  "animal_mode": "cat",
+  "total_duration": 20.0,
+  "expected_duration_s": 20.0,
+  "real_duration_s": 20.09,
+  "clip_count": 2,
+  "target_clips": 2,
+  "target_clip_sec": 10.0,
+  "config_line": "CONFIG: mode=short layout=blur_fit clips=2 clip_time=10.0s expected_total=20.0s pace=fast slicing=peak_viral",
+  "sha256": "75691aaa0da2854606086b7d8f4aa4f11347a23fb4ac1ac22044418a60ed0b9c",
+  "clips": [
+    {
+      "clip_index": 1,
+      "clip_id": "c_cache_ByH9LuSILxU_45_55",
+      "source_file": "cache_ByH9LuSILxU.mp4",
+      "start_s": 45.5,
+      "end_s": 55.5,
+      "duration": 10.0,
+      "crop_mode": "blur_fit",
+      "caption": "When gravity decides to betray you \ud83d\ude39",
+      "license": "Creative Commons CC-BY 4.0",
+      "credit": "LionReel Verified CC Archive"
+    },
+    {
+      "clip_index": 2,
+      "clip_id": "c_byh9_185_192",
+      "source_file": "cache_ByH9LuSILxU.mp4",
+      "start_s": 184.375,
+      "end_s": 194.375,
+      "duration": 10.0,
+      "crop_mode": "blur_fit",
+      "caption": "",
+      "license": "Creative Commons CC-BY 4.0",
+      "credit": "LionReel Verified CC Archive"
+    }
+  ]
+}

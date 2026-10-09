@@ -675,4 +675,50 @@ Videos in the review/result panel, finished/recent compilations, and "Open" view
 - Visual gallery generated: `ui_audit/BEFORE_AFTER/index.html` with side-by-side dark and light comparisons across desktop and mobile.
 - Design System documented in `DESIGN_SYSTEM.md`.
 
+---
+
+## 9. Ordered Pipeline State Machine & Sequential Order Enforcement
+
+### Overview
+Addressed the issue where the "10 Automated Pipeline Stages" previously showed stages 1–4 as `VERIFIED` almost instantly, then stage 5 as `RUNNING`. Traced backend execution, established a single unified backend state machine (`stage_state_machine.py`), enforced strict sequential stage ordering, explicit data dependencies with proof artifacts, honest status reporting (`DONE`, `SKIPPED: <reason>`, `CACHED`, `FAILED`, `RUNNING`, `PENDING`), expandable evidence lines with real duration badges, and full reconnection/restoration on page refresh.
+
+### Key Changes & Architecture
+1. **Tracing (Normal vs. Force Fresh):**
+   - Traced real backend pipeline timings. Uncovered that stages 2, 3, 4 were previously hard-coded UI markers fired with 0ms delay, while actual probes and watermark scans ran inside the stage 5 candidate evaluation loop.
+2. **Single Ordered State Machine (`stage_state_machine.py`):**
+   - Defined 10 sequential pipeline stages once in backend `STAGE_DEFINITIONS`:
+     1. `collect_candidates` -> writes `candidates_reserved.json`
+     2. `prepare_sources` -> writes `sources_prepared.json`
+     3. `check_quality_fps` -> writes `quality_checked.json`
+     4. `detect_watermarks` -> writes `watermark_checked.json`
+     5. `predict_framing` -> writes `framing_predicted.json`
+     6. `reframe_render_clips` -> writes `clips_rendered.json`
+     7. `color_grading` -> writes `color_graded.json`
+     8. `captions_and_audio` -> writes `audio_mastered.json`
+     9. `final_render_qa` -> writes `qa_validated.json`
+     10. `save_credits_export` -> writes `export_complete.json`
+   - Enforces `start(stage n) >= end(stage n-1)`. Starting or skipping out of order raises `StageOrderViolationError` (`STAGE_ORDER_VIOLATION`).
+   - Verifies input artifact existence: missing/empty input raises `MissingInputError` (`MISSING_INPUT`).
+   - Zero produced items where expected raises `EmptyResultError` (`EMPTY_RESULT`).
+   - Proof artifacts written per job: `work/<job_id>/stages/<n>_<id>.json`.
+   - Sub-second stages automatically explain why ("instant: pool ready, verified in-memory").
+3. **Pipeline Refactoring (`lion_automate_v97.py`):**
+   - Refactored `render_one_video` to execute through `sm.start_stage()`, `sm.complete_stage()`, and `sm.skip_stage()`.
+   - Connected all 12 dashboard toggles. Auto Color Grading (`APPLY_COLOR_GRADING`) now executes real CLAHE adaptive contrast normalization and color balance in FFmpeg when enabled, and marks `SKIPPED: turned off in settings` when turned off.
+4. **Backend Server Integration (`web_server.py`):**
+   - Added `GET /api/stages` returning `STAGE_DEFINITIONS`.
+   - Enriched `GET /api/status` to read `stages_state.json` and return honest `stages` array with timings, evidence, and reasons.
+   - Added crash detection: unhandled process termination transitions `RUNNING` stages to `FAILED` with "Process terminated unexpectedly".
+5. **Frontend Dynamic UI (`gui/index.html`, `gui/app.js`, `gui/style.css`):**
+   - Removed hardcoded stage HTML rows from `gui/index.html`.
+   - Dynamic stage rows created from backend definitions on startup.
+   - Replaced `VERIFIED` with `DONE`, `SKIPPED: <reason>`, `CACHED` (hover shows hash & date), `FAILED`, `RUNNING`, `PENDING`.
+   - Real duration badges (`0.85s`, `18.32s`, etc.) displayed at the right of each row.
+   - Expandable evidence line under each stage displaying real evidence strings.
+   - Restores exact stage list, statuses, and evidence upon page refresh mid-job or on reconnect.
+6. **Automated Test Suite:**
+   - Unit tests (`tests/test_stage_order.py`): 10 of 10 passed (100% pass rate).
+   - Playwright UI tests (`tests/stage_order_ui.spec.js`): Captured dark and light screenshots for mid-run and completed stages.
+
+
 

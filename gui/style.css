@@ -3045,13 +3045,20 @@ body.light-mode .render-config-strip {
 
 .render-stage-row {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
     padding: 10px 14px;
     border-radius: var(--radius-md);
     background: var(--bg-card);
     border: 1px solid var(--border);
     transition: all var(--transition-fast);
+    gap: 6px;
+}
+
+.stage-row-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
 }
 
 .render-stage-row.pending {
@@ -3070,10 +3077,51 @@ body.light-mode .render-config-strip {
     border-color: rgba(24, 232, 122, 0.4);
 }
 
+.render-stage-row.skipped {
+    opacity: 0.7;
+    border-color: rgba(245, 158, 11, 0.35);
+    background: rgba(245, 158, 11, 0.04);
+}
+
+.render-stage-row.cached {
+    opacity: 0.95;
+    border-color: rgba(6, 182, 212, 0.4);
+    background: rgba(6, 182, 212, 0.05);
+}
+
 .stage-left-info {
     display: flex;
     align-items: center;
     gap: 12px;
+}
+
+.stage-right-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stage-duration-badge {
+    font-size: 0.75rem;
+    font-family: var(--font-mono, monospace);
+    font-weight: 600;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.04);
+    padding: 2px 7px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+}
+
+.badge-skipped {
+    background: rgba(245, 158, 11, 0.15) !important;
+    color: #f59e0b !important;
+    border: 1px solid rgba(245, 158, 11, 0.35) !important;
+}
+
+.badge-cached {
+    background: rgba(6, 182, 212, 0.15) !important;
+    color: #06b6d4 !important;
+    border: 1px solid rgba(6, 182, 212, 0.35) !important;
 }
 
 .stage-status-bullet {
@@ -3087,6 +3135,7 @@ body.light-mode .render-config-strip {
     font-weight: 700;
     background: var(--border);
     color: var(--text-muted);
+    flex-shrink: 0;
 }
 
 .render-stage-row.running .stage-status-bullet {
@@ -3098,6 +3147,75 @@ body.light-mode .render-config-strip {
 .render-stage-row.done .stage-status-bullet {
     background: var(--strong-emerald);
     color: #FFFFFF;
+}
+
+.render-stage-row.skipped .stage-status-bullet {
+    background: rgba(245, 158, 11, 0.2);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.render-stage-row.cached .stage-status-bullet {
+    background: rgba(6, 182, 212, 0.2);
+    color: #06b6d4;
+    border: 1px solid rgba(6, 182, 212, 0.4);
+}
+
+.stage-evidence-line {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    padding-left: 36px;
+    padding-top: 4px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    word-break: break-word;
+}
+
+.stage-evidence-line .evidence-icon {
+    display: inline-flex;
+    align-items: center;
+    color: var(--primary-emerald);
+    flex-shrink: 0;
+}
+
+.render-stage-row.skipped .stage-evidence-line .evidence-icon {
+    color: #f59e0b;
+}
+
+.render-stage-row.cached .stage-evidence-line .evidence-icon {
+    color: #06b6d4;
+}
+
+.render-stage-row.failed .stage-evidence-line .evidence-icon {
+    color: var(--error, #ef4444);
+}
+
+.stage-expand-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 3px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.stage-expand-btn:hover {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.render-stage-row.collapsed .stage-evidence-line {
+    display: none;
+}
+
+.render-stage-row.collapsed .stage-expand-btn svg {
+    transform: rotate(-90deg);
 }
 
 @keyframes stagePulse {

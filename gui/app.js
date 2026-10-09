@@ -326,11 +326,17 @@ async function initApp() {
         updateLoadingProgress(100, "Ready to create.");
         finishAppLoadingScreen();
 
+        await loadBackendStages();
+        ensureStageRowsExist(BACKEND_STAGES);
+
         // Check if backend compilation engine is actively running
         try {
             const statusRes = await fetch(`${API_BASE}/api/status`);
             if (statusRes.ok) {
                 const statusData = await statusRes.json();
+                if (statusData.stages && Array.isArray(statusData.stages)) {
+                    updateRenderStagesUI(statusData.stages);
+                }
                 if (statusData.status === "running") {
                     state.isRunning = true;
                     state.logOffset = 0;
@@ -1396,18 +1402,48 @@ function applyColorFilter(filterName) {
 // ==========================================================================
 // 7. PROCESSING / RENDER ENGINE (10 STAGES + 9 QUALITY CHECKS)
 // ==========================================================================
-const RENDER_STAGES = [
-    { id: 1, name: "Searching sources & fetching high-res clips", weight: 8 },
-    { id: 2, name: "Downloading selected clips into raw staging", weight: 14 },
-    { id: 3, name: "Checking video quality & frame rate stability", weight: 10 },
-    { id: 4, name: "Detecting watermarks & platform overlays", weight: 8 },
-    { id: 5, name: "Trimming high-energy animal motion slices", weight: 14 },
-    { id: 6, name: "Auto color grading (Contrast & CLAHE Normalization)", weight: 12 },
-    { id: 7, name: "Smart center-crop to 9:16 vertical shorts", weight: 12 },
-    { id: 8, name: "Mixing background music & audio ducking (-14 LUFS)", weight: 8 },
-    { id: 9, name: "Rendering final MP4 compilation with FFmpeg", weight: 10 },
-    { id: 10, name: "Preparing export packages for TikTok, Reels & Shorts", weight: 4 }
+const DEFAULT_STAGE_DEFINITIONS = [
+    { id: 1, key: "collect_candidates", label: "Collect candidate moments from ledger", weight: 8 },
+    { id: 2, key: "prepare_sources", label: "Prepare & verify raw source video files", weight: 14 },
+    { id: 3, key: "check_quality_fps", label: "Check source video resolution & frame rate", weight: 10 },
+    { id: 4, key: "detect_watermarks", label: "Detect watermarks, logos & overlays", weight: 8 },
+    { id: 5, key: "predict_framing", label: "Predict pet framing & select viral moments", weight: 14 },
+    { id: 6, key: "reframe_render_clips", label: "Reframe & render vertical clip cuts", weight: 12 },
+    { id: 7, key: "color_grading", label: "Auto color grading & contrast optimization", weight: 12 },
+    { id: 8, key: "captions_and_audio", label: "Burn safe-zone captions & master audio ducking", weight: 8 },
+    { id: 9, key: "final_render_qa", label: "Final MP4 assembly & 10-gate QA validation", weight: 10 },
+    { id: 10, key: "save_credits_export", label: "Save job artifacts, ledger commit & export", weight: 4 }
 ];
+let BACKEND_STAGES = [...DEFAULT_STAGE_DEFINITIONS];
+
+async function loadBackendStages() {
+    try {
+        const res = await fetch(`${API_BASE}/api/stages`);
+        if (res.ok) {
+            const data = await res.json();
+            if (data.stages && Array.isArray(data.stages) && data.stages.length > 0) {
+                BACKEND_STAGES = data.stages;
+            }
+        }
+    } catch (e) {
+        console.warn("Could not fetch /api/stages, using defaults", e);
+    }
+}
+
+const RENDER_STAGES = new Proxy([], {
+    get(target, prop) {
+        if (prop === "length") return BACKEND_STAGES.length;
+        if (!isNaN(prop)) {
+            const s = BACKEND_STAGES[prop];
+            return s ? { id: s.id, name: s.label || s.name, key: s.key } : undefined;
+        }
+        if (prop === "findIndex" || prop === "find" || prop === "map" || prop === "forEach" || prop === "some") {
+            const mapped = BACKEND_STAGES.map(s => ({ id: s.id, name: s.label || s.name, key: s.key }));
+            return mapped[prop].bind(mapped);
+        }
+        return BACKEND_STAGES[prop];
+    }
+});
 
 function setGenerateButtonsDisabled(disabled) {
     const launchRenderBtn = document.getElementById("btn-launch-render");
@@ -1483,6 +1519,7 @@ async function startRenderPipeline() {
         updateEngineStatusBadge(true);
 
         // Reset Stage Visuals
+        LAST_KNOWN_STAGES_DATA = null;
         updateRenderStagesUI(1);
         resetQualityChecksUI();
 
@@ -1730,58 +1767,214 @@ function updateJobConfigSummaryUI(cfgLine = null) {
     `;
 }
 
-function updateRenderStagesUI(activeStageId, failedStageId = null) {
-    for (let i = 1; i <= 10; i++) {
-        const row = document.querySelector(`.render-stage-row[data-stage-id="${i}"]`);
-        if (!row) continue;
+function ensureStageRowsExist(stages) {
+    const listEl = document.getElementById("render-stages-list");
+    if (!listEl) return;
+    const existingRows = listEl.querySelectorAll(".render-stage-row");
+    if (existingRows.length === stages.length) return;
+
+    listEl.innerHTML = "";
+    stages.forEach(s => {
+        const row = document.createElement("div");
+        row.className = "render-stage-row pending";
+        row.setAttribute("data-stage-id", s.id);
+        row.setAttribute("data-stage-key", s.key || "");
+
+        row.innerHTML = `
+            <div class="stage-row-main" onclick="toggleStageRow(${s.id})">
+                <div class="stage-left-info">
+                    <div class="stage-status-bullet">${s.id}</div>
+                    <div class="stage-label-title">${escapeHtml(s.label || s.name || `Stage ${s.id}`)}</div>
+                </div>
+                <div class="stage-right-info">
+                    <span class="stage-duration-badge" style="display: none;"></span>
+                    <span class="badge stage-badge">PENDING</span>
+                    <button class="stage-expand-btn" aria-label="Toggle details" title="Toggle evidence" onclick="event.stopPropagation(); toggleStageRow(${s.id});">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="stage-evidence-line" id="stage-evidence-${s.id}">
+                <span class="evidence-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></span>
+                <span class="evidence-text">Pending prerequisites…</span>
+            </div>
+        `;
+        listEl.appendChild(row);
+    });
+}
+
+window.toggleStageRow = function(stageId) {
+    const row = document.querySelector(`.render-stage-row[data-stage-id="${stageId}"]`);
+    if (row) {
+        row.classList.toggle("collapsed");
+    }
+};
+
+let LAST_KNOWN_STAGES_DATA = null;
+
+function updateRenderStagesUI(stagesInput, failedStageId = null) {
+    let stagesData = [];
+    if (Array.isArray(stagesInput) && stagesInput.length > 0) {
+        stagesData = stagesInput;
+        LAST_KNOWN_STAGES_DATA = stagesInput;
+    } else if (LAST_KNOWN_STAGES_DATA && LAST_KNOWN_STAGES_DATA.length > 0) {
+        stagesData = LAST_KNOWN_STAGES_DATA;
+    } else {
+        // Fallback for integer activeStageId
+        const activeStageId = typeof stagesInput === "number" ? stagesInput : 1;
+        stagesData = BACKEND_STAGES.map(s => {
+            let st = "PENDING";
+            let reason = "";
+            let evidence = "";
+            if (failedStageId && s.id === failedStageId) {
+                st = "FAILED";
+                reason = "Execution error";
+                evidence = "Failed: Execution error";
+            } else if (failedStageId && s.id < failedStageId) {
+                st = "DONE";
+                evidence = "Stage completed successfully";
+            } else if (s.id < activeStageId) {
+                st = "DONE";
+                evidence = "Stage completed successfully";
+            } else if (s.id === activeStageId) {
+                st = "RUNNING";
+                evidence = "Processing in progress…";
+            }
+            return {
+                id: s.id,
+                key: s.key,
+                label: s.label || s.name,
+                status: st,
+                duration_sec: 0,
+                evidence: evidence,
+                reason: reason
+            };
+        });
+    }
+
+    ensureStageRowsExist(stagesData);
+
+    let runningStageNum = null;
+    let completedCount = 0;
+
+    stagesData.forEach(s => {
+        const row = document.querySelector(`.render-stage-row[data-stage-id="${s.id}"]`);
+        if (!row) return;
+
         const badge = row.querySelector(".stage-badge");
         const bullet = row.querySelector(".stage-status-bullet");
+        const durEl = row.querySelector(".stage-duration-badge");
+        const evTextEl = row.querySelector(".evidence-text");
+        const titleEl = row.querySelector(".stage-label-title");
 
-        row.classList.remove("pending", "running", "done", "failed");
+        if (titleEl && s.label) {
+            titleEl.innerText = s.label;
+        }
 
-        if (failedStageId && i === failedStageId) {
-            row.classList.add("failed");
+        const status = (s.status || "PENDING").toUpperCase();
+        row.classList.remove("pending", "running", "done", "skipped", "cached", "failed");
+        row.classList.add(status.toLowerCase());
+
+        // Duration badge (real duration at right of the row)
+        if (durEl) {
+            if (typeof s.duration_sec === "number" && s.duration_sec > 0) {
+                durEl.style.display = "inline-flex";
+                durEl.innerText = `${s.duration_sec.toFixed(2)}s`;
+            } else {
+                durEl.style.display = "none";
+            }
+        }
+
+        // Status badge & bullet
+        if (status === "DONE") {
+            completedCount++;
+            if (badge) {
+                badge.className = "badge badge-emerald stage-badge";
+                badge.innerText = "DONE";
+                badge.title = "Real work verified";
+            }
+            if (bullet) bullet.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+        } else if (status === "SKIPPED") {
+            completedCount++;
+            const skipReason = s.reason || "turned off in settings";
+            if (badge) {
+                badge.className = "badge badge-skipped stage-badge";
+                badge.innerText = "SKIPPED";
+                badge.title = `Skipped: ${skipReason}`;
+            }
+            if (bullet) bullet.innerText = "—";
+        } else if (status === "CACHED") {
+            completedCount++;
+            let cacheTitle = "Cached analysis";
+            if (s.details && (s.details.cached_hash || s.details.hash)) {
+                const h = s.details.cached_hash || s.details.hash;
+                const d = s.details.cached_at || s.details.analyzed_at || "previously cached";
+                const v = s.details.analyzer_version || "1.0";
+                cacheTitle = `Hash: ${h} | Analyzed: ${d} | Ver: ${v}`;
+            }
+            if (badge) {
+                badge.className = "badge badge-cached stage-badge";
+                badge.innerText = "CACHED";
+                badge.title = cacheTitle;
+            }
+            if (bullet) bullet.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>';
+        } else if (status === "FAILED") {
             if (badge) {
                 badge.className = "badge badge-error stage-badge";
                 badge.innerText = "FAILED";
+                badge.title = s.reason || "Stage execution failed";
             }
             if (bullet) bullet.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
-        } else if (failedStageId && i < failedStageId) {
-            row.classList.add("done");
+        } else if (status === "RUNNING") {
+            runningStageNum = s.id;
             if (badge) {
-                badge.className = "badge badge-emerald stage-badge";
-                badge.innerText = "VERIFIED";
-            }
-            if (bullet) bullet.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
-        } else if (failedStageId && i > failedStageId) {
-            row.classList.add("pending");
-            if (badge) {
-                badge.className = "badge stage-badge";
-                badge.innerText = "PENDING";
-            }
-            if (bullet) bullet.innerText = i;
-        } else if (i < activeStageId) {
-            row.classList.add("done");
-            if (badge) {
-                badge.className = "badge badge-emerald stage-badge";
-                badge.innerText = "VERIFIED";
-            }
-            if (bullet) bullet.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
-        } else if (i === activeStageId) {
-            row.classList.add("running");
-            if (badge) {
-                badge.className = "badge badge-emerald stage-badge";
+                badge.className = "badge badge-emerald stage-badge pulse";
                 badge.innerText = "RUNNING";
+                badge.title = "Executing real work";
             }
-            if (bullet) bullet.innerText = i;
+            if (bullet) bullet.innerText = s.id;
         } else {
-            row.classList.add("pending");
+            // PENDING
             if (badge) {
                 badge.className = "badge stage-badge";
                 badge.innerText = "PENDING";
+                badge.title = "Pending prerequisites";
             }
-            if (bullet) bullet.innerText = i;
+            if (bullet) bullet.innerText = s.id;
         }
+
+        // Expandable evidence line
+        if (evTextEl) {
+            if (s.evidence) {
+                evTextEl.innerText = s.evidence;
+            } else if (status === "SKIPPED") {
+                evTextEl.innerText = `Skipped: ${s.reason || "turned off in settings"}`;
+            } else if (status === "RUNNING") {
+                evTextEl.innerText = "Executing real pipeline workload…";
+            } else if (status === "FAILED") {
+                evTextEl.innerText = `Failed: ${s.reason || "Stage order or data dependency error"}`;
+            } else if (status === "DONE") {
+                evTextEl.innerText = "Verified complete.";
+            } else {
+                evTextEl.innerText = "Waiting for prerequisites…";
+            }
+        }
+    });
+
+    // Update Stage fraction badge & top title
+    const fractionEl = document.getElementById("render-stage-fraction");
+    const stageNameEl = document.getElementById("render-stage-name");
+
+    if (runningStageNum !== null) {
+        if (fractionEl) fractionEl.innerText = `Stage ${runningStageNum} of 10`;
+        const activeDef = stagesData.find(s => s.id === runningStageNum);
+        if (stageNameEl && activeDef) stageNameEl.innerText = activeDef.label || activeDef.name;
+    } else if (completedCount >= 10) {
+        if (fractionEl) fractionEl.innerText = "10 of 10 Complete";
+        if (stageNameEl) stageNameEl.innerText = "All Pipeline Stages Complete";
+    } else if (failedStageId || stagesData.some(s => s.status === "FAILED")) {
+        const fStage = stagesData.find(s => s.status === "FAILED") || { id: failedStageId };
+        if (fractionEl) fractionEl.innerText = `Stage ${fStage.id} Failed`;
     }
 }
 
@@ -2781,7 +2974,11 @@ async function checkEngineStatus() {
                     state.liveStatusMsg = `Stage ${state.renderStageIndex}/10: ${data.stageName}`;
                 }
                 updateRenderHeroUI(state.renderProgress);
-                updateRenderStagesUI(state.renderStageIndex);
+                if (data.stages && Array.isArray(data.stages)) {
+                    updateRenderStagesUI(data.stages);
+                } else {
+                    updateRenderStagesUI(state.renderStageIndex);
+                }
 
             } else if (data.status === "completed" || (data.jobResult && data.jobResult.success)) {
                 // Background process finished with verified success
@@ -2804,7 +3001,11 @@ async function checkEngineStatus() {
                 state.renderProgress = 100;
                 state.renderStageIndex = 10;
                 updateRenderHeroUI(100);
-                updateRenderStagesUI(11);
+                if (data.stages && Array.isArray(data.stages)) {
+                    updateRenderStagesUI(data.stages);
+                } else {
+                    updateRenderStagesUI(11);
+                }
                 updateQualityChecksProgress(100);
 
                 const newFileName = data.generatedFile || (data.jobResult && data.jobResult.output_file);
@@ -2862,10 +3063,14 @@ async function checkEngineStatus() {
                 // Highlight failed stage
                 let failedStageId = data.stageIndex || state.renderStageIndex || 1;
                 if (data.failedStage) {
-                    const fIdx = RENDER_STAGES.findIndex(s => s.name.toLowerCase().includes(data.failedStage.toLowerCase()));
+                    const fIdx = RENDER_STAGES.findIndex(s => (s.name || "").toLowerCase().includes(data.failedStage.toLowerCase()));
                     if (fIdx >= 0) failedStageId = fIdx + 1;
                 }
-                updateRenderStagesUI(state.renderStageIndex, failedStageId);
+                if (data.stages && Array.isArray(data.stages)) {
+                    updateRenderStagesUI(data.stages, failedStageId);
+                } else {
+                    updateRenderStagesUI(state.renderStageIndex, failedStageId);
+                }
 
                 // Hide ETA on failed jobs (Fix 6c)
                 const remainWrap = document.getElementById("render-telemetry-remaining");

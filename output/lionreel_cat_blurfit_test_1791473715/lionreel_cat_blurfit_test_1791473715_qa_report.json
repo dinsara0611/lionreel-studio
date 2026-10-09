@@ -1,0 +1,72 @@
+{
+  "video_file": "C:\\LionReel\\work\\lionreel_cat_blurfit_test_1791473715\\lionreel_cat_blurfit_test_1791473715.mp4",
+  "overall_passed": true,
+  "verdict": "PASSED \u2014 READY FOR UPLOAD",
+  "stream_specs": {
+    "passed": true,
+    "width": 1080,
+    "height": 1920,
+    "codec": "h264",
+    "profile": "High",
+    "bitrate_kbps": 8505,
+    "duration_sec": 20.03
+  },
+  "defects": {
+    "passed": true,
+    "black_hits": 0,
+    "freeze_hits": 0,
+    "details": []
+  },
+  "loudness": {
+    "passed": true,
+    "integrated_lufs": -14.18,
+    "true_peak_dbtp": -1.49,
+    "lra": 11.6
+  },
+  "pet_centering": {
+    "passed": true,
+    "compliance_ratio": 1.0,
+    "visibility_ratio": 1.0,
+    "horizontal_ratio": 1.0,
+    "vertical_ratio": 1.0,
+    "size_ratio": 1.0,
+    "passed_frames": 18,
+    "detected_frames": 18,
+    "sampled_frames": 24,
+    "layout_mode": "blur_fit",
+    "details": []
+  },
+  "layout_fill": {
+    "passed": true,
+    "reason": "BLUR_FIT_LAYOUT_VERIFIED",
+    "checked_frames": 16
+  },
+  "watermark_gate": {
+    "passed": true,
+    "detected_corner": null,
+    "confidence": 0.0,
+    "reason": "Clean corners (no watermark detected)"
+  },
+  "cartoon_classifier": {
+    "passed": true,
+    "mean_negative_probability": 0.0,
+    "negative_votes": 0,
+    "sampled_frames": 24
+  },
+  "sharpness": {
+    "passed": true,
+    "median_sharpness": 1352.6,
+    "min_sharpness": 66.9,
+    "max_sharpness": 1598.6,
+    "low_sharp_frame_ratio": 0.0
+  },
+  "captions": {
+    "passed": true,
+    "violations": 0,
+    "checked_frames": 16
+  },
+  "source_guard": {
+    "passed": true
+  },
+  "contact_sheet": "C:\\LionReel\\work\\lionreel_cat_blurfit_test_1791473715\\lionreel_cat_blurfit_test_1791473715_contact_sheet.png"
+}

@@ -1,0 +1,946 @@
+{
+  "normal": {
+    "job_id": "trace_normal_1791527853",
+    "name": "normal",
+    "duration": 291.67793583869934,
+    "res": "G:\\My Drive\\Cat make\\finished\\trace_normal_1791527853.mp4",
+    "timings": {
+      "job_id": "trace_normal_1791527853",
+      "total_duration_sec": 256.06,
+      "stages": {
+        "startup_imports": {
+          "duration_sec": 9.04,
+          "duration_ms": 9037.0,
+          "percentage": 3.5
+        },
+        "folder_setup": {
+          "duration_sec": 0.01,
+          "duration_ms": 14.0,
+          "percentage": 0.0
+        },
+        "harvest": {
+          "duration_sec": 0.01,
+          "duration_ms": 9.2,
+          "percentage": 0.0
+        },
+        "ledger_reserve": {
+          "duration_sec": 0.33,
+          "duration_ms": 325.4,
+          "percentage": 0.1
+        },
+        "ffprobe": {
+          "duration_sec": 0.1,
+          "duration_ms": 100.4,
+          "percentage": 0.0
+        },
+        "watermark": {
+          "duration_sec": 25.23,
+          "duration_ms": 25225.9,
+          "percentage": 9.9
+        },
+        "tracking": {
+          "duration_sec": 83.02,
+          "duration_ms": 83023.2,
+          "percentage": 32.4
+        },
+        "reframe": {
+          "duration_sec": 49.2,
+          "duration_ms": 49196.8,
+          "percentage": 19.2
+        },
+        "caption": {
+          "duration_sec": 15.61,
+          "duration_ms": 15614.2,
+          "percentage": 6.1
+        },
+        "audio": {
+          "duration_sec": 13.03,
+          "duration_ms": 13030.9,
+          "percentage": 5.1
+        },
+        "render": {
+          "duration_sec": 26.35,
+          "duration_ms": 26350.7,
+          "percentage": 10.3
+        },
+        "qa": {
+          "duration_sec": 33.56,
+          "duration_ms": 33564.4,
+          "percentage": 13.1
+        },
+        "export_copy": {
+          "duration_sec": 0.57,
+          "duration_ms": 565.5,
+          "percentage": 0.2
+        }
+      },
+      "table": "====================================================================\n  STAGE TIMING BREAKDOWN \u2014 JOB: trace_normal_1791527853\n====================================================================\nSTAGE                      | TIME (s)   | TIME (ms)    | SHARE   \n--------------------------------------------------------------------\nstartup_imports            | 9.04       | 9037.0       |   3.5%\nfolder_setup               | 0.01       | 14.0         |   0.0%\nledger_reserve             | 0.33       | 325.4        |   0.1%\nharvest                    | 0.01       | 9.2          |   0.0%\nffprobe                    | 0.10       | 100.4        |   0.0%\nwatermark                  | 25.23      | 25225.9      |   9.9%\ntracking                   | 83.02      | 83023.2      |  32.4%\nreframe                    | 49.20      | 49196.8      |  19.2%\ncaption                    | 15.61      | 15614.2      |   6.1%\naudio                      | 13.03      | 13030.9      |   5.1%\nrender                     | 26.35      | 26350.7      |  10.3%\nqa                         | 33.56      | 33564.4      |  13.1%\nexport_copy                | 0.57       | 565.5        |   0.2%\n--------------------------------------------------------------------\nTOTAL PIPELINE TIME        | 256.06     | 256057.7     | 100.0%\n===================================================================="
+    },
+    "job_res": {
+      "job_id": "trace_normal_1791527853",
+      "status": "completed",
+      "success": true,
+      "stage_index": 10,
+      "stage_name": "Preparing export packages for TikTok, Reels & Shorts",
+      "progress_pct": 100,
+      "candidate_reports": [
+        {
+          "candidate": 1,
+          "clip_id": "c_byh9_120_127",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 119.375,
+          "dur_s": 10.0,
+          "score": 0.8,
+          "sharpness": 608.8,
+          "pet_ratio": 0.5,
+          "vis_ratio": 1.0,
+          "horiz_ratio": 1.0,
+          "vert_ratio": 1.0,
+          "size_ratio": 0.8,
+          "measured": true,
+          "actual_score": null,
+          "result": "REJECT",
+          "reason": "PREDICTED_BAD_FRAMING (Score: 80.0% < 88% \u2014 Vis:100.0%, H:100.0%, V:100.0%, S:80.0%)"
+        },
+        {
+          "candidate": 2,
+          "clip_id": "c_byh9_95_102",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 94.375,
+          "dur_s": 10.0,
+          "score": 0.9,
+          "sharpness": 1456.9,
+          "pet_ratio": 1.0,
+          "vis_ratio": 1.0,
+          "horiz_ratio": 1.0,
+          "vert_ratio": 1.0,
+          "size_ratio": 0.9,
+          "measured": true,
+          "actual_score": 0.957,
+          "result": "PASS",
+          "reason": "PREDICT_PASS",
+          "plan": {
+            "status": "pass",
+            "mode": "smart_crop",
+            "orig_size": [
+              1920,
+              1080
+            ],
+            "crop_w": 542,
+            "crop_h": 964,
+            "keyframes_t": [
+              0.0,
+              1.1111111111111143,
+              2.2222222222222285,
+              3.3333333333333286,
+              5.555555555555557,
+              6.666666666666671,
+              7.7777777777777715,
+              10.0
+            ],
+            "keyframes_x": [
+              749.61551893481,
+              749.61551893481,
+              749.61551893481,
+              736.7987588642175,
+              723.858126267459,
+              723.858126267459,
+              723.858126267459,
+              745.2358532489344
+            ],
+            "keyframes_y": [
+              49,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            "keyframes_zoom": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "framing_score": 0.9,
+            "sharpness": 1456.9,
+            "pet_detected_ratio": 1.0,
+            "details": {
+              "vis": 1.0,
+              "horiz": 1.0,
+              "vert": 1.0,
+              "size": 0.9
+            }
+          },
+          "clip_info": {
+            "clip_id": "c_byh9_95_102",
+            "source_id": "cache_ByH9LuSILxU",
+            "source_url_or_path": "G:\\My Drive\\Cat make\\raw\\cache_ByH9LuSILxU.mp4",
+            "license": "Creative Commons CC-BY 4.0",
+            "start_s": 94.375,
+            "end_s": 104.375,
+            "fingerprint": "[\"1110011001001000000110110110011010010110001110011100110101100010\", \"1110011111001000010100110110010110000110001110111100100000111011\", \"1110010110001000010101110110010110000110001110111100010000111011\", \"1110011111001000010101111110010010011010001110011100100010111011\", \"1110011011001000011101111110010010001010000110011110011010111001\"]",
+            "quality_score": 0.95,
+            "funny_score": 0.9,
+            "animal_type": "cat",
+            "times_used": 0,
+            "last_used_short_id": null,
+            "pending_short_id": null,
+            "pool_cycle": 1,
+            "computed_dur": 10.0
+          }
+        },
+        {
+          "candidate": 3,
+          "clip_id": "c_byh9_190_197",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 189.375,
+          "dur_s": 10.0,
+          "score": 0.9,
+          "sharpness": 2232.5,
+          "pet_ratio": 1.0,
+          "vis_ratio": 0.9,
+          "horiz_ratio": 1.0,
+          "vert_ratio": 1.0,
+          "size_ratio": 1.0,
+          "measured": true,
+          "actual_score": 1.0,
+          "result": "PASS",
+          "reason": "PREDICT_PASS",
+          "plan": {
+            "status": "pass",
+            "mode": "smart_crop",
+            "orig_size": [
+              1920,
+              1080
+            ],
+            "crop_w": 608,
+            "crop_h": 1080,
+            "keyframes_t": [
+              0.0,
+              1.1111111111111143,
+              2.2222222222222285,
+              3.333333333333343,
+              5.555555555555543,
+              6.666666666666657,
+              7.7777777777777715,
+              10.0
+            ],
+            "keyframes_x": [
+              830.6778592889009,
+              830.6778592889009,
+              830.6778592889009,
+              830.6778592889009,
+              842.8917041341616,
+              833.1677930575778,
+              809.0773686096164,
+              756.8284258095572
+            ],
+            "keyframes_y": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "keyframes_zoom": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "framing_score": 0.9,
+            "sharpness": 2232.5,
+            "pet_detected_ratio": 1.0,
+            "details": {
+              "vis": 0.9,
+              "horiz": 1.0,
+              "vert": 1.0,
+              "size": 1.0
+            }
+          },
+          "clip_info": {
+            "clip_id": "c_byh9_190_197",
+            "source_id": "cache_ByH9LuSILxU",
+            "source_url_or_path": "G:\\My Drive\\Cat make\\raw\\cache_ByH9LuSILxU.mp4",
+            "license": "Creative Commons CC-BY 4.0",
+            "start_s": 189.375,
+            "end_s": 199.375,
+            "fingerprint": "[\"1001010000111010110111110011000000110001101110000011011011000001\", \"1001010000111010110111110011000000110001101110000011011011000001\", \"1001010000101010110111010011000000110001101110000011111011010001\", \"1001010000101010110111010011010000110001100110010011101011000011\", \"1001000000101010110111010011010000110001100110000011111011010001\"]",
+            "quality_score": 0.95,
+            "funny_score": 0.9,
+            "animal_type": "cat",
+            "times_used": 0,
+            "last_used_short_id": null,
+            "pending_short_id": null,
+            "pool_cycle": 1,
+            "computed_dur": 10.0
+          }
+        },
+        {
+          "candidate": 4,
+          "clip_id": "c_byh9_16_23",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 15.375,
+          "dur_s": 10.0,
+          "score": 0.143,
+          "sharpness": 291.4,
+          "pet_ratio": 0.7,
+          "vis_ratio": 0.429,
+          "horiz_ratio": 0.286,
+          "vert_ratio": 1.0,
+          "size_ratio": 0.714,
+          "measured": true,
+          "actual_score": null,
+          "result": "REJECT",
+          "reason": "PREDICTED_BAD_FRAMING (Score: 14.3% < 88% \u2014 Vis:42.9%, H:28.6%, V:100.0%, S:71.4%)"
+        },
+        {
+          "candidate": 5,
+          "clip_id": "c_byh9_106_113",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 105.375,
+          "dur_s": 10.0,
+          "score": 0.7,
+          "sharpness": 1097.6,
+          "pet_ratio": 1.0,
+          "vis_ratio": 0.7,
+          "horiz_ratio": 0.9,
+          "vert_ratio": 1.0,
+          "size_ratio": 0.9,
+          "measured": true,
+          "actual_score": null,
+          "result": "REJECT",
+          "reason": "PREDICTED_BAD_FRAMING (Score: 70.0% < 88% \u2014 Vis:70.0%, H:90.0%, V:100.0%, S:90.0%)"
+        },
+        {
+          "candidate": 6,
+          "clip_id": "c_byh9_135_142",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 134.375,
+          "dur_s": 10.0,
+          "measured": false,
+          "pet_ratio": null,
+          "vis_ratio": null,
+          "horiz_ratio": null,
+          "vert_ratio": null,
+          "size_ratio": null,
+          "sharpness": null,
+          "score": null,
+          "actual_score": null,
+          "result": "REJECT",
+          "reason": "WATERMARK (bottom_left: WOA Network logo detected in bottom-left corner)"
+        },
+        {
+          "candidate": 7,
+          "clip_id": "c_byh9_166_173",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 165.375,
+          "dur_s": 10.0,
+          "score": 0.25,
+          "sharpness": 1111.9,
+          "pet_ratio": 0.8,
+          "vis_ratio": 0.375,
+          "horiz_ratio": 0.875,
+          "vert_ratio": 1.0,
+          "size_ratio": 0.75,
+          "measured": true,
+          "actual_score": null,
+          "result": "REJECT",
+          "reason": "PREDICTED_BAD_FRAMING (Score: 25.0% < 88% \u2014 Vis:37.5%, H:87.5%, V:100.0%, S:75.0%)"
+        },
+        {
+          "candidate": 8,
+          "clip_id": "c_byh9_180_187",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 179.375,
+          "dur_s": 10.0,
+          "score": 0.7,
+          "sharpness": 2019.2,
+          "pet_ratio": 1.0,
+          "vis_ratio": 0.8,
+          "horiz_ratio": 0.8,
+          "vert_ratio": 0.8,
+          "size_ratio": 0.9,
+          "measured": true,
+          "actual_score": null,
+          "result": "REJECT",
+          "reason": "PREDICTED_BAD_FRAMING (Score: 70.0% < 88% \u2014 Vis:80.0%, H:80.0%, V:80.0%, S:90.0%)"
+        },
+        {
+          "candidate": 9,
+          "clip_id": "c_cache_ByH9LuSILxU_112_118",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 111.224,
+          "dur_s": 10.0,
+          "score": 0.7,
+          "sharpness": 896.7,
+          "pet_ratio": 1.0,
+          "vis_ratio": 0.7,
+          "horiz_ratio": 1.0,
+          "vert_ratio": 1.0,
+          "size_ratio": 1.0,
+          "measured": true,
+          "actual_score": null,
+          "result": "REJECT",
+          "reason": "PREDICTED_BAD_FRAMING (Score: 70.0% < 88% \u2014 Vis:70.0%, H:100.0%, V:100.0%, S:100.0%)"
+        },
+        {
+          "candidate": 10,
+          "clip_id": "c_cache_ByH9LuSILxU_160_165",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 158.466,
+          "dur_s": 10.0,
+          "score": 0.1,
+          "sharpness": 1254.1,
+          "pet_ratio": 1.0,
+          "vis_ratio": 0.1,
+          "horiz_ratio": 0.4,
+          "vert_ratio": 1.0,
+          "size_ratio": 0.6,
+          "measured": true,
+          "actual_score": null,
+          "result": "REJECT",
+          "reason": "PREDICTED_BAD_FRAMING (Score: 10.0% < 88% \u2014 Vis:10.0%, H:40.0%, V:100.0%, S:60.0%)"
+        },
+        {
+          "candidate": 11,
+          "clip_id": "c_cache_ByH9LuSILxU_90_95",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 88.847,
+          "dur_s": 10.0,
+          "score": 0.333,
+          "sharpness": 278.5,
+          "pet_ratio": 0.9,
+          "vis_ratio": 0.333,
+          "horiz_ratio": 0.444,
+          "vert_ratio": 1.0,
+          "size_ratio": 0.778,
+          "measured": true,
+          "actual_score": null,
+          "result": "REJECT",
+          "reason": "PREDICTED_BAD_FRAMING (Score: 33.3% < 88% \u2014 Vis:33.3%, H:44.4%, V:100.0%, S:77.8%)"
+        },
+        {
+          "candidate": 12,
+          "clip_id": "c_cache_ByH9LuSILxU_347_352",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 345.439,
+          "dur_s": 10.0,
+          "score": 0.444,
+          "sharpness": 764.4,
+          "pet_ratio": 0.9,
+          "vis_ratio": 0.444,
+          "horiz_ratio": 1.0,
+          "vert_ratio": 1.0,
+          "size_ratio": 1.0,
+          "measured": true,
+          "actual_score": null,
+          "result": "REJECT",
+          "reason": "PREDICTED_BAD_FRAMING (Score: 44.4% < 88% \u2014 Vis:44.4%, H:100.0%, V:100.0%, S:100.0%)"
+        },
+        {
+          "candidate": 13,
+          "clip_id": "c_cache_ByH9LuSILxU_140_145",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 138.575,
+          "dur_s": 10.0,
+          "score": 0.0,
+          "sharpness": 502.0,
+          "pet_ratio": 1.0,
+          "vis_ratio": 0.4,
+          "horiz_ratio": 0.6,
+          "vert_ratio": 0.3,
+          "size_ratio": 1.0,
+          "measured": true,
+          "actual_score": null,
+          "result": "REJECT",
+          "reason": "PREDICTED_BAD_FRAMING (Score: 0.0% < 88% \u2014 Vis:40.0%, H:60.0%, V:30.0%, S:100.0%)"
+        },
+        {
+          "candidate": 14,
+          "clip_id": "c_cache_ByH9LuSILxU_227_232",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 226.094,
+          "dur_s": 10.0,
+          "score": 0.444,
+          "sharpness": 668.8,
+          "pet_ratio": 0.9,
+          "vis_ratio": 0.889,
+          "horiz_ratio": 1.0,
+          "vert_ratio": 0.444,
+          "size_ratio": 0.444,
+          "measured": true,
+          "actual_score": null,
+          "result": "REJECT",
+          "reason": "PREDICTED_BAD_FRAMING (Score: 44.4% < 88% \u2014 Vis:88.9%, H:100.0%, V:44.4%, S:44.4%)"
+        }
+      ],
+      "output_file": "trace_normal_1791527853.mp4",
+      "output_path": "G:\\My Drive\\Cat make\\finished\\trace_normal_1791527853.mp4",
+      "sha256": "2590faa79cedf14caa7192fbb2ba2034d53088027f97a84f29ba835458ff0e65",
+      "duration": 20.0,
+      "expected_duration_s": 20.0,
+      "real_duration_s": 20.09,
+      "config_line": "CONFIG: mode=short layout=smart_crop clips=2 clip_time=10.0s expected_total=20.0s pace=fast slicing=peak_viral",
+      "clip_list": [
+        "c_byh9_95_102",
+        "c_byh9_190_197"
+      ],
+      "render_time_sec": 253.0,
+      "title": "Cats Being Pure Chaos (Impossible Not To Smile) \ud83d\udc3e",
+      "timings": {
+        "startup_imports": {
+          "duration_sec": 9.04,
+          "duration_ms": 9037.0,
+          "percentage": 3.5
+        },
+        "folder_setup": {
+          "duration_sec": 0.01,
+          "duration_ms": 14.0,
+          "percentage": 0.0
+        },
+        "harvest": {
+          "duration_sec": 0.01,
+          "duration_ms": 9.2,
+          "percentage": 0.0
+        },
+        "ledger_reserve": {
+          "duration_sec": 0.33,
+          "duration_ms": 325.4,
+          "percentage": 0.1
+        },
+        "ffprobe": {
+          "duration_sec": 0.1,
+          "duration_ms": 100.4,
+          "percentage": 0.0
+        },
+        "watermark": {
+          "duration_sec": 25.23,
+          "duration_ms": 25225.9,
+          "percentage": 9.9
+        },
+        "tracking": {
+          "duration_sec": 83.02,
+          "duration_ms": 83023.2,
+          "percentage": 32.4
+        },
+        "reframe": {
+          "duration_sec": 49.2,
+          "duration_ms": 49196.8,
+          "percentage": 19.2
+        },
+        "caption": {
+          "duration_sec": 15.61,
+          "duration_ms": 15614.2,
+          "percentage": 6.1
+        },
+        "audio": {
+          "duration_sec": 13.03,
+          "duration_ms": 13030.9,
+          "percentage": 5.1
+        },
+        "render": {
+          "duration_sec": 26.35,
+          "duration_ms": 26350.7,
+          "percentage": 10.3
+        },
+        "qa": {
+          "duration_sec": 33.56,
+          "duration_ms": 33564.4,
+          "percentage": 13.1
+        },
+        "export_copy": {
+          "duration_sec": 0.57,
+          "duration_ms": 565.5,
+          "percentage": 0.2
+        }
+      }
+    }
+  },
+  "fresh": {
+    "job_id": "trace_fresh_1791528140",
+    "name": "fresh",
+    "duration": 95.96881103515625,
+    "res": null,
+    "timings": {
+      "job_id": "trace_fresh_1791528140",
+      "total_duration_sec": 383.52,
+      "stages": {
+        "startup_imports": {
+          "duration_sec": 296.43,
+          "duration_ms": 296431.0,
+          "percentage": 77.3
+        },
+        "folder_setup": {
+          "duration_sec": 0.02,
+          "duration_ms": 18.4,
+          "percentage": 0.0
+        },
+        "harvest": {
+          "duration_sec": 0.01,
+          "duration_ms": 8.4,
+          "percentage": 0.0
+        },
+        "ledger_reserve": {
+          "duration_sec": 0.24,
+          "duration_ms": 238.2,
+          "percentage": 0.1
+        },
+        "ffprobe": {
+          "duration_sec": 0.0,
+          "duration_ms": 0.2,
+          "percentage": 0.0
+        },
+        "watermark": {
+          "duration_sec": 19.21,
+          "duration_ms": 19214.7,
+          "percentage": 5.0
+        },
+        "tracking": {
+          "duration_sec": 67.61,
+          "duration_ms": 67605.3,
+          "percentage": 17.6
+        }
+      },
+      "table": "====================================================================\n  STAGE TIMING BREAKDOWN \u2014 JOB: trace_fresh_1791528140\n====================================================================\nSTAGE                      | TIME (s)   | TIME (ms)    | SHARE   \n--------------------------------------------------------------------\nstartup_imports            | 296.43     | 296431.0     |  77.3%\nfolder_setup               | 0.02       | 18.4         |   0.0%\nledger_reserve             | 0.24       | 238.2        |   0.1%\nharvest                    | 0.01       | 8.4          |   0.0%\nffprobe                    | 0.00       | 0.2          |   0.0%\nwatermark                  | 19.21      | 19214.7      |   5.0%\ntracking                   | 67.61      | 67605.3      |  17.6%\n--------------------------------------------------------------------\nTOTAL PIPELINE TIME        | 383.52     | 383516.3     | 100.0%\n===================================================================="
+    },
+    "job_res": {
+      "job_id": "trace_fresh_1791528140",
+      "status": "error",
+      "success": false,
+      "stage_index": 7,
+      "stage_name": "Smart center-crop to 9:16 vertical shorts",
+      "progress_pct": 50,
+      "candidate_reports": [
+        {
+          "candidate": 1,
+          "clip_id": "c_byh9_120_127",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 119.375,
+          "dur_s": 10.0,
+          "score": 0.8,
+          "sharpness": 608.8,
+          "pet_ratio": 0.5,
+          "vis_ratio": 1.0,
+          "horiz_ratio": 1.0,
+          "vert_ratio": 1.0,
+          "size_ratio": 0.8,
+          "measured": true,
+          "actual_score": null,
+          "result": "REJECT",
+          "reason": "PREDICTED_BAD_FRAMING (Score: 80.0% < 88% \u2014 Vis:100.0%, H:100.0%, V:100.0%, S:80.0%)"
+        },
+        {
+          "candidate": 2,
+          "clip_id": "c_byh9_96_103",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 95.375,
+          "dur_s": 10.0,
+          "score": 0.9,
+          "sharpness": 1470.1,
+          "pet_ratio": 1.0,
+          "vis_ratio": 1.0,
+          "horiz_ratio": 1.0,
+          "vert_ratio": 1.0,
+          "size_ratio": 0.9,
+          "measured": true,
+          "actual_score": null,
+          "result": "PASS",
+          "reason": "PREDICT_PASS",
+          "plan": {
+            "status": "pass",
+            "mode": "smart_crop",
+            "orig_size": [
+              1920,
+              1080
+            ],
+            "crop_w": 542,
+            "crop_h": 964,
+            "keyframes_t": [
+              0.0,
+              1.1111111111111143,
+              2.2222222222222285,
+              3.3333333333333286,
+              5.555555555555557,
+              6.666666666666671,
+              7.7777777777777715,
+              10.0
+            ],
+            "keyframes_x": [
+              743.5531785807191,
+              743.5531785807191,
+              743.5531785807191,
+              730.2232495394561,
+              730.2232495394561,
+              730.2232495394561,
+              730.2232495394561,
+              730.2232495394561
+            ],
+            "keyframes_y": [
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0
+            ],
+            "keyframes_zoom": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "framing_score": 0.9,
+            "sharpness": 1470.1,
+            "pet_detected_ratio": 1.0,
+            "details": {
+              "vis": 1.0,
+              "horiz": 1.0,
+              "vert": 1.0,
+              "size": 0.9
+            }
+          },
+          "clip_info": {
+            "clip_id": "c_byh9_96_103",
+            "source_id": "cache_ByH9LuSILxU",
+            "source_url_or_path": "G:\\My Drive\\Cat make\\raw\\cache_ByH9LuSILxU.mp4",
+            "license": "Creative Commons CC-BY 4.0",
+            "start_s": 95.375,
+            "end_s": 105.375,
+            "fingerprint": "[\"1110011111001000010100110110010010000110001110111100110000111011\", \"1110011110001000010100110110010110000110001110111100110000111011\", \"1110011111001000011101111110010010001010001110011100010010111011\", \"1110011111001000011101110110010010000010001111011100010010111011\", \"1110010110011000011101111110110010000010001110011100011010110011\"]",
+            "quality_score": 0.95,
+            "funny_score": 0.9,
+            "animal_type": "cat",
+            "times_used": 0,
+            "last_used_short_id": null,
+            "pending_short_id": null,
+            "pool_cycle": 1,
+            "computed_dur": 10.0
+          }
+        },
+        {
+          "candidate": 3,
+          "clip_id": "c_byh9_16_23",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 15.375,
+          "dur_s": 10.0,
+          "score": 0.143,
+          "sharpness": 291.4,
+          "pet_ratio": 0.7,
+          "vis_ratio": 0.429,
+          "horiz_ratio": 0.286,
+          "vert_ratio": 1.0,
+          "size_ratio": 0.714,
+          "measured": true,
+          "actual_score": null,
+          "result": "REJECT",
+          "reason": "PREDICTED_BAD_FRAMING (Score: 14.3% < 88% \u2014 Vis:42.9%, H:28.6%, V:100.0%, S:71.4%)"
+        },
+        {
+          "candidate": 4,
+          "clip_id": "c_byh9_106_113",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 105.375,
+          "dur_s": 10.0,
+          "score": 0.7,
+          "sharpness": 1097.6,
+          "pet_ratio": 1.0,
+          "vis_ratio": 0.7,
+          "horiz_ratio": 0.9,
+          "vert_ratio": 1.0,
+          "size_ratio": 0.9,
+          "measured": true,
+          "actual_score": null,
+          "result": "REJECT",
+          "reason": "PREDICTED_BAD_FRAMING (Score: 70.0% < 88% \u2014 Vis:70.0%, H:90.0%, V:100.0%, S:90.0%)"
+        },
+        {
+          "candidate": 5,
+          "clip_id": "c_byh9_135_142",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 134.375,
+          "dur_s": 10.0,
+          "measured": false,
+          "pet_ratio": null,
+          "vis_ratio": null,
+          "horiz_ratio": null,
+          "vert_ratio": null,
+          "size_ratio": null,
+          "sharpness": null,
+          "score": null,
+          "actual_score": null,
+          "result": "REJECT",
+          "reason": "WATERMARK (bottom_left: WOA Network logo detected in bottom-left corner)"
+        },
+        {
+          "candidate": 6,
+          "clip_id": "c_byh9_166_173",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 165.375,
+          "dur_s": 10.0,
+          "score": 0.25,
+          "sharpness": 1111.9,
+          "pet_ratio": 0.8,
+          "vis_ratio": 0.375,
+          "horiz_ratio": 0.875,
+          "vert_ratio": 1.0,
+          "size_ratio": 0.75,
+          "measured": true,
+          "actual_score": null,
+          "result": "REJECT",
+          "reason": "PREDICTED_BAD_FRAMING (Score: 25.0% < 88% \u2014 Vis:37.5%, H:87.5%, V:100.0%, S:75.0%)"
+        },
+        {
+          "candidate": 7,
+          "clip_id": "c_byh9_180_187",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 179.375,
+          "dur_s": 10.0,
+          "score": 0.7,
+          "sharpness": 2019.2,
+          "pet_ratio": 1.0,
+          "vis_ratio": 0.8,
+          "horiz_ratio": 0.8,
+          "vert_ratio": 0.8,
+          "size_ratio": 0.9,
+          "measured": true,
+          "actual_score": null,
+          "result": "REJECT",
+          "reason": "PREDICTED_BAD_FRAMING (Score: 70.0% < 88% \u2014 Vis:80.0%, H:80.0%, V:80.0%, S:90.0%)"
+        },
+        {
+          "candidate": 8,
+          "clip_id": "c_cache_ByH9LuSILxU_112_118",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 111.224,
+          "dur_s": 10.0,
+          "score": 0.7,
+          "sharpness": 896.7,
+          "pet_ratio": 1.0,
+          "vis_ratio": 0.7,
+          "horiz_ratio": 1.0,
+          "vert_ratio": 1.0,
+          "size_ratio": 1.0,
+          "measured": true,
+          "actual_score": null,
+          "result": "REJECT",
+          "reason": "PREDICTED_BAD_FRAMING (Score: 70.0% < 88% \u2014 Vis:70.0%, H:100.0%, V:100.0%, S:100.0%)"
+        },
+        {
+          "candidate": 9,
+          "clip_id": "c_cache_ByH9LuSILxU_160_165",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 158.466,
+          "dur_s": 10.0,
+          "score": 0.1,
+          "sharpness": 1254.1,
+          "pet_ratio": 1.0,
+          "vis_ratio": 0.1,
+          "horiz_ratio": 0.4,
+          "vert_ratio": 1.0,
+          "size_ratio": 0.6,
+          "measured": true,
+          "actual_score": null,
+          "result": "REJECT",
+          "reason": "PREDICTED_BAD_FRAMING (Score: 10.0% < 88% \u2014 Vis:10.0%, H:40.0%, V:100.0%, S:60.0%)"
+        },
+        {
+          "candidate": 10,
+          "clip_id": "c_cache_ByH9LuSILxU_90_95",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 88.847,
+          "dur_s": 10.0,
+          "score": 0.333,
+          "sharpness": 278.5,
+          "pet_ratio": 0.9,
+          "vis_ratio": 0.333,
+          "horiz_ratio": 0.444,
+          "vert_ratio": 1.0,
+          "size_ratio": 0.778,
+          "measured": true,
+          "actual_score": null,
+          "result": "REJECT",
+          "reason": "PREDICTED_BAD_FRAMING (Score: 33.3% < 88% \u2014 Vis:33.3%, H:44.4%, V:100.0%, S:77.8%)"
+        },
+        {
+          "candidate": 11,
+          "clip_id": "c_cache_ByH9LuSILxU_347_352",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 345.439,
+          "dur_s": 10.0,
+          "score": 0.444,
+          "sharpness": 764.4,
+          "pet_ratio": 0.9,
+          "vis_ratio": 0.444,
+          "horiz_ratio": 1.0,
+          "vert_ratio": 1.0,
+          "size_ratio": 1.0,
+          "measured": true,
+          "actual_score": null,
+          "result": "REJECT",
+          "reason": "PREDICTED_BAD_FRAMING (Score: 44.4% < 88% \u2014 Vis:44.4%, H:100.0%, V:100.0%, S:100.0%)"
+        },
+        {
+          "candidate": 12,
+          "clip_id": "c_cache_ByH9LuSILxU_140_145",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 138.575,
+          "dur_s": 10.0,
+          "score": 0.0,
+          "sharpness": 502.0,
+          "pet_ratio": 1.0,
+          "vis_ratio": 0.4,
+          "horiz_ratio": 0.6,
+          "vert_ratio": 0.3,
+          "size_ratio": 1.0,
+          "measured": true,
+          "actual_score": null,
+          "result": "REJECT",
+          "reason": "PREDICTED_BAD_FRAMING (Score: 0.0% < 88% \u2014 Vis:40.0%, H:60.0%, V:30.0%, S:100.0%)"
+        },
+        {
+          "candidate": 13,
+          "clip_id": "c_cache_ByH9LuSILxU_227_232",
+          "source": "cache_ByH9LuSILxU.mp4",
+          "start_s": 226.094,
+          "dur_s": 10.0,
+          "score": 0.444,
+          "sharpness": 668.8,
+          "pet_ratio": 0.9,
+          "vis_ratio": 0.889,
+          "horiz_ratio": 1.0,
+          "vert_ratio": 0.444,
+          "size_ratio": 0.444,
+          "measured": true,
+          "actual_score": null,
+          "result": "REJECT",
+          "reason": "PREDICTED_BAD_FRAMING (Score: 44.4% < 88% \u2014 Vis:88.9%, H:100.0%, V:44.4%, S:44.4%)"
+        }
+      ],
+      "error": "JOB FAILED: not enough usable clips (got 1 of 2)",
+      "failed_stage": "Smart center-crop to 9:16 vertical shorts",
+      "output_file": null,
+      "elapsed_seconds": 392.3
+    }
+  }
+}

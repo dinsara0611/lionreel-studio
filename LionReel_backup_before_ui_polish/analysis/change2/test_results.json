@@ -1,0 +1,36 @@
+{
+  "chrome": {
+    "browser": "Google Chrome",
+    "autoplayMuted": true,
+    "mutedTrue": true,
+    "defaultMutedTrue": true,
+    "startedAtZero": true,
+    "pillVisible": true,
+    "pillText": "Muted - tap to unmute",
+    "unmuteWorks": true,
+    "pillDisappears": true,
+    "resumedUnmuted": true,
+    "switchStartsMutedAtZero": true,
+    "offScreenPauses": true,
+    "scrollBackResumes": true,
+    "reducedMotionBlocksAutoplay": true,
+    "mobileLayoutPlaysinline": true
+  },
+  "edge": {
+    "browser": "Microsoft Edge",
+    "autoplayMuted": true,
+    "mutedTrue": true,
+    "defaultMutedTrue": true,
+    "startedAtZero": true,
+    "pillVisible": true,
+    "pillText": "Muted - tap to unmute",
+    "unmuteWorks": true,
+    "pillDisappears": true,
+    "resumedUnmuted": true,
+    "switchStartsMutedAtZero": true,
+    "offScreenPauses": true,
+    "scrollBackResumes": true,
+    "reducedMotionBlocksAutoplay": true,
+    "mobileLayoutPlaysinline": true
+  }
+}
