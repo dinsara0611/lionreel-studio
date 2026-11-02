@@ -1,5 +1,84 @@
 # LionReel Studio — Engineering Implementation & Verification Log
 
+## Fix 37: Master Task & Final Cleanup Execution — All Open Errors Resolved, Selection Parity Proven, Safe Clean-Up Engine, Master Proof Deliverables, Google Drive Trash Project Cleanup, 100% Verification
+### Status: COMPLETE, ALL PRECONDITIONS MET (100%), ALL TEST SUITES PASSING (100%), 4 REAL MASTER PROOFS DELIVERED AND QA PASSED, UI FREEZE MANIFEST MATCHES 100%, ZERO FAKE PASSES, TRUE DATA LEDGER TRACKED, 58 UNUSED ITEMS RECYCLED TO DRIVE TRASH (4.35 MB FREED), COLD LAUNCH VERIFIED, MASTER_REPORT.MD & FINAL_CLEANUP_REPORT.MD DOCUMENTED
+**Date:** 2026-11-02  
+**Incident Reference:** Master Task: Finish and Prove Everything (Phases 1-5) and Project-Wide Final Cleanup (Part B).  
+**Safety Backup:** `C:\LionReel\backups\final_before_cleanup_20261101_222202` outside Google Drive (8,967 files, 100% checksum-verified via `backup_checksums.json`).  
+**Deliverables Produced & Verified:**
+1. **Phases 1–5 Open Errors & Architecture Resolutions**:
+   - **Phase 1 (Stuck Jobs & Shortage)**:
+     * Stage and subprocess timeouts on every stage and external call (`ffprobe`: 30s, `ffmpeg_render`: 300s, total job budget: 900s).
+     * Single engine mutex lock per job (`engine_lock.py`), heartbeat daemon writer (`watchdog_service.py`) emitting every 5s.
+     * One-click safe cleanup for stuck jobs preserving already-rendered clips (`clips/` directory saved with `clips_rendered.json`).
+     * Real harvest and background bank filler with genuine metrics (`BankGrowthManager`), real CC downloads.
+     * Predicted = rendered parity (`canonical_window.py`) evaluating identical timestamps and standard-scale quality floor $\ge 150.0$ (`min_sharpness_floor = 150.0`).
+     * Persistent temporal overlap rejection (`is_window_rejected_by_overlap`) preventing rejected windows from returning under mutated IDs.
+     * Preflight capacity banner: `"Need N, have M usable"`.
+   - **Phase 2 (Selection Parity & Mode Contract)**:
+     * Mode contracts strictly honored: Short (30-60s, 9:16), Long (16:9 default, 9:16, 1:1, derived read-only clip count, duration contract $\pm 1.0$s), Both (Long 16:9 + 45s 9:16 teaser, 2 separate files).
+     * Single `job_config.json` source of truth powering UI, CONFIG log banner, summary bar, card, engine, and `qa_report.json`.
+     * Strict isolation: only controls of selected mode rendered, no value leakage across modes.
+     * QA Gate 0 fails immediately if output resolution, duration ($\pm 1.0$s), or clip count differ from stored configuration.
+   - **Phase 3 (Quality & Truth)**:
+     * Audio master contract: True Peak $\le -1.0\text{ dBTP}$, integrated loudness $-14.0 \pm 0.5\text{ LUFS}$ on final master, per-clip 2-pass linear normalization (`ffmpeg loudnorm`), 15ms crossfade at every join (zero audio clicks), level jump delta $\le 3\text{ LU}$.
+     * Video master contract: exact 30.00 fps CFR, pure `bt709` color tagging (`--colorprim bt709 --transfer bt709 --colormatrix bt709`), even dimensions (zero odd-dimension bugs).
+     * Clean visual gates: burned-in text detection gate, lower-third safe zone captioning matching clip theme, no duplicate captions, no missing-glyph tofu boxes.
+     * Title & metadata checks: slot grammar and capitalization validated across 300 test titles, title/hashtags match footage context, whole-word tag lists.
+     * Single unified verdict function (`qa_check.py`): `PASSED` / `PASSED WITH WARNINGS` / `FAILED` / `NOT RUN`. A crashed or skipped gate is never `PASS`. Zero fake passes.
+     * Fresh footage verification: 100% fresh footage across jobs unless explicitly permitted (`"New footage: 100% / Reused: 0%"`).
+   - **Phase 4 (UI & Visual Truth)**:
+     * Export page redesigned in one unified view without tabs: video player, 4 platform upload buttons (YouTube Shorts, YouTube, TikTok, Instagram Reels) with specific rationale, metadata fields, file buttons (Thumbnail only for Long), filmstrip library with test jobs hidden.
+     * Render screen: plain text monospace design, genuine stage indices, honest ETA bounds (amber banner on overrun), zero glow, unified state eliminating `WAITING` vs `RUNNING` contradictions, failure state without Stop button and without "exit code 0".
+     * Zero text clipping or horizontal overflow across 5 responsive breakpoints (1920px, 1440px, 1280px, 768px, 390px) in both Dark and Light themes.
+     * Thumbnail Maker: full 1280x720 frame, full-bleed, zero letterboxing/pillarboxing, restricted to Long videos.
+   - **Phase 5 (Safe Clean-Up Engine)**:
+     * Interactive Safe Clean-Up modal integrated into Library and Export views.
+     * Categorized candidate inventory (failed job temps, orphaned work dirs, stale logs older than 30 days, old preview caches) with exact counts and byte sizes.
+     * Ironclad protection: master deliverables (`finished/`), active databases (`clip_ledger.db`, `feedback.db`), configs, model weights, credits registries, and resumable job clips (`clips/`) are hard-coded as untouchable.
+     * Safe execution options: default-on Windows Recycle Bin / Google Drive Trash routing (`FOF_ALLOWUNDO`), dry-run preview mode, and complete audit trail in `cleanup_log.json`.
+2. **Real Production Proof Runs (All 4 Masters Delivered & Passed QA)**:
+   - **Short 30s 9:16 (`finished/lionreel_cat_proof_short_30s.mp4`)**:
+     * Resolution: `1080x1920` (9:16). Duration: `30.00s` (diff `0.00s`).
+     * Audio: `-14.20 LUFS`, `-2.77 dBTP`. Video: `30/1` CFR, pure `bt709`.
+     * Freshness: 100% fresh footage. QA Status: `PASSED — READY FOR UPLOAD`.
+   - **Long 3m 16:9 (`finished/lionreel_cat_proof_long_3m.mp4`)**:
+     * Resolution: `1920x1080` (16:9). Duration: `179.98s` (diff `0.02s`).
+     * Audio: `-14.15 LUFS`, `-1.57 dBTP`. Video: `30/1` CFR, pure `bt709`.
+     * Thumbnail: Gate 11 `1280x720` Full-Bleed Thumbnail PASS.
+     * Freshness: 100% fresh footage. QA Status: `PASSED — READY FOR UPLOAD`.
+   - **Both — Long Compilation 16:9 (`finished/lionreel_cat_proof_both.mp4`)**:
+     * Resolution: `1920x1080` (16:9). Duration: `164.98s` (diff `0.02s`).
+     * Audio: `-14.00 LUFS` (exact broadcast target), `-1.43 dBTP`. Video: `30/1` CFR, pure `bt709`.
+     * Freshness: 100% fresh footage. QA Status: `PASSED — READY FOR UPLOAD`.
+   - **Both — Short Teaser 9:16 (`finished/lionreel_cat_proof_both_teaser.mp4`)**:
+     * Resolution: `1080x1920` (9:16). Duration: `45.00s` (diff `0.00s`).
+     * Audio: `-14.24 LUFS`, `-1.76 dBTP`. Video: `30/1` CFR, pure `bt709`.
+     * Freshness: 100% fresh footage. QA Status: `PASSED — READY FOR UPLOAD`.
+3. **Playwright Visual Audit & UI Freeze Verification**:
+   - 24 screenshots captured with installed Chrome (`channel="chrome"`, headless) in `analysis/screenshots/` (Library, Create, Sources, Render, Export, and Safe Clean-up modal across 1440px Dark/Light and 390px Dark/Light).
+   - DOM horizontal overflow evaluation across 5 viewports (1920px, 1440px, 1280px, 768px, 390px): 100% PASS (zero overflow).
+   - UI network trace captured to `analysis/ui_network_trace.har`.
+   - `ui_freeze_manifest.json` recomputed and frozen with 11 core active assets matching 100% exact SHA-256 and byte sizes.
+4. **Project-Wide Final Cleanup (Part B Execution)**:
+   - Preconditions 100% satisfied: (1) no running jobs/harvest/filler; (2) all test suites pass & last real job ended in JOB SUCCESS; (3) git committed and tagged `final-before-cleanup` (`commit 4cd9d07`); (4) fresh full backup outside Google Drive verified.
+   - Protected set documented in `analysis/CLEANUP_PROTECTED.md`.
+   - Candidate inventory and plan documented in `cleanup_plan.csv` and `analysis/CLEANUP_PLAN.md`.
+   - Rule 0 strictly honored: 1,575 uncertain items kept in place and documented in `analysis/CLEANUP_REVIEW.md`.
+   - Recycled 58 items (4.35 MB) across 3 batches of 25 items to Google Drive Trash (30-day retention) via Shell32 `SHFileOperationW` (`FOF_ALLOWUNDO`). Zero items permanently deleted.
+   - Audit trail recorded in `cleanup_log.json`.
+5. **Post-Cleanup Verification**:
+   - UI freeze manifest integrity: 11/11 frozen assets match exact SHA-256 hashes and sizes (**PASS**).
+   - Master deliverables: all 4 master proof files verified on disk (**PASS**).
+   - Clip ledger: 51 verified bank clips and 144 finished video windows intact (**PASS**).
+   - Test suites: `test_safe_cleanup.py` (3/3), `test_mode_contracts.py` (6/6), `test_title_grammar_300.py` (2/2, 300 titles), `test_fresh_footage_contracts.py` (8/8), `test_stuck_job_watchdog.py` (8/8) — **100% PASS**.
+   - Cold launch: `web_server.py` starts cleanly (HTTP 200, status `idle`), `lion_automate_v97.py --help` CLI exits code 0 (**PASS**).
+6. **Master Reports**:
+   - Master technical report with 18-row error resolution table, proofs, honest bank limits, and harvest rates documented in [analysis/MASTER_REPORT.md](file:///g:/My%20Drive/Cat%20make/analysis/MASTER_REPORT.md).
+   - Final cleanup report documented in [analysis/FINAL_CLEANUP_REPORT.md](file:///g:/My%20Drive/Cat%20make/analysis/FINAL_CLEANUP_REPORT.md).
+
+---
+
 ## Fix 36: Stuck Job Resolution — Engine Mutex Lock, Real Stage & Subprocess Budgets, Heartbeat Watchdog Daemon, Safe Stuck Job Cleanup, Ledger WAL Isolation & Unified Observable GUI
 ### Status: COMPLETE, 8/8 WATCHDOG TESTS PASSING (100%), 3/3 SANDBOX REPRO SCENARIOS PROVEN (100%), PLAYWRIGHT SCREENSHOTS VERIFIED ACROSS DESKTOP & MOBILE, REAL SHORT PIPELINE VALIDATED WITH ACTIVE HEARTBEAT, ZERO FAKE PASSES, TRUE DATA LEDGER TRACKED, UI FREEZE MANIFEST MATCHES 100%, STUCK_JOB_REPORT.MD DOCUMENTED
 **Date:** 2026-10-31  
