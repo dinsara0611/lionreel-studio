@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LionReel Studio Production Report: lionreel_dog_20261021_030712_2f2518ef</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 10mm 10mm 10mm 10mm;
+            @bottom-right {
+                content: "Page " counter(page) " of " counter(pages);
+                font-size: 7.5pt;
+                color: #94a3b8;
+            }
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-size: 8.5pt;
+            line-height: 1.4;
+            color: #1e293b;
+            background: #f1f5f9;
+            margin: 0;
+            padding: 16px 8px;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .report-paper {
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 10mm 12mm;
+            background: #ffffff;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+            border-radius: 8px;
+        }
+        .report-page {
+            position: relative;
+            min-height: 270mm;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px dashed #cbd5e1;
+        }
+        .report-page:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        @media print {
+            body {
+                background: #ffffff;
+                padding: 0;
+            }
+            .report-paper {
+                max-width: 100%;
+                box-shadow: none;
+                padding: 0;
+                margin: 0;
+            }
+            .report-page {
+                border-bottom: none;
+                margin-bottom: 0;
+                page-break-after: always;
+                break-after: page;
+                min-height: 275mm;
+            }
+            .report-page:last-child {
+                page-break-after: auto;
+                break-after: auto;
+            }
+        }
+
+        .page-top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 4px;
+            margin-bottom: 10px;
+            font-size: 7pt;
+            color: #64748b;
+        }
+        .brand-sub {
+            font-weight: 700;
+            color: #0f172a;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .page-footer {
+            border-top: 1px solid #e2e8f0;
+            padding-top: 6px;
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 7.5pt;
+            color: #94a3b8;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #10b981;
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+        }
+        .brand-row {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+        .brand-title {
+            font-size: 1.35rem;
+            font-weight: 900;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+            margin: 0;
+        }
+        .report-subtitle {
+            font-size: 0.8rem;
+            color: #64748b;
+            font-weight: 600;
+        }
+        .sub-header {
+            font-size: 7.5pt;
+            color: #64748b;
+            margin-top: 3px;
+        }
+
+        .verdict-banner-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: 1px solid transparent;
+        }
+        .verdict-icon {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+        .verdict-tag {
+            font-size: 0.88rem;
+            font-weight: 900;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+        .verdict-desc {
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        .badge-success { background: #ecfdf5; color: #047857; border-color: #a7f3d0; }
+        .badge-warning { background: #fffbeb; color: #b45309; border-color: #fde68a; }
+        .badge-notrun { background: #fefce8; color: #854d0e; border-color: #fef08a; }
+        .badge-failed { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
+
+        /* Attention Box */
+        .attention-box {
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-bottom: 12px;
+            font-size: 7.5pt;
+        }
+        .attention-red { background: #fff5f5; border: 1px solid #fca5a5; color: #991b1b; }
+        .attention-amber { background: #fffbeb; border: 1px solid #fcd34d; color: #92400e; }
+        .attention-green { background: #f0fdf4; border: 1px solid #86efac; color: #166534; }
+        .attention-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            margin-bottom: 4px;
+        }
+        .attention-title {
+            font-size: 7pt;
+            text-transform: uppercase;
+        }
+        .attention-list {
+            margin: 0;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .chip {
+            display: inline-block;
+            padding: 1px 5px;
+            border-radius: 4px;
+            font-size: 6.5pt;
+            font-weight: 600;
+        }
+        .chip-success { background: #e0f2fe; color: #0369a1; }
+        .chip-warning { background: #fef3c7; color: #92400e; }
+        .chip-subtle { background: #f1f5f9; color: #475569; }
+        
+        .section {
+            margin-bottom: 12px;
+        }
+        .section-title {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #0f172a;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 3px;
+            margin: 0 0 8px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .kpi-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 6px 10px;
+        }
+        .kpi-label {
+            font-size: 6.5pt;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 1px;
+        }
+        .kpi-val {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1.15;
+        }
+        .kpi-sub {
+            font-size: 6.5pt;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+
+        .diversity-strip {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin-bottom: 10px;
+        }
+        .div-item-label {
+            font-size: 6pt;
+            color: #475569;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .div-item-val {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+        .div-item-sub {
+            font-size: 6pt;
+            color: #64748b;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 7.5pt;
+            margin-bottom: 8px;
+        }
+        thead { display: table-header-group; }
+        tr { page-break-inside: avoid; break-inside: avoid; }
+        th {
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            text-align: left;
+            padding: 5px 6px;
+            border-bottom: 1.5px solid #cbd5e1;
+        }
+        td {
+            padding: 4px 6px;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+        }
+        .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 7pt; }
+        .bold { font-weight: 600; }
+        .status-pass { color: #059669; font-weight: 700; }
+        .status-fail { color: #dc2626; font-weight: 700; }
+        .status-notrun { color: #d97706; font-weight: 700; }
+        .not-measured { color: #94a3b8; font-style: italic; font-weight: 500; }
+
+        .stacked-bar {
+            display: flex;
+            height: 12px;
+            width: 100%;
+            border-radius: 4px;
+            overflow: hidden;
+            background: #e2e8f0;
+            margin-bottom: 6px;
+        }
+        .bar-seg { height: 100%; }
+        .stacked-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 12px;
+            margin-bottom: 8px;
+            font-size: 6.5pt;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 4px 8px;
+        }
+        .legend-chip {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .legend-swatch {
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+            display: inline-block;
+        }
+        .legend-label {
+            font-weight: 600;
+            color: #334155;
+        }
+        .legend-metric {
+            color: #64748b;
+        }
+
+        .page-break {
+            page-break-before: always;
+            break-before: page;
+        }
+        .contact-sheet-img {
+            width: 100%;
+            max-height: 230px;
+            object-fit: contain;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            margin-top: 6px;
+            background: #000;
+        }
+        .log-terminal {
+            background: #0f172a;
+            color: #38bdf8;
+            padding: 8px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 7pt;
+            max-height: 220px;
+            overflow: hidden;
+            white-space: pre-wrap;
+        }
+        .diagnostic-card {
+            border: 1px solid #f87171;
+            background: #fff5f5;
+            padding: 10px;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+<div class="report-paper">
+    <!-- PAGE 1: Cover, Executive Summary, Attention & Time Allocation -->
+    <div id="report-page-1" class="report-page section-cover">
+        <div>
+            <!-- Header -->
+            <div class="header">
+                <div>
+                    <div class="brand-row">
+                        <h1 class="brand-title">LionReel Studio</h1>
+                        <span class="report-subtitle">Production Quality & Verification Audit</span>
+                    </div>
+                    <div class="sub-header">
+                        <strong>Job ID:</strong> lionreel_dog_20261021_030712_2f2518ef &bull; 
+                        <strong>Build:</strong> 4de7b3a0773c &bull; 
+                        <strong>Audited:</strong> 2026-10-21 03:12:28 (Sri Lanka Standard Time)
+                    </div>
+                </div>
+                <div class="verdict-banner-badge badge-success">
+                    <span class="verdict-icon">✓</span>
+                    <div>
+                        <div class="verdict-tag">PASSED</div>
+                        <div class="verdict-desc">PASSED / BROADCAST READY</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- What Needs Attention Block -->
+            
+    <div class="attention-box attention-green">
+        <div class="attention-header">
+            <span class="attention-title">WHAT NEEDS ATTENTION (1 ITEMS)</span>
+            <span class="badge badge-success" style="font-size:0.68rem; padding: 2px 7px;">PASSED</span>
+        </div>
+        <ul class="attention-list">
+            <li style='margin-bottom: 3px;'><span style='color:#f59e0b; font-weight:bold;'>⚠️</span> All 11 QA gates passed with zero warnings. Video conforms to broadcast specification.</li>
+        </ul>
+    </div>
+    
+
+            <!-- Section A: Summary KPIs -->
+            <div class="section">
+                <h2 class="section-title">Summary & Deliverable Specifications</h2>
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-label">Delivered Length</div>
+                        <div class="kpi-val">0.0s</div>
+                        <div class="kpi-sub">Target: 45s (-45.0s)</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">Delivered Clips</div>
+                        <div class="kpi-val">0 Clips</div>
+                        <div class="kpi-sub">Target: 6 | Plan: 0</div>
+                        
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">Aspect & Format</div>
+                        <div class="kpi-val">9:16</div>
+                        <div class="kpi-sub">Compilation</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">Repeat Share</div>
+                        <div class="kpi-val">0.0%</div>
+                        <div class="kpi-sub">0 unique of 0 clips</div>
+                    </div>
+                </div>
+
+                <!-- Footage Diversity Mini-Card -->
+                <div class="diversity-strip">
+                    <div>
+                        <div class="div-item-label">Source Count</div>
+                        <div class="div-item-val">0 Sources</div>
+                        <div class="div-item-sub"><span style='color:#f59e0b;'>Warning (< 5 sources)</span></div>
+                    </div>
+                    <div>
+                        <div class="div-item-label">Window Uniqueness</div>
+                        <div class="div-item-val">0 Unique</div>
+                        <div class="div-item-sub">0 total assembled clips</div>
+                    </div>
+                    <div>
+                        <div class="div-item-label">Max Uses / Window</div>
+                        <div class="div-item-val">0x Max</div>
+                        <div class="div-item-sub">Cap 8x Safe</div>
+                    </div>
+                    <div>
+                        <div class="div-item-label">Repeat Ratio</div>
+                        <div class="div-item-val">0.0%</div>
+                        <div class="div-item-sub">Audited Spacing &ge; 8</div>
+                    </div>
+                </div>
+
+                <!-- Deliverables Table -->
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Deliverable Artifact</th>
+                            <th>Format</th>
+                            <th>Resolution</th>
+                            <th>Duration</th>
+                            <th>Size</th>
+                            <th>SHA-256 Digest</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Section B: Where the time went -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span>Execution Timings & Resource Allocation</span>
+                    <span style="font-size:0.75rem; color:#64748b; font-weight:normal;">Total Exclusive Time: 0.0 min (0.0s)</span>
+                </h2>
+                
+                <div class="stacked-bar">
+                    
+                </div>
+
+                <!-- Stacked Bar Legend Underneath -->
+                <div class="stacked-legend">
+                    
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Pipeline Stage</th>
+                            <th style="width: 95px;">Exclusive Time</th>
+                            <th style="width: 75px;">Share (%)</th>
+                            <th>Throughput / Measurement</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        <tr style="background:#f8fafc; font-weight:700; border-top: 1.5px solid #cbd5e1;">
+                            <td>Exclusive Subtotal (Monotonic Sum)</td>
+                            <td class="mono">0.0 min</td>
+                            <td class="mono">100.0%</td>
+                            <td>Verified monotonic sum</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Slowest steps -->
+                <div style="background: #f8fafc; border-left: 3px solid #10b981; padding: 4px 10px; margin-top: 6px; font-size: 7.5pt;">
+                    <strong>Primary Bottleneck Analysis:</strong>
+                    <ul style="margin: 2px 0 0 14px; padding: 0;">
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-footer">
+            <span>LionReel Studio &bull; lionreel_dog_20261021_030712_2f2518ef &bull; Build 4de7b3a0773c</span>
+            <span>Page 1 of 5</span>
+        </div>
+    </div>
+
+    <!-- PAGE 2: Quality Assurance & 12 Gates + Contact Sheet -->
+    <div id="report-page-2" class="report-page page-break section-quality">
+        <div>
+            <div class="page-top-header">
+                <span class="brand-sub">LionReel Studio &bull; Pipeline Audit</span>
+                <span class="page-top-meta">Job: lionreel_dog_20261021_030712_2f2518ef &bull; Section E: Quality Assurance (12 Gates)</span>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">
+                    <span>Quality Assurance & Contract Verification (12 Gates)</span>
+                    <span class="badge badge-success" style="font-size:0.68rem; padding:2px 7px;">PASSED</span>
+                </h2>
+                
+                <!-- 5-Column Quality Gate Table -->
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 170px;">Gate Name</th>
+                            <th style="width: 220px;">Quality Threshold</th>
+                            <th>Measured Output</th>
+                            <th style="width: 80px;">Margin (+/-)</th>
+                            <th style="width: 95px;">Verdict</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+        <tr>
+            <td class="bold">1. Stream Specs</td>
+            <td style="color:#475569;">1920x1080 (16:9) H264 High</td>
+            <td><span class='not-measured'>not measured</span></td>
+            <td><span class='not-measured'>N/A</span></td>
+            <td><span class='status-notrun'>⚠️ NOT RUN</span></td>
+        </tr>
+        
+        <tr>
+            <td class="bold">1b. Exact Duration Contract</td>
+            <td style="color:#475569;">+/- 1.0s diff from 45s</td>
+            <td><span class='not-measured'>not measured</span></td>
+            <td><span class='not-measured'>N/A</span></td>
+            <td><span class='status-notrun'>⚠️ NOT RUN</span></td>
+        </tr>
+        
+        <tr>
+            <td class="bold">2. Stream Defects</td>
+            <td style="color:#475569;">0 black, 0 frozen frames</td>
+            <td><span class='not-measured'>not measured</span></td>
+            <td><span class='not-measured'>N/A</span></td>
+            <td><span class='status-notrun'>⚠️ NOT RUN</span></td>
+        </tr>
+        
+        <tr>
+            <td class="bold">3. Broadcast Audio Loudness</td>
+            <td style="color:#475569;">-14.0 LUFS (+/- 0.5), Peak <= -1.0 dBTP</td>
+            <td><span class='not-measured'>not measured</span></td>
+            <td><span class='not-measured'>N/A</span></td>
+            <td><span class='status-notrun'>⚠️ NOT RUN</span></td>
+        </tr>
+        
+        <tr>
+            <td class="bold">4. Pet Centering</td>
+            <td style="color:#475569;">Compliance >= 85% of sampled frames</td>
+            <td><span class='not-measured'>not measured</span></td>
+            <td><span class='not-measured'>N/A</span></td>
+            <td><span class='status-notrun'>⚠️ NOT RUN</span></td>
+        </tr>
+        
+        <tr>
+            <td class="bold">5. Layout Fill</td>
+            <td style="color:#475569;">Full canvas cover</td>
+            <td><span class='not-measured'>not measured</span></td>
+            <td><span class='not-measured'>N/A</span></td>
+            <td><span class='status-notrun'>⚠️ NOT RUN</span></td>
+        </tr>
+        
+        <tr>
+            <td class="bold">6. Watermark Cleanliness</td>
+            <td style="color:#475569;">Clean corners</td>
+            <td><span class='not-measured'>not measured</span></td>
+            <td><span class='not-measured'>N/A</span></td>
+            <td><span class='status-notrun'>⚠️ NOT RUN</span></td>
+        </tr>
+        
+        <tr>
+            <td class="bold">6b. Clean Clips (Overlays)</td>
+            <td style="color:#475569;">Clean footage (no overlays)</td>
+            <td><span class='not-measured'>not measured</span></td>
+            <td><span class='not-measured'>N/A</span></td>
+            <td><span class='status-notrun'>⚠️ NOT RUN</span></td>
+        </tr>
+        
+        <tr>
+            <td class="bold">7. Peak Quality Visibility</td>
+            <td style="color:#475569;">100% visible at peak</td>
+            <td><span class='not-measured'>not measured</span></td>
+            <td><span class='not-measured'>N/A</span></td>
+            <td><span class='status-notrun'>⚠️ NOT RUN</span></td>
+        </tr>
+        
+        <tr>
+            <td class="bold">8. Real Footage Verification</td>
+            <td style="color:#475569;">Real cat video</td>
+            <td><span class='not-measured'>not measured</span></td>
+            <td><span class='not-measured'>N/A</span></td>
+            <td><span class='status-notrun'>⚠️ NOT RUN</span></td>
+        </tr>
+        
+        <tr>
+            <td class="bold">9. Visual Sharpness</td>
+            <td style="color:#475569;">LapVar >= 150.0 (every clip)</td>
+            <td><span class='not-measured'>not measured</span></td>
+            <td><span class='not-measured'>N/A</span></td>
+            <td><span class='status-notrun'>⚠️ NOT RUN</span></td>
+        </tr>
+        
+        <tr>
+            <td class="bold">10. Safe-Zone Captions & Spacing</td>
+            <td style="color:#475569;">Spacing verified</td>
+            <td><span class='not-measured'>not measured</span></td>
+            <td><span class='not-measured'>N/A</span></td>
+            <td><span class='status-notrun'>⚠️ NOT RUN</span></td>
+        </tr>
+        
+                    </tbody>
+                </table>
+
+                
+            </div>
+        </div>
+
+        <div class="page-footer">
+            <span>LionReel Studio &bull; lionreel_dog_20261021_030712_2f2518ef &bull; Build 4de7b3a0773c</span>
+            <span>Page 2 of 5</span>
+        </div>
+    </div>
+
+    <!-- PAGES 3..N: Verified Clips Assembly -->
+    
+
+    <!-- PAGE NEXT: Provenance, Attribution, Metadata Packaging & Hardware -->
+    <div id="report-page-4" class="report-page page-break section-timeline">
+        <div>
+            <div class="page-top-header">
+                <span class="brand-sub">LionReel Studio &bull; Pipeline Audit</span>
+                <span class="page-top-meta">Job: lionreel_dog_20261021_030712_2f2518ef &bull; Provenance &amp; Metadata Packaging</span>
+            </div>
+
+            <!-- Plan & Decisions -->
+            <div class="section">
+                <h2 class="section-title">Planner Decisions & Progressive Fulfillment</h2>
+                <div style="font-size: 7.5pt; color: #475569; margin-bottom: 4px;">
+                    <strong>Fulfillment Strategy:</strong> Pool capacity verified
+                </div>
+                <ul style="margin: 2px 0 0 14px; font-size: 7.5pt; color: #334155;">
+                    
+                </ul>
+            </div>
+
+            <!-- Sources, Attribution & Platform Metadata -->
+            <div class="section">
+                <h2 class="section-title">Sources, Attribution & Platform Metadata Packaging</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>
+                        <h4 style="margin:0 0 4px 0; font-size: 7.5pt; color:#334155;">Source Attribution Registry (0 Verified Sources)</h4>
+                        <div style="max-height: 160px; overflow-y: auto; font-size: 7pt; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px; background:#fafafa;">
+                            
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="margin:0 0 4px 0; font-size: 7.5pt; color:#334155;">Platform Metadata Packaging (Verified Token Boundaries)</h4>
+                        <div style="font-size: 7.5pt; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px;">
+                            <div><strong>YouTube Title:</strong> Cat Moments Compilation</div>
+                            <div style="margin-top:2px;"><strong>Status:</strong> Valid (<= 100 chars)</div>
+                            <div style="margin-top:3px;"><strong>YouTube Tags:</strong> cats, funny, compilation</div>
+                            <div style="margin-top:3px;"><strong>TikTok Caption:</strong>  #cats #funny...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hardware Environment & Software Provenance -->
+            <div class="section">
+                <h2 class="section-title">Execution Environment & Software Provenance</h2>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; font-size: 7pt;">
+                    <div class="kpi-card"><strong>OS:</strong> Windows-11-10.0.26300-SP0</div>
+                    <div class="kpi-card"><strong>Python:</strong> 3.12.10</div>
+                    <div class="kpi-card"><strong>FFmpeg:</strong> ffmpeg version 7.1-ess</div>
+                    <div class="kpi-card"><strong>Encoder:</strong> libx264</div>
+                    <div class="kpi-card"><strong>CPU:</strong> Intel64 Family 6 Model 18</div>
+                    <div class="kpi-card"><strong>RAM:</strong> 16.0 GB Total</div>
+                    <div class="kpi-card"><strong>Free Disk:</strong> 169.8 GB</div>
+                    <div class="kpi-card"><strong>Build ID:</strong> 4de7b3a0773c</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-footer">
+            <span>LionReel Studio &bull; lionreel_dog_20261021_030712_2f2518ef &bull; Build 4de7b3a0773c</span>
+            <span>Page 4 of 5</span>
+        </div>
+    </div>
+
+    <!-- Diagnostic page if failed -->
+    
+        <!-- PAGE 5: Failure Diagnostics -->
+        <div id="report-page-5" class="report-page page-break section diagnostic-card">
+            <div>
+                <div class="page-top-header">
+                    <span class="brand-sub">LionReel Studio &bull; Pipeline Audit</span>
+                    <span class="page-top-meta">Job: lionreel_dog_20261021_030712_2f2518ef &bull; Failure Diagnostic</span>
+                </div>
+                <h3 style="color: #ef4444; margin-top:4px;">Execution Interruption & Diagnostic Record</h3>
+                <div style="font-size: 8pt; margin-bottom: 8px;">
+                    <strong>Failing Pipeline Stage:</strong> RuntimeError: No internet connection: cannot fetch clips yet &bull; 
+                    <strong>Reason Code:</strong> RuntimeError: No internet connection: cannot fetch clips yet
+                </div>
+                <div class="log-terminal">
+                    <pre>Finding fresh clips (0 of 2 ready) [waited 274s / 300s]...
+[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.
+Finding fresh clips (0 of 2 ready) [waited 277s / 300s]...
+[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.
+Finding fresh clips (0 of 2 ready) [waited 280s / 300s]...
+[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.
+Finding fresh clips (0 of 2 ready) [waited 283s / 300s]...
+[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.
+Finding fresh clips (0 of 2 ready) [waited 286s / 300s]...
+[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.
+Finding fresh clips (0 of 2 ready) [waited 289s / 300s]...
+[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.
+Finding fresh clips (0 of 2 ready) [waited 292s / 300s]...
+[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.
+Finding fresh clips (0 of 2 ready) [waited 295s / 300s]...
+[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.
+Finding fresh clips (0 of 2 ready) [waited 298s / 300s]...
+[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.
+[SEQ:10] [03:12:28] [ERROR] Pipeline uncaught exception: Traceback (most recent call last):
+File "G:\My Drive\Cat make\lion_automate_v97.py", line 4599, in run
+res = self.render_one_video(
+^^^^^^^^^^^^^^^^^^^^^^
+File "G:\My Drive\Cat make\lion_automate_v97.py", line 2228, in render_one_video
+fulfillment_plan = planner.plan_fulfillment(
+^^^^^^^^^^^^^^^^^^^^^^^^^
+File "G:\My Drive\Cat make\fulfillment_planner.py", line 263, in plan_fulfillment
+raise RuntimeError(err_msg)
+RuntimeError: No internet connection: cannot fetch clips yet
+
+[SEQ:11] [03:12:28] [ERROR] JOB FAILED: RuntimeError: No internet connection: cannot fetch clips yet</pre>
+                </div>
+                <div style="margin-top: 12px; padding: 10px; background: rgba(239, 68, 68, 0.08); border-radius: 6px; font-size: 8pt;">
+                    <strong>Checkpoint Preserved:</strong> Checkpoint preserved at failure point<br>
+                    <strong>Recommended Resumption Strategy:</strong> Auto-resume from the last verified checkpoint via Retry Generation.
+                </div>
+            </div>
+            <div class="page-footer">
+                <span>LionReel Studio &bull; lionreel_dog_20261021_030712_2f2518ef &bull; Build 4de7b3a0773c</span>
+                <span>Page 5 of 5</span>
+            </div>
+        </div>
+        
+</div>
+</body>
+</html>

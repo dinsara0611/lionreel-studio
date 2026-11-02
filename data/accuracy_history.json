@@ -1,0 +1,227 @@
+[
+  {
+    "job_id": "lionreel_cat_20261014_132813_d25ddf09",
+    "timestamp": 1791966435.88993,
+    "predicted_low": 374,
+    "predicted_high": 550,
+    "actual_sec": 1541.47,
+    "inside_range": false,
+    "error_pct": 233.7
+  },
+  {
+    "job_id": "test_acc_job",
+    "timestamp": 1791966717.4242864,
+    "predicted_low": 1200,
+    "predicted_high": 1800,
+    "actual_sec": 1500,
+    "inside_range": true,
+    "error_pct": 0.0
+  },
+  {
+    "job_id": "test_acc_job",
+    "timestamp": 1791966754.3841221,
+    "predicted_low": 1200,
+    "predicted_high": 1800,
+    "actual_sec": 1500,
+    "inside_range": true,
+    "error_pct": 0.0
+  },
+  {
+    "job_id": "test_acc_job",
+    "timestamp": 1791970041.772137,
+    "predicted_low": 1200,
+    "predicted_high": 1800,
+    "actual_sec": 1500,
+    "inside_range": true,
+    "error_pct": 0.0
+  },
+  {
+    "job_id": "test_acc_job",
+    "timestamp": 1792000729.9322848,
+    "predicted_low": 1200,
+    "predicted_high": 1800,
+    "actual_sec": 1500,
+    "inside_range": true,
+    "error_pct": 0.0
+  },
+  {
+    "job_id": "test_acc_job",
+    "timestamp": 1792000817.6187751,
+    "predicted_low": 1200,
+    "predicted_high": 1800,
+    "actual_sec": 1500,
+    "inside_range": true,
+    "error_pct": 0.0
+  },
+  {
+    "job_id": "test_acc_job",
+    "timestamp": 1792002985.1720774,
+    "predicted_low": 1200,
+    "predicted_high": 1800,
+    "actual_sec": 1500,
+    "inside_range": true,
+    "error_pct": 0.0
+  },
+  {
+    "job_id": "test_acc_job",
+    "timestamp": 1792008508.4703794,
+    "predicted_low": 1200,
+    "predicted_high": 1800,
+    "actual_sec": 1500,
+    "inside_range": true,
+    "error_pct": 0.0
+  },
+  {
+    "job_id": "lionreel_cat_20261015_031404_530ccd56",
+    "timestamp": 1792016759.267346,
+    "predicted_low": 8796,
+    "predicted_high": 11239,
+    "actual_sec": 2507.33,
+    "inside_range": false,
+    "error_pct": 75.0
+  },
+  {
+    "job_id": "lionreel_cat_20261015_042816_da269c70",
+    "timestamp": 1792019037.9806995,
+    "predicted_low": 1448,
+    "predicted_high": 1851,
+    "actual_sec": 337.09,
+    "inside_range": false,
+    "error_pct": 79.6
+  },
+  {
+    "job_id": "test_acc_job",
+    "timestamp": 1792037117.6240864,
+    "predicted_low": 1200,
+    "predicted_high": 1800,
+    "actual_sec": 1500,
+    "inside_range": true,
+    "error_pct": 0.0
+  },
+  {
+    "job_id": "lionreel_cat_20261016_065802_502f5dd4",
+    "timestamp": 1792120262.8939724,
+    "predicted_low": 12645,
+    "predicted_high": 16157,
+    "actual_sec": 6166.01,
+    "inside_range": false,
+    "error_pct": 57.2
+  },
+  {
+    "job_id": "lionreel_cat_20261016_084742_31bc5d3b",
+    "timestamp": 1792120812.9892416,
+    "predicted_low": 541,
+    "predicted_high": 692,
+    "actual_sec": 147.69,
+    "inside_range": false,
+    "error_pct": 76.0
+  },
+  {
+    "job_id": "lionreel_cat_20261017_102216_9ed2b729",
+    "timestamp": 1792212928.309488,
+    "predicted_low": 541,
+    "predicted_high": 692,
+    "actual_sec": 187.72,
+    "inside_range": false,
+    "error_pct": 69.6
+  },
+  {
+    "job_id": "lionreel_cat_20261017_223027_c54267b4",
+    "timestamp": 1792256637.3156726,
+    "predicted_low": 541,
+    "predicted_high": 692,
+    "actual_sec": 203.11,
+    "inside_range": false,
+    "error_pct": 67.1
+  },
+  {
+    "job_id": "lionreel_cat_20261018_220346_6b8cce5c",
+    "timestamp": 1792341521.662911,
+    "predicted_low": 541,
+    "predicted_high": 692,
+    "actual_sec": 293.09,
+    "inside_range": false,
+    "error_pct": 52.5
+  },
+  {
+    "job_id": "lionreel_cat_20261019_101219_796fd854",
+    "timestamp": 1792385120.6570485,
+    "predicted_low": 541,
+    "predicted_high": 692,
+    "actual_sec": 177.32,
+    "inside_range": false,
+    "error_pct": 71.2
+  },
+  {
+    "job_id": "lionreel_cat_20261019_120631_c7bf35e8",
+    "timestamp": 1792392254.961767,
+    "predicted_low": 541,
+    "predicted_high": 692,
+    "actual_sec": 462.0,
+    "inside_range": false,
+    "error_pct": 25.1
+  },
+  {
+    "job_id": "lionreel_cat_20261020_130833_6149f8b2",
+    "timestamp": 1792482214.5334437,
+    "predicted_low": 541,
+    "predicted_high": 692,
+    "actual_sec": 297.41,
+    "inside_range": false,
+    "error_pct": 51.8
+  },
+  {
+    "job_id": "lionreel_cat_20261022_064906_4658b5bc",
+    "timestamp": 1792632815.6184444,
+    "predicted_low": 589,
+    "predicted_high": 753,
+    "actual_sec": 865.27,
+    "inside_range": false,
+    "error_pct": 29.0
+  },
+  {
+    "job_id": "lionreel_cat_20261023_083640_b54aef67",
+    "timestamp": 1792725617.175367,
+    "predicted_low": 851,
+    "predicted_high": 1087,
+    "actual_sec": 803.66,
+    "inside_range": false,
+    "error_pct": 17.1
+  },
+  {
+    "job_id": "lionreel_cat_20261026_092004_9c9af4ac",
+    "timestamp": 1792986934.7641997,
+    "predicted_low": 541,
+    "predicted_high": 692,
+    "actual_sec": 326.83,
+    "inside_range": false,
+    "error_pct": 47.0
+  },
+  {
+    "job_id": "lionreel_cat_20261027_113225_a24ea39e",
+    "timestamp": 1793083292.7338653,
+    "predicted_low": 541,
+    "predicted_high": 692,
+    "actual_sec": 877.63,
+    "inside_range": false,
+    "error_pct": 42.4
+  },
+  {
+    "job_id": "lionreel_cat_20261027_120634_9123d1f8",
+    "timestamp": 1793083500.542469,
+    "predicted_low": 541,
+    "predicted_high": 692,
+    "actual_sec": 502.47,
+    "inside_range": false,
+    "error_pct": 18.5
+  },
+  {
+    "job_id": "lionreel_cat_20261027_121640_134848b6",
+    "timestamp": 1793084472.196707,
+    "predicted_low": 541,
+    "predicted_high": 692,
+    "actual_sec": 864.09,
+    "inside_range": false,
+    "error_pct": 40.2
+  }
+]

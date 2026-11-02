@@ -1,0 +1,6 @@
+file 'C:\LionReel\work\job_real_contract_short_9_16_1792067679\job_real_contract_short_9_16_1792067679_c00_cap.mp4'
+file 'C:\LionReel\work\job_real_contract_short_9_16_1792067679\job_real_contract_short_9_16_1792067679_c01_cap.mp4'
+file 'C:\LionReel\work\job_real_contract_short_9_16_1792067679\job_real_contract_short_9_16_1792067679_c02.mp4'
+file 'C:\LionReel\work\job_real_contract_short_9_16_1792067679\job_real_contract_short_9_16_1792067679_c03_cap.mp4'
+file 'C:\LionReel\work\job_real_contract_short_9_16_1792067679\job_real_contract_short_9_16_1792067679_c04.mp4'
+file 'C:\LionReel\work\job_real_contract_short_9_16_1792067679\job_real_contract_short_9_16_1792067679_last_extended.mp4'

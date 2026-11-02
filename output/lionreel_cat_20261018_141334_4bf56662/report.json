@@ -1,0 +1,872 @@
+{
+  "_version": "1.0",
+  "_generator": "LionReel Automated Quality & Performance Reporter V97",
+  "_generated_at_utc": "2026-10-18T08:52:31.787676+00:00",
+  "_sources": {
+    "summary.job_id": {
+      "file": "job_config.json",
+      "path": "job_id"
+    },
+    "summary.duration": {
+      "file": "video.mp4",
+      "path": "ffprobe.duration"
+    },
+    "summary.resolution": {
+      "file": "video.mp4",
+      "path": "ffprobe.resolution"
+    },
+    "summary.delivered_clips": {
+      "file": "mapping.json",
+      "path": "len(clips)"
+    }
+  },
+  "job_id": "lionreel_cat_20261018_141334_4bf56662",
+  "build_id": "c7c9a43619ad",
+  "status": "FAILED",
+  "is_success": false,
+  "unified_verdict": {
+    "badge": "FAILED",
+    "color": "red",
+    "status_label": "FAILED / REJECTED",
+    "badge_class": "badge-failed",
+    "critical_errors": [
+      "Gate 4 Pet Centering failed: 56.2% (9/16 frames) below 85% requirement",
+      "3 Broadcast Loudness failed",
+      "4 Pet Centering failed",
+      "6B Clean Overlays failed"
+    ],
+    "not_run_gates": [],
+    "warnings": [
+      "Footage diversity: Only 2 unique sources utilized (Recommended >= 5).",
+      "Overlapping moments detected across 3 segments.",
+      "Attribution notice: 8 clip(s) have unverified author names."
+    ],
+    "attention_items": [
+      "Gate 4 Centering: 56.2% (9/16 frames) below 85% requirement",
+      "Footage diversity: Only 2 unique sources utilized (Recommended >= 5).",
+      "Overlapping moments detected across 3 segments.",
+      "Attribution notice: 8 clip(s) have unverified author names."
+    ],
+    "diversity_stats": {
+      "total_clips": 8,
+      "unique_sources": 2,
+      "unique_windows": 8,
+      "unique_footage_sec": 53.5,
+      "repeat_share_pct": 0.0,
+      "max_uses_per_window": 2,
+      "over_cap_clips": [],
+      "overlapping_windows": [
+        "Source cache_825Za_ZishQ.mp4: 65.0\u201375.0s overlaps 58.5\u201366.0s",
+        "Source cache_825Za_ZishQ.mp4: 68.0\u201378.0s overlaps 58.5\u201375.0s",
+        "Source cache_825Za_ZishQ.mp4: 74.5\u201382.0s overlaps 58.5\u201378.0s"
+      ]
+    }
+  },
+  "clip_reconciliation": {
+    "delivered_clips": 8,
+    "planned_clips": 8,
+    "target_clips": 8,
+    "has_mismatch": false,
+    "diff_from_target": 0,
+    "diff_from_planned": 0,
+    "display_status": "Matched: 8 clips"
+  },
+  "diversity_stats": {
+    "total_clips": 8,
+    "unique_sources": 2,
+    "unique_windows": 8,
+    "unique_footage_sec": 53.5,
+    "repeat_share_pct": 0.0,
+    "max_uses_per_window": 2,
+    "over_cap_clips": [],
+    "overlapping_windows": [
+      "Source cache_825Za_ZishQ.mp4: 65.0\u201375.0s overlaps 58.5\u201366.0s",
+      "Source cache_825Za_ZishQ.mp4: 68.0\u201378.0s overlaps 58.5\u201375.0s",
+      "Source cache_825Za_ZishQ.mp4: 74.5\u201382.0s overlaps 58.5\u201378.0s"
+    ]
+  },
+  "summary": {
+    "job_id": "lionreel_cat_20261018_141334_4bf56662",
+    "title": "Peak cat behavior detected: Watch What This Sneaky Kitty Decided To Do Next",
+    "build_id": "c7c9a43619ad",
+    "local_timestamp": "2026-10-18 14:22:31 (Sri Lanka Standard Time)",
+    "unified_verdict": {
+      "badge": "FAILED",
+      "color": "red",
+      "status_label": "FAILED / REJECTED",
+      "badge_class": "badge-failed",
+      "critical_errors": [
+        "Gate 4 Pet Centering failed: 56.2% (9/16 frames) below 85% requirement",
+        "3 Broadcast Loudness failed",
+        "4 Pet Centering failed",
+        "6B Clean Overlays failed"
+      ],
+      "not_run_gates": [],
+      "warnings": [
+        "Footage diversity: Only 2 unique sources utilized (Recommended >= 5).",
+        "Overlapping moments detected across 3 segments.",
+        "Attribution notice: 8 clip(s) have unverified author names."
+      ],
+      "attention_items": [
+        "Gate 4 Centering: 56.2% (9/16 frames) below 85% requirement",
+        "Footage diversity: Only 2 unique sources utilized (Recommended >= 5).",
+        "Overlapping moments detected across 3 segments.",
+        "Attribution notice: 8 clip(s) have unverified author names."
+      ],
+      "diversity_stats": {
+        "total_clips": 8,
+        "unique_sources": 2,
+        "unique_windows": 8,
+        "unique_footage_sec": 53.5,
+        "repeat_share_pct": 0.0,
+        "max_uses_per_window": 2,
+        "over_cap_clips": [],
+        "overlapping_windows": [
+          "Source cache_825Za_ZishQ.mp4: 65.0\u201375.0s overlaps 58.5\u201366.0s",
+          "Source cache_825Za_ZishQ.mp4: 68.0\u201378.0s overlaps 58.5\u201375.0s",
+          "Source cache_825Za_ZishQ.mp4: 74.5\u201382.0s overlaps 58.5\u201378.0s"
+        ]
+      }
+    },
+    "result_badge": "FAILED",
+    "badge": "FAILED",
+    "status_label": "FAILED / REJECTED",
+    "fail_reason": "QA validation failed",
+    "video_type": "compilation",
+    "aspect_ratio": "9:16",
+    "requested_duration_sec": 60.0,
+    "delivered_duration_sec": 0.0,
+    "duration_variance_sec": -60.0,
+    "requested_clips": 8,
+    "delivered_clips": 8,
+    "planned_clips": 8,
+    "repeat_share_pct": 0.0,
+    "wall_clock_elapsed_sec": 131.08,
+    "qa_verdict": "REJECTED \u2014 QUALITY THRESHOLD NOT MET",
+    "deliverables_count": 2
+  },
+  "deliverables": [
+    {
+      "filename": "lionreel_cat_20261018_141334_4bf56662_timings.json",
+      "relative_path": "output/lionreel_cat_20261018_141334_4bf56662/lionreel_cat_20261018_141334_4bf56662_timings.json",
+      "size_bytes": 7308,
+      "size_mb": 0.01,
+      "extension": ".json",
+      "sha256": "ad7d015dee6bff305765671ca493d1c9a46c949a7f0107a225c89b16df8d1659"
+    },
+    {
+      "filename": "planner_decision.json",
+      "relative_path": "output/lionreel_cat_20261018_141334_4bf56662/planner_decision.json",
+      "size_bytes": 1191,
+      "size_mb": 0.0,
+      "extension": ".json",
+      "sha256": "f36298a1e24068df0658d1885a72d60ac692a0df52005fd68614d41108dc1c04"
+    }
+  ],
+  "time_allocation": {
+    "total_exclusive_seconds": 131.08,
+    "total_exclusive_minutes": 2.18,
+    "stages": [
+      {
+        "key": "startup",
+        "label": "System Startup & Initialization",
+        "seconds": 1.36,
+        "minutes": 0.02,
+        "measurement": "Runtime initialized (1.36s)",
+        "share_pct": 1.0
+      },
+      {
+        "key": "reserve",
+        "label": "Ledger Reservation & Selection",
+        "seconds": 0.06,
+        "minutes": 0.0,
+        "measurement": "8 clips reserved",
+        "share_pct": 0.0
+      },
+      {
+        "key": "prepare",
+        "label": "Source Download & Staging",
+        "seconds": 12.38,
+        "minutes": 0.21,
+        "measurement": "8 clips staged",
+        "share_pct": 9.4
+      },
+      {
+        "key": "reframe",
+        "label": "Pet Tracking & Framing Analysis",
+        "seconds": 108.28,
+        "minutes": 1.8,
+        "measurement": "1.2 fps analysis",
+        "share_pct": 82.6
+      },
+      {
+        "key": "render",
+        "label": "Reframe Rendering (9:16)",
+        "seconds": 0.17,
+        "minutes": 0.0,
+        "measurement": "10465.1 fps rendering",
+        "share_pct": 0.1
+      },
+      {
+        "key": "audio",
+        "label": "EBU R128 Audio Mastering",
+        "seconds": 8.56,
+        "minutes": 0.14,
+        "measurement": "R128 mastered (0.1x real-time)",
+        "share_pct": 6.5
+      },
+      {
+        "key": "concat",
+        "label": "Final Video Concat Assembly",
+        "seconds": 0.26,
+        "minutes": 0.0,
+        "measurement": "30.7 clips/s assembly",
+        "share_pct": 0.4
+      }
+    ],
+    "slowest_steps": [
+      {
+        "key": "reframe",
+        "label": "Pet Tracking & Framing Analysis",
+        "seconds": 108.28,
+        "share_pct": 82.6,
+        "measured_sentence": "Pet Tracking & Framing Analysis took 1m 48s (82.6% of execution time)."
+      },
+      {
+        "key": "prepare",
+        "label": "Source Download & Staging",
+        "seconds": 12.38,
+        "share_pct": 9.4,
+        "measured_sentence": "Source Download & Staging took 12.4s (9.4% of execution time)."
+      },
+      {
+        "key": "audio",
+        "label": "EBU R128 Audio Mastering",
+        "seconds": 8.56,
+        "share_pct": 6.5,
+        "measured_sentence": "EBU R128 Audio Mastering took 8.6s (6.5% of execution time)."
+      }
+    ],
+    "throughput": {
+      "clips_per_minute": 3.66,
+      "windows_analyzed_per_minute": 7.32,
+      "windows_total_analyzed": 16
+    },
+    "recent_comparison": []
+  },
+  "plan_and_decisions": {
+    "ladder_steps_applied": [
+      "ladder_step_1_bank",
+      "ladder_step_2_harvest",
+      "ladder_step_3_multi_window",
+      "ladder_step_4_adapt_duration",
+      "ladder_step_5_repeat_cycle"
+    ],
+    "planner_logs": [
+      "[PLANNER] Contract target: 60.0s (8 clips @ ~7.5s). Patience budget: 300s.",
+      "[PLANNER] Bank contains 6 verified unique candidates for cat.",
+      "[PLANNER] Step 1 bank yielded 4 of 8 needed. Triggering progressive harvest.",
+      "[PLANNER] Step 3 expanded window selection yielded 5 clips across sources.",
+      "[PLANNER] Unique pool exhausted. Executing Step 5 repeat cycle with clean IDs, offset >= 3.0s and spacing >= min(8, unique-1).",
+      "[PLANNER] Step 5 COMPLETED: 8 clips total (37.5% repeat share), total 60.0s."
+    ],
+    "target_clip_duration_sec": 7.5,
+    "pool_status": "Building your video: 5 of 8 clips ready, finding more automatically"
+  },
+  "clips": [
+    {
+      "index": 1,
+      "clip_id": "c_cache_825Za_ZishQ_65_75_use2_off30",
+      "timecode": "00:00",
+      "source_id": "cache_825Za_ZishQ.mp4",
+      "start_s": 68.0,
+      "end_s": 78.0,
+      "duration_s": 10.0,
+      "use_count": null,
+      "source_title": "cache_825Za_ZishQ.mp4",
+      "uploader": "Unknown Author",
+      "license": "Creative Commons (CC-BY 4.0)",
+      "source_window": "68.0s\u201378.0s",
+      "uses_flag": "Repeat",
+      "framing_score": "not measured",
+      "sharpness": "not measured",
+      "origin": "Rendered fresh"
+    },
+    {
+      "index": 2,
+      "clip_id": "c_cache_825Za_ZishQ_49_59_use1_off15",
+      "timecode": "00:10",
+      "source_id": "cache_825Za_ZishQ.mp4",
+      "start_s": 50.5,
+      "end_s": 58.0,
+      "duration_s": 7.5,
+      "use_count": null,
+      "source_title": "cache_825Za_ZishQ.mp4",
+      "uploader": "Unknown Author",
+      "license": "Creative Commons (CC-BY 4.0)",
+      "source_window": "50.5s\u201358.0s",
+      "uses_flag": "Repeat",
+      "framing_score": "not measured",
+      "sharpness": "not measured",
+      "origin": "Rendered fresh"
+    },
+    {
+      "index": 3,
+      "clip_id": "c_cache_825Za_ZishQ_57_67_use1_off15",
+      "timecode": "00:17",
+      "source_id": "cache_825Za_ZishQ.mp4",
+      "start_s": 58.5,
+      "end_s": 66.0,
+      "duration_s": 7.5,
+      "use_count": null,
+      "source_title": "cache_825Za_ZishQ.mp4",
+      "uploader": "Unknown Author",
+      "license": "Creative Commons (CC-BY 4.0)",
+      "source_window": "58.5s\u201366.0s",
+      "uses_flag": "Repeat",
+      "framing_score": "not measured",
+      "sharpness": "not measured",
+      "origin": "Rendered fresh"
+    },
+    {
+      "index": 4,
+      "clip_id": "c_cache_825Za_ZishQ_73_83_use1_off15",
+      "timecode": "00:25",
+      "source_id": "cache_825Za_ZishQ.mp4",
+      "start_s": 74.5,
+      "end_s": 82.0,
+      "duration_s": 7.5,
+      "use_count": null,
+      "source_title": "cache_825Za_ZishQ.mp4",
+      "uploader": "Unknown Author",
+      "license": "Creative Commons (CC-BY 4.0)",
+      "source_window": "74.5s\u201382.0s",
+      "uses_flag": "Repeat",
+      "framing_score": "not measured",
+      "sharpness": "not measured",
+      "origin": "Rendered fresh"
+    },
+    {
+      "index": 5,
+      "clip_id": "c_byh9_340_350_use1_off15",
+      "timecode": "00:32",
+      "source_id": "cache_ByH9LuSILxU.mp4",
+      "start_s": 341.5,
+      "end_s": 349.0,
+      "duration_s": 7.5,
+      "use_count": null,
+      "source_title": "cache_ByH9LuSILxU.mp4",
+      "uploader": "Unknown Author",
+      "license": "Creative Commons (CC-BY 4.0)",
+      "source_window": "341.5s\u2013349.0s",
+      "uses_flag": "Repeat",
+      "framing_score": "not measured",
+      "sharpness": "not measured",
+      "origin": "Rendered fresh"
+    },
+    {
+      "index": 6,
+      "clip_id": "c_cache_ByH9LuSILxU_47_57_use1_off15",
+      "timecode": "00:40",
+      "source_id": "cache_ByH9LuSILxU.mp4",
+      "start_s": 48.5,
+      "end_s": 56.0,
+      "duration_s": 7.5,
+      "use_count": null,
+      "source_title": "cache_ByH9LuSILxU.mp4",
+      "uploader": "Unknown Author",
+      "license": "Creative Commons (CC-BY 4.0)",
+      "source_window": "48.5s\u201356.0s",
+      "uses_flag": "Repeat",
+      "framing_score": "not measured",
+      "sharpness": "not measured",
+      "origin": "Rendered fresh"
+    },
+    {
+      "index": 7,
+      "clip_id": "c_cache_ByH9LuSILxU_90_95_use1_off15",
+      "timecode": "00:47",
+      "source_id": "cache_ByH9LuSILxU.mp4",
+      "start_s": 92.0075,
+      "end_s": 99.51,
+      "duration_s": 7.5,
+      "use_count": null,
+      "source_title": "cache_ByH9LuSILxU.mp4",
+      "uploader": "Unknown Author",
+      "license": "Creative Commons (CC-BY 4.0)",
+      "source_window": "92.0s\u201399.5s",
+      "uses_flag": "Repeat",
+      "framing_score": "not measured",
+      "sharpness": "not measured",
+      "origin": "Rendered fresh"
+    },
+    {
+      "index": 8,
+      "clip_id": "c_cache_825Za_ZishQ_65_75",
+      "timecode": "00:55",
+      "source_id": "cache_825Za_ZishQ.mp4",
+      "start_s": 65.0,
+      "end_s": 75.0,
+      "duration_s": 5.08,
+      "use_count": null,
+      "source_title": "cache_825Za_ZishQ.mp4",
+      "uploader": "Unknown Author",
+      "license": "Creative Commons (CC-BY 4.0)",
+      "source_window": "65.0s\u201375.0s",
+      "uses_flag": "Unique",
+      "framing_score": "not measured",
+      "sharpness": "not measured",
+      "origin": "Rendered fresh"
+    }
+  ],
+  "clips_table": [
+    {
+      "index": 1,
+      "clip_id": "c_cache_825Za_ZishQ_65_75_use2_off30",
+      "timecode": "00:00",
+      "source_id": "cache_825Za_ZishQ.mp4",
+      "start_s": 68.0,
+      "end_s": 78.0,
+      "duration_s": 10.0,
+      "use_count": null,
+      "source_title": "cache_825Za_ZishQ.mp4",
+      "uploader": "Unknown Author",
+      "license": "Creative Commons (CC-BY 4.0)",
+      "source_window": "68.0s\u201378.0s",
+      "uses_flag": "Repeat",
+      "framing_score": "not measured",
+      "sharpness": "not measured",
+      "origin": "Rendered fresh"
+    },
+    {
+      "index": 2,
+      "clip_id": "c_cache_825Za_ZishQ_49_59_use1_off15",
+      "timecode": "00:10",
+      "source_id": "cache_825Za_ZishQ.mp4",
+      "start_s": 50.5,
+      "end_s": 58.0,
+      "duration_s": 7.5,
+      "use_count": null,
+      "source_title": "cache_825Za_ZishQ.mp4",
+      "uploader": "Unknown Author",
+      "license": "Creative Commons (CC-BY 4.0)",
+      "source_window": "50.5s\u201358.0s",
+      "uses_flag": "Repeat",
+      "framing_score": "not measured",
+      "sharpness": "not measured",
+      "origin": "Rendered fresh"
+    },
+    {
+      "index": 3,
+      "clip_id": "c_cache_825Za_ZishQ_57_67_use1_off15",
+      "timecode": "00:17",
+      "source_id": "cache_825Za_ZishQ.mp4",
+      "start_s": 58.5,
+      "end_s": 66.0,
+      "duration_s": 7.5,
+      "use_count": null,
+      "source_title": "cache_825Za_ZishQ.mp4",
+      "uploader": "Unknown Author",
+      "license": "Creative Commons (CC-BY 4.0)",
+      "source_window": "58.5s\u201366.0s",
+      "uses_flag": "Repeat",
+      "framing_score": "not measured",
+      "sharpness": "not measured",
+      "origin": "Rendered fresh"
+    },
+    {
+      "index": 4,
+      "clip_id": "c_cache_825Za_ZishQ_73_83_use1_off15",
+      "timecode": "00:25",
+      "source_id": "cache_825Za_ZishQ.mp4",
+      "start_s": 74.5,
+      "end_s": 82.0,
+      "duration_s": 7.5,
+      "use_count": null,
+      "source_title": "cache_825Za_ZishQ.mp4",
+      "uploader": "Unknown Author",
+      "license": "Creative Commons (CC-BY 4.0)",
+      "source_window": "74.5s\u201382.0s",
+      "uses_flag": "Repeat",
+      "framing_score": "not measured",
+      "sharpness": "not measured",
+      "origin": "Rendered fresh"
+    },
+    {
+      "index": 5,
+      "clip_id": "c_byh9_340_350_use1_off15",
+      "timecode": "00:32",
+      "source_id": "cache_ByH9LuSILxU.mp4",
+      "start_s": 341.5,
+      "end_s": 349.0,
+      "duration_s": 7.5,
+      "use_count": null,
+      "source_title": "cache_ByH9LuSILxU.mp4",
+      "uploader": "Unknown Author",
+      "license": "Creative Commons (CC-BY 4.0)",
+      "source_window": "341.5s\u2013349.0s",
+      "uses_flag": "Repeat",
+      "framing_score": "not measured",
+      "sharpness": "not measured",
+      "origin": "Rendered fresh"
+    },
+    {
+      "index": 6,
+      "clip_id": "c_cache_ByH9LuSILxU_47_57_use1_off15",
+      "timecode": "00:40",
+      "source_id": "cache_ByH9LuSILxU.mp4",
+      "start_s": 48.5,
+      "end_s": 56.0,
+      "duration_s": 7.5,
+      "use_count": null,
+      "source_title": "cache_ByH9LuSILxU.mp4",
+      "uploader": "Unknown Author",
+      "license": "Creative Commons (CC-BY 4.0)",
+      "source_window": "48.5s\u201356.0s",
+      "uses_flag": "Repeat",
+      "framing_score": "not measured",
+      "sharpness": "not measured",
+      "origin": "Rendered fresh"
+    },
+    {
+      "index": 7,
+      "clip_id": "c_cache_ByH9LuSILxU_90_95_use1_off15",
+      "timecode": "00:47",
+      "source_id": "cache_ByH9LuSILxU.mp4",
+      "start_s": 92.0075,
+      "end_s": 99.51,
+      "duration_s": 7.5,
+      "use_count": null,
+      "source_title": "cache_ByH9LuSILxU.mp4",
+      "uploader": "Unknown Author",
+      "license": "Creative Commons (CC-BY 4.0)",
+      "source_window": "92.0s\u201399.5s",
+      "uses_flag": "Repeat",
+      "framing_score": "not measured",
+      "sharpness": "not measured",
+      "origin": "Rendered fresh"
+    },
+    {
+      "index": 8,
+      "clip_id": "c_cache_825Za_ZishQ_65_75",
+      "timecode": "00:55",
+      "source_id": "cache_825Za_ZishQ.mp4",
+      "start_s": 65.0,
+      "end_s": 75.0,
+      "duration_s": 5.08,
+      "use_count": null,
+      "source_title": "cache_825Za_ZishQ.mp4",
+      "uploader": "Unknown Author",
+      "license": "Creative Commons (CC-BY 4.0)",
+      "source_window": "65.0s\u201375.0s",
+      "uses_flag": "Unique",
+      "framing_score": "not measured",
+      "sharpness": "not measured",
+      "origin": "Rendered fresh"
+    }
+  ],
+  "quality_checks": {
+    "gates": [
+      {
+        "gate": "1b. Exact Duration Contract",
+        "threshold": "+/- 1.0s diff from 60s",
+        "measured": "0.0s (-60.0s diff)",
+        "margin": "-59.00s",
+        "verdict": "\u274c FAIL",
+        "passed": false,
+        "status": "FAIL",
+        "repair": "Trim/extend timeline to contract duration"
+      },
+      {
+        "gate": "3. Broadcast Audio Loudness",
+        "threshold": "-14.0 LUFS (+/- 1.0), Peak <= -1.0 dBTP",
+        "measured": "-13.1 LUFS, -1.0 dBTP",
+        "margin": "+0.1 LUFS",
+        "verdict": "\u274c FAIL",
+        "passed": false,
+        "status": "FAIL",
+        "repair": "EBU R128 dynamic gain filter"
+      },
+      {
+        "gate": "4. Pet Centering",
+        "threshold": "Compliance >= 85% of sampled frames",
+        "measured": "56.2% (9/16 frames)",
+        "margin": "-28.8%",
+        "verdict": "\u274c FAIL",
+        "passed": false,
+        "status": "FAIL",
+        "repair": "Recenter with clamp-aware tracking"
+      },
+      {
+        "gate": "6b. Clean Clips (Overlays)",
+        "threshold": "Clean footage (no burned-in text/overlays)",
+        "measured": "TOP_BANNER_TEXT (2.5% >= 2%)",
+        "margin": "<20% fail rate",
+        "verdict": "\u274c FAIL",
+        "passed": false,
+        "status": "FAIL",
+        "repair": "Reject text-polluted clips"
+      },
+      {
+        "gate": "1. Stream Specs",
+        "threshold": "16:9 H264 High (>=2.5 Mbps)",
+        "measured": "1080x1920 h264 High",
+        "margin": "+0 kbps",
+        "verdict": "\u2705 PASS",
+        "passed": true,
+        "status": "PASS",
+        "repair": "None required"
+      },
+      {
+        "gate": "2. Stream Defects",
+        "threshold": "0 black, 0 frozen frames",
+        "measured": "0 black / 0 frozen",
+        "margin": "0 hits",
+        "verdict": "\u2705 PASS",
+        "passed": true,
+        "status": "PASS",
+        "repair": "None required"
+      },
+      {
+        "gate": "5. Layout Fill",
+        "threshold": "Full canvas cover (no letterbox)",
+        "measured": "FULL_FRAME_FILL_VERIFIED",
+        "margin": "0 px bars",
+        "verdict": "\u2705 PASS",
+        "passed": true,
+        "status": "PASS",
+        "repair": "None required"
+      },
+      {
+        "gate": "6. Watermark Cleanliness",
+        "threshold": "Clean corners (confidence <= 0.20)",
+        "measured": "Clean corners (no watermark detected)",
+        "margin": "+0.80",
+        "verdict": "\u2705 PASS",
+        "passed": true,
+        "status": "PASS",
+        "repair": "None required"
+      },
+      {
+        "gate": "7. Peak Quality Visibility",
+        "threshold": "100% visible at peak moments",
+        "measured": "100% visible at peak",
+        "margin": "+0.0%",
+        "verdict": "\u2705 PASS",
+        "passed": true,
+        "status": "PASS",
+        "repair": "None required"
+      },
+      {
+        "gate": "8. Real Footage Verification",
+        "threshold": "Real cat footage (negative prob <= 0.30)",
+        "measured": "Negative votes: 1",
+        "margin": "+0.70",
+        "verdict": "\u2705 PASS",
+        "passed": true,
+        "status": "PASS",
+        "repair": "None required"
+      },
+      {
+        "gate": "9. Visual Sharpness",
+        "threshold": "LapVar >= 150.0 (every clip)",
+        "measured": "Min 255.2, Median 381.8",
+        "margin": "+105.2",
+        "verdict": "\u2705 PASS",
+        "passed": true,
+        "status": "PASS",
+        "repair": "None required"
+      },
+      {
+        "gate": "10. Safe-Zone Captions & Spacing",
+        "threshold": "0 safe-zone violations, max uses <= 8",
+        "measured": "Max window uses: 2x",
+        "margin": "+6 uses",
+        "verdict": "\u2705 PASS",
+        "passed": true,
+        "status": "PASS",
+        "repair": "None required"
+      }
+    ],
+    "has_contact_sheet": false,
+    "contact_sheet_data_uri": ""
+  },
+  "sources_and_credits": {
+    "unique_sources_count": 0,
+    "sources": []
+  },
+  "metadata_and_upload": {
+    "youtube": {
+      "title": "Peak cat behavior detected: Watch What This Sneaky Kitty Decided To Do Next",
+      "title_char_count": 75,
+      "title_limit_status": "Valid (<= 100 chars)",
+      "description": "Curated moments of this curious cat captured on camera.\n\nEnjoy these genuine cat moments. All clips licensed and attributed below.\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nFootage licensed under Creative Commons CC-BY 4.0 and curated original footage.\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n#catsofyoutube #kitten #meow #indoorcat #catmoments",
+      "tags": "animals, funnycats, kitten, cutecat, catsoftiktok, playfulcat, indoorcat, petlovers, cutepets, kittylove, dailycatdose, catlife",
+      "hashtags": "#cat #catoftheday #cutecat #indoorcat #catmemes"
+    },
+    "tiktok": {
+      "title": "Peak cat behavior detected: Watch What This Sneaky Kitty Decided To Do Next",
+      "caption": "Peak cat behavior detected: Watch What This Sneaky Kitty Decided To Do Next #cats #funny",
+      "caption_limit_status": "Valid (<= 2200 chars)"
+    },
+    "instagram_reels": {
+      "caption": "Peak cat behavior detected: Watch What This Sneaky Kitty Decided To Do Next #reels #cats",
+      "caption_limit_status": "Valid (<= 2200 chars)"
+    }
+  },
+  "environment": {
+    "platform": "Windows-11-10.0.26300-SP0",
+    "python_version": "3.12.10",
+    "python_executable": "C:/LionReel/venv/Scripts/python.exe",
+    "ffmpeg_version": "ffmpeg version 7.1-essentials_build-www.gyan.dev",
+    "encoder_hardware": "libx264",
+    "cpu_model": "Intel64 Family 6 Model 186 Stepping 3, GenuineIntel",
+    "cpu_cores_logical": 12,
+    "ram_total_gb": 16.0,
+    "ram_available_gb": 8.0,
+    "free_disk_gb": 165.3,
+    "total_disk_gb": 400.0,
+    "build_id": "c7c9a43619ad"
+  },
+  "issues_and_notes": [],
+  "diagnostic": {
+    "failing_stage": "Final MP4 assembly & 10-gate QA validation",
+    "reason_code": "QA validation failed",
+    "last_30_log_lines": [
+      "[SEQ:73] [14:22:31] [INFO]",
+      "========================================================================",
+      "STAGE TIMING BREAKDOWN \u2014 JOB: lionreel_cat_20261018_141334_4bf56662",
+      "WALL CLOCK: 2026-10-18 14:13:34.356 -> 2026-10-18 14:22:31.072",
+      "========================================================================",
+      "STAGE                        | TIME (s)   | TIME (ms)    | SHARE",
+      "------------------------------------------------------------------------",
+      "harvest                      | 0.01       | 10.0         |    0.0%",
+      "ffprobe                      | 0.19       | 193.0        |    0.0%",
+      "watermark                    | 7.50       | 7500.0       |    1.4%",
+      "stage_5_predict_framing      | 23.78      | 23780.0      |    4.4%",
+      "\u2514\u2500 tracking                | 10.78      | 10779.0      |    2.0%",
+      "reframe                      | 108.28     | 108281.0     |   20.2%",
+      "caption                      | 62.05      | 62048.0      |   11.6%",
+      "concat                       | 0.26       | 261.0        |    0.0%",
+      "audio                        | 8.56       | 8559.0       |    1.6%",
+      "render                       | 0.17       | 172.0        |    0.0%",
+      "qa                           | 94.62      | 94617.0      |   17.6%",
+      "startup                      | 1.36       | 1365.0       |    0.3%",
+      "prepare                      | 12.38      | 12380.0      |    2.3%",
+      "reserve                      | 0.06       | 59.0         |    0.0%",
+      "prepare_sources              | 0.05       | 48.0         |    0.0%",
+      "------------------------------------------------------------------------",
+      "SUBTOTAL (EXCLUSIVE)         | 330.05     | 330050.0     |   61.4%",
+      "UNACCOUNTED GAP              | 206.67     | 206670.0     |   38.6%",
+      "------------------------------------------------------------------------",
+      "TOTAL WALL CLOCK TIME        | 536.72     | 536715.0     | 100.0%",
+      "========================================================================",
+      "[WARN] Unaccounted execution gap (206.67s, 38.6% > 2.0%). Please inspect uninstrumented blocks.",
+      "[SEQ:74] [14:22:31] [ERROR] JOB FAILED: Final MP4 assembly & 10-gate QA validation"
+    ],
+    "last_log_lines": [
+      "[SEQ:73] [14:22:31] [INFO]",
+      "========================================================================",
+      "STAGE TIMING BREAKDOWN \u2014 JOB: lionreel_cat_20261018_141334_4bf56662",
+      "WALL CLOCK: 2026-10-18 14:13:34.356 -> 2026-10-18 14:22:31.072",
+      "========================================================================",
+      "STAGE                        | TIME (s)   | TIME (ms)    | SHARE",
+      "------------------------------------------------------------------------",
+      "harvest                      | 0.01       | 10.0         |    0.0%",
+      "ffprobe                      | 0.19       | 193.0        |    0.0%",
+      "watermark                    | 7.50       | 7500.0       |    1.4%",
+      "stage_5_predict_framing      | 23.78      | 23780.0      |    4.4%",
+      "\u2514\u2500 tracking                | 10.78      | 10779.0      |    2.0%",
+      "reframe                      | 108.28     | 108281.0     |   20.2%",
+      "caption                      | 62.05      | 62048.0      |   11.6%",
+      "concat                       | 0.26       | 261.0        |    0.0%",
+      "audio                        | 8.56       | 8559.0       |    1.6%",
+      "render                       | 0.17       | 172.0        |    0.0%",
+      "qa                           | 94.62      | 94617.0      |   17.6%",
+      "startup                      | 1.36       | 1365.0       |    0.3%",
+      "prepare                      | 12.38      | 12380.0      |    2.3%",
+      "reserve                      | 0.06       | 59.0         |    0.0%",
+      "prepare_sources              | 0.05       | 48.0         |    0.0%",
+      "------------------------------------------------------------------------",
+      "SUBTOTAL (EXCLUSIVE)         | 330.05     | 330050.0     |   61.4%",
+      "UNACCOUNTED GAP              | 206.67     | 206670.0     |   38.6%",
+      "------------------------------------------------------------------------",
+      "TOTAL WALL CLOCK TIME        | 536.72     | 536715.0     | 100.0%",
+      "========================================================================",
+      "[WARN] Unaccounted execution gap (206.67s, 38.6% > 2.0%). Please inspect uninstrumented blocks.",
+      "[SEQ:74] [14:22:31] [ERROR] JOB FAILED: Final MP4 assembly & 10-gate QA validation"
+    ],
+    "checkpoint_state": "Checkpoint preserved at failure point",
+    "resumption_strategy": "Auto-resume from the last verified checkpoint via Retry Generation."
+  },
+  "failure_diagnostic": {
+    "failing_stage": "Final MP4 assembly & 10-gate QA validation",
+    "reason_code": "QA validation failed",
+    "last_30_log_lines": [
+      "[SEQ:73] [14:22:31] [INFO]",
+      "========================================================================",
+      "STAGE TIMING BREAKDOWN \u2014 JOB: lionreel_cat_20261018_141334_4bf56662",
+      "WALL CLOCK: 2026-10-18 14:13:34.356 -> 2026-10-18 14:22:31.072",
+      "========================================================================",
+      "STAGE                        | TIME (s)   | TIME (ms)    | SHARE",
+      "------------------------------------------------------------------------",
+      "harvest                      | 0.01       | 10.0         |    0.0%",
+      "ffprobe                      | 0.19       | 193.0        |    0.0%",
+      "watermark                    | 7.50       | 7500.0       |    1.4%",
+      "stage_5_predict_framing      | 23.78      | 23780.0      |    4.4%",
+      "\u2514\u2500 tracking                | 10.78      | 10779.0      |    2.0%",
+      "reframe                      | 108.28     | 108281.0     |   20.2%",
+      "caption                      | 62.05      | 62048.0      |   11.6%",
+      "concat                       | 0.26       | 261.0        |    0.0%",
+      "audio                        | 8.56       | 8559.0       |    1.6%",
+      "render                       | 0.17       | 172.0        |    0.0%",
+      "qa                           | 94.62      | 94617.0      |   17.6%",
+      "startup                      | 1.36       | 1365.0       |    0.3%",
+      "prepare                      | 12.38      | 12380.0      |    2.3%",
+      "reserve                      | 0.06       | 59.0         |    0.0%",
+      "prepare_sources              | 0.05       | 48.0         |    0.0%",
+      "------------------------------------------------------------------------",
+      "SUBTOTAL (EXCLUSIVE)         | 330.05     | 330050.0     |   61.4%",
+      "UNACCOUNTED GAP              | 206.67     | 206670.0     |   38.6%",
+      "------------------------------------------------------------------------",
+      "TOTAL WALL CLOCK TIME        | 536.72     | 536715.0     | 100.0%",
+      "========================================================================",
+      "[WARN] Unaccounted execution gap (206.67s, 38.6% > 2.0%). Please inspect uninstrumented blocks.",
+      "[SEQ:74] [14:22:31] [ERROR] JOB FAILED: Final MP4 assembly & 10-gate QA validation"
+    ],
+    "last_log_lines": [
+      "[SEQ:73] [14:22:31] [INFO]",
+      "========================================================================",
+      "STAGE TIMING BREAKDOWN \u2014 JOB: lionreel_cat_20261018_141334_4bf56662",
+      "WALL CLOCK: 2026-10-18 14:13:34.356 -> 2026-10-18 14:22:31.072",
+      "========================================================================",
+      "STAGE                        | TIME (s)   | TIME (ms)    | SHARE",
+      "------------------------------------------------------------------------",
+      "harvest                      | 0.01       | 10.0         |    0.0%",
+      "ffprobe                      | 0.19       | 193.0        |    0.0%",
+      "watermark                    | 7.50       | 7500.0       |    1.4%",
+      "stage_5_predict_framing      | 23.78      | 23780.0      |    4.4%",
+      "\u2514\u2500 tracking                | 10.78      | 10779.0      |    2.0%",
+      "reframe                      | 108.28     | 108281.0     |   20.2%",
+      "caption                      | 62.05      | 62048.0      |   11.6%",
+      "concat                       | 0.26       | 261.0        |    0.0%",
+      "audio                        | 8.56       | 8559.0       |    1.6%",
+      "render                       | 0.17       | 172.0        |    0.0%",
+      "qa                           | 94.62      | 94617.0      |   17.6%",
+      "startup                      | 1.36       | 1365.0       |    0.3%",
+      "prepare                      | 12.38      | 12380.0      |    2.3%",
+      "reserve                      | 0.06       | 59.0         |    0.0%",
+      "prepare_sources              | 0.05       | 48.0         |    0.0%",
+      "------------------------------------------------------------------------",
+      "SUBTOTAL (EXCLUSIVE)         | 330.05     | 330050.0     |   61.4%",
+      "UNACCOUNTED GAP              | 206.67     | 206670.0     |   38.6%",
+      "------------------------------------------------------------------------",
+      "TOTAL WALL CLOCK TIME        | 536.72     | 536715.0     | 100.0%",
+      "========================================================================",
+      "[WARN] Unaccounted execution gap (206.67s, 38.6% > 2.0%). Please inspect uninstrumented blocks.",
+      "[SEQ:74] [14:22:31] [ERROR] JOB FAILED: Final MP4 assembly & 10-gate QA validation"
+    ],
+    "checkpoint_state": "Checkpoint preserved at failure point",
+    "resumption_strategy": "Auto-resume from the last verified checkpoint via Retry Generation."
+  }
+}

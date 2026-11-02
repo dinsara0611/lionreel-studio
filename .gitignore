@@ -7,13 +7,28 @@ __pycache__/
 raw/
 finished/
 own_footage/
+work/
+quarantine/
+scratch/
 
 # Logs and user configuration
 gui_run.log
+*.log
 config.json
 cookies_raw.json
+web_server.lock
+quarantine_manifest.json
+*.bak
+*.lock
 
 # Local system files
 Thumbs.db
 .DS_Store
 *.mp4
+*.webm
+*.mkv
+*.wav
+*.mp3
+
+# Large network traces
+analysis/ui_network_trace.har

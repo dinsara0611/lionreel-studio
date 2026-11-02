@@ -1,0 +1,68 @@
+<USER_REQUEST>
+BUG: the job "freezes": the same job id restarts in a loop, the harvest never runs, the numbers disagree, and the card shows stale state. Fix the root causes, keep the quality floor unchanged (license, watermark/logo, cartoon/AI, no-pet, framing, sharpness, duplicates, credits). Keep earlier rules (job isolation, ledger, no fake passes, SVG icons, dark/light themes, UI freeze: change only the progress card files and the server/engine; update ui_freeze_manifest.json for those files only). Back up first, work in small steps, update PROGRESS.md, use Playwright with installed Chrome (channel="chrome", no driver download), and stop and report if the same error happens twice. Test-first: write the failing test for each symptom, show it failing, fix, show it passing. Never claim a fix without proof.
+
+EVIDENCE FROM MY LOG
+- Job test_small_long_1791693001 starts again at 10:06:57, 10:08:57, 10:10:57, 10:13:01, 10:15:01, 10:17:02, 10:19:02, 10:21:02, 10:23:06, 10:25:06, 10:27:06 (each cycle about 118-130 s, restart about 2 s after "BATCH COMPLETE"). Every cycle re-analyzes the same 20 windows (about 82 s of tracking), ends with "JOB WAITING: Waiting for clips: 1 of 2 ready", and nothing changes. The pids differ (30776, 18616, 5696, 8292, 4120, 13964, 28908, 2296, 26680, 30604, 27212, 31652).
+- At 10:29:18 the SAME job id starts with "CONFIG: ... mode=short ... clips=100 clip_time=12.0s expected_total=1200.0s" and "TYPE: SHORT" (my dashboard job is Long Video, which must be TYPE COMPILATION). Log: "[SELF-HEALING PAUSE] Finding more clips: 75 of 100 ready".
+- Every cycle prints "[USER ACTION] User selected 'Make shorter video' (2 clips). Proceeding!" although I never clicked it (a stored test choice is replayed).
+- harvest = 0.00-0.01 s in every timing table while the log says "Starting background harvest loop (budget: 900s or 60 candidates)" and the card says "Background harvest worker active".
+- Dashboard card for the 100-clip job: "Finding more clips: 0 of 100 ready", 49% (orange), "Active stage: Reframe & render vertical clip cuts", WAITING with elapsed 00:00 after 20+ minutes, "Est. remaining: Waiting for clips". Pool panel: Verified Clips 1, Distinct Sources 14, Vertical 9:16 Sources 7, Blocked Sources 12. So three different numbers (75 / 0 / 1) for the same thing, and the pool can supply at most about 6 clips (2 usable sources x 3 clips) for a 100-clip request.
+- Other defects: post-crop gate "Sharpness: 11.3 (low_ratio: 0.25)" for window cache_ByH9LuSILxU 340.0-351.5 s although Stage A measured Sharp 360.6 for the same moment (30x drop); duplicate windows still reserved (Cand 10 = Cand 14 = zCBhh 43.6 s, Cand 12 = Cand 16 = Rr97 33.8 s); point candidates without a window (0.1 s, 0.8 s, 6.4 s); only 1 CACHE HIT of 20 (rejected windows are re-analyzed every cycle); timing table shares are wrong (reframe 26.95 s = 0.1%, stage_5_predict_framing 83.20 s = 47.2% while its nested tracking 81.83 s = 23.6%); the post-crop gate takes about 24 s for a clip that renders in 3 s; log lines are duplicated again and separator lines are missing (SEQ 44-46 twice, the timing table twice at 10:29:15, the "--- RENDERING VIDEO 1 OF 1 ---" line missing at 10:29:18); the card is left of center with an empty gap on the right.
+
+1. FIND AND STOP THE LOOP (no other changes first)
+a) Show the process list (command lines, start times, parent) for python/ffmpeg, and find which component relaunches lion_automate_v97.py after "BATCH COMPLETE" (supervisor, watcher, scheduler, web_server thread, leftover test harness). Show the code, the restart interval, and why the job id test_small_long_1791693001 is still alive in production. Kill the stale test processes, and delete nothing else.
+b) Explain how the 100-clip settings and TYPE SHORT got attached to the old test job id (shared config read at start instead of the job's own saved config?).
+
+2. ONE JOB = ONE IMMUTABLE CONFIG + ONE PROCESS
+- At creation, write work/<job_id>/job_config.json (type, mode, clips, clip time, layout, allow flags, settings snapshot, created_at). The engine reads ONLY this file, never live dashboard settings or shared files. A relaunch of the same job id with different settings is rejected.
+- Test and sandbox jobs use a separate id prefix (sandbox_), a separate work/ledger/config directory, and a fixture teardown that kills their processes and removes their supervisor entries. Production supervisors never resume sandbox_ or test_ jobs and never touch their files.
+- One process per job via a lock file with the pid; a second launch of the same job id exits immediately with a clear message.
+- "[USER ACTION]" decisions are one-shot events: stored with job id, UI event id and timestamp, consumed once, never replayed on a restart, and the log shows who or what triggered them. Remove the stored "Make shorter video" choice from the test.
+
+3. WAITING AND RESUME WITHOUT A RESTART LOOP
+- A job in WAITING_FOR_CLIPS keeps ONE process (or a single supervisor entry) and sleeps. It wakes only when the verified-clip count of the bank INCREASES (event or a cheap poll every 30 s), then re-validates only the new windows. If nothing changed, do not re-run Stage A and do not relaunch.
+- If a relaunch is needed after a server restart, resume from the checkpoint (reserved list, rendered clips, analysis cache), and use exponential backoff (2, 4, 8 ... max 10 min) when nothing changed.
+- The wait budget (30 min) and "waiting since" are persisted per job and are NOT reset by a restart. After the budget or after 3 consecutive no-growth checks the state becomes NEEDS_SOURCES (amber) with the buttons "Add sources", "Reduce to what the pool can supply (N clips)", "Cancel".
+- Idle CPU during waiting must be under 5%.
+
+4. THE HARVEST MUST BE REAL AND VISIBLE
+- A single harvest worker with its own log. /api/harvest/status returns state (idle, running, error), current source, sources scanned, windows analyzed, windows verified, rejects by reason, last activity time and growth per minute. The card and the log use this data only. If the worker is not running, say "Harvest not running" (not "worker active") and offer a "Start harvest" button; if it cannot run (no network, quota, no results) show the reason.
+- Pool health: show a per-source table (source, orientation, resolution, license, verified windows, blocked yes/no with the reason: watermark, compilation, low resolution, unknown license, no pet, framing infeasible). I have 14 sources, 12 blocked, 7 vertical 9:16 but only 1 verified clip: explain why vertical sources produce nothing and check for over-blocking bugs (for example a whole source blocked because of one window). Do NOT lower any gate.
+- Add at least 10 new legal sources (at least 5 vertical 9:16, no compilations, no logos) with credits saved, and report the verified windows they add.
+
+5. ONE DEFINITION OF "READY" AND REAL CAPACITY
+- ready = verified-good unique windows that satisfy the diversity rules (at most 3 per source, 30 s apart). Compute it once in the backend and use it in the log, the card, the pool panel and the preflight. Show candidates (unverified) separately ("75 candidates, 1 verified").
+- Capacity check in /api/preflight and before Start: capacity = min(verified windows, usable sources x 3). A 100-clip request on this pool must say "This pool can supply at most N clips. 100 clips need at least 34 sources." with the buttons "Set N clips", "Harvest first", "Start anyway (it will wait)".
+
+6. THE CARD (progress card files only)
+- WAITING shows: a harvest progress bar (verified / needed), a ticking waiting timer from the server start time, "waiting since", "last harvest activity", "next check in", growth per minute, and an ETA only when the growth rate is measurable. No stale percentage or stage from another job: the card renders only the data of ITS job id (job id in every API response, the frontend ignores events for other ids).
+- After 10 minutes with no growth show an amber hint ("No new clips for 10 min: add sources or reduce to N clips").
+- Center the card with the same container as the rest (no empty right gap).
+
+7. PERFORMANCE AND CORRECTNESS BUGS FROM THE LOG
+- Cache EVERY Stage A result, including REJECT reasons, keyed by (source hash, start, end, analyzer version, thresholds hash); show "CACHE HIT" and never re-analyze (the 20-window analysis cost about 82 s per cycle).
+- UNIQUE window constraint and non-maximum suppression (10 s apart); turn point candidates into real windows or drop them.
+- Post-crop sharpness: reproduce on cache_ByH9LuSILxU 340.0-351.5 s (Stage A 360.6 vs post-crop 11.3). Compare the Laplacian variance (540x960 gray) of the source crop and of the rendered clip, check the first frames for a fade or black frame, the scaling filter, the encode settings and the way low_ratio is computed. Fix the measurement or the render, not the threshold (150), and show before/after frames and numbers.
+- Speed up the post-crop gate (24 s now): sample 12 frames from the rendered clip instead of decoding it all.
+- Timing table: shares must be computed against the wall clock total for every row (exclusive for parents, nested rows indented), and they must match the time column. Add a test with these numbers.
+- Log integrity: one writer per job log, dedupe by (job_id, seq), no missing separators, the log file on disk equals the UI log (1000 lines in, 1000 out).
+
+8. ACCEPTANCE TESTS (sandbox)
+- Reproduce: a pool with 1 verified clip and a 100-clip job. Expected: ONE process, state WAITING_FOR_CLIPS, no relaunch, no repeated STARTUP lines for that job id in 15 minutes, idle CPU under 5%, real harvest status in the card, preflight warning with capacity N, correct TYPE COMPILATION, job_config.json used.
+- Add verified windows while waiting: the job wakes once and resumes without a restart loop. No new clips for the budget: NEEDS_SOURCES.
+- Kill and restart the server during WAITING: the job resumes from the checkpoint with its original wait start time.
+- A sandbox job never touches production config; a leftover sandbox process is killed by the fixture; the replayed "USER ACTION" cannot happen.
+- Card screenshots (waiting, needs sources, running, success) in dark and light, 1440 and 390 px. Paste the process list, the last 60 log lines, timings.json, the changed files, and an honest list of anything still failing.
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-10-11T10:46:11+05:30.
+
+The user's current state is as follows:
+Active Document: g:\My Drive\Cat make\tests\test_pipeline_symptoms.py (LANGUAGE_PYTHON)
+Cursor is on line: 1
+Other open documents:
+- g:\My Drive\Cat make\tests\test_pipeline_symptoms.py (LANGUAGE_PYTHON)
+</ADDITIONAL_METADATA>
+<USER_SETTINGS_CHANGE>
+The user changed setting `Model Selection` from None to Gemini 3.8 Flash (Medium). No need to comment on this change if the user doesn't ask about it. If reporting what model you are, please use a human readable name instead of the exact string.
+</USER_SETTINGS_CHANGE>

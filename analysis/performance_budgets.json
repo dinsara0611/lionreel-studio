@@ -1,0 +1,9 @@
+{
+  "cutting_room_css_gz_kb": 5.7,
+  "fonts_total_kb": 118.9,
+  "icons_kb": 0.66,
+  "third_party_requests_count": 0,
+  "local_lcp_s": 0.348,
+  "cls_score": 0.0,
+  "all_budgets_passed": true
+}

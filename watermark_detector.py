@@ -48,6 +48,11 @@ class WatermarkDetector:
         clip_frames = int(dur_s * fps) if dur_s else (total_frames - start_f)
         clip_frames = max(1, min(clip_frames, total_frames - start_f))
 
+        # Sample all four corners every 0.5s across candidate window
+        if n_samples is None or n_samples == 10:
+            eff_dur = dur_s if dur_s else (clip_frames / fps)
+            n_samples = max(10, int(eff_dur / 0.5))
+
         # Evenly spaced frame indices across segment
         sample_indices = [
             start_f + int(clip_frames * (i + 0.5) / n_samples)

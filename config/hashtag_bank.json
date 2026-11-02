@@ -1,0 +1,74 @@
+{
+  "cat": {
+    "mega": [
+      "#cat",
+      "#cats",
+      "#catsofyoutube",
+      "#catsoftiktok",
+      "#shorts",
+      "#cutepets",
+      "#animals"
+    ],
+    "medium": [
+      "#funnycats",
+      "#catlover",
+      "#catlife",
+      "#catoftheday",
+      "#kitten",
+      "#cutecat",
+      "#meow",
+      "#petlovers",
+      "#funnyvideos"
+    ],
+    "niche": [
+      "#catmemes",
+      "#catmoments",
+      "#catzoomies",
+      "#felinefriends",
+      "#playfulcat",
+      "#dailycatdose",
+      "#kittylove",
+      "#wholesomepets",
+      "#indoorcat"
+    ]
+  },
+  "dog": {
+    "mega": [
+      "#dog",
+      "#dogs",
+      "#dogsofyoutube",
+      "#dogsoftiktok",
+      "#shorts",
+      "#cutepets"
+    ],
+    "medium": [
+      "#funnydogs",
+      "#doglover",
+      "#doglife",
+      "#dogoftheday",
+      "#puppy",
+      "#cutedog",
+      "#petlovers"
+    ],
+    "niche": [
+      "#doggo",
+      "#goodboy",
+      "#puppylove",
+      "#dailydog",
+      "#playfulpuppy"
+    ]
+  },
+  "blocklist": [
+    "#fyp",
+    "#foryou",
+    "#foryoupage",
+    "#viral",
+    "#viralvideo",
+    "#explore",
+    "#trending",
+    "#like4like",
+    "#follow4follow",
+    "#sub4sub",
+    "#goviral"
+  ]
+}

@@ -1,0 +1,133 @@
+{
+  "job_id": "lionreel_cat_20261019_105113_0557e923",
+  "wall_clock_start": "2026-10-19 10:51:13.540",
+  "wall_clock_end": "2026-10-19 10:59:07.108",
+  "total_wall_time_sec": 473.567,
+  "total_duration_sec": 473.567,
+  "sum_stages_sec": 472.996,
+  "unaccounted_sec": 0.571,
+  "unaccounted_pct": 0.12,
+  "stages": {
+    "startup": {
+      "duration_sec": 2.425,
+      "total_duration_sec": 2.425,
+      "exclusive_sec": 2.425,
+      "duration_ms": 2425.0,
+      "percentage": 0.51,
+      "share_pct": 0.51,
+      "start_epoch": 1792387273.54096,
+      "end_epoch": 1792387275.96596,
+      "count": 1,
+      "parent": null
+    },
+    "prepare": {
+      "duration_sec": 10.508,
+      "total_duration_sec": 10.508,
+      "exclusive_sec": 10.508,
+      "duration_ms": 10508.2,
+      "percentage": 2.22,
+      "share_pct": 2.22,
+      "start_epoch": 1792387275.965823,
+      "end_epoch": 1792387286.47411,
+      "count": 1,
+      "parent": null
+    },
+    "harvest": {
+      "duration_sec": 0.003,
+      "total_duration_sec": 0.003,
+      "exclusive_sec": 0.003,
+      "duration_ms": 3.0,
+      "percentage": 0.0,
+      "share_pct": 0.0,
+      "start_epoch": 1792387286.5019617,
+      "end_epoch": 1792387286.505258,
+      "count": 1,
+      "parent": null
+    },
+    "reserve": {
+      "duration_sec": 0.03,
+      "total_duration_sec": 0.03,
+      "exclusive_sec": 0.03,
+      "duration_ms": 29.8,
+      "percentage": 0.01,
+      "share_pct": 0.01,
+      "start_epoch": 1792387286.505258,
+      "end_epoch": 1792387286.5348916,
+      "count": 1,
+      "parent": null
+    },
+    "prepare_sources": {
+      "duration_sec": 0.034,
+      "total_duration_sec": 0.034,
+      "exclusive_sec": 0.034,
+      "duration_ms": 34.1,
+      "percentage": 0.01,
+      "share_pct": 0.01,
+      "start_epoch": 1792387286.6756036,
+      "end_epoch": 1792387286.709921,
+      "count": 1,
+      "parent": null
+    },
+    "ffprobe": {
+      "duration_sec": 0.071,
+      "total_duration_sec": 0.071,
+      "exclusive_sec": 0.071,
+      "duration_ms": 70.6,
+      "percentage": 0.01,
+      "share_pct": 0.01,
+      "start_epoch": 1792387286.794578,
+      "end_epoch": 1792387286.865131,
+      "count": 1,
+      "parent": null
+    },
+    "watermark": {
+      "duration_sec": 2.462,
+      "total_duration_sec": 2.462,
+      "exclusive_sec": 2.462,
+      "duration_ms": 2461.6,
+      "percentage": 0.52,
+      "share_pct": 0.52,
+      "start_epoch": 1792387286.965049,
+      "end_epoch": 1792387289.4264748,
+      "count": 1,
+      "parent": null
+    },
+    "stage_5_predict_framing": {
+      "duration_sec": 11.984,
+      "total_duration_sec": 11.984,
+      "exclusive_sec": 9.928,
+      "duration_ms": 11983.8,
+      "percentage": 2.1,
+      "share_pct": 2.1,
+      "start_epoch": 1792387289.5519075,
+      "end_epoch": 1792387301.5359547,
+      "count": 1,
+      "parent": null
+    },
+    "tracking": {
+      "duration_sec": 2.056,
+      "total_duration_sec": 2.056,
+      "exclusive_sec": 2.056,
+      "duration_ms": 2056.2,
+      "percentage": 0.43,
+      "share_pct": 0.43,
+      "start_epoch": 1792387289.9105642,
+      "end_epoch": 1792387291.966813,
+      "count": 1,
+      "parent": "stage_5_predict_framing"
+    },
+    "reframe": {
+      "duration_sec": 445.48,
+      "total_duration_sec": 445.48,
+      "exclusive_sec": 445.48,
+      "duration_ms": 445479.9,
+      "percentage": 94.07,
+      "share_pct": 94.07,
+      "start_epoch": 1792387301.6283717,
+      "end_epoch": 1792387747.1070044,
+      "count": 1,
+      "parent": null
+    }
+  },
+  "table": "========================================================================\n  STAGE TIMING BREAKDOWN \u2014 JOB: lionreel_cat_20261019_105113_0557e923\n  WALL CLOCK: 2026-10-19 10:51:13.540 -> 2026-10-19 10:59:07.108\n========================================================================\nSTAGE                        | TIME (s)   | TIME (ms)    | SHARE   \n------------------------------------------------------------------------\nharvest                      | 0.00       | 3.0          |    0.0%\nffprobe                      | 0.07       | 71.0         |    0.0%\nwatermark                    | 2.46       | 2462.0       |    0.5%\nstage_5_predict_framing      | 9.93       | 9928.0       |    2.1%\n  \u2514\u2500 tracking                | 2.06       | 2056.0       |    0.4%\nreframe                      | 445.48     | 445480.0     |   94.1%\nstartup                      | 2.42       | 2425.0       |    0.5%\nprepare                      | 10.51      | 10508.0      |    2.2%\nreserve                      | 0.03       | 30.0         |    0.0%\nprepare_sources              | 0.03       | 34.0         |    0.0%\n------------------------------------------------------------------------\nSUBTOTAL (EXCLUSIVE)         | 473.00     | 473000.0     |   99.8%\nUNACCOUNTED GAP              | 0.57       | 570.0        |    0.2%\n------------------------------------------------------------------------\nTOTAL WALL CLOCK TIME        | 473.57     | 473567.0     | 100.0%\n========================================================================"
+}

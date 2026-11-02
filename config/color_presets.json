@@ -1,0 +1,88 @@
+{
+  "presets": {
+    "natural": {
+      "id": "natural",
+      "name": "Natural",
+      "description": "True-to-source natural color profile (identity, no grade)",
+      "ffmpeg_filter": "null",
+      "preview_css": "none",
+      "default_strength": 0.6,
+      "params": {
+        "contrast": 1.0,
+        "brightness": 0.0,
+        "saturation": 1.0
+      }
+    },
+    "vivid": {
+      "id": "vivid",
+      "name": "Vivid Pop",
+      "description": "High-energy color pop with enhanced fur highlights and sharpness",
+      "ffmpeg_filter": "eq=contrast=1.15:brightness=0.02:saturation=1.35,unsharp=5:5:0.5:5:5:0.0",
+      "preview_css": "contrast(1.15) brightness(1.02) saturate(1.35)",
+      "default_strength": 0.6,
+      "params": {
+        "contrast": 1.15,
+        "brightness": 0.02,
+        "saturation": 1.35,
+        "unsharp": true
+      }
+    },
+    "cinema": {
+      "id": "cinema",
+      "name": "Cinema",
+      "description": "Rich cinematic contrast with deep blacks and filmic curve",
+      "ffmpeg_filter": "eq=contrast=1.18:brightness=-0.02:saturation=1.08,curves=all='0/0 0.25/0.20 0.75/0.80 1/1'",
+      "preview_css": "contrast(1.18) brightness(0.98) saturate(1.08)",
+      "default_strength": 0.6,
+      "params": {
+        "contrast": 1.18,
+        "brightness": -0.02,
+        "saturation": 1.08,
+        "curves": "all='0/0 0.25/0.20 0.75/0.80 1/1'"
+      }
+    },
+    "warm": {
+      "id": "warm",
+      "name": "Warm Glow",
+      "description": "Golden hour warmth and cozy feline tones",
+      "ffmpeg_filter": "colortemperature=temperature=6800,eq=contrast=1.08:brightness=0.02:saturation=1.18",
+      "preview_css": "sepia(0.15) contrast(1.08) brightness(1.02) saturate(1.18)",
+      "default_strength": 0.6,
+      "params": {
+        "temperature": 6800,
+        "contrast": 1.08,
+        "brightness": 0.02,
+        "saturation": 1.18,
+        "sepia": 0.15
+      }
+    },
+    "cool": {
+      "id": "cool",
+      "name": "Cool Mint",
+      "description": "Crisp and clean cool tones for bright daylight scenes",
+      "ffmpeg_filter": "colortemperature=temperature=5400,eq=contrast=1.08:brightness=0.01:saturation=1.08",
+      "preview_css": "hue-rotate(5deg) contrast(1.08) brightness(1.01) saturate(1.08)",
+      "default_strength": 0.6,
+      "params": {
+        "temperature": 5400,
+        "contrast": 1.08,
+        "brightness": 0.01,
+        "saturation": 1.08,
+        "hue": 5
+      }
+    },
+    "clahe": {
+      "id": "clahe",
+      "name": "Auto contrast (CLAHE)",
+      "description": "Contrast Limited Adaptive Histogram Equalization for balanced shadow and highlight detail",
+      "ffmpeg_filter": "clahe=clip_limit=2.5:tile_grid_size_x=8:tile_grid_size_y=8,eq=contrast=1.08:saturation=1.12",
+      "preview_css": "contrast(1.22) brightness(1.02) saturate(1.12)",
+      "default_strength": 0.6,
+      "params": {
+        "clahe_clip_limit": 2.5,
+        "contrast": 1.08,
+        "saturation": 1.12
+      }
+    }
+  }
+}

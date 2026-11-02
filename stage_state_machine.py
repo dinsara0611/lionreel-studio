@@ -135,10 +135,11 @@ STAGE_DEFINITIONS = [
 ]
 
 class StageStateMachine:
-    def __init__(self, job_id: str, work_dir: str, config: dict = None):
+    def __init__(self, job_id: str, work_dir: str, config: dict = None, heartbeat = None):
         self.job_id = job_id
         self.work_dir = work_dir
         self.config = config or {}
+        self.heartbeat = heartbeat
         self.stages_dir = os.path.join(work_dir, "stages")
         os.makedirs(self.stages_dir, exist_ok=True)
         self.state_file = os.path.join(work_dir, "stages_state.json")
@@ -235,6 +236,11 @@ class StageStateMachine:
 
         s["status"] = "RUNNING"
         s["start_time"] = time.time()
+        if hasattr(self, "heartbeat") and self.heartbeat:
+            try:
+                self.heartbeat.set_stage(stage_id, s["label"])
+            except Exception:
+                pass
         self._save_state()
         return s
 
@@ -251,9 +257,9 @@ class StageStateMachine:
         dur = max(0.01, round(now - start_t, 2))
         s["duration_sec"] = dur
 
-        # A stage that finishes in under 1s must show why
-        if dur < 1.0 and ("instant:" not in evidence.lower() and "cached" not in evidence.lower() and "ready" not in evidence.lower()):
-            evidence = f"{evidence} (instant: pool ready, verified in-memory)"
+        # Truthful stage evidence: preserve real evidence without fake instant verification text
+        if is_cached and "cached" not in evidence.lower():
+            evidence = f"{evidence} (cached result reused)"
 
         # Detect compute device
         device_name = "CPU"
@@ -313,9 +319,61 @@ class StageStateMachine:
 
         s["status"] = "CACHED" if is_cached else "DONE"
         s["evidence"] = evidence
-        s["details"] = cache_meta or {}
+        stage_details = dict(cache_meta or {})
+        if items_count is not None:
+            stage_details["units_done"] = items_count
+        target_cnt = proof.get("target_clips") or proof.get("target_count") or proof.get("candidate_target")
+        if target_cnt is not None:
+            stage_details["units_total"] = target_cnt
+        s["details"] = stage_details
         self._save_state()
+        if hasattr(self, "heartbeat") and self.heartbeat:
+            try:
+                self.heartbeat.step_counter()
+            except Exception:
+                pass
+
+        # Record stage completion in historical estimator database
+        try:
+            from stage_estimator import StageEstimator
+            estimator = StageEstimator()
+            target_clips = int(self.config.get("TARGET_CLIPS", 6))
+            clip_time = float(self.config.get("SHORT_CLIP_SEC", 7.5))
+            mode = str(self.config.get("VIDEO_TYPE", "short")).lower()
+            layout = str(self.config.get("LAYOUT_MODE", "smart_crop")).lower()
+            u_done = items_count if items_count is not None else 0
+            u_tot = proof.get("target_count", target_clips)
+            estimator.record_stage_execution(
+                job_id=self.job_id,
+                stage_id=stage_id,
+                stage_key=s["key"],
+                duration_sec=dur,
+                units_done=u_done,
+                units_total=u_tot,
+                clips_count=target_clips,
+                clip_time=clip_time,
+                mode=mode,
+                layout=layout,
+                is_cached=1 if is_cached else 0
+            )
+        except Exception:
+            pass
+
         return s
+
+    def update_stage_progress(self, stage_id_or_key, units_done: int, units_total: int, unit_type: str = "", note: str = ""):
+        """Updates intra-stage work units (candidates, clips, frames) for real-time progress & ETA calculation."""
+        s = self._get_stage(stage_id_or_key)
+        if not s:
+            return
+        if "details" not in s or not isinstance(s["details"], dict):
+            s["details"] = {}
+        s["details"]["units_done"] = int(units_done)
+        s["details"]["units_total"] = int(units_total)
+        s["details"]["unit_type"] = unit_type
+        if note:
+            s["details"]["note"] = note
+        self._save_state()
 
     def skip_stage(self, stage_id_or_key, reason: str = "turned off in settings", proof_data: dict = None):
         s = self._get_stage(stage_id_or_key)

@@ -1,0 +1,30 @@
+{
+  "gui/app.js": {
+    "sha256": "67b1f954aa5772d1e1bb0bec69deefedaf9fc1fedcabe541986519542c6b198c",
+    "size": 402788
+  },
+  "gui/clipforge_logo.svg": {
+    "sha256": "fad743528bc8cd32d3b3b13af752c7d4927bd2aad592b33e3342daa341807473",
+    "size": 696
+  },
+  "gui/index.html": {
+    "sha256": "3618fd5a507c98b67e8244bfb13d7d2de39dafadad05820f8a88e39491937238",
+    "size": 206446
+  },
+  "gui/lion_logo.png": {
+    "sha256": "2a4ad8f9e59ec25ff73c19f540f0d60d12081082e80b317a0e9419015a49f3f6",
+    "size": 27712
+  },
+  "gui/lion_logo.svg": {
+    "sha256": "9cfa5ca0531fec74cdc1e6f573d044009d178b9038b6550234ee4a79f6c9a733",
+    "size": 672
+  },
+  "gui/style.css": {
+    "sha256": "936cce95811d60b431b4b9d2d625704f98c8ee5785a93a8da5fd04f9df55a5cb",
+    "size": 161326
+  },
+  "gui/tour_strings.js": {
+    "sha256": "603f89e227cf682a6ae8043272bde297d0d39f5b548fb07b25f7974a368e98f3",
+    "size": 7024
+  }
+}

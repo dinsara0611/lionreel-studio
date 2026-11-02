@@ -1,0 +1,28 @@
+{
+  "job_id": "lionreel_cat_20261015_043459_12d6476f",
+  "animal_mode": "cat",
+  "video_type": "compilation",
+  "target_clips_count": 16,
+  "target_clip_sec": 7.5,
+  "initial_clip_sec": 7.5,
+  "contract_total_sec": 120.0,
+  "expected_total_sec": 120.0,
+  "strategy_used": "ladder_step_5_repeat_cycle",
+  "ladder_steps_applied": [
+    "ladder_step_1_bank",
+    "ladder_step_2_harvest",
+    "ladder_step_3_multi_window",
+    "ladder_step_4_adapt_duration",
+    "ladder_step_5_repeat_cycle"
+  ],
+  "repeat_share_pct": 12.5,
+  "status_card_line": "Building your video: 14 of 16 clips ready, finding more automatically",
+  "log_messages": [
+    "[PLANNER] Contract target: 120.0s (16 clips @ ~7.5s). Patience budget: 300s.",
+    "[PLANNER] Bank contains 15 verified unique candidates for cat.",
+    "[PLANNER] Step 1 bank yielded 11 of 16 needed. Triggering progressive harvest.",
+    "[PLANNER] Step 3 expanded window selection yielded 14 clips across sources.",
+    "[PLANNER] Unique pool exhausted. Executing Step 5 repeat cycle with clean IDs, offset >= 3.0s and spacing >= min(8, unique-1).",
+    "[PLANNER] Step 5 COMPLETED: 16 clips total (12.5% repeat share), total 120.0s."
+  ]
+}

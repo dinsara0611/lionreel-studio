@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LionReel Studio Production Report: lionreel_cat_20261017_090335_066ec087</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 10mm 10mm 10mm 10mm;
+            @bottom-right {
+                content: "Page " counter(page) " of " counter(pages);
+                font-size: 7.5pt;
+                color: #94a3b8;
+            }
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-size: 8.5pt;
+            line-height: 1.4;
+            color: #1e293b;
+            background: #f1f5f9;
+            margin: 0;
+            padding: 16px 8px;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .report-paper {
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 10mm 12mm;
+            background: #ffffff;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+            border-radius: 8px;
+        }
+        .report-page {
+            position: relative;
+            min-height: 270mm;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px dashed #cbd5e1;
+        }
+        .report-page:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        @media print {
+            body {
+                background: #ffffff;
+                padding: 0;
+            }
+            .report-paper {
+                max-width: 100%;
+                box-shadow: none;
+                padding: 0;
+                margin: 0;
+            }
+            .report-page {
+                border-bottom: none;
+                margin-bottom: 0;
+                page-break-after: always;
+                break-after: page;
+                min-height: 275mm;
+            }
+            .report-page:last-child {
+                page-break-after: auto;
+                break-after: auto;
+            }
+        }
+
+        .page-top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 4px;
+            margin-bottom: 10px;
+            font-size: 7pt;
+            color: #64748b;
+        }
+        .brand-sub {
+            font-weight: 700;
+            color: #0f172a;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .page-footer {
+            border-top: 1px solid #e2e8f0;
+            padding-top: 6px;
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 7.5pt;
+            color: #94a3b8;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #10b981;
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+        }
+        .brand-row {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+        .brand-title {
+            font-size: 1.35rem;
+            font-weight: 900;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+            margin: 0;
+        }
+        .report-subtitle {
+            font-size: 0.8rem;
+            color: #64748b;
+            font-weight: 600;
+        }
+        .sub-header {
+            font-size: 7.5pt;
+            color: #64748b;
+            margin-top: 3px;
+        }
+
+        .verdict-banner-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: 1px solid transparent;
+        }
+        .verdict-icon {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+        .verdict-tag {
+            font-size: 0.88rem;
+            font-weight: 900;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+        .verdict-desc {
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        .badge-success { background: #ecfdf5; color: #047857; border-color: #a7f3d0; }
+        .badge-warning { background: #fffbeb; color: #b45309; border-color: #fde68a; }
+        .badge-notrun { background: #fefce8; color: #854d0e; border-color: #fef08a; }
+        .badge-failed { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
+
+        /* Attention Box */
+        .attention-box {
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-bottom: 12px;
+            font-size: 7.5pt;
+        }
+        .attention-red { background: #fff5f5; border: 1px solid #fca5a5; color: #991b1b; }
+        .attention-amber { background: #fffbeb; border: 1px solid #fcd34d; color: #92400e; }
+        .attention-green { background: #f0fdf4; border: 1px solid #86efac; color: #166534; }
+        .attention-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            margin-bottom: 4px;
+        }
+        .attention-title {
+            font-size: 7pt;
+            text-transform: uppercase;
+        }
+        .attention-list {
+            margin: 0;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .chip {
+            display: inline-block;
+            padding: 1px 5px;
+            border-radius: 4px;
+            font-size: 6.5pt;
+            font-weight: 600;
+        }
+        .chip-success { background: #e0f2fe; color: #0369a1; }
+        .chip-warning { background: #fef3c7; color: #92400e; }
+        .chip-subtle { background: #f1f5f9; color: #475569; }
+        
+        .section {
+            margin-bottom: 12px;
+        }
+        .section-title {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #0f172a;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 3px;
+            margin: 0 0 8px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .kpi-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 6px 10px;
+        }
+        .kpi-label {
+            font-size: 6.5pt;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 1px;
+        }
+        .kpi-val {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1.15;
+        }
+        .kpi-sub {
+            font-size: 6.5pt;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+
+        .diversity-strip {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin-bottom: 10px;
+        }
+        .div-item-label {
+            font-size: 6pt;
+            color: #475569;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .div-item-val {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+        .div-item-sub {
+            font-size: 6pt;
+            color: #64748b;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 7.5pt;
+            margin-bottom: 8px;
+        }
+        thead { display: table-header-group; }
+        tr { page-break-inside: avoid; break-inside: avoid; }
+        th {
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            text-align: left;
+            padding: 5px 6px;
+            border-bottom: 1.5px solid #cbd5e1;
+        }
+        td {
+            padding: 4px 6px;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+        }
+        .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 7pt; }
+        .bold { font-weight: 600; }
+        .status-pass { color: #059669; font-weight: 700; }
+        .status-fail { color: #dc2626; font-weight: 700; }
+        .status-notrun { color: #d97706; font-weight: 700; }
+        .not-measured { color: #94a3b8; font-style: italic; font-weight: 500; }
+
+        .stacked-bar {
+            display: flex;
+            height: 12px;
+            width: 100%;
+            border-radius: 4px;
+            overflow: hidden;
+            background: #e2e8f0;
+            margin-bottom: 6px;
+        }
+        .bar-seg { height: 100%; }
+        .stacked-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 12px;
+            margin-bottom: 8px;
+            font-size: 6.5pt;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 4px 8px;
+        }
+        .legend-chip {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .legend-swatch {
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+            display: inline-block;
+        }
+        .legend-label {
+            font-weight: 600;
+            color: #334155;
+        }
+        .legend-metric {
+            color: #64748b;
+        }
+
+        .page-break {
+            page-break-before: always;
+            break-before: page;
+        }
+        .contact-sheet-img {
+            width: 100%;
+            max-height: 230px;
+            object-fit: contain;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            margin-top: 6px;
+            background: #000;
+        }
+        .log-terminal {
+            background: #0f172a;
+            color: #38bdf8;
+            padding: 8px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 7pt;
+            max-height: 220px;
+            overflow: hidden;
+            white-space: pre-wrap;
+        }
+        .diagnostic-card {
+            border: 1px solid #f87171;
+            background: #fff5f5;
+            padding: 10px;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+<div class="report-paper">
+    <!-- PAGE 1: Cover, Executive Summary, Attention & Time Allocation -->
+    <div id="report-page-1" class="report-page section-cover">
+        <div>
+            <!-- Header -->
+            <div class="header">
+                <div>
+                    <div class="brand-row">
+                        <h1 class="brand-title">LionReel Studio</h1>
+                        <span class="report-subtitle">Production Quality & Verification Audit</span>
+                    </div>
+                    <div class="sub-header">
+                        <strong>Job ID:</strong> lionreel_cat_20261017_090335_066ec087 &bull; 
+                        <strong>Build:</strong> 0ca9ff38ce82 &bull; 
+                        <strong>Audited:</strong> 2026-10-17 09:05:47 (Sri Lanka Standard Time)
+                    </div>
+                </div>
+                <div class="verdict-banner-badge badge-success">
+                    <span class="verdict-icon">✓</span>
+                    <div>
+                        <div class="verdict-tag">PASSED</div>
+                        <div class="verdict-desc">PASSED / BROADCAST READY</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- What Needs Attention Block -->
+            
+    <div class="attention-box attention-green">
+        <div class="attention-header">
+            <span class="attention-title">WHAT NEEDS ATTENTION (1 ITEMS)</span>
+            <span class="badge badge-success" style="font-size:0.68rem; padding: 2px 7px;">PASSED</span>
+        </div>
+        <ul class="attention-list">
+            <li style='margin-bottom: 3px;'><span style='color:#f59e0b; font-weight:bold;'>⚠️</span> All 11 QA gates passed with zero warnings. Video conforms to broadcast specification.</li>
+        </ul>
+    </div>
+    
+
+            <!-- Section A: Summary KPIs -->
+            <div class="section">
+                <h2 class="section-title">Summary & Deliverable Specifications</h2>
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-label">Delivered Length</div>
+                        <div class="kpi-val">0.0s</div>
+                        <div class="kpi-sub">Target: 30s (-30.0s)</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">Delivered Clips</div>
+                        <div class="kpi-val">0 Clips</div>
+                        <div class="kpi-sub">Target: 4 | Plan: 0</div>
+                        
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">Aspect & Format</div>
+                        <div class="kpi-val">9:16</div>
+                        <div class="kpi-sub">Compilation</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">Repeat Share</div>
+                        <div class="kpi-val">0.0%</div>
+                        <div class="kpi-sub">0 unique of 0 clips</div>
+                    </div>
+                </div>
+
+                <!-- Footage Diversity Mini-Card -->
+                <div class="diversity-strip">
+                    <div>
+                        <div class="div-item-label">Source Count</div>
+                        <div class="div-item-val">0 Sources</div>
+                        <div class="div-item-sub"><span style='color:#f59e0b;'>Warning (< 5 sources)</span></div>
+                    </div>
+                    <div>
+                        <div class="div-item-label">Window Uniqueness</div>
+                        <div class="div-item-val">0 Unique</div>
+                        <div class="div-item-sub">0 total assembled clips</div>
+                    </div>
+                    <div>
+                        <div class="div-item-label">Max Uses / Window</div>
+                        <div class="div-item-val">0x Max</div>
+                        <div class="div-item-sub">Cap 8x Safe</div>
+                    </div>
+                    <div>
+                        <div class="div-item-label">Repeat Ratio</div>
+                        <div class="div-item-val">0.0%</div>
+                        <div class="div-item-sub">Audited Spacing &ge; 8</div>
+                    </div>
+                </div>
+
+                <!-- Deliverables Table -->
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Deliverable Artifact</th>
+                            <th>Format</th>
+                            <th>Resolution</th>
+                            <th>Duration</th>
+                            <th>Size</th>
+                            <th>SHA-256 Digest</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class='bold'>lionreel_cat_20261017_090335_066ec087_timings.json</td><td>.JSON</td><td class='mono'>—</td><td class='mono'>—</td><td class='mono'>6.3 KB</td><td class='mono' style='font-size:6pt;'>3645a8638aa1f56fd70353ccf095...</td></tr><tr><td class='bold'>planner_decision.json</td><td>.JSON</td><td class='mono'>—</td><td class='mono'>—</td><td class='mono'>712 B</td><td class='mono' style='font-size:6pt;'>9ddf5d641ddfd42181d7390b462b...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Section B: Where the time went -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span>Execution Timings & Resource Allocation</span>
+                    <span style="font-size:0.75rem; color:#64748b; font-weight:normal;">Total Exclusive Time: 1.57 min (93.95s)</span>
+                </h2>
+                
+                <div class="stacked-bar">
+                    <div class="bar-seg" style="width: 6.0%; background: #10b981;" title="System Startup & Initialization: 6.0% (5.66s)"></div><div class="bar-seg" style="width: 32.3%; background: #f59e0b;" title="Source Download & Staging: 32.3% (30.37s)"></div><div class="bar-seg" style="width: 51.5%; background: #8b5cf6;" title="Pet Tracking & Framing Analysis: 51.5% (48.39s)"></div><div class="bar-seg" style="width: 9.7%; background: #06b6d4;" title="EBU R128 Audio Mastering: 9.7% (9.15s)"></div>
+                </div>
+
+                <!-- Stacked Bar Legend Underneath -->
+                <div class="stacked-legend">
+                    
+        <div class="legend-chip">
+            <span class="legend-swatch" style="background: #10b981;"></span>
+            <span class="legend-label">System Startup & Initialization</span>
+            <span class="legend-metric">6.0% (5.66s)</span>
+        </div>
+        
+        <div class="legend-chip">
+            <span class="legend-swatch" style="background: #3b82f6;"></span>
+            <span class="legend-label">Ledger Reservation & Selection</span>
+            <span class="legend-metric">0.1% (0.09s)</span>
+        </div>
+        
+        <div class="legend-chip">
+            <span class="legend-swatch" style="background: #f59e0b;"></span>
+            <span class="legend-label">Source Download & Staging</span>
+            <span class="legend-metric">32.3% (30.37s)</span>
+        </div>
+        
+        <div class="legend-chip">
+            <span class="legend-swatch" style="background: #8b5cf6;"></span>
+            <span class="legend-label">Pet Tracking & Framing Analysis</span>
+            <span class="legend-metric">51.5% (48.39s)</span>
+        </div>
+        
+        <div class="legend-chip">
+            <span class="legend-swatch" style="background: #ec4899;"></span>
+            <span class="legend-label">Reframe Rendering (9:16)</span>
+            <span class="legend-metric">0.2% (0.17s)</span>
+        </div>
+        
+        <div class="legend-chip">
+            <span class="legend-swatch" style="background: #06b6d4;"></span>
+            <span class="legend-label">EBU R128 Audio Mastering</span>
+            <span class="legend-metric">9.7% (9.15s)</span>
+        </div>
+        
+        <div class="legend-chip">
+            <span class="legend-swatch" style="background: #14b8a6;"></span>
+            <span class="legend-label">Final Video Concat Assembly</span>
+            <span class="legend-metric">0.2% (0.11s)</span>
+        </div>
+        
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Pipeline Stage</th>
+                            <th style="width: 95px;">Exclusive Time</th>
+                            <th style="width: 75px;">Share (%)</th>
+                            <th>Throughput / Measurement</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class='bold'>System Startup & Initialization</td><td class='mono'>0.09 min (5.66s)</td><td class='mono' style='font-weight:700;'>6.0%</td><td style='color:#64748b;'>Runtime initialized (5.66s)</td></tr><tr><td class='bold'>Ledger Reservation & Selection</td><td class='mono'>0.0 min (0.09s)</td><td class='mono' style='font-weight:700;'>0.1%</td><td style='color:#64748b;'>0.09s elapsed</td></tr><tr><td class='bold'>Source Download & Staging</td><td class='mono'>0.51 min (30.37s)</td><td class='mono' style='font-weight:700;'>32.3%</td><td style='color:#64748b;'>0 clips staged</td></tr><tr><td class='bold'>Pet Tracking & Framing Analysis</td><td class='mono'>0.81 min (48.39s)</td><td class='mono' style='font-weight:700;'>51.5%</td><td style='color:#64748b;'>0.0 fps analysis</td></tr><tr><td class='bold'>Reframe Rendering (9:16)</td><td class='mono'>0.0 min (0.17s)</td><td class='mono' style='font-weight:700;'>0.2%</td><td style='color:#64748b;'>5357.1 fps rendering</td></tr><tr><td class='bold'>EBU R128 Audio Mastering</td><td class='mono'>0.15 min (9.15s)</td><td class='mono' style='font-weight:700;'>9.7%</td><td style='color:#64748b;'>R128 mastered (0.1x real-time)</td></tr><tr><td class='bold'>Final Video Concat Assembly</td><td class='mono'>0.0 min (0.11s)</td><td class='mono' style='font-weight:700;'>0.2%</td><td style='color:#64748b;'>0 clips assembled</td></tr>
+                        <tr style="background:#f8fafc; font-weight:700; border-top: 1.5px solid #cbd5e1;">
+                            <td>Exclusive Subtotal (Monotonic Sum)</td>
+                            <td class="mono">1.57 min</td>
+                            <td class="mono">100.0%</td>
+                            <td>Verified monotonic sum</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Slowest steps -->
+                <div style="background: #f8fafc; border-left: 3px solid #10b981; padding: 4px 10px; margin-top: 6px; font-size: 7.5pt;">
+                    <strong>Primary Bottleneck Analysis:</strong>
+                    <ul style="margin: 2px 0 0 14px; padding: 0;">
+                        <li>Pet Tracking & Framing Analysis took 48.4s (51.5% of execution time).</li><li>Source Download & Staging took 30.4s (32.3% of execution time).</li><li>EBU R128 Audio Mastering took 9.2s (9.7% of execution time).</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-footer">
+            <span>LionReel Studio &bull; lionreel_cat_20261017_090335_066ec087 &bull; Build 0ca9ff38ce82</span>
+            <span>Page 1 of 5</span>
+        </div>
+    </div>
+
+    <!-- PAGE 2: Quality Assurance & 12 Gates + Contact Sheet -->
+    <div id="report-page-2" class="report-page page-break section-quality">
+        <div>
+            <div class="page-top-header">
+                <span class="brand-sub">LionReel Studio &bull; Pipeline Audit</span>
+                <span class="page-top-meta">Job: lionreel_cat_20261017_090335_066ec087 &bull; Section E: Quality Assurance (12 Gates)</span>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">
+                    <span>Quality Assurance & Contract Verification (12 Gates)</span>
+                    <span class="badge badge-success" style="font-size:0.68rem; padding:2px 7px;">PASSED</span>
+                </h2>
+                
+                <!-- 5-Column Quality Gate Table -->
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 170px;">Gate Name</th>
+                            <th style="width: 220px;">Quality Threshold</th>
+                            <th>Measured Output</th>
+                            <th style="width: 80px;">Margin (+/-)</th>
+                            <th style="width: 95px;">Verdict</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+        <tr>
+            <td class="bold">1. Stream Specs</td>
+            <td style="color:#475569;">1920x1080 (16:9) H264 High</td>
+            <td><span class='not-measured'>not measured</span></td>
+            <td><span class='not-measured'>N/A</span></td>
+            <td><span class='status-notrun'>⚠️ NOT RUN</span></td>
+        </tr>
+        
+        <tr>
+            <td class="bold">1b. Exact Duration Contract</td>
+            <td style="color:#475569;">+/- 1.0s diff from 30s</td>
+            <td><span class='not-measured'>not measured</span></td>
+            <td><span class='not-measured'>N/A</span></td>
+            <td><span class='status-notrun'>⚠️ NOT RUN</span></td>
+        </tr>
+        
+        <tr>
+            <td class="bold">2. Stream Defects</td>
+            <td style="color:#475569;">0 black, 0 frozen frames</td>
+            <td><span class='not-measured'>not measured</span></td>
+            <td><span class='not-measured'>N/A</span></td>
+            <td><span class='status-notrun'>⚠️ NOT RUN</span></td>
+        </tr>
+        
+        <tr>
+            <td class="bold">3. Broadcast Audio Loudness</td>
+            <td style="color:#475569;">-14.0 LUFS (+/- 1.0), Peak <= -1.0 dBTP</td>
+            <td><span class='not-measured'>not measured</span></td>
+            <td><span class='not-measured'>N/A</span></td>
+            <td><span class='status-notrun'>⚠️ NOT RUN</span></td>
+        </tr>
+        
+        <tr>
+            <td class="bold">4. Pet Centering</td>
+            <td style="color:#475569;">Compliance >= 85% of sampled frames</td>
+            <td><span class='not-measured'>not measured</span></td>
+            <td><span class='not-measured'>N/A</span></td>
+            <td><span class='status-notrun'>⚠️ NOT RUN</span></td>
+        </tr>
+        
+        <tr>
+            <td class="bold">5. Layout Fill</td>
+            <td style="color:#475569;">Full canvas cover</td>
+            <td><span class='not-measured'>not measured</span></td>
+            <td><span class='not-measured'>N/A</span></td>
+            <td><span class='status-notrun'>⚠️ NOT RUN</span></td>
+        </tr>
+        
+        <tr>
+            <td class="bold">6. Watermark Cleanliness</td>
+            <td style="color:#475569;">Clean corners</td>
+            <td><span class='not-measured'>not measured</span></td>
+            <td><span class='not-measured'>N/A</span></td>
+            <td><span class='status-notrun'>⚠️ NOT RUN</span></td>
+        </tr>
+        
+        <tr>
+            <td class="bold">6b. Clean Clips (Overlays)</td>
+            <td style="color:#475569;">Clean footage (no overlays)</td>
+            <td><span class='not-measured'>not measured</span></td>
+            <td><span class='not-measured'>N/A</span></td>
+            <td><span class='status-notrun'>⚠️ NOT RUN</span></td>
+        </tr>
+        
+        <tr>
+            <td class="bold">7. Peak Quality Visibility</td>
+            <td style="color:#475569;">100% visible at peak</td>
+            <td><span class='not-measured'>not measured</span></td>
+            <td><span class='not-measured'>N/A</span></td>
+            <td><span class='status-notrun'>⚠️ NOT RUN</span></td>
+        </tr>
+        
+        <tr>
+            <td class="bold">8. Real Footage Verification</td>
+            <td style="color:#475569;">Real cat video</td>
+            <td><span class='not-measured'>not measured</span></td>
+            <td><span class='not-measured'>N/A</span></td>
+            <td><span class='status-notrun'>⚠️ NOT RUN</span></td>
+        </tr>
+        
+        <tr>
+            <td class="bold">9. Visual Sharpness</td>
+            <td style="color:#475569;">LapVar >= 150.0 (every clip)</td>
+            <td><span class='not-measured'>not measured</span></td>
+            <td><span class='not-measured'>N/A</span></td>
+            <td><span class='status-notrun'>⚠️ NOT RUN</span></td>
+        </tr>
+        
+        <tr>
+            <td class="bold">10. Safe-Zone Captions & Spacing</td>
+            <td style="color:#475569;">Spacing verified</td>
+            <td><span class='not-measured'>not measured</span></td>
+            <td><span class='not-measured'>N/A</span></td>
+            <td><span class='status-notrun'>⚠️ NOT RUN</span></td>
+        </tr>
+        
+                    </tbody>
+                </table>
+
+                
+            </div>
+        </div>
+
+        <div class="page-footer">
+            <span>LionReel Studio &bull; lionreel_cat_20261017_090335_066ec087 &bull; Build 0ca9ff38ce82</span>
+            <span>Page 2 of 5</span>
+        </div>
+    </div>
+
+    <!-- PAGES 3..N: Verified Clips Assembly -->
+    
+
+    <!-- PAGE NEXT: Provenance, Attribution, Metadata Packaging & Hardware -->
+    <div id="report-page-4" class="report-page page-break section-timeline">
+        <div>
+            <div class="page-top-header">
+                <span class="brand-sub">LionReel Studio &bull; Pipeline Audit</span>
+                <span class="page-top-meta">Job: lionreel_cat_20261017_090335_066ec087 &bull; Provenance &amp; Metadata Packaging</span>
+            </div>
+
+            <!-- Plan & Decisions -->
+            <div class="section">
+                <h2 class="section-title">Planner Decisions & Progressive Fulfillment</h2>
+                <div style="font-size: 7.5pt; color: #475569; margin-bottom: 4px;">
+                    <strong>Fulfillment Strategy:</strong> Building your video: 4 of 4 clips ready (100% unique bank)
+                </div>
+                <ul style="margin: 2px 0 0 14px; font-size: 7.5pt; color: #334155;">
+                    <li>[PLANNER] Contract target: 30.0s (4 clips @ ~7.5s). Patience budget: 300s.</li><li>[PLANNER] Bank contains 13 verified unique candidates for cat.</li><li>[PLANNER] Step 1 SUCCESS: 4 unique clips cover 30.0s.</li>
+                </ul>
+            </div>
+
+            <!-- Sources, Attribution & Platform Metadata -->
+            <div class="section">
+                <h2 class="section-title">Sources, Attribution & Platform Metadata Packaging</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>
+                        <h4 style="margin:0 0 4px 0; font-size: 7.5pt; color:#334155;">Source Attribution Registry (0 Verified Sources)</h4>
+                        <div style="max-height: 160px; overflow-y: auto; font-size: 7pt; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px; background:#fafafa;">
+                            
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="margin:0 0 4px 0; font-size: 7.5pt; color:#334155;">Platform Metadata Packaging (Verified Token Boundaries)</h4>
+                        <div style="font-size: 7.5pt; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px;">
+                            <div><strong>YouTube Title:</strong> Cat Moments Compilation</div>
+                            <div style="margin-top:2px;"><strong>Status:</strong> Valid (<= 100 chars)</div>
+                            <div style="margin-top:3px;"><strong>YouTube Tags:</strong> cats, funny, compilation</div>
+                            <div style="margin-top:3px;"><strong>TikTok Caption:</strong>  #cats #funny...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hardware Environment & Software Provenance -->
+            <div class="section">
+                <h2 class="section-title">Execution Environment & Software Provenance</h2>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; font-size: 7pt;">
+                    <div class="kpi-card"><strong>OS:</strong> Windows-11-10.0.26300-SP0</div>
+                    <div class="kpi-card"><strong>Python:</strong> 3.12.10</div>
+                    <div class="kpi-card"><strong>FFmpeg:</strong> ffmpeg version 7.1-ess</div>
+                    <div class="kpi-card"><strong>Encoder:</strong> libx264</div>
+                    <div class="kpi-card"><strong>CPU:</strong> Intel64 Family 6 Model 18</div>
+                    <div class="kpi-card"><strong>RAM:</strong> 16.0 GB Total</div>
+                    <div class="kpi-card"><strong>Free Disk:</strong> 169.8 GB</div>
+                    <div class="kpi-card"><strong>Build ID:</strong> 0ca9ff38ce82</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-footer">
+            <span>LionReel Studio &bull; lionreel_cat_20261017_090335_066ec087 &bull; Build 0ca9ff38ce82</span>
+            <span>Page 4 of 5</span>
+        </div>
+    </div>
+
+    <!-- Diagnostic page if failed -->
+    
+        <!-- PAGE 5: Failure Diagnostics -->
+        <div id="report-page-5" class="report-page page-break section diagnostic-card">
+            <div>
+                <div class="page-top-header">
+                    <span class="brand-sub">LionReel Studio &bull; Pipeline Audit</span>
+                    <span class="page-top-meta">Job: lionreel_cat_20261017_090335_066ec087 &bull; Failure Diagnostic</span>
+                </div>
+                <h3 style="color: #ef4444; margin-top:4px;">Execution Interruption & Diagnostic Record</h3>
+                <div style="font-size: 8pt; margin-bottom: 8px;">
+                    <strong>Failing Pipeline Stage:</strong> RuntimeError: DUPLICATE_OUTPUT: DUPLICATE_OUTPUT: Exact clip list ['c_cache_ByH9LuSILxU_270_275', 'c_cache_825Za_ZishQ_49_59_use1_off15', 'c_cache_825Za_ZishQ_57_67_use1_off15', 'c_cache_825Za_ZishQ_65_75_use1_off15'] was already used in job 'lionreel_cat_20261016_084742_31bc5d3b' &bull; 
+                    <strong>Reason Code:</strong> RuntimeError: DUPLICATE_OUTPUT: DUPLICATE_OUTPUT: Exact clip list ['c_cache_ByH9LuSILxU_270_275', 'c_cache_825Za_ZishQ_49_59_use1_off15', 'c_cache_825Za_ZishQ_57_67_use1_off15', 'c_cache_825Za_ZishQ_65_75_use1_off15'] was already used in job 'lionreel_cat_20261016_084742_31bc5d3b'
+                </div>
+                <div class="log-terminal">
+                    <pre>------------------------------------------------------------------------
+harvest                      | 0.01       | 13.0         |    0.0%
+ffprobe                      | 1.22       | 1221.0       |    0.9%
+watermark                    | 3.85       | 3851.0       |    3.0%
+stage_5_predict_framing      | 4.69       | 4686.0       |    3.6%
+reframe                      | 48.39      | 48393.0      |   37.6%
+caption                      | 21.23      | 21229.0      |   16.5%
+concat                       | 0.11       | 111.0        |    0.1%
+audio                        | 9.15       | 9148.0       |    7.1%
+render                       | 0.17       | 168.0        |    0.1%
+startup                      | 5.66       | 5664.0       |    4.4%
+prepare                      | 30.37      | 30373.0      |   23.6%
+reserve                      | 0.09       | 90.0         |    0.1%
+prepare_sources              | 0.10       | 100.0        |    0.1%
+------------------------------------------------------------------------
+SUBTOTAL (EXCLUSIVE)         | 125.05     | 125050.0     |   97.1%
+UNACCOUNTED GAP              | 3.65       | 3650.0       |    2.9%
+------------------------------------------------------------------------
+TOTAL WALL CLOCK TIME        | 128.70     | 128701.0     | 100.0%
+========================================================================
+[WARN] Unaccounted execution gap (3.65s, 2.9% > 2.0%). Please inspect uninstrumented blocks.
+[SEQ:49] [09:05:45] [ERROR] Pipeline uncaught exception: Traceback (most recent call last):
+File "G:\My Drive\Cat make\lion_automate_v97.py", line 4074, in run
+res = self.render_one_video(
+^^^^^^^^^^^^^^^^^^^^^^
+File "G:\My Drive\Cat make\lion_automate_v97.py", line 3607, in render_one_video
+raise RuntimeError(err_msg)
+RuntimeError: DUPLICATE_OUTPUT: DUPLICATE_OUTPUT: Exact clip list ['c_cache_ByH9LuSILxU_270_275', 'c_cache_825Za_ZishQ_49_59_use1_off15', 'c_cache_825Za_ZishQ_57_67_use1_off15', 'c_cache_825Za_ZishQ_65_75_use1_off15'] was already used in job 'lionreel_cat_20261016_084742_31bc5d3b'
+
+[SEQ:50] [09:05:45] [ERROR] JOB FAILED: RuntimeError: DUPLICATE_OUTPUT: DUPLICATE_OUTPUT: Exact clip list ['c_cache_ByH9LuSILxU_270_275', 'c_cache_825Za_ZishQ_49_59_use1_off15', 'c_cache_825Za_ZishQ_57_67_use1_off15', 'c_cache_825Za_ZishQ_65_75_use1_off15'] was already used in job 'lionreel_cat_20261016_084742_31bc5d3b'</pre>
+                </div>
+                <div style="margin-top: 12px; padding: 10px; background: rgba(239, 68, 68, 0.08); border-radius: 6px; font-size: 8pt;">
+                    <strong>Checkpoint Preserved:</strong> Checkpoint preserved at failure point<br>
+                    <strong>Recommended Resumption Strategy:</strong> Auto-resume from the last verified checkpoint via Retry Generation.
+                </div>
+            </div>
+            <div class="page-footer">
+                <span>LionReel Studio &bull; lionreel_cat_20261017_090335_066ec087 &bull; Build 0ca9ff38ce82</span>
+                <span>Page 5 of 5</span>
+            </div>
+        </div>
+        
+</div>
+</body>
+</html>

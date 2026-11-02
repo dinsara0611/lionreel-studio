@@ -1,0 +1,19 @@
+<USER_REQUEST>
+contuie all
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-10-10T07:38:44+05:30.
+
+The user's current state is as follows:
+Active Document: g:\My Drive\Cat make\UI_FUNCTION_MATRIX.md (LANGUAGE_MARKDOWN)
+Cursor is on line: 1
+Other open documents:
+- g:\My Drive\Cat make\UI_FUNCTION_MATRIX.md (LANGUAGE_MARKDOWN)
+- g:\My Drive\Cat make\watermark_detector.py (LANGUAGE_PYTHON)
+- g:\My Drive\Cat make\config\blocked_sources.json (LANGUAGE_JSON)
+- g:\My Drive\Cat make\scripts\verify_screenshots_pixel_perfect.py (LANGUAGE_PYTHON)
+- g:\My Drive\Cat make\scripts\execute_quarantine.py (LANGUAGE_PYTHON)
+</ADDITIONAL_METADATA>
+<USER_SETTINGS_CHANGE>
+The user changed setting `Model Selection` from None to Gemini 3.8 Flash (High). No need to comment on this change if the user doesn't ask about it. If reporting what model you are, please use a human readable name instead of the exact string.
+</USER_SETTINGS_CHANGE>

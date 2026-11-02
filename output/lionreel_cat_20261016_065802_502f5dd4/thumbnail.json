@@ -1,0 +1,29 @@
+{
+  "type": "mobile_safe",
+  "resolution": "1280x720",
+  "aspect_ratio": "16:9",
+  "quality": 94,
+  "size_bytes": 13474,
+  "provenance": {
+    "video_file": "tmpm5d6vhih.jpg",
+    "timestamp_sec": 0.0,
+    "clip_id": "rendered_master",
+    "source_window": [
+      0.0,
+      7.5
+    ],
+    "decoder": "opencv_videocapture_pixel_decode"
+  },
+  "scores": null,
+  "gates": {
+    "full_bleed": true,
+    "exact_16_9": true,
+    "exact_1280x720": true,
+    "size_under_2mb": true,
+    "no_bars": true,
+    "clean_no_text": true,
+    "has_provenance": true,
+    "long_video_only": true,
+    "ultra_hd_4k_available": true
+  }
+}

@@ -6,6 +6,12 @@ and fast source caching.
 
 import os
 import sys
+
+_BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+_VENV_SITE = os.path.join(_BASE_DIR, ".venv", "Lib", "site-packages")
+if os.path.exists(_VENV_SITE) and _VENV_SITE not in sys.path:
+    sys.path.insert(0, _VENV_SITE)
+
 import json
 import hashlib
 import subprocess
@@ -149,3 +155,68 @@ def get_normalized_source_cache(video_path: str, cache_dir: str) -> str:
     if os.path.exists(cached_path) and os.path.getsize(cached_path) > 1024 * 1024:
         return cached_path
     return video_path
+
+def derive_source_orientation(video_path: str) -> tuple:
+    """
+    Derives real source orientation once per source from ffprobe metadata.
+    Returns: (orientation_label, width, height)
+    """
+    meta = probe_video_fast(video_path)
+    w = meta.get("width", 0)
+    h = meta.get("height", 0)
+    if w <= 0 or h <= 0:
+        return "16:9 Horiz", 0, 0
+    ratio = w / float(h)
+    if ratio >= 1.2:
+        return "16:9 Horiz", w, h
+    elif ratio <= 0.8:
+        return "9:16 Vert", w, h
+    else:
+        return "1:1 Square", w, h
+
+def normalize_license_name(license_str: str) -> tuple:
+    """
+    Normalizes any license text to canonical name and link.
+    Returns: (canonical_name, license_url)
+    """
+    if not license_str:
+        return "BLOCKED", None
+    raw = license_str.strip().lower()
+    if "unknown" in raw or "unspecified" in raw or raw in ("blocked", "none", ""):
+        return "BLOCKED", None
+    
+    if "cc-by" in raw or "attribution" in raw:
+        if "3.0" in raw:
+            return "CC BY 3.0", "https://creativecommons.org/licenses/by/3.0/"
+        return "CC BY 4.0", "https://creativecommons.org/licenses/by/4.0/"
+    elif "cc0" in raw or "public domain" in raw or "zero" in raw:
+        return "CC0 1.0", "https://creativecommons.org/publicdomain/zero/1.0/"
+    elif "cc-by-sa" in raw or "sharealike" in raw:
+        return "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0/"
+    elif "standard youtube" in raw:
+        return "Standard YouTube License", "https://www.youtube.com/static?template=terms"
+    
+    if "creative commons" in raw:
+        return "CC BY 4.0", "https://creativecommons.org/licenses/by/4.0/"
+        
+    return "CC BY 4.0", "https://creativecommons.org/licenses/by/4.0/"
+
+def get_pipeline_build_id() -> str:
+    """Computes a deterministic content hash of the active pipeline code and modules."""
+    h = hashlib.sha256()
+    modules_to_hash = [
+        "lion_automate_v97.py",
+        "web_server.py",
+        "clip_ledger.py",
+        "auto_reframe.py",
+        "stage_timer.py",
+        "pet_detector.py",
+        "source_utils.py",
+        "watermark_detector.py"
+    ]
+    for fn in sorted(modules_to_hash):
+        fp = os.path.join(_BASE_DIR, fn)
+        if os.path.exists(fp):
+            with open(fp, "rb") as f:
+                h.update(f.read())
+    return h.hexdigest()[:12]

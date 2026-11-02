@@ -1,0 +1,10 @@
+{
+  "model_version": "learned_ranker_v1791599602",
+  "active": true,
+  "trained_at": "2026-10-10 08:03:22",
+  "num_samples": 107,
+  "baseline_accuracy": 0.841,
+  "learned_accuracy": 0.925,
+  "beats_baseline": true,
+  "decision": "DEPLOYED_LEARNED"
+}

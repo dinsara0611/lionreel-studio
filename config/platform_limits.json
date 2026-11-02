@@ -1,0 +1,68 @@
+{
+  "youtube_shorts": {
+    "aspect_ratio": "vertical",
+    "max_duration_sec": 60,
+    "title_max_chars": 100,
+    "title_optimal_min": 35,
+    "title_optimal_max": 70,
+    "description_max_chars": 5000,
+    "description_optimal_first_hook_chars": 150,
+    "tags_max_chars": 500,
+    "tags_count_min": 8,
+    "tags_count_max": 15,
+    "hashtags_in_description_min": 3,
+    "hashtags_in_description_max": 5
+  },
+  "youtube_video": {
+    "aspect_ratio": "any",
+    "max_duration_sec": 43200,
+    "title_max_chars": 100,
+    "title_optimal_min": 40,
+    "title_optimal_max": 70,
+    "description_max_chars": 5000,
+    "tags_max_chars": 500,
+    "hashtags_in_description_min": 3,
+    "hashtags_in_description_max": 5
+  },
+  "tiktok": {
+    "aspect_ratio": "vertical",
+    "max_duration_sec": 600,
+    "caption_max_chars": 2200,
+    "caption_optimal_min": 100,
+    "caption_optimal_max": 300,
+    "hashtags_count_min": 3,
+    "hashtags_count_max": 6
+  },
+  "instagram_reels": {
+    "aspect_ratio": "vertical",
+    "max_duration_sec": 180,
+    "recommended_max_sec": 180,
+    "caption_max_chars": 2200,
+    "caption_optimal_min": 100,
+    "caption_optimal_max": 350,
+    "hashtags_count_min": 3,
+    "hashtags_count_max": 5,
+    "hashtags_total_max": 30
+  },
+  "youtube_custom_thumbnail": {
+    "checked_on": "2026-10-17",
+    "source_urls": [
+      "https://support.google.com/youtube/answer/72431"
+    ],
+    "aspect_ratio": "16:9",
+    "accepted_formats": ["jpg", "png", "gif"],
+    "desktop_max_bytes": 52428800,
+    "desktop_max_mb": 50,
+    "desktop_recommended_res": [3840, 2160],
+    "desktop_standard_res": [1920, 1080],
+    "mobile_max_bytes": 2097152,
+    "mobile_max_mb": 2,
+    "mobile_recommended_res": [1280, 720],
+    "min_width_px": 640,
+    "test_and_compare_min_res": [1280, 720],
+    "test_and_compare_downscale_threshold_res": [854, 480],
+    "safe_zone_bottom_right_badge_clearance_px": [180, 70],
+    "thumbnail_sharpness_floor": 8.0,
+    "thumbnail_sharpness_floor_note": "Configurable Laplacian variance floor on 1280x720 gray image. Standard YouTube H.264 video pixels typically exhibit lapvar between 10 and 45 due to compression smoothing, while motion blurred frames drop below 8.0."
+  }
+}

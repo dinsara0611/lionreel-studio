@@ -1,0 +1,35 @@
+{
+  "job_id": "lionreel_cat_20261031_152021_452b6e92",
+  "animal_mode": "cat",
+  "video_type": "short",
+  "target_clips_count": 4,
+  "target_clip_sec": 7.5,
+  "initial_clip_sec": 7.5,
+  "contract_total_sec": 30.0,
+  "expected_total_sec": 30.0,
+  "strategy_used": "shortage_harvest_pending",
+  "ladder_steps_applied": [
+    "ladder_step_1_bank",
+    "shortage_active_harvest"
+  ],
+  "repeat_share_pct": 0.0,
+  "freshness": {
+    "new_windows": 3,
+    "reused_windows": 0,
+    "total_windows": 3,
+    "new_footage_pct": 100.0,
+    "reused_footage_pct": 0.0,
+    "reused_details": [],
+    "reused_from_jobs": [],
+    "card_line": "New footage: 100% / Reused from earlier videos: 0%"
+  },
+  "freshness_card_line": "New footage: 100% / Reused from earlier videos: 0%",
+  "status_card_line": "New footage: 100% / Reused from earlier videos: 0%",
+  "log_messages": [
+    "[PLANNER] Contract target: 30.0s (4 clips @ ~7.5s). Patience budget: 300s.",
+    "[PLANNER] Bank contains 5 verified unique candidates for cat.",
+    "[PLANNER] Enforcing source cooldown: 3 fresh candidates available outside cooldown sources.",
+    "[PLANNER] Shortage detected: 3 usable now < 4 needed. Triggering harvest and verification immediately.",
+    "[PLANNER] Shortage active: 3 ready, 1 to find."
+  ]
+}

@@ -1,0 +1,67 @@
+[
+  {
+    "run": 1,
+    "job_id": "lionreel_cat_20261010_005833_ea8bd457",
+    "duration_s": 40.07,
+    "clips_count": 4,
+    "centering_pct": 100.0,
+    "sharpness": 75.7,
+    "size_mb": 42.16,
+    "contact_sheet": true,
+    "qa_pass": true,
+    "verdict": "PASSED \u2014 READY FOR UPLOAD",
+    "credits_count": 4
+  },
+  {
+    "run": 2,
+    "job_id": "lionreel_cat_20261010_010228_9cf316c3",
+    "duration_s": 40.07,
+    "clips_count": 4,
+    "centering_pct": 94.4,
+    "sharpness": 69.4,
+    "size_mb": 42.4,
+    "contact_sheet": true,
+    "qa_pass": true,
+    "verdict": "PASSED \u2014 READY FOR UPLOAD",
+    "credits_count": 4
+  },
+  {
+    "run": 3,
+    "job_id": "lionreel_cat_20261010_014846_74393d2a",
+    "duration_s": 41.63,
+    "clips_count": 4,
+    "centering_pct": 94.1,
+    "sharpness": 97.4,
+    "size_mb": 43.79,
+    "contact_sheet": true,
+    "qa_pass": true,
+    "verdict": "PASSED \u2014 READY FOR UPLOAD",
+    "credits_count": 4
+  },
+  {
+    "run": 4,
+    "job_id": "lionreel_cat_20261010_015423_14aa701e",
+    "duration_s": 41.63,
+    "clips_count": 4,
+    "centering_pct": 90.0,
+    "sharpness": 134.1,
+    "size_mb": 44.55,
+    "contact_sheet": true,
+    "qa_pass": true,
+    "verdict": "PASSED \u2014 READY FOR UPLOAD",
+    "credits_count": 4
+  },
+  {
+    "run": 5,
+    "job_id": "lionreel_cat_20261010_020004_49dfa336",
+    "duration_s": 40.03,
+    "clips_count": 4,
+    "centering_pct": 100.0,
+    "sharpness": 71.5,
+    "size_mb": 41.59,
+    "contact_sheet": true,
+    "qa_pass": true,
+    "verdict": "PASSED \u2014 READY FOR UPLOAD",
+    "credits_count": 4
+  }
+]

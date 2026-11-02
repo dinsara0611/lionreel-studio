@@ -1,0 +1,21 @@
+{
+  "job_id": "lionreel_cat_20261019_113511_f2310542",
+  "animal_mode": "cat",
+  "video_type": "short",
+  "target_clips_count": 4,
+  "target_clip_sec": 7.5,
+  "initial_clip_sec": 7.5,
+  "contract_total_sec": 30.0,
+  "expected_total_sec": 30.0,
+  "strategy_used": "ladder_step_1_bank",
+  "ladder_steps_applied": [
+    "ladder_step_1_bank"
+  ],
+  "repeat_share_pct": 0.0,
+  "status_card_line": "Building your video: 4 of 4 clips ready (100% unique bank)",
+  "log_messages": [
+    "[PLANNER] Contract target: 30.0s (4 clips @ ~7.5s). Patience budget: 300s.",
+    "[PLANNER] Bank contains 15 verified unique candidates for cat.",
+    "[PLANNER] Step 1 SUCCESS: 4 fresh unique clips cover 30.0s."
+  ]
+}

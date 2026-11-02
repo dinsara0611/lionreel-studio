@@ -2212,8 +2212,10 @@ def finalize_and_export(clips, energy_scores=None):
     )
     print(f"   Saved: {short_out}")
 
-    thumb_out = short_out.replace(".mp4", "_thumb.jpg")
-    create_thumbnail(short_out, thumb_out)
+    thumb_out = None
+    if VIDEO_TYPE == "long":
+        thumb_out = short_out.replace(".mp4", "_thumb.jpg")
+        create_thumbnail(short_out, thumb_out)
 
     meta_path = os.path.join(OUT_FOLDER, f"lion_metadata_{VIDEO_MODE}_{ts}.txt")
     with open(meta_path, "w", encoding="utf-8") as f:
@@ -2221,7 +2223,7 @@ def finalize_and_export(clips, energy_scores=None):
         f.write(f"SOURCE_MODE : {SOURCE_MODE}\n")
         f.write(f"MODE  : {VIDEO_MODE.upper()} {mode_emoji}\n")
         f.write(f"VIDEO : {os.path.basename(short_out)}\n")
-        f.write(f"THUMB : {os.path.basename(thumb_out)}\n\n")
+        f.write(f"THUMB : {os.path.basename(thumb_out) if thumb_out else 'None (Shorts get no custom thumbnail)'}\n\n")
         f.write("-"*60+"\nTITLE\n"+"-"*60+"\n"+title+"\n\n")
         f.write("-"*60+"\nYOUTUBE DESCRIPTION\n"+"-"*60+"\n"+yt_desc+"\n\n")
         f.write("-"*60+"\nTIKTOK / INSTAGRAM / FACEBOOK\n"+"-"*60+"\n"+social_desc+"\n\n")

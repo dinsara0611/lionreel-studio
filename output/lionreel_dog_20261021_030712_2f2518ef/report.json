@@ -1,0 +1,444 @@
+{
+  "_version": "1.0",
+  "_generator": "LionReel Automated Quality & Performance Reporter V97",
+  "_generated_at_utc": "2026-10-20T21:42:28.990479+00:00",
+  "_sources": {
+    "summary.job_id": {
+      "file": "job_config.json",
+      "path": "job_id"
+    },
+    "summary.duration": {
+      "file": "video.mp4",
+      "path": "ffprobe.duration"
+    },
+    "summary.resolution": {
+      "file": "video.mp4",
+      "path": "ffprobe.resolution"
+    },
+    "summary.delivered_clips": {
+      "file": "mapping.json",
+      "path": "len(clips)"
+    }
+  },
+  "job_id": "lionreel_dog_20261021_030712_2f2518ef",
+  "build_id": "4de7b3a0773c",
+  "status": "FAILED",
+  "is_success": false,
+  "unified_verdict": {
+    "badge": "PASSED",
+    "color": "green",
+    "status_label": "PASSED / BROADCAST READY",
+    "badge_class": "badge-success",
+    "critical_errors": [],
+    "not_run_gates": [],
+    "warnings": [],
+    "attention_items": [
+      "All 11 QA gates passed with zero warnings. Video conforms to broadcast specification."
+    ],
+    "diversity_stats": {
+      "total_clips": 0,
+      "unique_sources": 0,
+      "unique_windows": 0,
+      "unique_footage_sec": 0.0,
+      "repeat_share_pct": 0.0,
+      "max_uses_per_window": 0,
+      "over_cap_clips": [],
+      "overlapping_windows": []
+    }
+  },
+  "clip_reconciliation": {
+    "delivered_clips": 0,
+    "planned_clips": 0,
+    "target_clips": 6,
+    "has_mismatch": true,
+    "diff_from_target": -6,
+    "diff_from_planned": 0,
+    "display_status": "Mismatch: Delivered 0 vs Target 6 (-6 clips)"
+  },
+  "diversity_stats": {
+    "total_clips": 0,
+    "unique_sources": 0,
+    "unique_windows": 0,
+    "unique_footage_sec": 0.0,
+    "repeat_share_pct": 0.0,
+    "max_uses_per_window": 0,
+    "over_cap_clips": [],
+    "overlapping_windows": []
+  },
+  "summary": {
+    "job_id": "lionreel_dog_20261021_030712_2f2518ef",
+    "title": "Cat Compilation",
+    "build_id": "4de7b3a0773c",
+    "local_timestamp": "2026-10-21 03:12:28 (Sri Lanka Standard Time)",
+    "unified_verdict": {
+      "badge": "PASSED",
+      "color": "green",
+      "status_label": "PASSED / BROADCAST READY",
+      "badge_class": "badge-success",
+      "critical_errors": [],
+      "not_run_gates": [],
+      "warnings": [],
+      "attention_items": [
+        "All 11 QA gates passed with zero warnings. Video conforms to broadcast specification."
+      ],
+      "diversity_stats": {
+        "total_clips": 0,
+        "unique_sources": 0,
+        "unique_windows": 0,
+        "unique_footage_sec": 0.0,
+        "repeat_share_pct": 0.0,
+        "max_uses_per_window": 0,
+        "over_cap_clips": [],
+        "overlapping_windows": []
+      }
+    },
+    "result_badge": "PASSED",
+    "badge": "PASSED",
+    "status_label": "PASSED / BROADCAST READY",
+    "fail_reason": "RuntimeError: No internet connection: cannot fetch clips yet",
+    "video_type": "compilation",
+    "aspect_ratio": "9:16",
+    "requested_duration_sec": 45.0,
+    "delivered_duration_sec": 0.0,
+    "duration_variance_sec": -45.0,
+    "requested_clips": 6,
+    "delivered_clips": 0,
+    "planned_clips": 0,
+    "repeat_share_pct": 0.0,
+    "wall_clock_elapsed_sec": 1.0,
+    "qa_verdict": "PASSED / BROADCAST READY",
+    "deliverables_count": 0
+  },
+  "deliverables": [],
+  "time_allocation": {
+    "total_exclusive_seconds": 0.0,
+    "total_exclusive_minutes": 0.0,
+    "stages": [],
+    "slowest_steps": [],
+    "throughput": {
+      "clips_per_minute": 0.0,
+      "windows_analyzed_per_minute": 0.0,
+      "windows_total_analyzed": 0
+    },
+    "recent_comparison": []
+  },
+  "plan_and_decisions": {
+    "ladder_steps_applied": [],
+    "planner_logs": [],
+    "target_clip_duration_sec": 7.5,
+    "pool_status": "Pool capacity verified"
+  },
+  "clips": [],
+  "clips_table": [],
+  "quality_checks": {
+    "gates": [
+      {
+        "gate": "1. Stream Specs",
+        "threshold": "1920x1080 (16:9) H264 High",
+        "measured": "not measured",
+        "margin": "N/A",
+        "verdict": "\u26a0\ufe0f NOT RUN",
+        "passed": false,
+        "status": "NOT RUN",
+        "repair": "Execute QA pipeline audit"
+      },
+      {
+        "gate": "1b. Exact Duration Contract",
+        "threshold": "+/- 1.0s diff from 45s",
+        "measured": "not measured",
+        "margin": "N/A",
+        "verdict": "\u26a0\ufe0f NOT RUN",
+        "passed": false,
+        "status": "NOT RUN",
+        "repair": "Execute QA pipeline audit"
+      },
+      {
+        "gate": "2. Stream Defects",
+        "threshold": "0 black, 0 frozen frames",
+        "measured": "not measured",
+        "margin": "N/A",
+        "verdict": "\u26a0\ufe0f NOT RUN",
+        "passed": false,
+        "status": "NOT RUN",
+        "repair": "Execute QA pipeline audit"
+      },
+      {
+        "gate": "3. Broadcast Audio Loudness",
+        "threshold": "-14.0 LUFS (+/- 0.5), Peak <= -1.0 dBTP",
+        "measured": "not measured",
+        "margin": "N/A",
+        "verdict": "\u26a0\ufe0f NOT RUN",
+        "passed": false,
+        "status": "NOT RUN",
+        "repair": "Execute QA pipeline audit"
+      },
+      {
+        "gate": "4. Pet Centering",
+        "threshold": "Compliance >= 85% of sampled frames",
+        "measured": "not measured",
+        "margin": "N/A",
+        "verdict": "\u26a0\ufe0f NOT RUN",
+        "passed": false,
+        "status": "NOT RUN",
+        "repair": "Execute QA pipeline audit"
+      },
+      {
+        "gate": "5. Layout Fill",
+        "threshold": "Full canvas cover",
+        "measured": "not measured",
+        "margin": "N/A",
+        "verdict": "\u26a0\ufe0f NOT RUN",
+        "passed": false,
+        "status": "NOT RUN",
+        "repair": "Execute QA pipeline audit"
+      },
+      {
+        "gate": "6. Watermark Cleanliness",
+        "threshold": "Clean corners",
+        "measured": "not measured",
+        "margin": "N/A",
+        "verdict": "\u26a0\ufe0f NOT RUN",
+        "passed": false,
+        "status": "NOT RUN",
+        "repair": "Execute QA pipeline audit"
+      },
+      {
+        "gate": "6b. Clean Clips (Overlays)",
+        "threshold": "Clean footage (no overlays)",
+        "measured": "not measured",
+        "margin": "N/A",
+        "verdict": "\u26a0\ufe0f NOT RUN",
+        "passed": false,
+        "status": "NOT RUN",
+        "repair": "Execute QA pipeline audit"
+      },
+      {
+        "gate": "7. Peak Quality Visibility",
+        "threshold": "100% visible at peak",
+        "measured": "not measured",
+        "margin": "N/A",
+        "verdict": "\u26a0\ufe0f NOT RUN",
+        "passed": false,
+        "status": "NOT RUN",
+        "repair": "Execute QA pipeline audit"
+      },
+      {
+        "gate": "8. Real Footage Verification",
+        "threshold": "Real cat video",
+        "measured": "not measured",
+        "margin": "N/A",
+        "verdict": "\u26a0\ufe0f NOT RUN",
+        "passed": false,
+        "status": "NOT RUN",
+        "repair": "Execute QA pipeline audit"
+      },
+      {
+        "gate": "9. Visual Sharpness",
+        "threshold": "LapVar >= 150.0 (every clip)",
+        "measured": "not measured",
+        "margin": "N/A",
+        "verdict": "\u26a0\ufe0f NOT RUN",
+        "passed": false,
+        "status": "NOT RUN",
+        "repair": "Execute QA pipeline audit"
+      },
+      {
+        "gate": "10. Safe-Zone Captions & Spacing",
+        "threshold": "Spacing verified",
+        "measured": "not measured",
+        "margin": "N/A",
+        "verdict": "\u26a0\ufe0f NOT RUN",
+        "passed": false,
+        "status": "NOT RUN",
+        "repair": "Execute QA pipeline audit"
+      }
+    ],
+    "has_contact_sheet": false,
+    "contact_sheet_data_uri": ""
+  },
+  "sources_and_credits": {
+    "unique_sources_count": 0,
+    "sources": []
+  },
+  "metadata_and_upload": {
+    "youtube": {
+      "title": "Cat Moments Compilation",
+      "title_char_count": 0,
+      "title_limit_status": "Valid (<= 100 chars)",
+      "description": "Hilarious cat moments compiled by LionReel Studio.",
+      "tags": [
+        "cats",
+        "funny",
+        "compilation"
+      ],
+      "hashtags": [
+        "#cats",
+        "#funnycats"
+      ]
+    },
+    "tiktok": {
+      "title": "Cat Compilation",
+      "caption": " #cats #funny",
+      "caption_limit_status": "Valid (<= 2200 chars)"
+    },
+    "instagram_reels": {
+      "caption": " #reels #cats",
+      "caption_limit_status": "Valid (<= 2200 chars)"
+    }
+  },
+  "environment": {
+    "platform": "Windows-11-10.0.26300-SP0",
+    "python_version": "3.12.10",
+    "python_executable": "C:/LionReel/venv/Scripts/python.exe",
+    "ffmpeg_version": "ffmpeg version 7.1-essentials_build-www.gyan.dev",
+    "encoder_hardware": "libx264",
+    "cpu_model": "Intel64 Family 6 Model 186 Stepping 3, GenuineIntel",
+    "cpu_cores_logical": 12,
+    "ram_total_gb": 16.0,
+    "ram_available_gb": 8.0,
+    "free_disk_gb": 169.8,
+    "total_disk_gb": 400.0,
+    "build_id": "4de7b3a0773c"
+  },
+  "issues_and_notes": [],
+  "diagnostic": {
+    "failing_stage": "RuntimeError: No internet connection: cannot fetch clips yet",
+    "reason_code": "RuntimeError: No internet connection: cannot fetch clips yet",
+    "last_30_log_lines": [
+      "Finding fresh clips (0 of 2 ready) [waited 274s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 277s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 280s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 283s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 286s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 289s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 292s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 295s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 298s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "[SEQ:10] [03:12:28] [ERROR] Pipeline uncaught exception: Traceback (most recent call last):",
+      "File \"G:\\My Drive\\Cat make\\lion_automate_v97.py\", line 4599, in run",
+      "res = self.render_one_video(",
+      "^^^^^^^^^^^^^^^^^^^^^^",
+      "File \"G:\\My Drive\\Cat make\\lion_automate_v97.py\", line 2228, in render_one_video",
+      "fulfillment_plan = planner.plan_fulfillment(",
+      "^^^^^^^^^^^^^^^^^^^^^^^^^",
+      "File \"G:\\My Drive\\Cat make\\fulfillment_planner.py\", line 263, in plan_fulfillment",
+      "raise RuntimeError(err_msg)",
+      "RuntimeError: No internet connection: cannot fetch clips yet",
+      "",
+      "[SEQ:11] [03:12:28] [ERROR] JOB FAILED: RuntimeError: No internet connection: cannot fetch clips yet"
+    ],
+    "last_log_lines": [
+      "Finding fresh clips (0 of 2 ready) [waited 274s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 277s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 280s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 283s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 286s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 289s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 292s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 295s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 298s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "[SEQ:10] [03:12:28] [ERROR] Pipeline uncaught exception: Traceback (most recent call last):",
+      "File \"G:\\My Drive\\Cat make\\lion_automate_v97.py\", line 4599, in run",
+      "res = self.render_one_video(",
+      "^^^^^^^^^^^^^^^^^^^^^^",
+      "File \"G:\\My Drive\\Cat make\\lion_automate_v97.py\", line 2228, in render_one_video",
+      "fulfillment_plan = planner.plan_fulfillment(",
+      "^^^^^^^^^^^^^^^^^^^^^^^^^",
+      "File \"G:\\My Drive\\Cat make\\fulfillment_planner.py\", line 263, in plan_fulfillment",
+      "raise RuntimeError(err_msg)",
+      "RuntimeError: No internet connection: cannot fetch clips yet",
+      "",
+      "[SEQ:11] [03:12:28] [ERROR] JOB FAILED: RuntimeError: No internet connection: cannot fetch clips yet"
+    ],
+    "checkpoint_state": "Checkpoint preserved at failure point",
+    "resumption_strategy": "Auto-resume from the last verified checkpoint via Retry Generation."
+  },
+  "failure_diagnostic": {
+    "failing_stage": "RuntimeError: No internet connection: cannot fetch clips yet",
+    "reason_code": "RuntimeError: No internet connection: cannot fetch clips yet",
+    "last_30_log_lines": [
+      "Finding fresh clips (0 of 2 ready) [waited 274s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 277s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 280s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 283s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 286s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 289s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 292s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 295s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 298s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "[SEQ:10] [03:12:28] [ERROR] Pipeline uncaught exception: Traceback (most recent call last):",
+      "File \"G:\\My Drive\\Cat make\\lion_automate_v97.py\", line 4599, in run",
+      "res = self.render_one_video(",
+      "^^^^^^^^^^^^^^^^^^^^^^",
+      "File \"G:\\My Drive\\Cat make\\lion_automate_v97.py\", line 2228, in render_one_video",
+      "fulfillment_plan = planner.plan_fulfillment(",
+      "^^^^^^^^^^^^^^^^^^^^^^^^^",
+      "File \"G:\\My Drive\\Cat make\\fulfillment_planner.py\", line 263, in plan_fulfillment",
+      "raise RuntimeError(err_msg)",
+      "RuntimeError: No internet connection: cannot fetch clips yet",
+      "",
+      "[SEQ:11] [03:12:28] [ERROR] JOB FAILED: RuntimeError: No internet connection: cannot fetch clips yet"
+    ],
+    "last_log_lines": [
+      "Finding fresh clips (0 of 2 ready) [waited 274s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 277s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 280s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 283s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 286s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 289s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 292s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 295s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "Finding fresh clips (0 of 2 ready) [waited 298s / 300s]...",
+      "[LRU FALLBACK] Bank depleted: only 0 clips available outside last 5 videos (needed 2). Reusing oldest moments via LRU fallback.",
+      "[SEQ:10] [03:12:28] [ERROR] Pipeline uncaught exception: Traceback (most recent call last):",
+      "File \"G:\\My Drive\\Cat make\\lion_automate_v97.py\", line 4599, in run",
+      "res = self.render_one_video(",
+      "^^^^^^^^^^^^^^^^^^^^^^",
+      "File \"G:\\My Drive\\Cat make\\lion_automate_v97.py\", line 2228, in render_one_video",
+      "fulfillment_plan = planner.plan_fulfillment(",
+      "^^^^^^^^^^^^^^^^^^^^^^^^^",
+      "File \"G:\\My Drive\\Cat make\\fulfillment_planner.py\", line 263, in plan_fulfillment",
+      "raise RuntimeError(err_msg)",
+      "RuntimeError: No internet connection: cannot fetch clips yet",
+      "",
+      "[SEQ:11] [03:12:28] [ERROR] JOB FAILED: RuntimeError: No internet connection: cannot fetch clips yet"
+    ],
+    "checkpoint_state": "Checkpoint preserved at failure point",
+    "resumption_strategy": "Auto-resume from the last verified checkpoint via Retry Generation."
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "output_file": "lionreel_cat_20261027_120634_9123d1f8.mp4",
+  "job_id": "lionreel_cat_20261027_120634_9123d1f8",
+  "credits": [
+    {
+      "clip_index": 1,
+      "source": "cache_825Za_ZishQ.mp4",
+      "license": "CC-BY",
+      "credit": "CC-BY Creator"
+    },
+    {
+      "clip_index": 2,
+      "source": "cache_Rr9701_s-Qs.mp4",
+      "license": "CC-BY",
+      "credit": "CC-BY Creator"
+    },
+    {
+      "clip_index": 3,
+      "source": "C:\\LionReel\\cache\\cache_825Za_ZishQ.mp4",
+      "license": "Creative Commons CC-BY 4.0",
+      "credit": "LionReel Verified CC Archive"
+    },
+    {
+      "clip_index": 4,
+      "source": "C:\\LionReel\\cache\\cache_OzAzzpR4JmY.mp4",
+      "license": "Creative Commons CC-BY 4.0",
+      "credit": "LionReel Verified CC Archive"
+    }
+  ]
+}

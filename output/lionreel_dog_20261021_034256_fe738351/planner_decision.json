@@ -1,0 +1,21 @@
+{
+  "job_id": "lionreel_dog_20261021_034256_fe738351",
+  "animal_mode": "dog",
+  "video_type": "short",
+  "target_clips_count": 6,
+  "target_clip_sec": 7.5,
+  "initial_clip_sec": 7.5,
+  "contract_total_sec": 45.0,
+  "expected_total_sec": 45.0,
+  "strategy_used": "ladder_step_1_bank",
+  "ladder_steps_applied": [
+    "ladder_step_1_bank"
+  ],
+  "repeat_share_pct": 0.0,
+  "status_card_line": "Building your video: 6 of 6 clips ready (100% unique bank)",
+  "log_messages": [
+    "[PLANNER] Contract target: 45.0s (6 clips @ ~7.5s). Patience budget: 300s.",
+    "[PLANNER] Bank contains 12 verified unique candidates for dog.",
+    "[PLANNER] Step 1 SUCCESS: 6 fresh unique clips cover 45.0s."
+  ]
+}

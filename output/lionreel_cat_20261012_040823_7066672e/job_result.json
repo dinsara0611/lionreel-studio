@@ -1,0 +1,17 @@
+{
+  "job_id": "lionreel_cat_20261012_040823_7066672e",
+  "status": "waiting_for_clips",
+  "reason_code": "CLIPS_SHORTFALL",
+  "message": "Finding more clips: 93 of 100 ready",
+  "exit_code": 0,
+  "clips_ready": 93,
+  "clips_needed": 100,
+  "eta": null,
+  "updated_at": 1791758313.161,
+  "success": null,
+  "error": null,
+  "stage_index": 1,
+  "stage_name": "Finding more clips: 93 of 100 ready",
+  "progress_pct": 19,
+  "output_file": null
+}

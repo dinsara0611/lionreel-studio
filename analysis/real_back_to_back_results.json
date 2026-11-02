@@ -1,0 +1,56 @@
+[
+  {
+    "job_id": "job_real_contract_long_16_9_1792066994",
+    "mode_type": "long",
+    "target_seconds": 180.0,
+    "target_clips": 24,
+    "target_ratio": "16:9",
+    "expected_resolution": "1920x1080",
+    "config_line": "CONFIG: build_id=27b8fbf33d34 mode=compilation aspect=16:9 (1920x1080) cat_type=auto layout=smart_crop (source=ui) clips=24 clip_time=7.5s expected_total=180.0s pace=fast slicing=peak_viral allow_shorter=on allow_reuse=on",
+    "wall_duration": 295.4,
+    "file_count": 1,
+    "output_files": [
+      "job_real_contract_long_16_9_1792066994.mp4"
+    ],
+    "actual_seconds": 180.06,
+    "actual_resolution": "1920x1080",
+    "qa_passed": true,
+    "exit_code": 0,
+    "qa_details": {
+      "duration_diff_s": 0.06,
+      "pet_centering_compliance": 0.909,
+      "black_hits": 0,
+      "freeze_hits": 0,
+      "lufs": -14.0,
+      "dbtp": -1.0,
+      "verdict": "PASSED \u2014 READY FOR UPLOAD"
+    }
+  },
+  {
+    "job_id": "job_real_contract_short_9_16_1792067679",
+    "mode_type": "short",
+    "target_seconds": 45.0,
+    "target_clips": 6,
+    "target_ratio": "9:16",
+    "expected_resolution": "1080x1920",
+    "config_line": "CONFIG: build_id=27b8fbf33d34 mode=short aspect=9:16 (1080x1920) cat_type=auto layout=smart_crop (source=ui) clips=6 clip_time=7.5s expected_total=45.0s pace=fast slicing=peak_viral allow_shorter=on allow_reuse=on",
+    "wall_duration": 210.6,
+    "file_count": 1,
+    "output_files": [
+      "job_real_contract_short_9_16_1792067679.mp4"
+    ],
+    "actual_seconds": 45.02,
+    "actual_resolution": "1080x1920",
+    "qa_passed": true,
+    "exit_code": 0,
+    "qa_details": {
+      "duration_diff_s": 0.02,
+      "pet_centering_compliance": 1.0,
+      "black_hits": 0,
+      "freeze_hits": 0,
+      "lufs": -14.0,
+      "dbtp": -1.0,
+      "verdict": "PASSED \u2014 READY FOR UPLOAD"
+    }
+  }
+]

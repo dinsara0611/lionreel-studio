@@ -1,0 +1,431 @@
+{
+  "video_file": "C:\\LionReel\\work\\lionreel_cat_proof_long_3m\\lionreel_cat_proof_long_3m.mp4",
+  "overall_passed": true,
+  "verdict": "PASSED \u2014 READY FOR UPLOAD",
+  "benchmark_config_hash": "1c8c1612e8b758fd9d1f7ba4608118096c55dc6a25ba5c22701893bcb82d852d",
+  "benchmark_thresholds": {
+    "min_sharpness_laplacian_540x960": 150.0,
+    "target_integrated_lufs": -14.0,
+    "target_true_peak_dbtp": -1.0
+  },
+  "gates": {
+    "gate_1_stream_specs": true,
+    "gate_1b_duration_contract": true,
+    "gate_2_stream_defects": true,
+    "gate_3_broadcast_loudness": true,
+    "gate_4_pet_centering": true,
+    "gate_5_layout_fill": true,
+    "gate_6_watermark_cleanliness": true,
+    "gate_6b_clean_overlays": true,
+    "gate_7_peak_quality": true,
+    "gate_8_real_footage": true,
+    "gate_9_visual_sharpness": true,
+    "gate_10_captions_and_spacing": true,
+    "gate_11_thumbnail": true
+  },
+  "thumbnail_gate": {
+    "is_long_video": true,
+    "passed": true,
+    "report_path": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_long_3m\\thumbnail_report.json",
+    "report_summary": {
+      "job_id": "lionreel_cat_proof_long_3m",
+      "frame_time_sec": 15.3,
+      "resolution": "1280x720",
+      "aspect_ratio": "16:9",
+      "size_kb": 131.9,
+      "size_bytes": 135075,
+      "quality_used": 94,
+      "ultra_hd_4k": {
+        "resolution": "3840x2160",
+        "file": "thumbnail_4k_3840x2160.jpg",
+        "relative_path": "output/lionreel_cat_proof_long_3m/thumbnails/thumbnail_4k_3840x2160.jpg",
+        "size_bytes": 895439,
+        "size_kb": 874.5,
+        "quality_used": 94,
+        "chroma_subsampling": "4:4:4",
+        "visual_enhancement": "unsharp_mask_and_micro_contrast",
+        "status": "PASS"
+      },
+      "provenance": {
+        "video_file": "lionreel_cat_proof_long_3m.mp4",
+        "timestamp_sec": 15.3,
+        "clip_id": "rendered_master",
+        "source_window": [
+          15.3,
+          22.8
+        ],
+        "decoder": "opencv_videocapture_pixel_decode"
+      },
+      "scores": {
+        "sharpness_lapvar": 44.7,
+        "head_fill_pct": 65.0,
+        "pet_height_pct": 65.0,
+        "eye_line_pct": 40.1,
+        "expression_score": 30.0,
+        "composite": 95.5
+      },
+      "gates": {
+        "full_bleed": true,
+        "exact_16_9": true,
+        "exact_1280x720": true,
+        "size_under_2mb": true,
+        "no_bars": true,
+        "clean_no_text": true,
+        "has_provenance": true,
+        "long_video_only": true,
+        "ultra_hd_4k_available": true
+      },
+      "bleed_status": "Full bleed verified: edge-to-edge real pixels without bars or borders",
+      "overall_passed": true,
+      "top_candidates": [
+        {
+          "id": "cand_1",
+          "timestamp_sec": 15.3,
+          "score": 95.5,
+          "total_score": 95.5,
+          "scores": {
+            "sharpness_lapvar": 44.7,
+            "head_fill_pct": 65.0,
+            "pet_height_pct": 65.0,
+            "eye_line_pct": 40.1,
+            "expression_score": 30.0,
+            "composite": 95.5
+          },
+          "provenance": {
+            "video_file": "lionreel_cat_proof_long_3m.mp4",
+            "timestamp_sec": 15.3,
+            "clip_id": "rendered_master",
+            "source_window": [
+              15.3,
+              22.8
+            ],
+            "decoder": "opencv_videocapture_pixel_decode"
+          },
+          "file_path": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_long_3m\\thumbnails\\cand_frame_15s.jpg",
+          "file_path_4k": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_long_3m\\thumbnails\\cand_frame_15s_master.jpg",
+          "relative_path": "output/lionreel_cat_proof_long_3m/thumbnails/cand_frame_15s.jpg",
+          "has_double_cats": false,
+          "cat_box": [
+            625,
+            171,
+            1305,
+            1016
+          ]
+        },
+        {
+          "id": "cand_2",
+          "timestamp_sec": 53.41,
+          "score": 93.7,
+          "total_score": 93.7,
+          "scores": {
+            "sharpness_lapvar": 53.3,
+            "head_fill_pct": 65.0,
+            "pet_height_pct": 65.0,
+            "eye_line_pct": 40.1,
+            "expression_score": 25.0,
+            "composite": 93.7
+          },
+          "provenance": {
+            "video_file": "lionreel_cat_proof_long_3m.mp4",
+            "timestamp_sec": 53.41,
+            "clip_id": "rendered_master",
+            "source_window": [
+              53.41,
+              60.91
+            ],
+            "decoder": "opencv_videocapture_pixel_decode"
+          },
+          "file_path": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_long_3m\\thumbnails\\cand_frame_53s.jpg",
+          "file_path_4k": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_long_3m\\thumbnails\\cand_frame_53s_master.jpg",
+          "relative_path": "output/lionreel_cat_proof_long_3m/thumbnails/cand_frame_53s.jpg",
+          "has_double_cats": false,
+          "cat_box": [
+            437,
+            203,
+            1113,
+            1023
+          ]
+        },
+        {
+          "id": "cand_3",
+          "timestamp_sec": 68.81,
+          "score": 88.4,
+          "total_score": 88.4,
+          "scores": {
+            "sharpness_lapvar": 510.3,
+            "head_fill_pct": 65.0,
+            "pet_height_pct": 65.0,
+            "eye_line_pct": 32.6,
+            "expression_score": 25.0,
+            "composite": 88.4
+          },
+          "provenance": {
+            "video_file": "lionreel_cat_proof_long_3m.mp4",
+            "timestamp_sec": 68.81,
+            "clip_id": "rendered_master",
+            "source_window": [
+              68.81,
+              76.31
+            ],
+            "decoder": "opencv_videocapture_pixel_decode"
+          },
+          "file_path": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_long_3m\\thumbnails\\cand_frame_68s.jpg",
+          "file_path_4k": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_long_3m\\thumbnails\\cand_frame_68s_master.jpg",
+          "relative_path": "output/lionreel_cat_proof_long_3m/thumbnails/cand_frame_68s.jpg",
+          "has_double_cats": false,
+          "cat_box": [
+            160,
+            1,
+            1920,
+            1074
+          ]
+        },
+        {
+          "id": "cand_4",
+          "timestamp_sec": 26.85,
+          "score": 83.5,
+          "total_score": 83.5,
+          "scores": {
+            "sharpness_lapvar": 173.4,
+            "head_fill_pct": 65.0,
+            "pet_height_pct": 65.0,
+            "eye_line_pct": 39.9,
+            "expression_score": 15.0,
+            "composite": 83.5
+          },
+          "provenance": {
+            "video_file": "lionreel_cat_proof_long_3m.mp4",
+            "timestamp_sec": 26.85,
+            "clip_id": "rendered_master",
+            "source_window": [
+              26.85,
+              34.35
+            ],
+            "decoder": "opencv_videocapture_pixel_decode"
+          },
+          "file_path": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_long_3m\\thumbnails\\cand_frame_26s.jpg",
+          "file_path_4k": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_long_3m\\thumbnails\\cand_frame_26s_master.jpg",
+          "relative_path": "output/lionreel_cat_proof_long_3m/thumbnails/cand_frame_26s.jpg",
+          "has_double_cats": false,
+          "cat_box": [
+            411,
+            598,
+            1036,
+            1061
+          ]
+        },
+        {
+          "id": "cand_5",
+          "timestamp_sec": 61.51,
+          "score": 83.1,
+          "total_score": 83.1,
+          "scores": {
+            "sharpness_lapvar": 171.1,
+            "head_fill_pct": 65.0,
+            "pet_height_pct": 65.0,
+            "eye_line_pct": 35.0,
+            "expression_score": 18.0,
+            "composite": 83.1
+          },
+          "provenance": {
+            "video_file": "lionreel_cat_proof_long_3m.mp4",
+            "timestamp_sec": 61.51,
+            "clip_id": "rendered_master",
+            "source_window": [
+              61.51,
+              69.01
+            ],
+            "decoder": "opencv_videocapture_pixel_decode"
+          },
+          "file_path": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_long_3m\\thumbnails\\cand_frame_61s.jpg",
+          "file_path_4k": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_long_3m\\thumbnails\\cand_frame_61s_master.jpg",
+          "relative_path": "output/lionreel_cat_proof_long_3m/thumbnails/cand_frame_61s.jpg",
+          "has_double_cats": false,
+          "cat_box": [
+            7,
+            22,
+            1698,
+            1071
+          ]
+        },
+        {
+          "id": "cand_6",
+          "timestamp_sec": 45.71,
+          "score": 77.8,
+          "total_score": 77.8,
+          "scores": {
+            "sharpness_lapvar": 15.4,
+            "head_fill_pct": 65.0,
+            "pet_height_pct": 65.0,
+            "eye_line_pct": 40.0,
+            "expression_score": 30.0,
+            "composite": 77.8
+          },
+          "provenance": {
+            "video_file": "lionreel_cat_proof_long_3m.mp4",
+            "timestamp_sec": 45.71,
+            "clip_id": "rendered_master",
+            "source_window": [
+              45.71,
+              53.21
+            ],
+            "decoder": "opencv_videocapture_pixel_decode"
+          },
+          "file_path": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_long_3m\\thumbnails\\cand_frame_45s.jpg",
+          "file_path_4k": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_long_3m\\thumbnails\\cand_frame_45s_master.jpg",
+          "relative_path": "output/lionreel_cat_proof_long_3m/thumbnails/cand_frame_45s.jpg",
+          "has_double_cats": false,
+          "cat_box": [
+            952,
+            91,
+            1468,
+            899
+          ]
+        }
+      ]
+    }
+  },
+  "duration_contract": {
+    "expected_duration_s": 180.0,
+    "real_duration_s": 179.98,
+    "duration_diff_s": 0.02,
+    "passed": true
+  },
+  "burned_in_text_gate": {
+    "passed": true,
+    "skipped": false,
+    "reason": "CLEAN_NO_OVERLAYS"
+  },
+  "stream_specs": {
+    "passed": true,
+    "width": 1920,
+    "height": 1080,
+    "codec": "h264",
+    "profile": "High",
+    "bitrate_kbps": 11460,
+    "duration_sec": 179.98
+  },
+  "defects": {
+    "passed": true,
+    "black_hits": 0,
+    "freeze_hits": 1,
+    "details": [
+      "[freezedetect @ 0000021ba468a800] lavfi.freezedetect.freeze_start: 174.696745"
+    ]
+  },
+  "loudness": {
+    "passed": true,
+    "integrated_lufs": -14.15,
+    "true_peak_dbtp": -1.57,
+    "lra": 8.8,
+    "target_lufs": -14.0,
+    "target_true_peak": -1.0,
+    "margin_lufs": 0.35,
+    "margin_tp": 0.57,
+    "sample_rate": 48000,
+    "channels": 2,
+    "drift_ms": 0.0,
+    "lufs_ok": true,
+    "tp_ok": true,
+    "rate_ok": true,
+    "ch_ok": true,
+    "drift_ok": true
+  },
+  "pet_centering": {
+    "passed": true,
+    "compliance_ratio": 0.875,
+    "visibility_ratio": 1.0,
+    "horizontal_ratio": 1.0,
+    "vertical_ratio": 1.0,
+    "size_ratio": 1.0,
+    "passed_frames": 14,
+    "detected_frames": 14,
+    "sampled_frames": 16,
+    "layout_mode": "smart_crop",
+    "details": []
+  },
+  "layout_fill": {
+    "passed": true,
+    "reason": "FULL_FRAME_FILL_VERIFIED",
+    "checked_frames": 16
+  },
+  "watermark_gate": {
+    "passed": true,
+    "skipped": false,
+    "detected_corner": null,
+    "confidence": 0.0,
+    "reason": "Clean corners (no watermark detected)"
+  },
+  "peak_quality_gate": {
+    "passed": true,
+    "peak_vis_ratio": 1.0,
+    "peak_horiz_ratio": 1.0,
+    "evaluated_frames": 47,
+    "reason": "PEAK_FRAMING_VERIFIED"
+  },
+  "cartoon_classifier": {
+    "passed": true,
+    "mean_negative_probability": 0.0,
+    "negative_votes": 0,
+    "sampled_frames": 16
+  },
+  "sharpness": {
+    "passed": true,
+    "median_sharpness": 1102.9,
+    "target_sharpness": 150.0,
+    "benchmark_floor": 150.0,
+    "min_sharpness": 413.2,
+    "max_sharpness": 2062.1,
+    "low_sharp_frame_ratio": 0.0
+  },
+  "captions": {
+    "passed": true,
+    "violations": 0,
+    "checked_frames": 16
+  },
+  "source_guard": {
+    "passed": true
+  },
+  "repeat_spacing_gate": {
+    "passed": true,
+    "clips_evaluated": 24,
+    "target_spacing": 8,
+    "consecutive_violations": [],
+    "spacing_violations": [
+      {
+        "pos_1": 19,
+        "pos_2": 23,
+        "distance": 4,
+        "target_spacing": 8,
+        "base_id": "c_cache_paWE-GvDO1c_8360_8435"
+      }
+    ],
+    "usage_violations": [],
+    "max_repeat_count": 2,
+    "repeat_share_pct": 0.0,
+    "repeat_share_str": "0% repeat (100% unique moments)"
+  },
+  "repeat_share_pct": 0.0,
+  "repeat_share_str": "0.0% of this video reuses earlier moments",
+  "contact_sheet": "C:\\LionReel\\work\\lionreel_cat_proof_long_3m\\lionreel_cat_proof_long_3m_contact_sheet.png",
+  "model_version": "learned_ranker_v1791599602",
+  "freshness": {
+    "new_windows": 24,
+    "reused_windows": 0,
+    "total_windows": 24,
+    "new_footage_pct": 100.0,
+    "reused_footage_pct": 0.0,
+    "reused_details": [],
+    "reused_from_jobs": [],
+    "card_line": "New footage: 100% / Reused from earlier videos: 0%"
+  },
+  "freshness_card_line": "New footage: 100% / Reused from earlier videos: 0%",
+  "status_card_line": "New footage: 100% / Reused from earlier videos: 0%",
+  "strategy_used": "ladder_step_1_bank",
+  "ladder_steps_applied": [
+    "ladder_step_1_bank"
+  ],
+  "contract_duration_sec": 180.0,
+  "actual_duration_sec": 180.0,
+  "duration_accuracy_pct": 0.0
+}
