@@ -3572,8 +3572,6 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                         python_exe = sys.executable or "python"
                 
                 script_to_run = "lion_automate_v97.py"
-                if not os.path.exists(os.path.join(BASE_DIR, script_to_run)):
-                    script_to_run = "lion_automate.py"
 
                 RUNNING_PROCESS_START_TIME = time.time()
                 cli_args = job_options.build_cli_args(norm_cfg, CURRENT_JOB_ID, RUNNING_PROCESS_START_TIME)
