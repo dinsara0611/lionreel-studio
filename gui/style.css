@@ -9640,3 +9640,19 @@ html[data-theme="light"] .render-stage-row.waiting .badge {
         height: auto !important;
     }
 }
+
+.step-item.active .step-num {
+    background: var(--accent-contrast) !important;
+    color: var(--accent-primary) !important;
+}
+#live-clock-text {
+    color: var(--text-primary) !important;
+}
+#btn-render-cancel {
+    color: var(--text-primary) !important;
+}
+html[data-theme="light"] .badge-warning,
+html[data-theme="light"] .chip-warning,
+html[data-theme="light"] .chip-warning span {
+    color: #7c4203 !important;
+}

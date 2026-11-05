@@ -1074,6 +1074,23 @@ class ClipLedger:
                 conn.commit()
                 return {"action": "rejected", "retry_count": curr_retries}
 
+    def reject_window(self, source: str, start_s: float, end_s: float, reason: str) -> int:
+        """
+        A window that failed a real gate value is rejected by source and time, so the same
+        moment cannot return under another clip id or length. Returns rows rejected.
+        """
+        key = self._source_key(source)
+        with self._get_conn() as conn:
+            rows = conn.execute("SELECT clip_id, source_id, source_url_or_path, start_s, end_s FROM clips").fetchall()
+            hits = [r["clip_id"] for r in rows
+                    if self._source_key(r["source_id"] or r["source_url_or_path"]) == key
+                    and is_same_moment(key, start_s, end_s, key, float(r["start_s"] or 0.0), float(r["end_s"] or 0.0), overlap_thresh=0.30)]
+            for clip_id in hits:
+                conn.execute("UPDATE clips SET status = 'rejected', rejection_reason = ?, is_verified = 0, pending_short_id = NULL WHERE clip_id = ?",
+                             (reason, clip_id))
+            conn.commit()
+        return len(hits)
+
     def verify_pending_unverified_rows(self, animal_type: str = "cat", limit: int = 5) -> int:
         """
         TASK 3: Active verification of unverified rows and needs_recheck rows with standard gates.

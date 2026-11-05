@@ -225,3 +225,31 @@ def test_harvest_refuses_video_without_shown_licence(monkeypatch, tmp_path):
 def test_no_invented_creator_defaults():
     for f in ("lion_automate_v97.py", "metadata_generator.py"):
         assert '"CC Creator"' not in open(os.path.join(BASE, f), encoding="utf8").read(), f
+
+
+def test_page_load_cannot_make_the_server_forget_a_running_job():
+    """Every page load calls clear-error. It used to wipe the job id while the engine ran."""
+    import web_server
+    proc = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(30)"])
+    saved = web_server.RUNNING_PROCESS, web_server.CURRENT_JOB_ID
+    try:
+        web_server.RUNNING_PROCESS, web_server.CURRENT_JOB_ID = proc, "job_running"
+        assert web_server.clear_last_job_state() is False
+        assert web_server.CURRENT_JOB_ID == "job_running"
+        proc.kill()
+        proc.wait()
+        assert web_server.clear_last_job_state() is True
+        assert web_server.CURRENT_JOB_ID is None
+    finally:
+        proc.kill()
+        web_server.RUNNING_PROCESS, web_server.CURRENT_JOB_ID = saved
+
+
+def test_render_rejection_blocks_the_moment_under_any_clip_id(ledger, tmp_path):
+    src = _source(tmp_path)
+    _add(ledger, "c_cat_cache_AAAAAAAAAAA_29_36", src, 29.0, 36.5)
+    _add(ledger, "c_cache_AAAAAAAAAAA_100", src, 100.0, 107.5)
+    assert ledger.reject_window(src, 29.0, 36.5, "POST_CROP_GATE_FAIL (Sharpness: 87.1)") == 1
+    windows = ledger.get_ledger_counts("cat", include_windows=True)["windows"]
+    assert "c_cat_cache_AAAAAAAAAAA_29_36" in {w["clip_id"] for w in windows["rejected"]}
+    assert "c_cache_AAAAAAAAAAA_100" in {w["clip_id"] for w in windows["usable_now"]}

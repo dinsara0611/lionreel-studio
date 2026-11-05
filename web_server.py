@@ -304,6 +304,24 @@ def update_stages_list_status(stages_list, computed_status, job_res=None):
                 s["evidence"] = "Failed: Process terminated unexpectedly"
     return stages_list
 
+def clear_last_job_state():
+    """
+    Forgets the last finished job's error. Every page load calls this, so it must never
+    touch a job that is still running: the server would lose track of its own engine.
+    """
+    global LAST_EXIT_CODE, CURRENT_JOB_ID
+    if RUNNING_PROCESS is not None and RUNNING_PROCESS.poll() is None:
+        return False
+    LAST_EXIT_CODE = None
+    CURRENT_JOB_ID = None
+    if os.path.exists(JOB_RESULT_FILE):
+        try:
+            os.remove(JOB_RESULT_FILE)
+        except OSError:
+            pass
+    return True
+
+
 def ensure_icon():
     workspace_dir = os.path.dirname(os.path.abspath(__file__))
     png_path = os.path.join(workspace_dir, "lion_logo.png")
@@ -1180,11 +1198,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             return
 
         elif self.path.startswith("/api/clear-error") or self.path.startswith("/api/dismiss-error"):
-            LAST_EXIT_CODE = None
-            CURRENT_JOB_ID = None
-            if os.path.exists(JOB_RESULT_FILE):
-                try: os.remove(JOB_RESULT_FILE)
-                except: pass
+            clear_last_job_state()
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
             self.end_headers()
@@ -3403,11 +3417,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             return
 
         elif self.path.startswith("/api/clear-error") or self.path.startswith("/api/dismiss-error"):
-            LAST_EXIT_CODE = None
-            CURRENT_JOB_ID = None
-            if os.path.exists(JOB_RESULT_FILE):
-                try: os.remove(JOB_RESULT_FILE)
-                except: pass
+            clear_last_job_state()
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
             self.end_headers()

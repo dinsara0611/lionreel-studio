@@ -1955,6 +1955,8 @@ class LionReelV97Pipeline:
         if not post_ok:
             cand["result"] = "REJECT"
             cand["reason"] = f"POST_CROP_GATE_FAIL ({post_msg})"
+            if "ANALYSIS_FAILED" not in post_msg and "UNREADABLE" not in post_msg:
+                self.ledger.reject_window(src_path, start_s, start_s + dur_s, cand["reason"])
             try: os.remove(clip_out)
             except Exception: pass
             return False, cid, None, cand
@@ -3459,6 +3461,7 @@ class LionReelV97Pipeline:
                         else:
                             log(f"Candidate {cid} Post-Crop Gate: REJECT ({post_msg})", "WARN")
                             self.ledger.release_single_clip(cid)
+                            self.ledger.reject_window(src_path, start_s, start_s + dur_s, f"POST_CROP_GATE_FAIL ({post_msg})")
                             try: os.remove(clip_out)
                             except: pass
                             continue
