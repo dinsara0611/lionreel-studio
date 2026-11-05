@@ -1037,10 +1037,10 @@ function renderCandidatesGrid(filterQuery = "") {
                 </div>
                 <div class="cand-content">
                     <div class="cand-title" title="${escapeHtml(source.title)}">${escapeHtml(source.title)}</div>
-                    <div style="font-size: 0.72rem; color: var(--text-muted);">${escapeHtml(source.channel)} • ${source.views} views</div>
+                    <div style="font-size: 0.8125rem; color: var(--text-muted);">${escapeHtml(source.channel)} • ${source.views} views</div>
                     <div class="cand-footer">
-                        <button type="button" class="btn btn-secondary btn-sm cand-preview-btn" data-preview-id="${source.id}" style="padding: 2px 8px; font-size: 0.72rem;">Preview</button>
-                        <button type="button" class="btn ${isSelected ? 'btn-primary' : 'btn-secondary'} btn-sm cand-select-btn" data-toggle-id="${source.id}" style="padding: 2px 10px; font-size: 0.72rem; display: inline-flex; align-items: center; gap: 4px;">
+                        <button type="button" class="btn btn-secondary btn-sm cand-preview-btn" data-preview-id="${source.id}" style="padding: 2px 8px; font-size: 0.8125rem;">Preview</button>
+                        <button type="button" class="btn ${isSelected ? 'btn-primary' : 'btn-secondary'} btn-sm cand-select-btn" data-toggle-id="${source.id}" style="padding: 2px 10px; font-size: 0.8125rem; display: inline-flex; align-items: center; gap: 4px;">
                             ${isSelected ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Added' : '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add to Reel'}
                         </button>
                     </div>
@@ -1342,14 +1342,14 @@ function renderReviewClipsGrid() {
             <img class="review-clip-thumb" src="${clip.thumbnail}" alt="${escapeHtml(clip.title)}">
             <div class="review-clip-meta">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-size: 0.72rem; font-family: var(--font-mono); font-weight: 700; color: var(--primary-emerald);">Clip #${idx + 1}</span>
+                    <span style="font-size: 0.8125rem; font-family: var(--font-mono); font-weight: 700; color: var(--primary-emerald);">Clip #${idx + 1}</span>
                     <button type="button" class="btn-icon btn-sm review-remove-btn" data-idx="${idx}" title="Remove Clip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
                 </div>
-                <div style="font-size: 0.78rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(clip.title)}</div>
-                <div style="font-size: 0.68rem; color: var(--text-muted);">${clip.duration}s • ${clip.resolution || '1080p'}</div>
+                <div style="font-size: 0.8125rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(clip.title)}</div>
+                <div style="font-size: 0.8125rem; color: var(--text-muted);">${clip.duration}s • ${clip.resolution || '1080p'}</div>
                 <div style="display: flex; gap: 4px; align-items: center; margin-top: 3px; flex-wrap: wrap;">
-                    <span class="badge badge-emerald" style="font-size: 0.6rem; padding: 1px 5px;">${clip.license || 'CC-BY 4.0'}</span>
-                    <span style="font-size: 0.64rem; color: var(--text-muted); max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${escapeHtml(clip.author || clip.source || 'CC Archive')}">${escapeHtml(clip.author || clip.source || 'CC Archive')}</span>
+                    <span class="badge badge-emerald" style="font-size: 0.8125rem; padding: 1px 5px;">${clip.license || 'CC-BY 4.0'}</span>
+                    <span style="font-size: 0.8125rem; color: var(--text-muted); max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${escapeHtml(clip.author || clip.source || 'CC Archive')}">${escapeHtml(clip.author || clip.source || 'CC Archive')}</span>
                 </div>
             </div>
         </div>
@@ -1822,14 +1822,14 @@ function renderTimelineTrack() {
             <div class="timeline-clip-card ${isActive ? 'active' : ''}" data-clip-idx="${idx}" draggable="true" title="Drag to reorder sequence">
                 <div style="position: relative; width: 100%; height: 60px; background: #000; overflow: hidden; border-radius: 4px;">
                     <video class="timeline-clip-thumb" src="${clip.videoUrl || ''}" muted playsinline preload="metadata" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;"></video>
-                    <span class="badge ${score >= 90 ? 'badge-emerald' : 'badge-amber'}" style="position: absolute; top: 3px; left: 3px; font-size: 0.60rem; padding: 1px 4px;">${score}% Frame</span>
+                    <span class="badge ${score >= 90 ? 'badge-emerald' : 'badge-amber'}" style="position: absolute; top: 3px; left: 3px; font-size: 0.8125rem; padding: 1px 4px;">${score}% Frame</span>
                 </div>
-                <div class="timeline-clip-meta" style="margin-top: 4px; display: flex; justify-content: space-between; font-size: 0.70rem; font-family: var(--font-mono);">
+                <div class="timeline-clip-meta" style="margin-top: 4px; display: flex; justify-content: space-between; font-size: 0.8125rem; font-family: var(--font-mono);">
                     <span>#${idx + 1}</span>
                     <span>${dur}s</span>
                 </div>
                 <div class="timeline-clip-footer" style="display: flex; align-items: center; justify-content: space-between; gap: 4px;">
-                    <span style="font-size: 0.62rem; color: #fff; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 85px;" title="${escapeHtml(clip.title || 'Clip')}">
+                    <span style="font-size: 0.8125rem; color: #fff; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 85px;" title="${escapeHtml(clip.title || 'Clip')}">
                         ${escapeHtml(clip.channel || clip.author || clip.title || 'Clip')}
                     </span>
                     <button type="button" class="btn-icon btn-sm timeline-del-btn" data-del-idx="${idx}" title="Delete clip from timeline" style="width: 18px; height: 18px; background: rgba(0,0,0,0.6); color: #fff; display: inline-flex; align-items: center; justify-content: center; padding: 0;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
@@ -1947,17 +1947,17 @@ async function openReplaceClipModal() {
                 <div class="bank-clip-card" data-clip-id="${escapeHtml(cand.clip_id)}">
                     <div style="position: relative; aspect-ratio: 16/9; background: #000; overflow: hidden;">
                         <img src="${thumb}" alt="${escapeHtml(cand.title || 'Clip')}" style="width: 100%; height: 100%; object-fit: cover;">
-                        <span class="badge badge-emerald" style="position: absolute; top: 6px; left: 6px; font-size: 0.65rem;">${scorePct}% Centering</span>
-                        <span style="position: absolute; bottom: 6px; right: 6px; background: rgba(0,0,0,0.7); color: #fff; font-size: 0.68rem; font-family: var(--font-mono); padding: 1px 4px; border-radius: 2px;">${dur}s</span>
+                        <span class="badge badge-emerald" style="position: absolute; top: 6px; left: 6px; font-size: 0.8125rem;">${scorePct}% Centering</span>
+                        <span style="position: absolute; bottom: 6px; right: 6px; background: rgba(0,0,0,0.7); color: #fff; font-size: 0.8125rem; font-family: var(--font-mono); padding: 1px 4px; border-radius: 2px;">${dur}s</span>
                     </div>
                     <div style="padding: 10px; display: flex; flex-direction: column; gap: 6px; flex: 1;">
                         <div style="font-size: 0.82rem; font-weight: 600; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
                             ${escapeHtml(cand.title || 'Verified Moment')}
                         </div>
-                        <div style="font-size: 0.7rem; color: var(--text-muted);">
+                        <div style="font-size: 0.8125rem; color: var(--text-muted);">
                             ${escapeHtml(cand.uploader || cand.channel || 'Verified CC Contributor')}
                         </div>
-                        <button type="button" class="btn btn-primary btn-sm btn-swap-clip-choice" data-clip-id="${escapeHtml(cand.clip_id)}" style="margin-top: auto; width: 100%; justify-content: center; font-size: 0.74rem;">
+                        <button type="button" class="btn btn-primary btn-sm btn-swap-clip-choice" data-clip-id="${escapeHtml(cand.clip_id)}" style="margin-top: auto; width: 100%; justify-content: center; font-size: 0.8125rem;">
                             <span>Select &amp; Swap</span>
                         </button>
                     </div>
@@ -2443,7 +2443,7 @@ function syncFeedbackControlsForClip(clip) {
 
     const altsContainer = document.getElementById("clip-suggested-alternatives");
     if (altsContainer) {
-        altsContainer.innerHTML = `<span style="font-size: 0.68rem; color: var(--text-muted); font-style: italic;">Click 'Load Alts' to see top model windows</span>`;
+        altsContainer.innerHTML = `<span style="font-size: 0.8125rem; color: var(--text-muted); font-style: italic;">Click 'Load Alts' to see top model windows</span>`;
     }
 
     refreshFeedbackStats();
@@ -2621,7 +2621,7 @@ function loadActiveClipIntoPlayer() {
     const creator = clip.channel || clip.author || "Verified CC Creator";
     const licenseText = clip.license || "CC-BY 4.0";
     const resText = clip.resolution || "1080p";
-    if (channelEl) channelEl.innerHTML = `<span>By <strong>${escapeHtml(creator)}</strong></span> · <span>${escapeHtml(licenseText)}</span> · <span class="badge" style="font-size:0.65rem; padding:1px 4px;">${escapeHtml(resText)}</span>`;
+    if (channelEl) channelEl.innerHTML = `<span>By <strong>${escapeHtml(creator)}</strong></span> · <span>${escapeHtml(licenseText)}</span> · <span class="badge" style="font-size: 0.8125rem; padding:1px 4px;">${escapeHtml(resText)}</span>`;
 
     const scoreVal = clip.qualityScore || Math.round((clip.framing_score || 0.95) * 100);
     if (scoreEl) {
@@ -4151,7 +4151,7 @@ function renderExportProjectsStrip(currentFilename) {
     }
 
     if (list.length === 0) {
-        listEl.innerHTML = `<span style="font-size: 0.72rem; color: var(--text-muted); padding: 6px;">No finished compilations available.</span>`;
+        listEl.innerHTML = `<span style="font-size: 0.8125rem; color: var(--text-muted); padding: 6px;">No finished compilations available.</span>`;
         return;
     }
 
@@ -5183,7 +5183,7 @@ async function initExportThumbnailPanel(jobId, target) {
                     <div style="width: 100%; aspect-ratio: 16/9; border-radius: 4px; overflow: hidden; background: #000;">
                         <img src="${thumbSrc}" style="width: 100%; height: 100%; object-fit: cover;" alt="Cand #${idx + 1}">
                     </div>
-                    <div style="display: flex; justify-content: space-between; width: 100%; font-size: 0.65rem; font-weight: 700; color: ${idx === activeIdx ? "var(--primary)" : "var(--text-muted)"};">
+                    <div style="display: flex; justify-content: space-between; width: 100%; font-size: 0.8125rem; font-weight: 700; color: ${idx === activeIdx ? "var(--primary)" : "var(--text-muted)"};">
                         <span>#${idx + 1}</span>
                         <span>${c.total_score || c.score || 85} pts</span>
                     </div>
@@ -5961,7 +5961,7 @@ function parseEngineTelemetry(chunk) {
 function getShortReasonChip(r) {
     const isPass = r.result === "PASS";
     if (isPass) {
-        return `<span class="badge badge-emerald" style="padding: 2px 8px; font-size: 0.70rem; font-weight: 700;">PASS</span>`;
+        return `<span class="badge badge-emerald" style="padding: 2px 8px; font-size: 0.8125rem; font-weight: 700;">PASS</span>`;
     }
     const reason = (r.reason || "").toUpperCase();
     let label = "REJECT";
@@ -6051,24 +6051,24 @@ function getShortReasonChip(r) {
         border = "rgba(244,63,94,0.4)";
     }
 
-    return `<span class="badge" style="background: ${bg}; color: ${color}; border: 1px solid ${border}; padding: 2px 7px; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.02em;">${label}</span>`;
+    return `<span class="badge" style="background: ${bg}; color: ${color}; border: 1px solid ${border}; padding: 2px 7px; font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.02em;">${label}</span>`;
 }
 
 function formatMetricPct(val, isMeasured) {
     if (!isMeasured || val === null || val === undefined) {
-        return `<span style="color: var(--text-muted); font-style: italic; font-size: 0.70rem;">not measured</span>`;
+        return `<span style="color: var(--text-muted); font-style: italic; font-size: 0.8125rem;">not measured</span>`;
     }
     const num = typeof val === "number" ? val : parseFloat(val);
-    if (isNaN(num)) return `<span style="color: var(--text-muted); font-style: italic; font-size: 0.70rem;">not measured</span>`;
+    if (isNaN(num)) return `<span style="color: var(--text-muted); font-style: italic; font-size: 0.8125rem;">not measured</span>`;
     return `${(num * 100).toFixed(1)}%`;
 }
 
 function formatMetricVal(val, isMeasured) {
     if (!isMeasured || val === null || val === undefined) {
-        return `<span style="color: var(--text-muted); font-style: italic; font-size: 0.70rem;">not measured</span>`;
+        return `<span style="color: var(--text-muted); font-style: italic; font-size: 0.8125rem;">not measured</span>`;
     }
     const num = typeof val === "number" ? val : parseFloat(val);
-    if (isNaN(num)) return `<span style="color: var(--text-muted); font-style: italic; font-size: 0.70rem;">not measured</span>`;
+    if (isNaN(num)) return `<span style="color: var(--text-muted); font-style: italic; font-size: 0.8125rem;">not measured</span>`;
     return num.toFixed(1);
 }
 
@@ -6109,11 +6109,11 @@ function renderCandidateReportsTable(reports) {
     if (blurredBarsCount > 0 && isBlurFit) {
         summaryHtml = `
             <div class="audit-summary-banner" style="background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-                <div style="font-size: 0.8rem; color: #f87171; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+                <div style="font-size: 0.8125rem; color: #f87171; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                     <span>${blurredBarsCount} of ${totalCount} rendered candidates failed for the same reason: BLURRED_BARS + SIZE. Suggested fix: use Smart crop</span>
                 </div>
-                <button id="btn-retry-smart-crop" class="btn btn-primary btn-sm" style="background: var(--state-success); border: 1px solid var(--accent-primary); font-size: 0.75rem; padding: 5px 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-weight: 600;">
+                <button id="btn-retry-smart-crop" class="btn btn-primary btn-sm" style="background: var(--state-success); border: 1px solid var(--accent-primary); font-size: 0.8125rem; padding: 5px 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-weight: 600;">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                     <span>Retry with Smart Crop</span>
                 </button>
@@ -6122,7 +6122,7 @@ function renderCandidateReportsTable(reports) {
     } else if (watermarkCount > 0 && passCount === 0) {
         summaryHtml = `
             <div class="audit-summary-banner" style="background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 12px;">
-                <div style="font-size: 0.8rem; color: #f87171; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+                <div style="font-size: 0.8125rem; color: #f87171; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                     <span>${watermarkCount} candidate(s) rejected by WATERMARK filter. Watermarked sources have been blocked from pool.</span>
                 </div>
@@ -6131,7 +6131,7 @@ function renderCandidateReportsTable(reports) {
     } else if (passCount < totalCount) {
         summaryHtml = `
             <div class="audit-summary-banner" style="background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.3); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 12px;">
-                <div style="font-size: 0.8rem; color: #60a5fa; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+                <div style="font-size: 0.8125rem; color: #60a5fa; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
                     <span>Evaluated ${totalCount} candidates: ${passCount} passed, ${totalCount - passCount} rejected.</span>
                 </div>
@@ -6206,9 +6206,9 @@ function renderCandidateReportsTable(reports) {
         return `
             <tr style="border-bottom: 1px solid var(--border); cursor: pointer;" onclick="toggleCandidateDetail(${idx})" title="Click to view full candidate details">
                 <td style="padding: 7px 8px; font-family: var(--font-mono); font-weight: 600; white-space: nowrap;">Cand ${r.candidate}</td>
-                <td style="padding: 7px 8px; color: var(--text-secondary); max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.70rem;" title="${escapeHtml(r.source || '')}">${escapeHtml(srcTitle)}</td>
-                <td style="padding: 7px 6px; font-size: 0.68rem; text-align: center;"><span class="badge ${isVert ? 'badge-blue' : 'badge-neutral'}">${orientationLabel}</span></td>
-                <td style="padding: 7px 6px; font-size: 0.68rem; color: var(--text-muted); text-align: center;">${escapeHtml(licenseLabel)}</td>
+                <td style="padding: 7px 8px; color: var(--text-secondary); max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.8125rem;" title="${escapeHtml(r.source || '')}">${escapeHtml(srcTitle)}</td>
+                <td style="padding: 7px 6px; font-size: 0.8125rem; text-align: center;"><span class="badge ${isVert ? 'badge-blue' : 'badge-neutral'}">${orientationLabel}</span></td>
+                <td style="padding: 7px 6px; font-size: 0.8125rem; color: var(--text-muted); text-align: center;">${escapeHtml(licenseLabel)}</td>
                 <td style="padding: 7px 6px; font-family: var(--font-mono); text-align: right;">${petStr}</td>
                 <td style="padding: 7px 6px; font-family: var(--font-mono); text-align: right;">${horizStr}</td>
                 <td style="padding: 7px 6px; font-family: var(--font-mono); text-align: right;">${vertStr}</td>
@@ -6217,13 +6217,13 @@ function renderCandidateReportsTable(reports) {
                 <td style="padding: 7px 6px; font-family: var(--font-mono); text-align: right; font-weight: 600;">${predStr}</td>
                 <td style="padding: 7px 6px; font-family: var(--font-mono); text-align: right; font-weight: 600;">${actStr}</td>
                 <td style="padding: 7px 8px; text-align: center;">${reasonChip}</td>
-                <td style="padding: 7px 6px; text-align: center; color: var(--text-muted); font-size: 0.70rem;" id="cand-chev-${idx}"><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-chevron-down"></use></svg></td>
+                <td style="padding: 7px 6px; text-align: center; color: var(--text-muted); font-size: 0.8125rem;" id="cand-chev-${idx}"><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-chevron-down"></use></svg></td>
             </tr>
             <tr id="cand-detail-${idx}" style="display: none; background: rgba(0,0,0,0.2); border-bottom: 1.5px solid var(--border);">
-                <td colspan="13" style="padding: 10px 14px; font-size: 0.73rem; color: var(--text-secondary);">
+                <td colspan="13" style="padding: 10px 14px; font-size: 0.8125rem; color: var(--text-secondary);">
                     <div style="display: flex; flex-direction: column; gap: 5px;">
-                        <div><strong style="color: var(--text-primary);">Time Window:</strong> ${startNum}s - ${endNum}s (${durNum}s) | <strong style="color: var(--text-primary);">Clip ID:</strong> <code style="font-size: 0.70rem;">${escapeHtml(r.clip_id || '—')}</code> | <strong style="color: var(--text-primary);">Source Format:</strong> ${orientationLabel} | <strong style="color: var(--text-primary);">License:</strong> ${escapeHtml(licenseLabel)}</div>
-                        <div><strong style="color: var(--text-primary);">Source Video / Channel:</strong> <span style="color: var(--text-primary); font-weight: 600;">${escapeHtml(srcTitle)}</span> (<code style="font-size: 0.68rem;">${escapeHtml(r.source || '')}</code>)</div>
+                        <div><strong style="color: var(--text-primary);">Time Window:</strong> ${startNum}s - ${endNum}s (${durNum}s) | <strong style="color: var(--text-primary);">Clip ID:</strong> <code style="font-size: 0.8125rem;">${escapeHtml(r.clip_id || '—')}</code> | <strong style="color: var(--text-primary);">Source Format:</strong> ${orientationLabel} | <strong style="color: var(--text-primary);">License:</strong> ${escapeHtml(licenseLabel)}</div>
+                        <div><strong style="color: var(--text-primary);">Source Video / Channel:</strong> <span style="color: var(--text-primary); font-weight: 600;">${escapeHtml(srcTitle)}</span> (<code style="font-size: 0.8125rem;">${escapeHtml(r.source || '')}</code>)</div>
                         <div><strong style="color: var(--text-primary);">Plain-Language Reason:</strong> <span style="color: #60a5fa; font-weight: 600;">${plainReason}</span></div>
                         <div><strong style="color: var(--text-primary);">Gate Telemetry / Full Detail:</strong> <span style="color: var(--text-primary); font-family: var(--font-mono);">${escapeHtml(r.reason || 'No additional details')}</span></div>
                     </div>
@@ -6237,11 +6237,11 @@ function renderCandidateReportsTable(reports) {
             ${summaryHtml}
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                 <span style="font-size: 0.82rem; font-weight: 700; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.04em;">Processing Gate Candidates Audit</span>
-                <span style="font-size: 0.72rem; color: var(--text-muted);">${uniqueReports.length} unique windows evaluated</span>
+                <span style="font-size: 0.8125rem; color: var(--text-muted);">${uniqueReports.length} unique windows evaluated</span>
             </div>
-            <table style="width: 100%; border-collapse: collapse; font-size: 0.74rem; text-align: left;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.8125rem; text-align: left;">
                 <thead style="position: sticky; top: 0; background: var(--bg-card); z-index: 2;">
-                    <tr style="border-bottom: 1.5px solid var(--border); color: var(--text-muted); font-size: 0.70rem;">
+                    <tr style="border-bottom: 1.5px solid var(--border); color: var(--text-muted); font-size: 0.8125rem;">
                         <th style="padding: 6px 8px;">Cand</th>
                         <th style="padding: 6px 8px;">Source</th>
                         <th style="padding: 6px 6px; text-align: center;">Format</th>
@@ -6341,9 +6341,9 @@ async function renderSelfHealingBanner(data, gotClips, targetClips, isNeedsSourc
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                         <span>${isNeedsSources ? "Pool Needs Additional Sources" : "Waiting for Clips: Harvest Active"}</span>
                         ${isHarvestRunning 
-                            ? `<span class="badge" style="background: rgba(16,185,129,0.2); color: var(--state-success); border: 1px solid rgba(16,185,129,0.4); font-size: 0.72rem; padding: 2px 8px; border-radius: 4px;">Harvest running</span>` 
-                            : `<span class="badge" style="background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.4); font-size: 0.72rem; padding: 2px 8px; border-radius: 4px;">Harvest not running</span>
-                               <button id="btn-start-harvest-now" class="btn btn-primary btn-sm" style="background: #2563eb; border: 1px solid #1d4ed8; font-size: 0.72rem; padding: 2px 10px; cursor: pointer;">Start harvest</button>`
+                            ? `<span class="badge" style="background: rgba(16,185,129,0.2); color: var(--state-success); border: 1px solid rgba(16,185,129,0.4); font-size: 0.8125rem; padding: 2px 8px; border-radius: 4px;">Harvest running</span>` 
+                            : `<span class="badge" style="background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.4); font-size: 0.8125rem; padding: 2px 8px; border-radius: 4px;">Harvest not running</span>
+                               <button id="btn-start-harvest-now" class="btn btn-primary btn-sm" style="background: #2563eb; border: 1px solid #1d4ed8; font-size: 0.8125rem; padding: 2px 10px; cursor: pointer;">Start harvest</button>`
                         }
                     </div>
                     <div style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 4px;">
@@ -6389,51 +6389,51 @@ async function renderSelfHealingBanner(data, gotClips, targetClips, isNeedsSourc
             </div>
 
             <!-- Live Telemetry Matrix (Ticking timer, waiting since, last activity, next check in, growth, ETA) -->
-            <div style="background: rgba(0,0,0,0.25); border-radius: var(--radius-xs); padding: 12px 14px; border: 1px solid rgba(255,255,255,0.06); font-size: 0.80rem;">
+            <div style="background: rgba(0,0,0,0.25); border-radius: var(--radius-xs); padding: 12px 14px; border: 1px solid rgba(255,255,255,0.06); font-size: 0.8125rem;">
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px;">
                     <div>
-                        <span style="color: var(--text-muted); display: block; font-size: 0.72rem; text-transform: uppercase;">Wait Timer</span>
+                        <span style="color: var(--text-muted); display: block; font-size: 0.8125rem; text-transform: uppercase;">Wait Timer</span>
                         <strong id="waiting-timer-val" style="color: #60a5fa; font-family: monospace; font-size: 0.92rem;">${formatDuration(waitDurationSec)}</strong>
                     </div>
                     <div>
-                        <span style="color: var(--text-muted); display: block; font-size: 0.72rem; text-transform: uppercase;">Waiting Since</span>
+                        <span style="color: var(--text-muted); display: block; font-size: 0.8125rem; text-transform: uppercase;">Waiting Since</span>
                         <strong style="color: var(--text-primary); font-size: 0.85rem;">${waitingSinceStr}</strong>
                     </div>
                     <div>
-                        <span style="color: var(--text-muted); display: block; font-size: 0.72rem; text-transform: uppercase;">Last Harvest Activity</span>
+                        <span style="color: var(--text-muted); display: block; font-size: 0.8125rem; text-transform: uppercase;">Last Harvest Activity</span>
                         <strong id="waiting-last-act-val" style="color: var(--text-primary); font-size: 0.85rem;">${lastActivityStr}</strong>
                     </div>
                     <div>
-                        <span style="color: var(--text-muted); display: block; font-size: 0.72rem; text-transform: uppercase;">Next Check In</span>
+                        <span style="color: var(--text-muted); display: block; font-size: 0.8125rem; text-transform: uppercase;">Next Check In</span>
                         <strong id="waiting-countdown-val" style="color: #f59e0b; font-family: monospace; font-size: 0.92rem;">${nextCheckSec}s</strong>
                     </div>
                     <div>
-                        <span style="color: var(--text-muted); display: block; font-size: 0.72rem; text-transform: uppercase;">Growth Rate</span>
+                        <span style="color: var(--text-muted); display: block; font-size: 0.8125rem; text-transform: uppercase;">Growth Rate</span>
                         <strong style="color: ${growthPerMin > 0 ? 'var(--state-success)' : 'var(--text-muted)'}; font-size: 0.85rem;">${growthPerMin.toFixed(1)} clips/min</strong>
                     </div>
                     <div>
-                        <span style="color: var(--text-muted); display: block; font-size: 0.72rem; text-transform: uppercase;">Harvest ETA</span>
+                        <span style="color: var(--text-muted); display: block; font-size: 0.8125rem; text-transform: uppercase;">Harvest ETA</span>
                         <strong style="color: ${etaDisplay !== '--' ? 'var(--state-success)' : 'var(--text-muted)'}; font-size: 0.85rem;">${etaDisplay}</strong>
                     </div>
                 </div>
 
                 ${isStalled10Min ? `
                 <!-- Amber hint for 10 min no growth -->
-                <div style="margin-top: 12px; background: rgba(245,158,11,0.14); border: 1px solid rgba(245,158,11,0.5); border-radius: var(--radius-xs); padding: 8px 12px; color: #fbbf24; font-size: 0.80rem; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
+                <div style="margin-top: 12px; background: rgba(245,158,11,0.14); border: 1px solid rgba(245,158,11,0.5); border-radius: var(--radius-xs); padding: 8px 12px; color: #fbbf24; font-size: 0.8125rem; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
                     <span>⚠️ <strong>No new clips for 10 min:</strong> add sources or reduce to ${gotClips} clips.</span>
                     <div style="display: flex; gap: 6px;">
-                        <button id="btn-amber-hint-add" class="btn btn-secondary btn-sm" style="font-size: 0.72rem; padding: 2px 8px; cursor: pointer;">Add sources</button>
-                        ${canMakeShorter ? `<button id="btn-amber-hint-short" class="btn btn-primary btn-sm" style="font-size: 0.72rem; padding: 2px 8px; background: var(--state-success); cursor: pointer;">Reduce to ${gotClips} clips</button>` : ''}
+                        <button id="btn-amber-hint-add" class="btn btn-secondary btn-sm" style="font-size: 0.8125rem; padding: 2px 8px; cursor: pointer;">Add sources</button>
+                        ${canMakeShorter ? `<button id="btn-amber-hint-short" class="btn btn-primary btn-sm" style="font-size: 0.8125rem; padding: 2px 8px; background: var(--state-success); cursor: pointer;">Reduce to ${gotClips} clips</button>` : ''}
                     </div>
                 </div>
                 ` : ''}
 
                 <!-- Pool Health breakdown -->
-                <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 0.75rem;">
+                <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 0.8125rem;">
                     <div><span style="color: var(--text-muted);">Pool Verified:</span> <strong style="color: var(--state-success);">${health.verified_clips || gotClips}</strong> &bull; <span style="color: var(--text-muted);">Distinct Sources:</span> <strong>${health.distinct_sources || 0}</strong> &bull; <span style="color: var(--text-muted);">${orientationLabel}</span> <strong style="color: #60a5fa;">${orientationCount}</strong></div>
                     <span style="color: #60a5fa; cursor: pointer; text-decoration: underline;" onclick="const el=document.getElementById('pool-blocked-reasons-list'); if(el) el.style.display = el.style.display === 'none' ? 'block' : 'none';">Toggle Blocked Reasons &darr;</span>
                 </div>
-                <div id="pool-blocked-reasons-list" style="display: none; margin-top: 6px; font-size: 0.72rem; color: #fca5a5; line-height: 1.4;">
+                <div id="pool-blocked-reasons-list" style="display: none; margin-top: 6px; font-size: 0.8125rem; color: #fca5a5; line-height: 1.4;">
                     ${(health.blocked_sources_list || []).map(b => `<div>&bull; <strong>${escapeHtml(b.source)}</strong>: ${escapeHtml(b.reason)}</div>`).join("")}
                 </div>
             </div>
@@ -9360,7 +9360,7 @@ function setupUIEventListeners() {
             if (!clip) return;
             const altsContainer = document.getElementById("clip-suggested-alternatives");
             if (!altsContainer) return;
-            altsContainer.innerHTML = `<span style="font-size: 0.68rem; color: var(--text-muted);">Analyzing top model candidates…</span>`;
+            altsContainer.innerHTML = `<span style="font-size: 0.8125rem; color: var(--text-muted);">Analyzing top model candidates…</span>`;
             try {
                 const jobId = state.currentJobId || "active_draft";
                 const clipId = clip.id || clip.clip_id || `clip_${state.activeClipIndex + 1}`;
@@ -9369,13 +9369,13 @@ function setupUIEventListeners() {
                     const data = await res.json();
                     const alts = data.alternatives || [];
                     if (alts.length === 0) {
-                        altsContainer.innerHTML = `<span style="font-size: 0.68rem; color: var(--text-muted); font-style: italic;">No other viable windows in this source</span>`;
+                        altsContainer.innerHTML = `<span style="font-size: 0.8125rem; color: var(--text-muted); font-style: italic;">No other viable windows in this source</span>`;
                         return;
                     }
                     altsContainer.innerHTML = alts.map((alt, idx) => `
                         <div class="alternative-item" data-alt-start="${alt.start_s.toFixed(2)}" data-alt-end="${alt.end_s.toFixed(2)}" data-alt-peak="${(alt.peak_s || (alt.start_s + 2.0)).toFixed(2)}" title="Score: ${Math.round(alt.score * 100)}% | Shot: [${alt.shot_start_s.toFixed(1)}s - ${alt.shot_end_s.toFixed(1)}s]">
                             <span><strong>Alt ${idx + 1}:</strong> ${alt.start_s.toFixed(1)}s – ${alt.end_s.toFixed(1)}s (Peak ${alt.peak_s ? alt.peak_s.toFixed(1) + 's' : '--'})</span>
-                            <span class="badge badge-emerald" style="font-size: 0.62rem; padding: 1px 4px;">Score ${Math.round(alt.score * 100)}</span>
+                            <span class="badge badge-emerald" style="font-size: 0.8125rem; padding: 1px 4px;">Score ${Math.round(alt.score * 100)}</span>
                         </div>
                     `).join("");
                     altsContainer.querySelectorAll(".alternative-item").forEach(item => {
@@ -9391,11 +9391,11 @@ function setupUIEventListeners() {
                         });
                     });
                 } else {
-                    altsContainer.innerHTML = `<span style="font-size: 0.68rem; color: var(--text-muted); font-style: italic;">Failed to compute alternatives</span>`;
+                    altsContainer.innerHTML = `<span style="font-size: 0.8125rem; color: var(--text-muted); font-style: italic;">Failed to compute alternatives</span>`;
                 }
             } catch (err) {
                 console.warn("Alternatives error:", err);
-                altsContainer.innerHTML = `<span style="font-size: 0.68rem; color: var(--text-muted); font-style: italic;">Error fetching alternatives</span>`;
+                altsContainer.innerHTML = `<span style="font-size: 0.8125rem; color: var(--text-muted); font-style: italic;">Error fetching alternatives</span>`;
             }
         });
     }
@@ -11466,7 +11466,7 @@ async function openReportViewer(jobId, mode = "production") {
     // Dynamic Sidebar Pages Populator
     if (sidebar) {
         sidebar.innerHTML = `
-            <div style="text-align: center; padding: 20px 4px; font-size: 0.72rem; color: var(--text-muted);">
+            <div style="text-align: center; padding: 20px 4px; font-size: 0.8125rem; color: var(--text-muted);">
                 Loading pages…
             </div>
         `;
@@ -11689,14 +11689,14 @@ async function openDownloadCenter(jobId) {
                             <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${escapeHtml(fname)}">
                                 ${escapeHtml(fname)}
                             </div>
-                            <div style="font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono); display: flex; gap: 8px; align-items: center;">
+                            <div style="font-size: 0.8125rem; color: var(--text-muted); font-family: var(--font-mono); display: flex; gap: 8px; align-items: center;">
                                 <span>${f.size_formatted || (f.size_bytes ? (f.size_bytes / 1024).toFixed(1) + ' KB' : '--')}</span>
                                 ${f.sha256 ? `<span title="SHA-256: ${f.sha256}">#${f.sha256.substring(0, 8)}</span>` : ''}
                             </div>
                         </div>
                     </div>
                     <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
-                        <span class="badge ${catBadgeClass}" style="font-size: 0.7rem; text-transform: uppercase;">${f.category || 'file'}</span>
+                        <span class="badge ${catBadgeClass}" style="font-size: 0.8125rem; text-transform: uppercase;">${f.category || 'file'}</span>
                         <a href="${downloadUrl}" download="${escapeHtml(fname)}" class="btn btn-secondary btn-sm" title="Download this asset directly">
                             <svg class="icon icon-sm" aria-hidden="true"><use href="#icon-download"></use></svg>
                         </a>
@@ -11965,7 +11965,7 @@ function updateProvenanceCard(c) {
     const scoreVal = Math.round(c.score || 85);
 
     provBox.innerHTML = `
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.72rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.8125rem;">
             <div><strong>Timestamp:</strong> ${c.timestamp_sec ? c.timestamp_sec.toFixed(1) + 's' : (c.time_str || '--')}</div>
             <div><strong>Clip ID:</strong> ${escapeHtml(c.clip_id || prov.clip_id || 'clip_0')}</div>
             <div><strong>Decoder:</strong> ${escapeHtml(prov.decoder || 'H.264 video pixels')}</div>
@@ -11973,7 +11973,7 @@ function updateProvenanceCard(c) {
             <div><strong>Face Height:</strong> ${faceRatio}% (target: 50-95%)</div>
             <div><strong>Full Bleed:</strong> <span style="color: var(--primary-emerald, var(--state-success)); font-weight: 700;">0 bars (pass)</span></div>
         </div>
-        <div style="margin-top: 6px; font-size: 0.70rem; color: var(--text-muted); border-top: 1px solid var(--border); padding-top: 4px;">
+        <div style="margin-top: 6px; font-size: 0.8125rem; color: var(--text-muted); border-top: 1px solid var(--border); padding-top: 4px;">
             <strong>Quality Score:</strong> ${scoreVal}/100 · <strong>Source:</strong> ${escapeHtml(prov.video_file || 'final rendered video')}
         </div>
     `;
@@ -11984,7 +11984,7 @@ function renderCandidatesGrid() {
     if (!grid) return;
 
     if (!thumbCandidates || thumbCandidates.length === 0) {
-        grid.innerHTML = `<div style="grid-column: span 3; font-size: 0.72rem; color: var(--text-muted); text-align: center; padding: 10px;">Candidates loading…</div>`;
+        grid.innerHTML = `<div style="grid-column: span 3; font-size: 0.8125rem; color: var(--text-muted); text-align: center; padding: 10px;">Candidates loading…</div>`;
         return;
     }
 
@@ -12533,12 +12533,12 @@ async function openSafeCleanupModal() {
                         style="margin-top: 3px;">
                     <div style="min-width: 0;">
                         <div style="font-size: 0.84rem; font-weight: 700; color: var(--text-primary);">${g.label}</div>
-                        <div style="font-size: 0.74rem; color: var(--text-muted); line-height: 1.35;">${g.description}</div>
+                        <div style="font-size: 0.8125rem; color: var(--text-muted); line-height: 1.35;">${g.description}</div>
                     </div>
                 </div>
                 <div style="text-align: right; flex-shrink: 0; font-family: var(--font-mono);">
-                    <div style="font-size: 0.8rem; font-weight: 700; color: ${g.count > 0 ? 'var(--text-primary)' : 'var(--text-muted)'};">${g.size_formatted}</div>
-                    <div style="font-size: 0.7rem; color: var(--text-muted);">${g.count} item${g.count === 1 ? "" : "s"}</div>
+                    <div style="font-size: 0.8125rem; font-weight: 700; color: ${g.count > 0 ? 'var(--text-primary)' : 'var(--text-muted)'};">${g.size_formatted}</div>
+                    <div style="font-size: 0.8125rem; color: var(--text-muted);">${g.count} item${g.count === 1 ? "" : "s"}</div>
                 </div>
             `;
             listEl.appendChild(row);
