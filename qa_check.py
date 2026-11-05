@@ -1346,7 +1346,7 @@ def check_stream_contract(probe, expected_aspect=None):
     if video.get("pix_fmt") != "yuv420p":
         problems.append(f"pixel format {video.get('pix_fmt')}, expected yuv420p")
     r_fps, avg_fps = _ratio(video.get("r_frame_rate")), _ratio(video.get("avg_frame_rate"))
-    if abs(r_fps - 30.0) > 0.001 or abs(avg_fps - 30.0) > 0.01:
+    if abs(r_fps - 30.0) > 0.001 or abs(avg_fps - 30.0) > 0.002:
         problems.append(f"frame rate r={video.get('r_frame_rate')} avg={video.get('avg_frame_rate')}, expected constant 30")
     for tag in ("color_space", "color_transfer", "color_primaries"):
         if video.get(tag) != "bt709":

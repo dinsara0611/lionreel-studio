@@ -55,6 +55,8 @@ def is_cc_license(text) -> bool:
 def record_from_info(info: dict) -> dict:
     """Builds a licence record from platform metadata."""
     shown = info.get("license")
+    sizes = [(f.get("width") or 0, f.get("height") or 0) for f in info.get("formats") or [] if f.get("vcodec") not in (None, "none")]
+    width, height = max(sizes, key=lambda wh: wh[0] * wh[1]) if sizes else (info.get("width") or 0, info.get("height") or 0)
     return {
         "video_id": info.get("id"),
         "status": VERIFIED if is_cc_license(shown) else NOT_SHOWN,
@@ -62,6 +64,9 @@ def record_from_info(info: dict) -> dict:
         "creator": info.get("uploader") or info.get("channel") or None,
         "channel_url": info.get("channel_url") or info.get("uploader_url"),
         "title": info.get("title"),
+        "duration": info.get("duration"),
+        "width": width,
+        "height": height,
         "video_url": info.get("webpage_url") or f"https://www.youtube.com/watch?v={info.get('id')}",
         "checked_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
     }
@@ -74,6 +79,17 @@ def fetch_record(video_id: str) -> dict:
     with yt_dlp.YoutubeDL(opts) as ydl:
         info = ydl.extract_info(f"https://www.youtube.com/watch?v={video_id}", download=False)
     return record_from_info(info)
+
+
+def worth_downloading(record: dict, min_seconds: float = 60.0) -> tuple:
+    """Screens length and resolution from metadata, so nothing unusable is downloaded."""
+    width, height = record.get("width") or 0, record.get("height") or 0
+    if (record.get("duration") or 0) < min_seconds:
+        return False, "TOO_SHORT"
+    landscape = width >= height
+    if (landscape and height < 960) or (not landscape and (width < 540 or height < 960)):
+        return False, "LOW_RESOLUTION"
+    return True, "OK"
 
 
 def lookup(source) -> dict:

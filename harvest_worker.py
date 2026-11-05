@@ -569,8 +569,9 @@ def run_real_harvest_sync(
     target_needed: int = 4,
     cat_video_type: str = "all",
     dry_run: bool = False,
-    max_search_results: int = 5,
-    max_downloads: int = 2,
+    max_search_results: int = 12,
+    max_downloads: int = None,
+    max_seconds: float = 1800.0,
     logger=None
 ) -> dict:
     """
@@ -652,6 +653,9 @@ def run_real_harvest_sync(
     detector = PetDetector()
     wm_detector = WatermarkDetector()
 
+    if max_downloads is None:
+        # A source yields a handful of windows at best, so scale downloads to the shortfall
+        max_downloads = min(15, max(3, int(target_needed) // 3 + 2))
     queries_run = 0
     videos_found = 0
     windows_cut = 0
@@ -662,6 +666,9 @@ def run_real_harvest_sync(
     _log(f"STARTING REAL HARVEST | Target Needed: {target_needed} | Mode: {animal_mode} | Queries: {len(queries)}")
 
     for q in queries:
+        if time.time() - t0 > max_seconds:
+            _log(f"Harvest time budget of {max_seconds:.0f}s reached.")
+            break
         queries_run += 1
         _log(f"Running Query {queries_run}/{len(queries)}: '{q}'")
         try:
@@ -711,6 +718,11 @@ def run_real_harvest_sync(
                 rejects_by_reason["NOT_CC_LICENSED"] = rejects_by_reason.get("NOT_CC_LICENSED", 0) + 1
                 _log(f"Skipped {vid_id}: no Creative Commons licence shown ({lic_record.get('license')})")
                 continue
+            usable, why_not = source_licenses.worth_downloading(lic_record)
+            if not usable:
+                rejects_by_reason[why_not] = rejects_by_reason.get(why_not, 0) + 1
+                _log(f"Skipped {vid_id}: {why_not} ({lic_record.get('width')}x{lic_record.get('height')}, {lic_record.get('duration')}s)")
+                continue
             uploader = lic_record["creator"]
             license_text = lic_record["license"]
             title = lic_record.get("title") or title
@@ -722,8 +734,12 @@ def run_real_harvest_sync(
                 ydl_opts_dl = {
                     "format": "bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080][ext=mp4]/best",
                     "outtmpl": os.path.join(CACHE_DIR, f"cache_{vid_id}.%(ext)s"),
+                    "merge_output_format": "mp4",
                     "quiet": True,
-                    "no_warnings": True
+                    "noprogress": True,
+                    "no_warnings": True,
+                    "socket_timeout": 30,
+                    "retries": 3
                 }
                 if ffmpeg_dir:
                     ydl_opts_dl["ffmpeg_location"] = ffmpeg_dir
@@ -868,6 +884,9 @@ def run_real_harvest_sync(
                         _log(f"Window {cid} VERIFIED! (Sharpness: {native_sharpness:.1f}, Pet: {pet_ratio*100:.0f}%)")
 
                     curr_start += step
+
+            if windows_verified >= target_needed or time.time() - t0 > max_seconds:
+                break
 
         if windows_verified >= target_needed:
             break
