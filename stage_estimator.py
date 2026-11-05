@@ -13,6 +13,7 @@ Features:
 """
 
 import os
+import lion_paths
 import sys
 import time
 import json
@@ -82,7 +83,7 @@ class StageEstimator:
                 if count > 0:
                     return
 
-                work_dir = "C:/LionReel/work"
+                work_dir = lion_paths.work_root()
                 if not os.path.exists(work_dir):
                     return
 

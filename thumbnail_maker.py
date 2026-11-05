@@ -5,6 +5,7 @@ Adheres strictly to full-bleed contract, picture provenance, style rules, and Yo
 """
 
 import os
+import lion_paths
 import sys
 import json
 import math
@@ -87,7 +88,7 @@ def is_thumbnail_supported_for_job(job_id: str) -> Tuple[bool, str]:
     clean_id = str(job_id).replace(".mp4", "")
     output_dir = os.path.join(BASE_DIR, "output")
     work_dir = os.path.join(BASE_DIR, "work")
-    local_work_dir = r"C:\LionReel\work"
+    local_work_dir = lion_paths.work_root()
     fin_dir = os.path.join(BASE_DIR, "finished")
 
     paths_to_check = [
