@@ -123,7 +123,8 @@ def main():
                 page.on("console", lambda m: errors.append(m.text[:200]) if m.type == "error" else None)
                 page.goto(args.base, wait_until="domcontentloaded", timeout=30000)
                 page.wait_for_timeout(1200)
-                page.evaluate("t => { document.documentElement.setAttribute('data-theme', t); document.body.classList.toggle('light-theme', t==='light'); }", theme)
+                page.evaluate("t => applyTheme(t)", theme)
+                assert page.evaluate("() => document.documentElement.getAttribute('data-theme')") == theme
                 for name, step in PAGES.items():
                     page.evaluate("n => navigateToStep(n)", step)
                     page.wait_for_timeout(450)

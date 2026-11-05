@@ -186,3 +186,16 @@ def test_description_makes_no_licence_promise():
 def test_no_invented_archive_creator():
     for f in ("lion_automate_v97.py", "report_generator.py"):
         assert "Verified CC Archive" not in open(os.path.join(BASE, f), encoding="utf8").read(), f
+
+
+def test_caption_font_really_is_bold():
+    from PIL import Image, ImageDraw, ImageFont
+    import lion_automate_v97 as engine
+
+    def ink(font):
+        im = Image.new("L", (900, 120), 0)
+        ImageDraw.Draw(im).text((10, 10), "Trying to look majestic", font=font, fill=255)
+        return np.count_nonzero(np.array(im) > 128)
+
+    path = os.path.join(BASE, "assets", "fonts", "Montserrat.ttf")
+    assert ink(engine.load_caption_font(path, 60)) > 1.4 * ink(ImageFont.truetype(path, 60))

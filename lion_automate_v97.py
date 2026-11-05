@@ -795,6 +795,16 @@ class SubjectReframer:
 # ───────────────────────────────────────────────────────────────
 # CAPTION OVERLAY ENGINE (FIX 4)
 # ───────────────────────────────────────────────────────────────
+def load_caption_font(font_path, size):
+    """Montserrat is a variable font and defaults to its thinnest weight, so ask for bold."""
+    font = ImageFont.truetype(font_path, size)
+    try:
+        font.set_variation_by_axes([700])
+    except (OSError, AttributeError, TypeError):
+        pass
+    return font
+
+
 def render_safe_zone_caption(clip_path, out_path, caption_text, font_lang="en"):
     """
     Renders safe-zone caption overlay on a single clip:
@@ -871,7 +881,7 @@ def render_safe_zone_caption(clip_path, out_path, caption_text, font_lang="en"):
 
     while font_size >= 30:
         try:
-            curr_font = ImageFont.truetype(font_path, font_size) if font_path else ImageFont.load_default()
+            curr_font = load_caption_font(font_path, font_size) if font_path else ImageFont.load_default()
         except Exception:
             curr_font = ImageFont.load_default()
 
@@ -920,8 +930,8 @@ def render_safe_zone_caption(clip_path, out_path, caption_text, font_lang="en"):
     # Clamp to lower third zone: between 68% and 88% height
     start_y = max(int(h * 0.68), min(start_y, int(h * 0.88) - total_text_h))
 
-    # Draw bold white text with thin 2px crisp outline (Bug 1c fix: thin outline, not heavy dark blur)
-    stroke_r = 2
+    # Bold white text with an outline that holds up on bright and busy footage
+    stroke_r = 4
     for l_idx, line in enumerate(lines):
         bb = draw.textbbox((0, 0), line, font=font)
         lw = bb[2] - bb[0]

@@ -6322,7 +6322,7 @@ async function renderSelfHealingBanner(data, gotClips, targetClips, isNeedsSourc
     // Waiting since & elapsed
     const waitingSinceEpoch = waitCheckpoint.waiting_since || (data.startTimeMs ? data.startTimeMs / 1000 : Date.now() / 1000);
     const waitingSinceDate = new Date(waitingSinceEpoch * 1000);
-    const waitingSinceStr = waitingSinceDate.toLocaleTimeString();
+    const waitingSinceStr = formatColomboTime(waitingSinceDate);
     const waitDurationSec = Math.max(0, Math.floor(Date.now() / 1000 - waitingSinceEpoch));
 
     // Last harvest activity
@@ -7369,7 +7369,7 @@ async function loadFinishedProjects() {
             }
         }
         const resLabel = isLandscape ? "1920×1080" : "1080×1920";
-        const dateStr = proj.created_date_str || (proj.mtime ? new Date(proj.mtime * 1000).toLocaleString([], {month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit'}) : "");
+        const dateStr = proj.created_date_str || (proj.mtime ? new Date(proj.mtime * 1000).toLocaleString([], {timeZone: "Asia/Colombo", month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit'}) : "");
         let thumb = proj.thumbnail;
         if (!thumb || thumb.includes("contact_sheet")) {
             thumb = isLandscape 

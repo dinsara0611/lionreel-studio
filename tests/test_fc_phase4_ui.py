@@ -116,7 +116,7 @@ def test_both_shows_the_teaser_note(page):
 @pytest.mark.parametrize("theme", ["dark", "light"])
 def test_no_horizontal_scroll_and_13px_floor(page, width, theme):
     page.set_viewport_size({"width": width, "height": 860})
-    page.evaluate("t => document.documentElement.setAttribute('data-theme', t)", theme)
+    page.evaluate("t => applyTheme(t)", theme)
     for step in range(1, 6):
         page.evaluate("n => navigateToStep(n)", step)
         page.wait_for_timeout(200)
