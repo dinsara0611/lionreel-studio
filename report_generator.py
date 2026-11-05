@@ -650,7 +650,7 @@ def build_report_data(
         rep_label = "Repeat" if is_rep else "Unique"
 
         uploader_raw = c.get("uploader") or c.get("author") or c.get("channel")
-        if not uploader_raw or uploader_raw.strip().lower() in ("original creator", "unknown", "unknown author"):
+        if not uploader_raw or uploader_raw.strip().lower() in ("original creator", "unknown", "unknown author", "not recorded"):
             uploader_clean = "Unknown Author"
         else:
             uploader_clean = uploader_raw.strip()
@@ -964,7 +964,7 @@ def build_report_data(
             "title_char_count": len(metadata_data.get("title", "")),
             "title_limit_status": "Valid (<= 100 chars)",
             "description": metadata_data.get("description") or "Hilarious cat moments compiled by LionReel Studio.",
-            "tags": metadata_data.get("tags") or ["cats", "funny", "compilation"],
+            "tags": format_tags_list(metadata_data.get("tags")),
             "hashtags": metadata_data.get("hashtags") or ["#cats", "#funnycats"]
         },
         "tiktok": {
@@ -1318,7 +1318,6 @@ def render_report_html(report_data: Dict[str, Any]) -> str:
             </div>
             <div class="page-footer">
                 <span>LionReel Studio &bull; {report_data['job_id']} &bull; Build {report_data.get('build_id')}</span>
-                <span>Page {c_page_num} of {total_report_pages}</span>
             </div>
         </div>
         """)
@@ -1398,7 +1397,6 @@ def render_report_html(report_data: Dict[str, Any]) -> str:
             </div>
             <div class="page-footer">
                 <span>LionReel Studio &bull; {report_data['job_id']} &bull; Build {report_data.get('build_id')}</span>
-                <span>Page {diag_page_num} of {total_report_pages}</span>
             </div>
         </div>
         """
@@ -1470,7 +1468,6 @@ def render_report_html(report_data: Dict[str, Any]) -> str:
                 margin-bottom: 0;
                 page-break-after: always;
                 break-after: page;
-                min-height: 275mm;
             }}
             .report-page:last-child {{
                 page-break-after: auto;
@@ -1923,7 +1920,6 @@ def render_report_html(report_data: Dict[str, Any]) -> str:
 
         <div class="page-footer">
             <span>LionReel Studio &bull; {report_data['job_id']} &bull; Build {report_data.get('build_id')}</span>
-            <span>Page 1 of {total_report_pages}</span>
         </div>
     </div>
 
@@ -1963,7 +1959,6 @@ def render_report_html(report_data: Dict[str, Any]) -> str:
 
         <div class="page-footer">
             <span>LionReel Studio &bull; {report_data['job_id']} &bull; Build {report_data.get('build_id')}</span>
-            <span>Page 2 of {total_report_pages}</span>
         </div>
     </div>
 
@@ -2029,7 +2024,6 @@ def render_report_html(report_data: Dict[str, Any]) -> str:
 
         <div class="page-footer">
             <span>LionReel Studio &bull; {report_data['job_id']} &bull; Build {report_data.get('build_id')}</span>
-            <span>Page {page_sources_num} of {total_report_pages}</span>
         </div>
     </div>
 

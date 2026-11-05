@@ -177,7 +177,7 @@ class EDLManager:
                     w = probe.get("width", 1920)
                     h = probe.get("height", 1080)
                     res_str = f"{w}x{h}" if (w and h) else "1080p"
-                    cred = self._get_credit_info(full_src, fallback_author=m.get("credit", "Verified CC Archive"), fallback_license=m.get("license", "Creative Commons Attribution 4.0"))
+                    cred = self._get_credit_info(full_src, fallback_author=m.get("credit", "not recorded"), fallback_license=m.get("license", "Creative Commons Attribution 4.0"))
 
                     start_s = round(float(m.get("start_s", 0.0)), 2)
                     end_s = round(float(m.get("end_s", start_s + m.get("duration", 10.0))), 2)
@@ -342,7 +342,7 @@ class EDLManager:
                     w = probe.get("width", 1920)
                     h = probe.get("height", 1080)
                     res_str = f"{w}x{h}" if (w and h) else "1080p"
-                    cred = self._get_credit_info(full_src, fallback_author=m.get("credit", "Verified CC Archive"), fallback_license=m.get("license", "Creative Commons Attribution 4.0"))
+                    cred = self._get_credit_info(full_src, fallback_author=m.get("credit", "not recorded"), fallback_license=m.get("license", "Creative Commons Attribution 4.0"))
                     
                     start_s = round(float(m.get("start_s", 0.0)), 2)
                     end_s = round(float(m.get("end_s", start_s + 10.0)), 2)
@@ -409,7 +409,7 @@ class EDLManager:
                         w = probe.get("width", 1920)
                         h = probe.get("height", 1080)
                         res_str = f"{w}x{h}" if (w and h) else "1080p"
-                        cred = self._get_credit_info(full_src, fallback_author=cinfo.get("uploader") or cinfo.get("channel") or "Verified CC Archive", fallback_license=cinfo.get("license", "Creative Commons Attribution 4.0"))
+                        cred = self._get_credit_info(full_src, fallback_author=cinfo.get("uploader") or cinfo.get("channel") or "not recorded", fallback_license=cinfo.get("license", "Creative Commons Attribution 4.0"))
 
                         start_s = round(float(cinfo.get("start_s", 0.0)), 2)
                         end_s = round(float(cinfo.get("end_s", start_s + 10.0)), 2)
@@ -1051,7 +1051,7 @@ class EDLManager:
             credits_data.append({
                 "clip_id": c.get("clip_id"),
                 "source": os.path.basename(c.get("source_file", "")),
-                "author": c.get("author", "Verified CC Archive"),
+                "author": c.get("author", "not recorded"),
                 "license": c.get("license", "Creative Commons Attribution 4.0")
             })
 
@@ -1292,7 +1292,7 @@ class EDLManager:
         credits_list = []
         for c in child_edl.get("clips", []):
             credits_list.append({
-                "author": c.get("author", "Verified CC Archive"),
+                "author": c.get("author", "not recorded"),
                 "license": c.get("license", "Creative Commons Attribution 4.0"),
                 "source": os.path.basename(c.get("source_file", ""))
             })

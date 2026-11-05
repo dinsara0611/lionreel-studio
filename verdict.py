@@ -278,7 +278,7 @@ def calculate_unified_verdict(
         attention_items.append(w_msg)
 
     # Check unknown authors
-    unknown_author_count = sum(1 for c in clips_table if c.get("uploader") in ("Unknown Author", "Original Creator", None, ""))
+    unknown_author_count = sum(1 for c in clips_table if c.get("uploader") in ("Unknown Author", "Original Creator", "not recorded", None, ""))
     if unknown_author_count > 0:
         w_msg = f"Attribution notice: {unknown_author_count} clip(s) have unverified author names."
         warnings.append(w_msg)

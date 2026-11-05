@@ -152,3 +152,37 @@ def test_engine_has_no_hardcoded_gate_success_text():
 def test_fresh_share_is_not_invented_when_unknown():
     src = open(os.path.join(BASE, "qa_check.py"), encoding="utf8").read()
     assert '"New footage: 100% / Reused from earlier videos: 0%")' not in src
+
+
+@pytest.mark.parametrize("title,ok", [
+    ("Try Not To Laugh - Funniest Cats Ever", False),
+    ("Tuxedo Kitten Makes The Whole Room Laugh Out Loud", False),
+    ("A Tiny This Majestic Kitten Steals The Whole Show Today", False),
+    ("This Tiny Kitten Refuses To Share The Sofa With Anyone", True),
+])
+def test_title_rules(title, ok):
+    import metadata_generator
+    assert metadata_generator.validate_title_grammar(title)[0] is ok
+
+
+def test_tags_are_a_list_of_whole_words():
+    import metadata_generator
+    pkg = metadata_generator.MetadataGenerator().generate_metadata_package("job", animal_type="cat", credits_list=[])
+    assert isinstance(pkg["tags"], list) and all(len(t) > 2 for t in pkg["tags"])
+
+
+def test_hashtags_make_no_appearance_claims():
+    import metadata_generator
+    engine = metadata_generator.MetadataGenerator()
+    for _ in range(40):
+        assert not any(metadata_generator.UNVERIFIED_LOOK.search(h) for h in engine.select_hashtags("cat"))
+
+
+def test_description_makes_no_licence_promise():
+    src = open(os.path.join(BASE, "metadata_generator.py"), encoding="utf8").read()
+    assert "All clips licensed" not in src
+
+
+def test_no_invented_archive_creator():
+    for f in ("lion_automate_v97.py", "report_generator.py"):
+        assert "Verified CC Archive" not in open(os.path.join(BASE, f), encoding="utf8").read(), f

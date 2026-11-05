@@ -3224,8 +3224,8 @@ class LionReelV97Pipeline:
                                 "start_s": b_start,
                                 "end_s": b_end,
                                 "computed_dur": b_dur,
-                                "license": row.get("license") or "Creative Commons Attribution 4.0",
-                                "author": row.get("uploader") or "LionReel Verified CC Archive"
+                                "license": row.get("license"),
+                                "author": row.get("uploader")
                             }
                         }
                         candidate_reports.append(b_rep)
@@ -3471,7 +3471,7 @@ class LionReelV97Pipeline:
                         "funny_score": 0.88,
                         "path": clip_out,
                         "cand": cand_match or {"candidate": edl_idx+1, "source": os.path.basename(src_path), "plan": plan},
-                        "cinfo": cinfo or {"author": edl_c.get("author", "Verified CC Archive"), "license": edl_c.get("license", "Creative Commons CC-BY 4.0")}
+                        "cinfo": cinfo or {"author": edl_c.get("author"), "license": edl_c.get("license", "Creative Commons CC-BY 4.0")}
                     }
                     try:
                         with open(checkpoint_meta, "w", encoding="utf-8") as f_cm:
@@ -4047,8 +4047,11 @@ class LionReelV97Pipeline:
                     "source_orientation": cand.get("source_orientation") or item.get("source_orientation", ""),
                     "peak_offset": round(max(0.5, min(dur_s - 0.5, float(cand.get("peak_s") or (start_s + dur_s * 0.40)) - start_s)), 2),
                     "funny_moment_s": cand.get("peak_s"),
-                    "license": cinfo.get("license", "Creative Commons CC-BY 4.0"),
-                    "credit": cinfo.get("author") or cinfo.get("channel") or "LionReel Verified CC Archive",
+                    "license": source_licenses.license_of(src_val, cinfo.get("license")),
+                    "license_status": source_licenses.status_of(src_val),
+                    "credit": source_licenses.creator_of(src_val, cinfo.get("author") or cinfo.get("channel")),
+                    "uploader": source_licenses.creator_of(src_val, cinfo.get("author") or cinfo.get("channel")),
+                    "video_url": source_licenses.lookup(src_val).get("video_url"),
                     "is_repeat": item.get("is_repeat", cand.get("is_repeat", False)),
                     "repeat_offset_s": item.get("repeat_offset_s", cand.get("repeat_offset_s", 0.0)),
                     "repeat_cycle": item.get("repeat_cycle", cand.get("repeat_cycle", 0)),
@@ -4057,8 +4060,10 @@ class LionReelV97Pipeline:
                 credits_data.append({
                     "clip_index": clip_idx + 1,
                     "source": src_val,
-                    "license": cinfo.get("license", "Creative Commons CC-BY 4.0"),
-                    "credit": cinfo.get("author") or cinfo.get("channel") or "LionReel Verified CC Archive"
+                    "license": source_licenses.license_of(src_val, cinfo.get("license")),
+                    "license_status": source_licenses.status_of(src_val),
+                    "credit": source_licenses.creator_of(src_val, cinfo.get("author") or cinfo.get("channel")),
+                    "video_url": source_licenses.lookup(src_val).get("video_url")
                 })
 
             expected_total_sec = round(sum(c["output_duration"] for c in clip_mapping_data), 2)
@@ -4675,7 +4680,7 @@ class LionReelV97Pipeline:
                 if meta_pkg and cfg.get("UPLOAD_METADATA_MODE", "full") == "full":
                     f_meta.write(f"TITLE: {clean_title}\n\n")
                     f_meta.write(f"DESCRIPTION:\n{meta_pkg.get('description', '')}\n\n")
-                    f_meta.write(f"TAGS:\n{meta_pkg.get('tags', '')}\n\n")
+                    f_meta.write("TAGS:\n" + ", ".join(meta_pkg.get("tags") or []) + "\n\n")
                     f_meta.write(f"HASHTAGS:\n{meta_pkg.get('hashtags', '')}\n")
                 else:
                     f_meta.write(f"TITLE: {clean_title}\n")

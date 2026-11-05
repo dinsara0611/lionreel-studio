@@ -46,6 +46,13 @@ def compute_ngram_overlap(s1: str, s2: str, n: int = 3) -> float:
     return len(ngrams1 & ngrams2) / max(len(ngrams1 | ngrams2), 1)
 
 
+MIN_TITLE_LEN = 40
+MAX_TITLE_LEN = 70
+UNVERIFIED_LOOK = re.compile(
+    r"(?i)\b(tuxedo|orange|ginger|calico|tabby|tortie|tortoiseshell|siamese|persian|bengal|ragdoll|sphynx|"
+    r"maine coon|british shorthair|husky|corgi|golden retriever|labrador|pug|beagle|poodle|black cat|white cat|grey cat|gray cat)\b")
+
+
 def validate_title_grammar(title: str, video_type: str = "short", duration_sec: float = 60.0) -> tuple:
     """
     Validates title grammar and slot cohesion:
@@ -60,6 +67,13 @@ def validate_title_grammar(title: str, video_type: str = "short", duration_sec: 
         return False, "Title too short or empty"
 
     t = title.strip()
+
+    # Length contract, and no appearance claims: nothing measures coat colour or breed
+    if not MIN_TITLE_LEN <= len(t) <= MAX_TITLE_LEN:
+        return False, f"Title length {len(t)} outside {MIN_TITLE_LEN}-{MAX_TITLE_LEN}"
+    m_look = UNVERIFIED_LOOK.search(t)
+    if m_look:
+        return False, f"Unverified appearance word: '{m_look.group(0)}'"
 
     # 1. Double determiners (e.g. 'a this', 'this the', 'the our', 'a tiny this', 'the sweetest little a')
     ADJ_CHAIN = r"(?:(?:tiny|little|sweet|sweetest|huge|chaotic|resident|sleeping|drama|sneaky|curious|mischievous|majestic|golden|clumsy|energetic|good|poor|wild|lazy|silly|big|biggest|cutest|fluffy|brave)\s+){0,2}"
@@ -359,9 +373,12 @@ class MetadataGenerator:
         bank = self.hashtag_bank.get(animal_type, {})
         blocklist = set(self.hashtag_bank.get("blocklist", []))
 
-        mega = [h for h in bank.get("mega", []) if h not in blocklist]
-        medium = [h for h in bank.get("medium", []) if h not in blocklist]
-        niche = [h for h in bank.get("niche", []) if h not in blocklist]
+        def allowed(tag):
+            return tag not in blocklist and not UNVERIFIED_LOOK.search(tag)
+
+        mega = [h for h in bank.get("mega", []) if allowed(h)]
+        medium = [h for h in bank.get("medium", []) if allowed(h)]
+        niche = [h for h in bank.get("niche", []) if allowed(h)]
 
         chosen = []
         if mega:
@@ -386,15 +403,15 @@ class MetadataGenerator:
             primary_tag_type = "cat"
             hashtags = ["#pets", "#cats", "#dogs", "#funnyanimals", "#cutepets"]
             hook_text = "Curated moments of our cat and dog sharing fun and curious adventures together."
-            context_text = "Enjoy these genuine moments captured on camera. All clips licensed and attributed below."
+            context_text = "Enjoy these genuine moments captured on camera. Sources are listed below."
         elif "dog" in animals:
             hashtags = self.select_hashtags("dog", platform="youtube_shorts")
             hook_text = "Curated moments of this playful dog captured on camera."
-            context_text = "Enjoy these genuine dog moments. All clips licensed and attributed below."
+            context_text = "Enjoy these genuine dog moments. Sources are listed below."
         else:
             hashtags = self.select_hashtags("cat", platform="youtube_shorts")
             hook_text = "Curated moments of this curious cat captured on camera."
-            context_text = "Enjoy these genuine cat moments. All clips licensed and attributed below."
+            context_text = "Enjoy these genuine cat moments. Sources are listed below."
 
         hashtags_line = " ".join(hashtags)
 
@@ -531,7 +548,7 @@ class MetadataGenerator:
             "quality_checklist": best_title_obj.get("checklist", []),
             "quality_score": best_title_obj.get("score", 85),
             "description": desc,
-            "tags": tags_str,
+            "tags": [t.strip() for t in tags_str.split(",") if t.strip()],
             "hashtags": hashtags_str,
             "tiktok": tiktok,
             "instagram": instagram,
