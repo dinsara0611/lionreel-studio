@@ -78,32 +78,26 @@ CONFIG_FILE = os.path.join(BASE_DIR, "config.json")
 BENCHMARK_CONFIG = os.path.join(BASE_DIR, "config", "benchmark.json")
 BLOCKED_SOURCES_FILE = os.path.join(BASE_DIR, "config", "blocked_sources.json")
 
-def normalize_cfr_timestamps(video_path: str, fps: int = 30) -> bool:
+def write_concat_list(list_path: str, clip_paths: list, fps: int = 30) -> None:
     """
-    Rewrites timestamps to exact constant frame rate without re-encoding.
-    Stream-copy concat of many clips drifts (5398 frames at 29.993 avg fps was measured).
+    Concat list with each clip's exact frame duration, so joins cannot drift.
+    Without it, stream-copy joins slipped to 5398 frames at 29.993 fps over 3 minutes.
     """
-    work = f"{video_path}.cfr.h264"
-    fixed = f"{video_path}.cfr.mp4"
+    with open(list_path, "w", encoding="utf-8") as f:
+        for path in clip_paths:
+            f.write(f"file '{os.path.abspath(path)}'\n")
+            frames = count_video_frames(path)
+            if frames:
+                f.write(f"duration {frames / float(fps):.6f}\n")
+
+
+def count_video_frames(path: str) -> int:
     try:
-        subprocess.run([FFMPEG_EXE, "-y", "-i", video_path, "-map", "0:v:0", "-c:v", "copy",
-                        "-bsf:v", "h264_mp4toannexb", "-f", "h264", work],
-                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
-        subprocess.run([FFMPEG_EXE, "-y", "-fflags", "+genpts", "-r", str(fps), "-f", "h264", "-i", work, "-i", video_path,
-                        "-map", "0:v:0", "-map", "1:a?", "-c", "copy", "-movflags", "+faststart", fixed],
-                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
-        os.replace(fixed, video_path)
-        return True
-    except Exception as e:
-        log(f"CFR timestamp normalize failed: {e}", "WARN")
-        return False
-    finally:
-        for leftover in (work, fixed):
-            if os.path.exists(leftover):
-                try:
-                    os.remove(leftover)
-                except OSError:
-                    pass
+        res = subprocess.run([FFPROBE_EXE, "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=nb_frames",
+                              "-of", "csv=p=0", path], capture_output=True, text=True)
+        return int(res.stdout.strip().split(",")[0])
+    except (ValueError, IndexError, OSError):
+        return 0
 
 
 def _active_model_version() -> str:
@@ -4214,46 +4208,20 @@ class LionReelV97Pipeline:
                 elif allow_shorter:
                     contract_target_sec = expected_total_sec
 
-            # Concatenate clips (in 10-clip segments joined with concat demuxer)
+            # Concatenate the picture only: audio is mastered from the clips in the next step
             timer.start_stage("concat")
-            segment_size = 10
-            segment_paths = []
-            if len(processed_clip_paths) > segment_size:
-                for seg_idx in range(0, len(processed_clip_paths), segment_size):
-                    seg_clips = processed_clip_paths[seg_idx:seg_idx + segment_size]
-                    seg_num = seg_idx // segment_size
-                    seg_out = os.path.join(work_job_dir, f"segment_{seg_num:02d}_{job_id}.mp4")
-                    seg_txt = os.path.join(work_job_dir, f"concat_seg_{seg_num}_{job_id}.txt")
-                    with open(seg_txt, "w", encoding="utf-8") as f_s:
-                        for p in seg_clips:
-                            f_s.write(f"file '{os.path.abspath(p)}'\n")
-                    seg_cmd = [
-                        FFMPEG_EXE, "-y",
-                        "-f", "concat", "-safe", "0",
-                        "-i", seg_txt,
-                        "-c", "copy",
-                        seg_out
-                    ]
-                    res_seg = subprocess.run(seg_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
-                    if res_seg.returncode == 0 and os.path.exists(seg_out) and os.path.getsize(seg_out) > 10000:
-                        log(f"  [SEGMENT CONCAT] Segment {seg_num+1} ({len(seg_clips)} clips) joined: {os.path.basename(seg_out)}")
-                        segment_paths.append(seg_out)
-                    else:
-                        segment_paths.extend(seg_clips)
-            else:
-                segment_paths = processed_clip_paths
-
+            segment_paths = processed_clip_paths
             concat_txt = os.path.join(work_job_dir, f"concat_{job_id}.txt")
-            with open(concat_txt, "w", encoding="utf-8") as f:
-                for p in segment_paths:
-                    f.write(f"file '{os.path.abspath(p)}'\n")
+            write_concat_list(concat_txt, segment_paths)
 
             raw_assembled = os.path.join(work_job_dir, f"assembled_{job_id}.mp4")
             concat_cmd = [
                 FFMPEG_EXE, "-y",
                 "-f", "concat", "-safe", "0",
                 "-i", concat_txt,
+                "-map", "0:v:0",
                 "-c", "copy",
+                "-video_track_timescale", "30000",
                 raw_assembled
             ]
             res_c = subprocess.run(concat_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
@@ -4277,7 +4245,6 @@ class LionReelV97Pipeline:
                     raw_assembled
                 ]
                 subprocess.run(concat_cmd_fallback, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
-            normalize_cfr_timestamps(raw_assembled)
             timer.stop_stage("concat")
 
             # Master audio
