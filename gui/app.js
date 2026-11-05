@@ -424,7 +424,6 @@ async function initApp() {
                 } else {
                     state.isRunning = false;
                     updateEngineStatusBadge(false, statusData);
-                    hideFilmLeaderLoader();
                     if (statusData.status === "completed" && statusData.generatedFile) {
                         if (state.lastActiveJobId && state.lastActiveJobId !== "default") {
                             state.activeFinishedProjectName = statusData.generatedFile;
@@ -435,12 +434,10 @@ async function initApp() {
             } else {
                 state.isRunning = false;
                 updateEngineStatusBadge(false, null);
-                hideFilmLeaderLoader();
             }
         } catch (e) {
             state.isRunning = false;
             updateEngineStatusBadge(false, null);
-            hideFilmLeaderLoader();
         }
 
         // Background watchdog: periodically ensure UI stays synced with engine
@@ -3492,7 +3489,6 @@ async function startRenderPipeline(skipPreflight = false) {
                 } else {
                     showToast(`LionReel compilation engine started (Job: ${state.currentJobId || "new"})`, "success");
                 }
-                showFilmLeaderLoader(state.currentJobId);
             } else {
                 const errData = await res.json().catch(() => ({}));
                 const errMessage = errData.error || `Server responded with HTTP ${res.status}`;
@@ -6787,7 +6783,6 @@ async function checkEngineStatus() {
                 setGenerateButtonsDisabled(false);
                 if (retryBtn) retryBtn.style.display = "none";
                 updateEngineStatusBadge(false, data);
-                hideFilmLeaderLoader();
                 stopLogsPolling();
                 stopLiveRenderClock("DONE");
 
@@ -7269,7 +7264,6 @@ async function checkEngineStatus() {
                 state.isRunning = false;
                 setGenerateButtonsDisabled(false);
                 updateEngineStatusBadge(false, data);
-                hideFilmLeaderLoader();
                 stopLogsPolling();
                 stopLiveRenderClock("STOPPED");
                 setRenderCardState("stopped", {
@@ -12167,249 +12161,6 @@ window.applyTheme = applyTheme;
 // ==========================================================================
 // FILM LEADER LOADING SCREEN & PROGRESS CONTROLLER (DATA-DRIVEN)
 // ==========================================================================
-let filmLeaderInterval = null;
-let filmLeaderStartTime = null;
-let filmLeaderCurrentJobId = null;
-let filmLeaderCount = 3;
-
-function showFilmLeaderLoader(jobId) {
-    const modal = document.getElementById("modal-film-leader-loader");
-    if (!modal) return;
-    filmLeaderCurrentJobId = jobId || null;
-    filmLeaderStartTime = Date.now();
-    filmLeaderCount = 3;
-
-    // Hide background pill if opening full modal
-    const pill = document.getElementById("render-floating-pill");
-    if (pill) pill.style.display = "none";
-
-    modal.style.display = "flex";
-    document.body.classList.add("modal-open");
-
-    const stageEl = document.getElementById("leader-stage-text");
-    const pbar = document.getElementById("leader-progress-bar");
-    const pctEl = document.getElementById("leader-pct-text");
-    const elapsedEl = document.getElementById("leader-elapsed-text");
-    const remainEl = document.getElementById("leader-remaining-text");
-    const detailEl = document.getElementById("leader-detail-line");
-    const warnEl = document.getElementById("leader-warning-line");
-    const errEl = document.getElementById("leader-error-line");
-    const countEl = document.getElementById("leader-countdown-num");
-
-    if (stageEl) stageEl.textContent = "Initializing pipeline...";
-    if (pbar) { pbar.style.width = "0%"; pbar.setAttribute("aria-valuenow", "0"); }
-    if (pctEl) pctEl.textContent = "0%";
-    if (elapsedEl) elapsedEl.textContent = "Elapsed: 00:00";
-    if (remainEl) remainEl.textContent = "Remaining: ~01:45";
-    if (detailEl) detailEl.textContent = "Preparing timeline tracks and master audio...";
-    if (warnEl) warnEl.style.display = "none";
-    if (errEl) errEl.style.display = "none";
-    if (countEl) countEl.textContent = "3";
-
-    if (filmLeaderInterval) clearInterval(filmLeaderInterval);
-
-    filmLeaderInterval = setInterval(async () => {
-        const elapsedSec = Math.floor((Date.now() - filmLeaderStartTime) / 1000);
-        const mm = String(Math.floor(elapsedSec / 60)).padStart(2, '0');
-        const ss = String(elapsedSec % 60).padStart(2, '0');
-        if (elapsedEl) elapsedEl.textContent = `Elapsed: ${mm}:${ss}`;
-
-        // Countdown visual loop
-        filmLeaderCount = (filmLeaderCount <= 1) ? 3 : filmLeaderCount - 1;
-        if (countEl) countEl.textContent = String(filmLeaderCount);
-
-        // Fetch live job progress
-        try {
-            const statusRes = await fetch(`${API_BASE}/api/status`);
-            if (statusRes.ok) {
-                const s = await statusRes.json();
-                if (s.status === "completed") {
-                    hideFilmLeaderLoader();
-                    showToast("Compilation rendered successfully!", "success");
-                    await loadFinishedProjects();
-                    navigateToStep(5);
-                    return;
-                }
-                if (s.status === "error" || s.error) {
-                    hideFilmLeaderLoader();
-                    showToast(`Video generation failed: ${s.error || "A processing error occurred during render."}`, "error");
-                    playErrorSound();
-                    navigateToStep(4);
-                    return;
-                }
-                // Measured progress
-                const stages = s.stages || [];
-                const doneCount = stages.filter(st => st.status === "done").length;
-                const activeStage = stages.find(st => st.status === "active") || stages[doneCount];
-                const totalStages = Math.max(stages.length, 10);
-                const pct = Math.min(Math.round((doneCount / totalStages) * 100), 98);
-
-                if (pbar) {
-                    pbar.style.width = `${pct}%`;
-                    pbar.setAttribute("aria-valuenow", String(pct));
-                }
-                if (pctEl) pctEl.textContent = `${pct}%`;
-
-                if (activeStage) {
-                    if (stageEl) stageEl.textContent = activeStage.name || "Processing clips...";
-                    if (detailEl) detailEl.textContent = activeStage.desc || "Reframing clips & mastering audio...";
-                    if (activeStage.duration_s && activeStage.duration_s > 30) {
-                        if (warnEl) warnEl.style.display = "block";
-                    } else {
-                        if (warnEl) warnEl.style.display = "none";
-                    }
-                }
-
-                // Update floating pill text if minimized
-                const pillText = document.getElementById("render-pill-text");
-                if (pillText) {
-                    const stageName = (activeStage && activeStage.name) ? activeStage.name : "Mastering clips...";
-                    pillText.textContent = `${pct}% • ${stageName}`;
-                }
-
-                // Estimated remaining time
-                const estRemaining = Math.max(0, Math.round((totalStages - doneCount) * 10));
-                const rmm = String(Math.floor(estRemaining / 60)).padStart(2, '0');
-                const rss = String(estRemaining % 60).padStart(2, '0');
-                if (remainEl) remainEl.textContent = `Remaining: ~${rmm}:${rss}`;
-            }
-        } catch (e) {}
-    }, 1000);
-}
-
-function hideFilmLeaderLoader() {
-    if (filmLeaderInterval) {
-        clearInterval(filmLeaderInterval);
-        filmLeaderInterval = null;
-    }
-    const modal = document.getElementById("modal-film-leader-loader");
-    if (modal) modal.style.display = "none";
-    document.body.classList.remove("modal-open");
-
-    const pill = document.getElementById("render-floating-pill");
-    if (pill) pill.style.display = "none";
-}
-
-function minimizeFilmLeaderLoader() {
-    const modal = document.getElementById("modal-film-leader-loader");
-    if (modal) modal.style.display = "none";
-    document.body.classList.remove("modal-open");
-
-    const pill = document.getElementById("render-floating-pill");
-    if (pill) {
-        pill.style.display = "flex";
-        const pctEl = document.getElementById("leader-pct-text");
-        const stageEl = document.getElementById("leader-stage-text");
-        const pillText = document.getElementById("render-pill-text");
-        if (pillText) {
-            const pct = pctEl ? pctEl.textContent : "0%";
-            const stage = stageEl ? stageEl.textContent : "Mastering Video";
-            pillText.textContent = `${pct} • ${stage}`;
-        }
-    }
-    showToast("Render running in background. Click 'View' to reopen.", "info");
-}
-
-function restoreFilmLeaderLoader() {
-    const pill = document.getElementById("render-floating-pill");
-    if (pill) pill.style.display = "none";
-
-    const modal = document.getElementById("modal-film-leader-loader");
-    if (modal) {
-        modal.style.display = "flex";
-        document.body.classList.add("modal-open");
-    }
-}
-
-function setupFilmLeaderCancel() {
-    const cancelBtn = document.getElementById("btn-cancel-job-leader");
-    const hideBtn = document.getElementById("btn-hide-job-leader");
-    const closeBtn = document.getElementById("btn-close-leader-top");
-    const pill = document.getElementById("render-floating-pill");
-    const reopenBtn = document.getElementById("btn-reopen-leader");
-    const confirmModal = document.getElementById("modal-cancel-leader-confirm");
-    const keepBtn = document.getElementById("btn-cancel-confirm-no");
-    const yesBtn = document.getElementById("btn-cancel-confirm-yes");
-
-    // Hide / Minimize actions
-    if (hideBtn && !hideBtn.dataset.wired) {
-        hideBtn.dataset.wired = "true";
-        hideBtn.addEventListener("click", () => {
-            minimizeFilmLeaderLoader();
-        });
-    }
-    if (closeBtn && !closeBtn.dataset.wired) {
-        closeBtn.dataset.wired = "true";
-        closeBtn.addEventListener("click", () => {
-            minimizeFilmLeaderLoader();
-        });
-    }
-
-    // Restore from floating pill
-    if (pill && !pill.dataset.wired) {
-        pill.dataset.wired = "true";
-        pill.addEventListener("click", (e) => {
-            restoreFilmLeaderLoader();
-        });
-    }
-    if (reopenBtn && !reopenBtn.dataset.wired) {
-        reopenBtn.dataset.wired = "true";
-        reopenBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            restoreFilmLeaderLoader();
-        });
-    }
-
-    // Cancel flow
-    if (cancelBtn && confirmModal && !cancelBtn.dataset.wired) {
-        cancelBtn.dataset.wired = "true";
-        cancelBtn.addEventListener("click", () => {
-            confirmModal.style.display = "flex";
-        });
-    }
-    if (keepBtn && confirmModal && !keepBtn.dataset.wired) {
-        keepBtn.dataset.wired = "true";
-        keepBtn.addEventListener("click", () => {
-            confirmModal.style.display = "none";
-        });
-    }
-    if (yesBtn && confirmModal && !yesBtn.dataset.wired) {
-        yesBtn.dataset.wired = "true";
-        yesBtn.addEventListener("click", async () => {
-            confirmModal.style.display = "none";
-            try {
-                await fetch(`${API_BASE}/api/cancel`, { method: "POST" });
-            } catch (e) {}
-            hideFilmLeaderLoader();
-            showToast("Render canceled by user", "warning");
-        });
-    }
-
-    // Keyboard Escape to minimize
-    if (!window._filmLeaderEscWired) {
-        window._filmLeaderEscWired = true;
-        document.addEventListener("keydown", (e) => {
-            if (e.key === "Escape") {
-                const modal = document.getElementById("modal-film-leader-loader");
-                const confModal = document.getElementById("modal-cancel-leader-confirm");
-                if (modal && modal.style.display !== "none" && (!confModal || confModal.style.display === "none")) {
-                    minimizeFilmLeaderLoader();
-                }
-            }
-        });
-    }
-}
-
-// Initialize handlers
-document.addEventListener("DOMContentLoaded", () => {
-    setupFilmLeaderCancel();
-});
-setupFilmLeaderCancel();
-
-window.showFilmLeaderLoader = showFilmLeaderLoader;
-window.hideFilmLeaderLoader = hideFilmLeaderLoader;
-window.minimizeFilmLeaderLoader = minimizeFilmLeaderLoader;
-window.restoreFilmLeaderLoader = restoreFilmLeaderLoader;
 
 
 

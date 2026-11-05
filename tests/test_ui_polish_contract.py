@@ -183,33 +183,15 @@ def test_touch_targets_mobile_44px():
         browser.close()
 
 def test_film_leader_loading_screen_contract():
-    """Contract: Film leader loading screen contains SVG countdown, real data stage text, and cancel confirm."""
+    """Contract: no film leader popup covers the Render screen; was: SVG countdown and cancel confirm."""
     with sync_playwright() as p:
         browser = get_browser(p)
         page = browser.new_page(viewport={"width": 1440, "height": 900})
         page.goto(BASE_URL)
         page.wait_for_selector("body", timeout=10000)
 
-        # Verify modal element exists in DOM
-        modal = page.query_selector("#modal-film-leader-loader")
-        assert modal is not None, "Film leader loader modal #modal-film-leader-loader not found in DOM"
-
-        # Check SVG film leader countdown circle
-        svg_leader = page.query_selector("#svg-film-leader")
-        assert svg_leader is not None, "Film leader SVG #svg-film-leader not found"
-
-        # Check progressbar role and aria-live stage text
-        pbar = page.query_selector("#leader-progress-bar")
-        assert pbar is not None, "Progress bar #leader-progress-bar not found"
-        assert pbar.get_attribute("role") == "progressbar", "Expected role='progressbar' on progress bar"
-
-        stage_live = page.query_selector("#leader-stage-text")
-        assert stage_live is not None, "Stage text #leader-stage-text not found"
-        assert stage_live.get_attribute("aria-live") == "polite", "Expected aria-live='polite' on stage text container"
-
-        # Check cancel button
-        cancel_btn = page.query_selector("#btn-cancel-job-leader")
-        assert cancel_btn is not None, "Cancel button #btn-cancel-job-leader not found"
+        # Starting a job goes straight to the Render screen: no decorative countdown over it
+        assert page.query_selector("#modal-film-leader-loader") is None
         browser.close()
 
 def test_wcag_contrast_tokens():
