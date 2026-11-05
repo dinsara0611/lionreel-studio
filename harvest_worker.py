@@ -936,7 +936,8 @@ def run_real_harvest_sync(
         "queries_run": queries_run,
         "videos_found": videos_found,
         "windows_cut": windows_cut,
-        "windows_verified": windows_verified,
+        "windows_verified": windows_verified + windows_rechecked,
+        "windows_rechecked": windows_rechecked,
         "rejects_by_reason": rejects_by_reason,
         "time_taken_s": elapsed,
         "sources_downloaded": sources_downloaded
