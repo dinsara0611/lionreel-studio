@@ -116,6 +116,7 @@ class TestVerdictsSandbox(unittest.TestCase):
             "gates": {
                 "gate_1_stream_specs": {"passed": True, "status": "PASS"},
                 "gate_1b_duration_contract": {"passed": True, "status": "PASS"},
+                "gate_1c_clip_count": True,
                 "gate_2_audio_loudness": {"passed": True, "status": "PASS"},
                 "gate_3_black_frames": {"passed": True, "status": "PASS"},
                 "gate_4_pet_centering": {"passed": True, "status": "PASS"},
@@ -196,6 +197,7 @@ class TestVerdictsSandbox(unittest.TestCase):
             "gates": {
                 "gate_1_stream_specs": {"passed": True},
                 "gate_1b_duration_contract": {"passed": True},
+                "gate_1c_clip_count": True,
                 "gate_2_audio_loudness": {"passed": True},
                 "gate_3_black_frames": {"passed": True},
                 "gate_4_pet_centering": {"passed": True},
@@ -334,6 +336,7 @@ class TestVerdictsSandbox(unittest.TestCase):
             "gates": {
                 "gate_1_stream_specs": {"passed": True},
                 "gate_1b_duration_contract": {"passed": True},
+                "gate_1c_clip_count": True,
                 "gate_2_audio_loudness": {"passed": True},
                 "gate_3_black_frames": {"passed": True},
                 "gate_4_pet_centering": {"passed": True},
