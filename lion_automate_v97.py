@@ -29,6 +29,7 @@ if __name__ == "__main__" and (sys.version_info >= (3, 13) or sys.version_info <
             sys.exit(subprocess.call([_venv_py] + sys.argv))
 
 import timed_subprocess as subprocess
+import source_licenses
 import re
 import time
 import json
@@ -1756,7 +1757,7 @@ class LionReelV97Pipeline:
                             source_path=sp,
                             start_s=cur_s,
                             end_s=cur_s + segment_len,
-                            license_type="CC-BY" if "cache_" in sp else "Own Footage",
+                            license_type=source_licenses.license_of(sp) if "cache_" in sp else "Own Footage",
                             animal_type=animal_mode,
                             quality_score=analysis["median_sharpness"] / 100.0,
                             funny_score=0.85
@@ -2515,8 +2516,9 @@ class LionReelV97Pipeline:
                 c_copy["source_url_or_path"] = src_p
                 c_copy["source_path"] = src_p
                 c_copy["end_s"] = round(c_copy["start_s"] + c_copy["dur_s"], 2)
-                c_copy.setdefault("license", "CC-BY")
-                c_copy.setdefault("uploader", "CC Creator")
+                c_copy["license"] = source_licenses.license_of(src_p, c_copy.get("license"))
+                c_copy["uploader"] = source_licenses.creator_of(src_p, c_copy.get("uploader"))
+                c_copy["license_status"] = source_licenses.status_of(src_p)
                 c_copy.setdefault("title", f"Clip {idx_c+1}")
                 c_copy.setdefault("times_used", 0)
                 c_copy.setdefault("is_verified", 1)
@@ -4663,8 +4665,8 @@ class LionReelV97Pipeline:
                 f_cred_txt.write(f"Credits & Creative Commons Attribution for {job_id}:\n\n")
                 for c in credits_data:
                     src = c.get("source") or c.get("source_file") or "Source Video"
-                    credit = c.get("credit") or c.get("channel") or "CC Creator"
-                    lic = c.get("license") or "Creative Commons Attribution 4.0"
+                    credit = c.get("credit") or c.get("channel") or source_licenses.NOT_RECORDED
+                    lic = c.get("license") or source_licenses.NOT_RECORDED
                     f_cred_txt.write(f"• Clip: {credit} ({lic}) - {src}\n")
 
             if meta_pkg:

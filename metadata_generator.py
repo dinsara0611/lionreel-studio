@@ -454,7 +454,7 @@ class MetadataGenerator:
         """Generates TikTok caption with credit line and 3-5 tags within 2200 chars."""
         hashtags = self.select_hashtags(animal_type, platform="tiktok")
         tag_str = " ".join(hashtags)
-        first_credit = credits_list[0].get("credit", "CC Creator") if credits_list else "CC-BY"
+        first_credit = credits_list[0].get("credit", "not recorded") if credits_list else "CC-BY"
         caption = f"{title} 😂🐾 Credit: {first_credit} {tag_str}"
         return {
             "caption": caption[:2200],
@@ -467,7 +467,7 @@ class MetadataGenerator:
         tag_str = " ".join(hashtags)
         credit_parts = []
         for c in (credits_list or [])[:3]:
-            cr = c.get("credit", "CC Creator")
+            cr = c.get("credit", "not recorded")
             if cr not in credit_parts:
                 credit_parts.append(cr)
         cr_line = f"Credit: {', '.join(credit_parts)}" if credit_parts else "Curated CC Content"

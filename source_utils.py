@@ -182,19 +182,22 @@ def normalize_license_name(license_str: str) -> tuple:
     if "unknown" in raw or "unspecified" in raw or raw in ("blocked", "none", ""):
         return "BLOCKED", None
     
+    if "standard youtube" in raw:
+        return "Standard YouTube License", "https://www.youtube.com/static?template=terms"
+    if "by-sa" in raw or "sharealike" in raw:
+        return "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0/"
+    if "cc0" in raw or "public domain" in raw or "zero" in raw:
+        return "CC0 1.0", "https://creativecommons.org/publicdomain/zero/1.0/"
     if "cc-by" in raw or "attribution" in raw:
         if "3.0" in raw:
             return "CC BY 3.0", "https://creativecommons.org/licenses/by/3.0/"
         return "CC BY 4.0", "https://creativecommons.org/licenses/by/4.0/"
-    elif "cc0" in raw or "public domain" in raw or "zero" in raw:
-        return "CC0 1.0", "https://creativecommons.org/publicdomain/zero/1.0/"
-    elif "cc-by-sa" in raw or "sharealike" in raw:
-        return "CC BY-SA 4.0", "https://creativecommons.org/licenses/by-sa/4.0/"
-    elif "standard youtube" in raw:
-        return "Standard YouTube License", "https://www.youtube.com/static?template=terms"
-    
     if "creative commons" in raw:
-        return "CC BY 4.0", "https://creativecommons.org/licenses/by/4.0/"
+        return "Creative Commons (version not stated)", None
+    if "own footage" in raw:
+        return "Own Footage", None
+
+    return "BLOCKED", None
         
     return "CC BY 4.0", "https://creativecommons.org/licenses/by/4.0/"
 

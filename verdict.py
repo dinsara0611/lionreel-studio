@@ -284,6 +284,12 @@ def calculate_unified_verdict(
         warnings.append(w_msg)
         attention_items.append(w_msg)
 
+    unverified = sum(1 for c in clips_table if c.get("license_status") and c.get("license_status") != "verified")
+    if unverified > 0:
+        w_msg = f"Licence notice: {unverified} clip(s) come from sources with no verified Creative Commons licence."
+        warnings.append(w_msg)
+        attention_items.insert(0, w_msg)
+
     # 4. Final Verdict Determination
     if critical_errors:
         badge = "FAILED"

@@ -7,6 +7,8 @@ Uses low-resolution fast scanning, cached fingerprints, and parallel workers.
 
 import os
 import lion_paths
+import source_licenses
+import urllib.parse
 import sys
 
 # Self-heal Python runtime: C-extensions (OpenCV, NumPy) are compiled for Python 3.12.
@@ -281,6 +283,9 @@ def run_harvest_loop(animal_mode: str = "cat", target_to_add: int = 15):
                 continue
             if ledger.is_blocked_source(p):
                 continue
+            # Downloaded sources need a licence the platform itself showed. Own footage does not.
+            if bname_lower.startswith("cache_") and source_licenses.status_of(p) != source_licenses.VERIFIED:
+                continue
             if os.path.exists(p) and os.path.getsize(p) > 1024 * 1024:
                 seen_basenames.add(bname_lower)
                 all_sources.append(p)
@@ -476,7 +481,7 @@ def run_harvest_loop(animal_mode: str = "cat", target_to_add: int = 15):
                         source_path=sp,
                         start_s=cur_s,
                         end_s=cur_s + segment_len,
-                        license_type="CC-BY" if "cache_" in sp else "Own Footage",
+                        license_type=source_licenses.license_of(sp) if "cache_" in sp else "Own Footage",
                         animal_type=animal_mode,
                         quality_score=sharp_val / 100.0,
                         funny_score=0.85,
@@ -484,8 +489,8 @@ def run_harvest_loop(animal_mode: str = "cat", target_to_add: int = 15):
                         framing_score=1.0,
                         sharpness=sharp_val,
                         orientation=src_orient,
-                        uploader=probe.get("uploader", "CC-BY Creator"),
-                        title=probe.get("title", os.path.splitext(bname)[0]),
+                        uploader=source_licenses.creator_of(sp, ""),
+                        title=source_licenses.lookup(sp).get("title") or probe.get("title", os.path.splitext(bname)[0]),
                         verified_plan=plan_data
                     )
                     if cid:
@@ -666,8 +671,10 @@ def run_real_harvest_sync(
                 "no_warnings": True
             }
             with yt_dlp.YoutubeDL(ydl_opts_search) as ydl:
-                search_res = ydl.extract_info(f"ytsearch{max_search_results}:{q}", download=False)
-                entries = search_res.get("entries", []) if search_res else []
+                # sp=EgIwAQ is the platform's own "Creative Commons" search filter
+                query_url = f"https://www.youtube.com/results?search_query={urllib.parse.quote(q)}&sp=EgIwAQ%253D%253D"
+                search_res = ydl.extract_info(query_url, download=False)
+                entries = list(search_res.get("entries", []) or [])[:max_search_results] if search_res else []
         except Exception as e:
             _log(f"Network / Search Error on '{q}': {e}")
             if "getaddrinfo failed" in str(e).lower() or "connection" in str(e).lower():
@@ -684,7 +691,6 @@ def run_real_harvest_sync(
                 continue
             vid_id = entry["id"]
             title = entry.get("title", "")
-            uploader = entry.get("uploader") or entry.get("channel") or "Creative Commons Creator"
             video_url = f"https://www.youtube.com/watch?v={vid_id}"
 
             # Check if source already in cache or ledger or blocked
@@ -693,7 +699,22 @@ def run_real_harvest_sync(
                 continue
 
             videos_found += 1
-            _log(f"Found candidate: '{title}' by {uploader} (ID: {vid_id})")
+            # Legal gate: the video page itself must show a Creative Commons licence
+            try:
+                lic_record = source_licenses.fetch_record(vid_id)
+            except Exception as e_lic:
+                rejects_by_reason["LICENSE_LOOKUP_FAILED"] = rejects_by_reason.get("LICENSE_LOOKUP_FAILED", 0) + 1
+                _log(f"Skipped {vid_id}: licence lookup failed ({e_lic})")
+                continue
+            source_licenses.save_record(vid_id, lic_record)
+            if lic_record["status"] != source_licenses.VERIFIED or not lic_record.get("creator"):
+                rejects_by_reason["NOT_CC_LICENSED"] = rejects_by_reason.get("NOT_CC_LICENSED", 0) + 1
+                _log(f"Skipped {vid_id}: no Creative Commons licence shown ({lic_record.get('license')})")
+                continue
+            uploader = lic_record["creator"]
+            license_text = lic_record["license"]
+            title = lic_record.get("title") or title
+            _log(f"Found candidate: '{title}' by {uploader} (ID: {vid_id}) [{license_text}]")
 
             # Download if under limit
             if len(sources_downloaded) < max_downloads:
@@ -785,13 +806,15 @@ def run_real_harvest_sync(
                             clip_id=cid,
                             source_id=f"cache_{vid_id}",
                             source_url_or_path=target_video,
-                            license_name="Creative Commons CC-BY 4.0",
+                            license_name=license_text,
                             start_s=c_win["start_s"],
                             end_s=c_win["end_s"],
                             frame_phashes=[],
                             is_verified=0,
                             sharpness=native_sharpness,
                             framing_score=0.0,
+                            uploader=uploader,
+                            title=title,
                             animal_type=animal_mode,
                             rejection_reason=rej_msg
                         )
@@ -810,13 +833,15 @@ def run_real_harvest_sync(
                             clip_id=cid,
                             source_id=f"cache_{vid_id}",
                             source_url_or_path=target_video,
-                            license_name="Creative Commons CC-BY 4.0",
+                            license_name=license_text,
                             start_s=c_win["start_s"],
                             end_s=c_win["end_s"],
                             frame_phashes=[],
                             is_verified=0,
                             sharpness=native_sharpness,
                             framing_score=pet_ratio,
+                            uploader=uploader,
+                            title=title,
                             animal_type=animal_mode,
                             rejection_reason=rej_msg
                         )
@@ -828,7 +853,7 @@ def run_real_harvest_sync(
                             clip_id=cid,
                             source_id=f"cache_{vid_id}",
                             source_url_or_path=target_video,
-                            license_name="Creative Commons CC-BY 4.0",
+                            license_name=license_text,
                             start_s=c_win["start_s"],
                             end_s=c_win["end_s"],
                             frame_phashes=phashes,
