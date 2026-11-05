@@ -80,7 +80,7 @@ STAGE_DEFINITIONS = [
     {
         "id": 6,
         "key": "reframe_render_clips",
-        "label": "Reframe & render vertical clip cuts",
+        "label": "Reframe & render clip cuts",
         "prerequisites": [5],
         "input_artifact": "framing_predicted.json",
         "output_artifact": "clips_rendered.json",

@@ -2864,7 +2864,7 @@ const DEFAULT_STAGE_DEFINITIONS = [
     { id: 3, key: "check_quality_fps", label: "Check source video resolution & frame rate", weight: 10 },
     { id: 4, key: "detect_watermarks", label: "Detect watermarks, logos & overlays", weight: 8 },
     { id: 5, key: "predict_framing", label: "Predict pet framing & select viral moments", weight: 14 },
-    { id: 6, key: "reframe_render_clips", label: "Reframe & render vertical clip cuts", weight: 12 },
+    { id: 6, key: "reframe_render_clips", label: "Reframe & render clip cuts", weight: 12 },
     { id: 7, key: "color_grading", label: "Auto color grading & contrast optimization", weight: 12 },
     { id: 8, key: "captions_and_audio", label: "Burn safe-zone captions & master audio ducking", weight: 8 },
     { id: 9, key: "final_render_qa", label: "Final MP4 assembly & 10-gate QA validation", weight: 10 },

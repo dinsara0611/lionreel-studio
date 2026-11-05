@@ -728,7 +728,7 @@ def verify_single_pass_post_crop_gate(video_path: str, plan: dict = None, layout
     Decodes exactly n_samples (default 12) frames once and computes:
     1. Layout fill check (black bars & blurred bars)
     2. Pet centering check (detector on output frames)
-    3. Visual sharpness check (540x960 gray Laplacian variance >= 15.0)
+    3. Visual sharpness check on the canonical scale, at or above the 150 floor
     4. Cartoon / CGI classifier check
     Returns (passed: bool, reason: str).
     """
@@ -940,7 +940,7 @@ def verify_single_pass_post_crop_gate(video_path: str, plan: dict = None, layout
 
     med_sharp = float(np.median(sharpness_scores)) if sharpness_scores else 0.0
     low_sharp_ratio = low_sharp_count / max(1, len(sharpness_scores))
-    sharp_passed = (med_sharp >= 15.0) and (low_sharp_ratio <= 0.35)
+    sharp_passed = (med_sharp >= MIN_SHARPNESS_FLOOR) and (low_sharp_ratio <= 0.35)
 
     neg_ratio = negative_votes / eval_count
     cartoon_passed = neg_ratio < 0.25

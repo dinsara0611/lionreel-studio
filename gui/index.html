@@ -366,10 +366,6 @@
                         </p>
                         <div class="hero-actions-row">
                             <div class="hero-primary-actions">
-                                <button id="hero-btn-new" class="btn btn-primary btn-md">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                                    <span>New Compilation</span>
-                                </button>
                                 <button id="hero-btn-sample" class="btn btn-secondary btn-md">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                                     <span>Use Sample Project</span>
@@ -407,7 +403,7 @@
                                     <span class="mockup-pill">Reels</span>
                                     <span class="mockup-pill">Shorts</span>
                                 </div>
-                                <span class="badge badge-emerald" style="font-size: 0.8125rem; padding: 2px 6px;">READY</span>
+                                <span class="badge badge-emerald" style="font-size: 0.8125rem; padding: 2px 6px;">Ready</span>
                             </div>
 
                             <div class="mockup-overlay-center">
@@ -1408,7 +1404,7 @@
                 <div class="editor-empty-actions">
                     <button id="btn-empty-new-compilation" type="button" class="btn btn-primary btn-md">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        <span>Create compilation</span>
+                        <span>Start a video</span>
                     </button>
                     <button id="btn-empty-open-recent" type="button" class="btn btn-secondary btn-md">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
@@ -2200,17 +2196,17 @@
                     <div class="cockpit-header-titles">
                         <div class="cockpit-header-title-line">
                             <h2 class="cockpit-filename" id="export-video-title" title="Active video filename">lionreel_compilation.mp4</h2>
-                            <span class="badge badge-emerald" id="export-render-badge">RENDER COMPLETE</span>
-                            <span class="badge badge-emerald" id="export-badge-qa">QA: PASSED</span>
+                            <span class="badge badge-emerald" id="export-render-badge">Render status</span>
+                            <span class="badge badge-emerald" id="export-badge-qa">QA: not run</span>
                         </div>
                         <div class="cockpit-header-submeta">
-                            <span id="export-header-meta-dur">0.0s</span>
+                            <span id="export-header-meta-dur">not measured</span>
                             <span class="meta-separator">&bull;</span>
-                            <span id="export-header-meta-res">1080&times;1920</span>
+                            <span id="export-header-meta-res">not measured</span>
                             <span class="meta-separator">&bull;</span>
                             <span id="export-header-meta-aspect">9:16 Compilation</span>
                             <span class="meta-separator">&bull;</span>
-                            <span id="export-header-meta-size">0.0 MB</span>
+                            <span id="export-header-meta-size">not measured</span>
                         </div>
                     </div>
                 </div>
@@ -2269,28 +2265,28 @@
 
                         <!-- Under player ONE monospace line: "1080x1920 - 9:16 Short - 30.0 s - 25.4 MB" -->
                         <div class="cockpit-monospace-specs" id="export-video-meta">
-                            <span id="export-stat-res">1080×1920</span> - 
-                            <span id="export-stat-aspect">9:16 Short</span> - 
-                            <span id="export-stat-dur">30.0 s</span> - 
-                            <span id="export-stat-size">25.4 MB</span>
+                            <span id="export-stat-res">not measured</span> - 
+                            <span id="export-stat-aspect">not measured</span> - 
+                            <span id="export-stat-dur">not measured</span> - 
+                            <span id="export-stat-size">not measured</span>
                         </div>
 
                         <!-- 3 Status Chips: Quality, Length, Repeat -->
                         <div class="cockpit-chips-row">
                             <div class="cockpit-chip chip-quality" id="chip-export-quality" tabindex="0" role="button" title="Quality assessment">
                                 <svg class="chip-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                                <span id="export-chip-quality-text">Quality PASSED</span>
-                                <div class="chip-tooltip-popover" id="popover-chip-quality">All broadcast and safety gates passed.</div>
+                                <span id="export-chip-quality-text">Quality not measured</span>
+                                <div class="chip-tooltip-popover" id="popover-chip-quality">Quality has not been measured yet.</div>
                             </div>
                             <div class="cockpit-chip chip-length" id="chip-export-length" tabindex="0" role="button" title="Duration contract (+/-1.0s tolerance)">
                                 <svg class="chip-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                                <span id="export-chip-length-text">Length OK (+0.0 s)</span>
-                                <div class="chip-tooltip-popover" id="popover-chip-length">Duration matches target within ±1.0s contract.</div>
+                                <span id="export-chip-length-text">Length not measured</span>
+                                <div class="chip-tooltip-popover" id="popover-chip-length">Length has not been measured yet.</div>
                             </div>
                             <div class="cockpit-chip chip-repeat" id="chip-export-repeat" tabindex="0" role="button" title="Repeat share from report/QA">
                                 <svg class="chip-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
-                                <span id="export-stat-repeat" class="export-chip-repeat-text">Repeat 0%</span>
-                                <div class="chip-tooltip-popover" id="popover-chip-repeat">100% unique moments across all clips.</div>
+                                <span id="export-stat-repeat" class="export-chip-repeat-text">Repeat not measured</span>
+                                <div class="chip-tooltip-popover" id="popover-chip-repeat">Repeat share has not been measured yet.</div>
                             </div>
                         </div>
 
@@ -2315,7 +2311,7 @@
                         <div class="cockpit-card-header">
                             <div class="cockpit-card-title-wrap">
                                 <span class="cockpit-card-title">Shared Base Text</span>
-                                <span class="meta-checklist-badge" id="badge-meta-checklist-score">100/100 QUALITY</span>
+                                <span class="meta-checklist-badge" id="badge-meta-checklist-score"></span>
                             </div>
                             <div class="cockpit-card-actions">
                                 <button type="button" class="btn btn-secondary btn-xs" id="btn-meta-generate-fresh" title="Generate fresh candidate titles and hashtags">
@@ -2638,7 +2634,7 @@
                                     <div class="files-row-info">
                                         <div class="files-row-name-line">
                                             <span class="files-row-title">Download video</span>
-                                            <span class="badge badge-subtle" id="btn-quick-download-badge">25.4 MB</span>
+                                            <span class="badge badge-subtle" id="btn-quick-download-badge"></span>
                                         </div>
                                         <span class="files-row-sub">Pristine MP4 master &bull; Download Center</span>
                                     </div>
@@ -2919,7 +2915,7 @@
                         <kbd style="padding: 2px 8px; border-radius: 4px; background: var(--bg-card); border: 1px solid var(--border); font-family: var(--font-mono);">S</kbd>
                     </div>
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 6px;">
-                        <span>Quick New Compilation</span>
+                        <span>Start a video</span>
                         <kbd style="padding: 2px 8px; border-radius: 4px; background: var(--bg-card); border: 1px solid var(--border); font-family: var(--font-mono);">N</kbd>
                     </div>
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 6px;">

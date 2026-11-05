@@ -530,10 +530,10 @@ class AutoReframeEngine:
 
         # 4b. Blur-fit evaluation modes
         if mode == "blur_fit_16_9":
-            if med_sharp < 15.0:
+            if med_sharp < 150.0:
                 return {
                     "status": "reject",
-                    "reason": f"LOW_SOURCE_SHARPNESS (Median raw LapVar {med_sharp:.1f} < 15.0)",
+                    "reason": f"LOW_SOURCE_SHARPNESS (Median {med_sharp:.1f} < 150.0)",
                     "framing_score": 0.0,
                     "sharpness": round(med_sharp, 1),
                     "pet_detected_ratio": 1.0,
@@ -621,10 +621,10 @@ class AutoReframeEngine:
                     "failing_frames": []
                 }
 
-            if med_sharp < 15.0:
+            if med_sharp < 150.0:
                 return {
                     "status": "reject",
-                    "reason": f"LOW_SOURCE_SHARPNESS (Median raw LapVar {med_sharp:.1f} < 15.0)",
+                    "reason": f"LOW_SOURCE_SHARPNESS (Median {med_sharp:.1f} < 150.0)",
                     "framing_score": round(pred_compliance, 3),
                     "sharpness": round(med_sharp, 1),
                     "pet_detected_ratio": round(total_eval / max(1, len(frame_times)), 3),

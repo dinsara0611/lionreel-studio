@@ -3313,7 +3313,7 @@ class LionReelV97Pipeline:
             # =========================================================================
             sm.start_stage(6)
             timer.start_stage("reframe")
-            self.update_pipeline_progress(job_id, 6, "Reframe & render vertical clip cuts", 60, candidate_reports=candidate_reports)
+            self.update_pipeline_progress(job_id, 6, "Reframe & render clip cuts", 60, candidate_reports=candidate_reports)
 
             with open(os.path.join(work_job_dir, "stages", "framing_predicted.json"), "r", encoding="utf-8") as f_art5:
                 s5_data = json.load(f_art5)
