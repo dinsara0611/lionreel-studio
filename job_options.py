@@ -248,8 +248,11 @@ def normalize_job_options(cfg: Dict[str, Any]) -> Tuple[bool, Dict[str, Any], Op
         # Short Video: 30-60s total. User edits clips and clip_time. Total = clips * clip_time.
         clips_val = cfg.get("TARGET_CLIPS") if cfg.get("TARGET_CLIPS") is not None else cfg.get("clips", 4)
         clips = int(clips_val)
+        # A clip count is the Short control. A length alone is honoured, but a length left
+        # over from Long mode must never override the clips the user set.
+        has_clip_count = cfg.get("TARGET_CLIPS") is not None or cfg.get("clips") is not None
         req_short_s = float(cfg.get("target_duration_s") or 0)
-        if req_short_s > 0:
+        if req_short_s > 0 and not has_clip_count:
             req_short_s = min(60.0, max(30.0, req_short_s))
             clips = max(2, int(round(req_short_s / clip_time)))
             clip_time = round(req_short_s / clips, 3)

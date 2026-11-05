@@ -3429,6 +3429,13 @@ async function startRenderPipeline(skipPreflight = false) {
             const clipSec = parseFloat(state.config.SHORT_CLIP_SEC) || 7.5;
             state.config.TARGET_CLIPS = Math.max(2, Math.round((min * 60) / clipSec));
             state.config.clips = state.config.TARGET_CLIPS;
+        } else {
+            // Short contract: always vertical, length is clips x clip time, nothing left from Long
+            const clipSec = parseFloat(state.config.SHORT_CLIP_SEC) || 7.5;
+            state.config.clips = parseInt(state.config.TARGET_CLIPS) || 4;
+            state.config.target_duration_s = Math.round(state.config.clips * clipSec * 100) / 100;
+            state.config.ASPECT_RATIO = "9:16";
+            state.config.TARGET_FORMAT = "9:16";
         }
 
         // 1. Save user configuration to config.json
@@ -7564,6 +7571,12 @@ function setVideoType(type, notify = true) {
     if (panelAspectFraming) panelAspectFraming.style.display = "block";
     if (panelShortDur) panelShortDur.style.display = "block";
 
+    // A Short is always 9:16, so its ratio choices are not shown
+    ["btn-format-169", "btn-format-11"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = type === "short" ? "none" : "";
+    });
+
     if (type === "long") {
         if (btnTypeLong) btnTypeLong.classList.add("active");
         if (panelLongControls) panelLongControls.style.display = "block";
@@ -7705,8 +7718,7 @@ function setVideoType(type, notify = true) {
 
         state.config.TARGET_CLIPS = clips;
         state.config.SHORT_CLIP_SEC = clipSec;
-        const targetAspect = remembered.ASPECT_RATIO || "9:16";
-        setFormat(targetAspect, false);
+        setFormat("9:16", false);
 
         if (badgeVideoType) {
             badgeVideoType.innerText = "Short Reel (30s-60s)";

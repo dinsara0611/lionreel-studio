@@ -16,6 +16,11 @@ def test_short_lengths(seconds, clips):
     assert n["target_seconds"] == seconds and n["clips"] == clips and n["ratio"] == "9:16"
 
 
+def test_length_left_over_from_long_cannot_change_a_short():
+    n = norm(type="short", TARGET_CLIPS=4, SHORT_CLIP_SEC=7.5, target_duration_s=300)
+    assert n["clips"] == 4 and n["target_seconds"] == 30
+
+
 def test_short_is_clamped_to_30_60():
     assert norm(type="short", target_duration_s=10)["target_seconds"] == 30
     assert norm(type="short", target_duration_s=300)["target_seconds"] == 60
