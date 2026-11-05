@@ -30,6 +30,14 @@ from pet_detector import PetDetector
 BENCHMARK_CONFIG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config", "benchmark.json")
 BLOCKED_SOURCES_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config", "blocked_sources.json")
 
+def _active_model_version() -> str:
+    try:
+        from feedback_manager import FeedbackManager
+        return getattr(FeedbackManager(), "active_version", "rule_based_baseline")
+    except Exception:
+        return "rule_based_baseline"
+
+
 def load_benchmark_config():
     if os.path.exists(BENCHMARK_CONFIG_PATH):
         try:
@@ -1617,7 +1625,7 @@ def run_full_qa(video_path, report_path=None, contact_sheet_path=None, layout_mo
         "repeat_share_pct": repeat_spacing.get("repeat_share_pct", 0.0),
         "repeat_share_str": repeat_spacing.get("repeat_share_str", "0% repeat (100% unique moments)"),
         "contact_sheet": sheet_file,
-        "model_version": getattr(FeedbackManager(), "active_version", "rule_based_baseline") if "FeedbackManager" in globals() or (lambda: globals().update({"FeedbackManager": __import__("feedback_manager").FeedbackManager}) or True)() else "rule_based_baseline"
+        "model_version": _active_model_version()
     }
 
     freshness_info = None

@@ -28,6 +28,7 @@ if __name__ == "__main__" and (sys.version_info >= (3, 13) or sys.version_info <
         if os.path.exists(_venv_py) and os.path.normpath(sys.executable) != os.path.normpath(_venv_py):
             sys.exit(subprocess.call([_venv_py] + sys.argv))
 
+import timed_subprocess as subprocess
 import re
 import time
 import json
@@ -75,6 +76,14 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CONFIG_FILE = os.path.join(BASE_DIR, "config.json")
 BENCHMARK_CONFIG = os.path.join(BASE_DIR, "config", "benchmark.json")
 BLOCKED_SOURCES_FILE = os.path.join(BASE_DIR, "config", "blocked_sources.json")
+
+def _active_model_version() -> str:
+    try:
+        from feedback_manager import FeedbackManager
+        return getattr(FeedbackManager(), "active_version", "rule_based_baseline")
+    except Exception:
+        return "rule_based_baseline"
+
 
 def get_local_path(cfg_key, default_local, fallback_rel):
     try:
@@ -2448,11 +2457,11 @@ class LionReelV97Pipeline:
             # TASK 3: Bank Preflight
             pool_cap = self.ledger.get_pool_ready_and_capacity(animal_mode, target_clips=target_clips_count, allow_reuse=allow_reuse)
             usable_count = pool_cap.get("ready", 0)
+            preflight_text = self.ledger.preflight_line(target_clips_count, animal_mode)
             if usable_count < target_clips_count:
-                est_min = max(1, int(round((target_clips_count - usable_count) * 2.0)))
-                log(f"PREFLIGHT: Need {target_clips_count}, have {usable_count} usable. Finding more (about {est_min} min).", "INFO")
+                log(f"PREFLIGHT: {preflight_text}. Finding more footage.", "INFO")
             else:
-                log(f"PREFLIGHT: Need {target_clips_count}, have {usable_count} usable. Bank healthy.", "INFO")
+                log(f"PREFLIGHT: {preflight_text}. Bank healthy.", "INFO")
 
             # TASK 2: Real harvest when deficit exists
             timer.start_stage("harvest")
@@ -3970,7 +3979,6 @@ class LionReelV97Pipeline:
                             if os.path.exists(base_chk):
                                 c_out = base_chk
                     if os.path.exists(c_out):
-                        import shutil
                         shutil.copy2(c_out, seq_out)
                         c_out = seq_out
                     elif os.path.exists(seq_out):
@@ -4626,7 +4634,7 @@ class LionReelV97Pipeline:
                 "freshness": freshness,
                 "freshness_card_line": freshness_card_line,
                 "status_card_line": freshness_card_line,
-                "model_version": getattr(FeedbackManager(), "active_version", "rule_based_baseline") if "FeedbackManager" in globals() or (lambda: globals().update({"FeedbackManager": __import__("feedback_manager").FeedbackManager}) or True)() else "rule_based_baseline",
+                "model_version": _active_model_version(),
                 "clips": clip_mapping_data
             }
             credits_data_payload = {

@@ -527,7 +527,7 @@ class FulfillmentPlanner:
                     FROM clips
                     WHERE animal_type = ? AND is_verified = 1 AND {pending_cond} {times_cond}
                       AND (rejection_reason IS NULL OR rejection_reason = '')
-                      AND (sharpness IS NULL OR sharpness >= 15.0 OR sharpness = 0.0)
+                      AND (sharpness IS NULL OR sharpness >= 150.0 OR sharpness = 0.0)
                     ORDER BY times_used ASC, quality_score DESC, funny_score DESC
                 """, tuple(params))
                 for row in cur.fetchall():
@@ -542,30 +542,11 @@ class FulfillmentPlanner:
                     if src_p and os.path.exists(src_p) and not self.ledger.is_blocked_source(src_p):
                         results.append(d)
 
-            # Strict rule 1 & 2: Filter out any window used in finished production videos
-            if results and not allow_reuse and hasattr(self.ledger, "is_window_used_in_production"):
-                fresh = []
-                for c in results:
-                    sid = c.get("source_id") or c.get("source_url_or_path")
-                    st = float(c.get("start_s", 0.0))
-                    en = float(c.get("end_s", st + 7.5))
-                    f_hashes = c.get("fingerprint")
-                    if isinstance(f_hashes, str):
-                        try:
-                            f_hashes = json.loads(f_hashes)
-                        except Exception:
-                            f_hashes = None
-                    is_used, _ = self.ledger.is_window_used_in_production(
-                        source_id_or_path=sid,
-                        start_s=st,
-                        end_s=en,
-                        frame_hashes=f_hashes,
-                        channel=animal_mode,
-                        exclude_job_id=current_job_id
-                    )
-                    if not is_used:
-                        fresh.append(c)
-                results = fresh
+            # The ledger count function decides what is fresh, so planner and UI cannot disagree
+            if results and not allow_reuse:
+                windows = self.ledger.get_ledger_counts(animal_mode, current_job_id=current_job_id, include_windows=True)["windows"]
+                fresh_ids = {w["clip_id"] for w in windows["usable_now"] + windows["cooldown"]}
+                results = [c for c in results if c.get("clip_id") in fresh_ids]
         except Exception:
             pass
         return results

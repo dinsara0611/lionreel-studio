@@ -39,7 +39,7 @@ DEFAULT_STAGE_WEIGHTS = {
 }
 
 def init_db(db_path=DB_PATH):
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect(db_path, timeout=10.0)
     cur = conn.cursor()
     cur.execute("""
         CREATE TABLE IF NOT EXISTS stage_executions (
@@ -71,7 +71,7 @@ class StageEstimator:
         self._init_history_from_work_dirs_if_empty()
 
     def _get_conn(self):
-        return sqlite3.connect(self.db_path)
+        return sqlite3.connect(self.db_path, timeout=10.0)
 
     def _init_history_from_work_dirs_if_empty(self):
         """Seeds the historical database from existing C:\\LionReel\\work jobs if empty."""

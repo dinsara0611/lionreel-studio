@@ -1312,10 +1312,10 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                     row_l = cur_l.fetchone()
                     landscape_sources = row_l["cnt"] if row_l else 0
 
-                    cur_tot = conn.execute("SELECT SUM(CASE WHEN is_verified = 1 THEN 1 ELSE 0 END) as v_cnt, COUNT(*) as tot FROM clips WHERE animal_type = ?", (canonical_animal,))
-                    row_t = cur_tot.fetchone()
-                    ledger_tot_candidates = row_t["tot"] if row_t else 0
-                    ledger_ver_candidates = row_t["v_cnt"] if row_t else 0
+                    pass
+                ledger_counts = pool_cap["counts"]
+                ledger_tot_candidates = ledger_counts["total_rows"]
+                ledger_ver_candidates = ledger_counts["verified_total"]
             except Exception:
                 pool_cap = {
                     "verified_windows": 0, "usable_sources": 0, "min_sources_needed": max(1, (target_clips + 2) // 3),
@@ -3896,7 +3896,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                     if RUNNING_PROCESS:
                         try:
                             if os.name == 'nt':
-                                subprocess.run(["taskkill", "/F", "/T", "/PID", str(RUNNING_PROCESS.pid)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                                subprocess.run(["taskkill", "/F", "/T", "/PID", str(RUNNING_PROCESS.pid)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=15)
                             else:
                                 RUNNING_PROCESS.terminate()
                         except Exception:

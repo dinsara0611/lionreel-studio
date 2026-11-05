@@ -786,85 +786,43 @@ class ClipLedger:
 
     def get_pool_status(self, animal_type='cat') -> dict:
         cycle = self.get_system_pool_cycle(animal_type)
+        counts = self.get_ledger_counts(animal_type)
+        total = counts["total_rows"]
+        used = counts["used"]
+        fresh = counts["fresh_total"]
         with self._get_conn() as conn:
-            cur_tot = conn.execute("SELECT COUNT(*) AS c FROM clips WHERE animal_type = ?", (animal_type,))
-            total = cur_tot.fetchone()["c"]
+            sources_count = conn.execute("SELECT COUNT(DISTINCT source_id) AS c FROM clips WHERE animal_type = ?", (animal_type,)).fetchone()["c"]
+            vertical_sources_count = conn.execute("SELECT COUNT(DISTINCT source_id) AS c FROM clips WHERE animal_type = ? AND orientation = 'vertical'", (animal_type,)).fetchone()["c"]
+            landscape_sources_count = conn.execute("SELECT COUNT(DISTINCT source_id) AS c FROM clips WHERE animal_type = ? AND orientation != 'vertical'", (animal_type,)).fetchone()["c"]
+            blocked_rows = conn.execute("SELECT source_path, reason FROM blocked_sources").fetchall()
 
-            cur_used = conn.execute(
-                "SELECT COUNT(*) AS c FROM clips WHERE animal_type = ? AND times_used > 0",
-                (animal_type,)
-            )
-            used = cur_used.fetchone()["c"]
-
-            cur_unused = conn.execute(
-                "SELECT COUNT(*) AS c FROM clips WHERE animal_type = ? AND times_used == 0 AND pending_short_id IS NULL AND (rejection_reason IS NULL OR rejection_reason = '')",
-                (animal_type,)
-            )
-            unused = cur_unused.fetchone()["c"]
-
-            cur_ver_unused = conn.execute(
-                "SELECT COUNT(*) AS c FROM clips WHERE animal_type = ? AND times_used == 0 AND pending_short_id IS NULL AND is_verified = 1 AND (rejection_reason IS NULL OR rejection_reason = '') AND (sharpness IS NULL OR sharpness >= 15.0 OR sharpness = 0.0)",
-                (animal_type,)
-            )
-            verified_unused = cur_ver_unused.fetchone()["c"]
-
-            cur_sources = conn.execute(
-                "SELECT COUNT(DISTINCT source_id) AS c FROM clips WHERE animal_type = ?",
-                (animal_type,)
-            )
-            sources_count = cur_sources.fetchone()["c"]
-
-            cur_ver_sources = conn.execute(
-                "SELECT COUNT(DISTINCT source_id) AS c FROM clips WHERE animal_type = ? AND times_used == 0 AND pending_short_id IS NULL AND is_verified = 1 AND (rejection_reason IS NULL OR rejection_reason = '') AND (sharpness IS NULL OR sharpness >= 15.0 OR sharpness = 0.0)",
-                (animal_type,)
-            )
-            verified_sources_count = cur_ver_sources.fetchone()["c"]
-
-            cur_vert_sources = conn.execute(
-                "SELECT COUNT(DISTINCT source_id) AS c FROM clips WHERE animal_type = ? AND orientation = 'vertical'",
-                (animal_type,)
-            )
-            vertical_sources_count = cur_vert_sources.fetchone()["c"]
-
-            cur_land_sources = conn.execute(
-                "SELECT COUNT(DISTINCT source_id) AS c FROM clips WHERE animal_type = ? AND orientation != 'vertical'",
-                (animal_type,)
-            )
-            landscape_sources_count = cur_land_sources.fetchone()["c"]
-
-            # Query blocked sources
-            cur_blocked = conn.execute("SELECT source_path, reason FROM blocked_sources")
-            blocked_rows = cur_blocked.fetchall()
-            blocked_sources_count = len(blocked_rows)
-            blocked_sources_list = [
-                {"source": os.path.basename(r["source_path"]), "reason": r["reason"]}
-                for r in blocked_rows
-            ]
-
-            pct = round((used / total * 100.0), 1) if total > 0 else 0.0
-            low_water_mark_met = (verified_unused >= 24) and (verified_sources_count >= 6)
-            warning = (unused <= 2) or (pct >= 85.0)
-
-            return {
-                "animal_type": animal_type,
-                "pool_cycle": cycle,
-                "total_clips": total,
-                "used_clips": used,
-                "unused_clips": unused,
-                "verified_clips": verified_unused,
-                "verified_unused_clips": verified_unused,
-                "sources_count": sources_count,
-                "distinct_sources": sources_count,
-                "verified_sources_count": verified_sources_count,
-                "vertical_sources_count": vertical_sources_count,
-                "landscape_sources_count": landscape_sources_count,
-                "blocked_sources_count": blocked_sources_count,
-                "blocked_sources_list": blocked_sources_list,
-                "low_water_mark_met": low_water_mark_met,
-                "usage_pct": pct,
-                "warning": warning,
-                "status_label": f"Clip pool: {used} of {total} used ({pct}%) | {verified_unused} verified from {verified_sources_count} sources"
-            }
+        pct = round((used / total * 100.0), 1) if total > 0 else 0.0
+        return {
+            "animal_type": animal_type,
+            "pool_cycle": cycle,
+            "total_clips": total,
+            "used_clips": used,
+            "unused_clips": fresh,
+            "verified_clips": fresh,
+            "verified_unused_clips": fresh,
+            "usable_now": counts["usable_now"],
+            "cooldown": counts["cooldown"],
+            "unverified": counts["unverified"],
+            "needs_recheck": counts["needs_recheck"],
+            "rejected": counts["rejected"],
+            "counts": counts,
+            "sources_count": sources_count,
+            "distinct_sources": sources_count,
+            "verified_sources_count": counts["fresh_sources"],
+            "vertical_sources_count": vertical_sources_count,
+            "landscape_sources_count": landscape_sources_count,
+            "blocked_sources_count": len(blocked_rows),
+            "blocked_sources_list": [{"source": os.path.basename(r["source_path"]), "reason": r["reason"]} for r in blocked_rows],
+            "low_water_mark_met": fresh >= 24 and counts["fresh_sources"] >= 6,
+            "usage_pct": pct,
+            "warning": fresh <= 2 or pct >= 85.0,
+            "status_label": f"Clip pool: {counts['plain_summary']} ({total} total)"
+        }
 
     def get_pool_health(self, animal_type='cat') -> dict:
         return self.get_pool_status(animal_type)
@@ -876,36 +834,10 @@ class ClipLedger:
                 AND are fresh (not used in last `exclude_recent_videos` videos).
         capacity = min(ready, usable_sources * 3).
         """
-        where_used = "times_used >= 0" if allow_reuse else "times_used == 0"
-        with self._get_conn() as conn:
-            cur = conn.execute(f"""
-                SELECT clip_id, source_id, source_url_or_path, start_s, end_s, is_verified
-                FROM clips
-                WHERE animal_type = ? AND {where_used} AND pending_short_id IS NULL AND is_verified == 1
-                ORDER BY start_s ASC
-            """, (animal_type,))
-            rows = [dict(r) for r in cur.fetchall()]
-
-        valid_rows = [r for r in rows if os.path.exists(r["source_url_or_path"]) and not self.is_blocked_source(r["source_url_or_path"])]
-
-        # Filter out windows from the last `exclude_recent_videos` completed videos
-        if exclude_recent_videos > 0 and not allow_reuse:
-            recent_windows = self.get_recent_video_windows(exclude_recent_videos)
-            if recent_windows:
-                valid_rows = [
-                    r for r in valid_rows
-                    if not any(
-                        is_same_moment(
-                            r.get("source_id") or r.get("source_url_or_path"),
-                            float(r.get("start_s", 0.0)),
-                            float(r.get("end_s", float(r.get("start_s", 0.0)) + 7.5)),
-                            w.get("source_id") or w.get("source_url_or_path"),
-                            float(w.get("start_s", 0.0)),
-                            float(w.get("end_s", float(w.get("start_s", 0.0)) + 7.5))
-                        )
-                        for w in recent_windows
-                    )
-                ]
+        counts = self.get_ledger_counts(animal_type, include_windows=True)
+        valid_rows = counts["windows"]["usable_now"] + counts["windows"]["cooldown"]
+        if allow_reuse:
+            valid_rows = valid_rows + counts["windows"]["used"]
 
         by_source = {}
         for r in valid_rows:
@@ -932,16 +864,16 @@ class ClipLedger:
                     selected_for_src.append(c)
             ready_clips.extend(selected_for_src)
 
-        ready_count = len(ready_clips)
-        capacity = min(ready_count, usable_sources * max_per_src)
+        ready_count = len(valid_rows)
+        capacity = min(len(ready_clips), usable_sources * max_per_src)
         needed_sources = max(1, (int(target_clips) + max_per_src - 1) // max_per_src)
         can_supply = capacity >= int(target_clips)
         warning_msg = "" if can_supply else f"This pool can supply at most {capacity} clips. {target_clips} clips need at least {needed_sources} sources."
 
-        pstat = self.get_pool_status(animal_type)
-        candidate_count = pstat.get("unused_clips", 0)
+        candidate_count = counts["fresh_total"]
 
         return {
+            "counts": {k: v for k, v in counts.items() if k != "windows"},
             "ready": ready_count,
             "verified_windows": ready_count,
             "candidates": candidate_count,
@@ -954,37 +886,42 @@ class ClipLedger:
             "options": ["set_n_clips", "harvest_first", "start_anyway"] if not can_supply else []
         }
 
-    def get_pool_unified_counts(self, animal_type: str = "cat", channel: str = None, current_job_id: str = None, last_n_jobs: int = 3, is_test_env: bool = False) -> dict:
+    def get_ledger_counts(self, animal_type: str = "cat", channel: str = None, current_job_id: str = None,
+                          last_n_jobs: int = 3, include_windows: bool = False, **_ignored) -> dict:
         """
-        TASK 1: One unified counting function for the entire pipeline:
-        verified, usable_now (verified - cooldown - used), unverified, rejected_with_reason, test.
+        The one count function. The planner, UI, report and Export all read this.
+
+        Every row lands in exactly one class, so the classes always add up to total_rows:
+        usable_now, cooldown, used, reserved, unverified, needs_recheck, rejected, unavailable.
+        fresh_total (usable_now + cooldown) is what a job may render with reuse off.
         """
         channel_name = channel or animal_type or "cat"
-        cooldown_sources = set()
-        if hasattr(self, "get_cooldown_sources"):
-            try:
-                cooldown_sources = set(str(s).lower() for s in self.get_cooldown_sources(channel=channel_name, last_n_jobs=last_n_jobs))
-            except Exception:
-                pass
+        try:
+            cooldown_sources = set(str(s).lower() for s in self.get_cooldown_sources(channel=channel_name, last_n_jobs=last_n_jobs))
+        except Exception:
+            cooldown_sources = set()
 
         with self._get_conn() as conn:
-            cur = conn.execute("""
-                SELECT clip_id, source_id, source_url_or_path, is_verified, times_used, rejection_reason, status, retry_count
+            all_rows = [dict(r) for r in conn.execute("""
+                SELECT clip_id, source_id, source_url_or_path, start_s, end_s, is_verified, times_used,
+                       rejection_reason, status, retry_count, pending_short_id, sharpness, fingerprint
+                FROM clips WHERE animal_type = ?
+            """, (animal_type,)).fetchall()]
+            finished = self._production_windows(conn, channel_name, current_job_id)
+            rejected_windows = [dict(r) for r in conn.execute("""
+                SELECT clip_id, source_id, source_url_or_path, start_s, end_s, rejection_reason
                 FROM clips
-                WHERE animal_type = ?
-            """, (animal_type,))
-            all_rows = [dict(r) for r in cur.fetchall()]
+                WHERE rejection_reason IS NOT NULL AND rejection_reason != '' AND rejection_reason != 'MEASUREMENT_FAILED'
+            """).fetchall()]
 
-        verified_total = 0
-        used = 0
-        cooldown = 0
-        usable_now = 0
-        unverified = 0
-        needs_recheck = 0
-        rejected = 0
+        finished_index = self._index_by_source(finished)
+        rejected_index = self._index_by_source(rejected_windows)
+        hashed_finished = [w for w in finished if w.get("frame_hashes")]
+
+        classes = {k: [] for k in ("usable_now", "cooldown", "used", "reserved", "unverified", "needs_recheck", "rejected", "unavailable")}
         rejected_by_reason = {}
         test_clips = 0
-        usable_sources_set = set()
+        source_ok = {}
 
         for r in all_rows:
             src_path = str(r.get("source_url_or_path") or "")
@@ -994,50 +931,120 @@ class ClipLedger:
             if is_test:
                 test_clips += 1
 
-            rej = r.get("rejection_reason")
-            st = str(r.get("status") or "").lower()
+            rej = (r.get("rejection_reason") or "").strip()
+            st_val = str(r.get("status") or "").lower()
             retry = int(r.get("retry_count") or 0)
-            is_ver = int(r.get("is_verified") or 0)
-            times_used = int(r.get("times_used") or 0)
+            start_s = float(r.get("start_s") or 0.0)
+            end_s = float(r.get("end_s") or (start_s + 7.5))
 
-            # Check if source exists and is not blocked
-            src_exists = os.path.exists(src_path) or is_test or ("dummy" in src_path) or ("src_" in src_name)
+            if src_path not in source_ok:
+                exists = os.path.exists(src_path) or is_test or "dummy" in src_path or "src_" in src_name
+                source_ok[src_path] = exists and not self.is_blocked_source(src_path)
 
-            if st == "needs_recheck" or (rej == "MEASUREMENT_FAILED" and retry < 1):
-                needs_recheck += 1
-            elif rej and rej.strip():
-                rejected += 1
-                clean_rej = rej.split("(")[0].strip() if "(" in rej else rej.strip()
+            if st_val == "needs_recheck" or (rej == "MEASUREMENT_FAILED" and retry < 1):
+                cls = "needs_recheck"
+            elif rej:
+                cls = "rejected"
+                clean_rej = rej.split("(")[0].strip()
                 rejected_by_reason[clean_rej] = rejected_by_reason.get(clean_rej, 0) + 1
-            elif is_ver == 1 and src_exists and not self.is_blocked_source(src_path):
-                verified_total += 1
-                is_cooldown = (src_base in cooldown_sources or src_name.lower() in cooldown_sources or os.path.splitext(src_name)[0].lower() in cooldown_sources)
-                if times_used > 0:
-                    used += 1
-                elif is_cooldown:
-                    cooldown += 1
-                else:
-                    usable_now += 1
-                    usable_sources_set.add(src_base)
+            elif int(r.get("is_verified") or 0) != 1:
+                cls = "unverified"
+            elif not source_ok[src_path]:
+                cls = "unavailable"
+            elif r.get("pending_short_id") and r.get("pending_short_id") != current_job_id:
+                cls = "reserved"
+            elif int(r.get("times_used") or 0) > 0 or self._overlaps_any(r, start_s, end_s, finished_index, hashed_finished):
+                cls = "used"
+            elif self._overlaps_any(r, start_s, end_s, rejected_index):
+                cls = "rejected"
+                rejected_by_reason["OVERLAPS_REJECTED_WINDOW"] = rejected_by_reason.get("OVERLAPS_REJECTED_WINDOW", 0) + 1
+            elif src_base in cooldown_sources or src_name.lower() in cooldown_sources or os.path.splitext(src_name)[0].lower() in cooldown_sources:
+                cls = "cooldown"
             else:
-                unverified += 1
+                cls = "usable_now"
+            classes[cls].append(r)
 
-        plain_summary = f"{usable_now} usable now, {cooldown} in cooldown, {used} used, {unverified} unverified, {rejected} rejected"
+        n = {k: len(v) for k, v in classes.items()}
+        usable_sources = {os.path.splitext(os.path.basename(str(c.get("source_url_or_path") or "")))[0].lower() for c in classes["usable_now"]}
+        fresh_sources = usable_sources | {os.path.splitext(os.path.basename(str(c.get("source_url_or_path") or "")))[0].lower() for c in classes["cooldown"]}
+        fresh_total = n["usable_now"] + n["cooldown"]
 
-        return {
-            "verified_total": verified_total,
-            "usable_now": usable_now,
-            "cooldown": cooldown,
-            "used": used,
-            "unverified": unverified,
-            "needs_recheck": needs_recheck,
-            "rejected": rejected,
+        result = dict(n)
+        result.update({
+            "fresh_total": fresh_total,
+            "verified_total": fresh_total + n["used"] + n["reserved"],
             "rejected_by_reason": rejected_by_reason,
             "test": test_clips,
-            "usable_sources": len(usable_sources_set),
+            "usable_sources": len(usable_sources),
+            "fresh_sources": len(fresh_sources),
             "total_rows": len(all_rows),
-            "plain_summary": plain_summary
-        }
+            "plain_summary": f"{n['usable_now']} usable now, {n['cooldown']} in cooldown, {n['used']} used, {n['unverified']} unverified, {n['needs_recheck']} to recheck, {n['rejected']} rejected",
+        })
+        if include_windows:
+            result["windows"] = classes
+        return result
+
+    def get_pool_unified_counts(self, animal_type: str = "cat", channel: str = None, current_job_id: str = None, last_n_jobs: int = 3, is_test_env: bool = False) -> dict:
+        return self.get_ledger_counts(animal_type, channel=channel, current_job_id=current_job_id, last_n_jobs=last_n_jobs)
+
+    def preflight_line(self, needed: int, animal_type: str = "cat") -> str:
+        c = self.get_ledger_counts(animal_type)
+        line = f"Need {needed}, have {c['usable_now']} usable"
+        if c["cooldown"]:
+            line += f" (+{c['cooldown']} on source cooldown)"
+        return line
+
+    def _production_windows(self, conn, channel: str = None, exclude_job_id: str = None) -> list:
+        query = "SELECT job_id, source_id, source_url_or_path, start_s, end_s, clip_id, frame_hashes FROM finished_video_windows WHERE is_production = 1"
+        params = []
+        if channel:
+            query += " AND (channel = ? OR channel IS NULL OR channel = '' OR channel = 'all')"
+            params.append(channel)
+        if exclude_job_id:
+            query += " AND job_id != ?"
+            params.append(exclude_job_id)
+            if str(exclude_job_id).endswith("_teaser"):
+                query += " AND job_id != ?"
+                params.append(str(exclude_job_id).replace("_teaser", ""))
+        return [dict(r) for r in conn.execute(query, tuple(params)).fetchall()]
+
+    @staticmethod
+    def _source_key(value) -> str:
+        return os.path.splitext(os.path.basename(str(value or "").strip()))[0].lower()
+
+    @classmethod
+    def _index_by_source(cls, windows: list) -> dict:
+        index = {}
+        for w in windows:
+            index.setdefault(cls._source_key(w.get("source_id") or w.get("source_url_or_path")), []).append(w)
+        return index
+
+    @classmethod
+    def _overlaps_any(cls, row: dict, start_s: float, end_s: float, index: dict, hashed: list = None) -> bool:
+        """True if this window overlaps a window in `index` by over 30%, or matches a hashed window's frames."""
+        sid = row.get("source_id") or row.get("source_url_or_path")
+        for o in index.get(cls._source_key(sid), ()):
+            if o.get("clip_id") == row.get("clip_id") and not hashed:
+                continue
+            o_st = float(o.get("start_s") or 0.0)
+            o_en = float(o.get("end_s") or (o_st + 7.5))
+            if is_same_moment(sid, start_s, end_s, o.get("source_id") or o.get("source_url_or_path"), o_st, o_en, overlap_thresh=0.30):
+                return True
+        own_hashes = row.get("fingerprint") if hashed else None
+        if isinstance(own_hashes, str):
+            try:
+                own_hashes = json.loads(own_hashes)
+            except Exception:
+                own_hashes = None
+        if isinstance(own_hashes, list):
+            for o in hashed:
+                try:
+                    theirs = json.loads(o["frame_hashes"]) if isinstance(o["frame_hashes"], str) else o["frame_hashes"]
+                    if are_frame_hashes_matching(own_hashes, theirs, max_dist=6, min_matching=3):
+                        return True
+                except Exception:
+                    pass
+        return False
 
     def record_candidate_evaluation_failure(self, clip_id: str, score: float = 0.0, sharpness: float = 0.0, reason: str = ""):
         """
@@ -1149,7 +1156,11 @@ class ClipLedger:
         patience_start = time.time()
         patience_budget = float(patience_budget_sec) if patience_budget_sec is not None else 0.0
 
+        wait_before_retry = False
         while True:
+            if wait_before_retry:
+                time.sleep(3.0)
+                wait_before_retry = False
             with self.transaction(timeout_sec=timeout_sec, immediate=True) as conn:
                 # Rule 1: strictly unused first (times_used == 0) unless explicit allow_reuse is granted
                 if allow_reuse:
@@ -1157,7 +1168,7 @@ class ClipLedger:
                         SELECT * FROM clips 
                         WHERE animal_type = ? AND (pending_short_id IS NULL OR pending_short_id = ?)
                           AND (rejection_reason IS NULL OR rejection_reason = '')
-                          AND (sharpness IS NULL OR sharpness >= 15.0 OR sharpness = 0.0)
+                          AND (sharpness IS NULL OR sharpness >= 150.0 OR sharpness = 0.0)
                         ORDER BY COALESCE(is_verified, 0) DESC, times_used ASC, funny_score DESC, quality_score DESC
                     """, (animal_type, short_id))
                 else:
@@ -1165,7 +1176,7 @@ class ClipLedger:
                         SELECT * FROM clips 
                         WHERE animal_type = ? AND times_used == 0 AND (pending_short_id IS NULL OR pending_short_id = ?)
                           AND (rejection_reason IS NULL OR rejection_reason = '')
-                          AND (sharpness IS NULL OR sharpness >= 15.0 OR sharpness = 0.0)
+                          AND (sharpness IS NULL OR sharpness >= 150.0 OR sharpness = 0.0)
                         ORDER BY COALESCE(is_verified, 0) DESC, funny_score DESC, quality_score DESC
                     """, (animal_type, short_id))
                 eligible = [dict(r) for r in cur.fetchall()]
@@ -1219,9 +1230,9 @@ class ClipLedger:
 
                 # Rule 2: exclude moments used in last 5 videos unless depleted
                 recent_video_ids = self.get_recent_video_ids(5)
-                recent_windows = self.get_recent_video_windows(5)
+                recent_windows = self.get_recent_video_windows(5) if allow_reuse else self.get_recent_video_windows(100000)
 
-                # Filter out any candidate that overlaps > 30% with any moment in the last 5 videos
+                # Allow reuse OFF: no overlap with ANY finished video. Reuse ON: only the last 5 are excluded.
                 fresh_candidates = []
                 for cand in eligible:
                     c_src = cand.get("source_id") or cand.get("source_url_or_path")
@@ -1234,10 +1245,10 @@ class ClipLedger:
                     if not matches_last_5:
                         fresh_candidates.append(cand)
 
-                if len(fresh_candidates) >= needed_min:
+                if len(fresh_candidates) >= needed_min or not allow_reuse:
                     eligible_pool = fresh_candidates
                 else:
-                    # Depleted: fall back to LRU with notice
+                    # Depleted and the user allowed reuse: fall back to LRU with notice
                     print(f"[LRU FALLBACK] Bank depleted: only {len(fresh_candidates)} clips available outside last 5 videos (needed {needed_min}). Reusing oldest moments via LRU fallback.")
                     eligible_pool = eligible
 
@@ -1245,7 +1256,7 @@ class ClipLedger:
                 if len(eligible_pool) < needed_min and patience_budget > 0 and (time.time() - patience_start) < patience_budget:
                     elapsed_wait = time.time() - patience_start
                     print(f"Finding fresh clips ({len(eligible_pool)} of {needed_min} ready) [waited {elapsed_wait:.0f}s / {patience_budget:.0f}s]...")
-                    time.sleep(3.0)
+                    wait_before_retry = True
                     continue
 
                 if len(eligible_pool) < needed_min:

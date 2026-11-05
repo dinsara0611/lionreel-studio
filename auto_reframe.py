@@ -34,6 +34,7 @@ if os.path.exists(_VENV_SITE) and _VENV_SITE not in sys.path:
 
 import cv2
 import numpy as np
+import json
 import imageio_ffmpeg
 from pet_detector import PetDetector
 

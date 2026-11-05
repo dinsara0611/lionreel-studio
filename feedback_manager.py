@@ -6,6 +6,7 @@ implicit decisions (trims, replaces, deletes) into data/feedback.db.
 Extracts window feature snapshots and evaluates/trains a learned candidate ranker.
 """
 
+import math
 import os
 import sys
 import json
@@ -24,7 +25,7 @@ MODEL_CARD_PATH = os.path.join(MODELS_DIR, "funny_ranker_model_card.json")
 
 def get_feedback_db():
     os.makedirs(DATA_DIR, exist_ok=True)
-    conn = sqlite3.connect(FEEDBACK_DB_PATH)
+    conn = sqlite3.connect(FEEDBACK_DB_PATH, timeout=10.0)
     conn.execute("""
         CREATE TABLE IF NOT EXISTS feedback (
             id INTEGER PRIMARY KEY AUTOINCREMENT,

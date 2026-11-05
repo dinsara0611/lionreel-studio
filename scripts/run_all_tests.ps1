@@ -1,7 +1,6 @@
 # One command for all tests. Syncs code from the Drive folder into the sandbox and
 # runs there, so no test can reach production data or the Drive output folder.
 #   powershell -File scripts/run_all_tests.ps1 [pytest args]
-param([Parameter(ValueFromRemainingArguments = $true)][string[]]$PytestArgs)
 
 $Sandbox = 'C:\LionReel_sandbox'
 $Proj = "$Sandbox\proj"
@@ -22,5 +21,5 @@ $env:IS_TEST = '1'
 $env:NO_BROWSER = '1'
 $env:PYTHONUTF8 = '1'
 Set-Location $Proj
-& "$Sandbox\venv\Scripts\python.exe" -m pytest @PytestArgs
+& "$Sandbox\venv\Scripts\python.exe" -m pytest @args
 exit $LASTEXITCODE

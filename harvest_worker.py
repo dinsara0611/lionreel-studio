@@ -25,7 +25,7 @@ import json
 import glob
 import cv2
 import numpy as np
-import subprocess
+import timed_subprocess as subprocess
 from typing import Optional, List, Dict, Any
 from concurrent.futures import ThreadPoolExecutor
 
