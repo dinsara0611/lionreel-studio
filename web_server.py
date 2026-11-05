@@ -304,6 +304,35 @@ def update_stages_list_status(stages_list, computed_status, job_res=None):
                 s["evidence"] = "Failed: Process terminated unexpectedly"
     return stages_list
 
+FINISHED_CACHE = {}
+FINISHED_CACHE_MAX_AGE_SEC = 30.0
+
+
+def finished_signature():
+    """Changes when a video or its report is added, replaced or deleted."""
+    entries = []
+    for folder in (FINISHED_DIR, OUTPUT_DIR):
+        try:
+            with os.scandir(folder) as it:
+                for e in it:
+                    st = e.stat()
+                    entries.append((e.name, st.st_mtime_ns, st.st_size))
+        except OSError:
+            pass
+    return hash(tuple(sorted(entries)))
+
+
+def cached_finished_response(path):
+    hit = FINISHED_CACHE.get(path)
+    if hit and time.time() - hit["at"] < FINISHED_CACHE_MAX_AGE_SEC and hit["signature"] == finished_signature():
+        return hit["body"]
+    return None
+
+
+def store_finished_response(path, body):
+    FINISHED_CACHE[path] = {"at": time.time(), "signature": finished_signature(), "body": body}
+
+
 def clear_last_job_state():
     """
     Forgets the last finished job's error. Every page load calls this, so it must never
@@ -2032,6 +2061,13 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             return
 
         elif self.path.startswith("/api/finished"):
+            cached_body = cached_finished_response(self.path)
+            if cached_body is not None:
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(cached_body)
+                return
             finished_dir = FINISHED_DIR
             files = []
             mp4_candidates = []
@@ -2389,12 +2425,14 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
             self.end_headers()
-            self.wfile.write(json.dumps({
+            body = json.dumps({
                 "files": files,
                 "total_count": len(video_files),
                 "real_count": len(real_videos),
                 "test_count": len(test_videos)
-            }).encode())
+            }).encode()
+            store_finished_response(self.path, body)
+            self.wfile.write(body)
             return
 
         elif self.path == "/lion_logo.png":

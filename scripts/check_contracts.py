@@ -6,6 +6,7 @@ Fails CI/startup if any unknown keyword argument or mismatched parameter is used
 """
 
 import ast
+import hashlib
 import inspect
 import os
 import sys
@@ -15,6 +16,38 @@ if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
 import clip_ledger
+import lion_paths
+
+def _code_signature(target_dir):
+    entries = []
+    for folder in (target_dir, os.path.join(target_dir, "scripts")):
+        with os.scandir(folder) as it:
+            for e in it:
+                if e.name.endswith(".py"):
+                    st = e.stat()
+                    entries.append((e.path, st.st_mtime_ns, st.st_size))
+    return hashlib.sha256(repr(sorted(entries)).encode()).hexdigest()
+
+
+def check_contracts_if_code_changed(target_dir=BASE_DIR):
+    """Scanning every source file over Google Drive slows each job start. A clean result stands until the code changes."""
+    stamp = os.path.join(lion_paths.data_root(), "contract_check.ok")
+    signature = _code_signature(target_dir)
+    try:
+        with open(stamp, "r", encoding="utf-8") as f:
+            if f.read().strip() == signature:
+                return 0, []
+    except OSError:
+        pass
+    count, errors = check_all_contracts(target_dir=target_dir, verbose=False)
+    if not errors:
+        try:
+            with open(stamp, "w", encoding="utf-8") as f:
+                f.write(signature)
+        except OSError:
+            pass
+    return count, errors
+
 
 def check_all_contracts(target_dir=BASE_DIR, verbose=False):
     ledger_cls = clip_ledger.ClipLedger

@@ -2367,8 +2367,8 @@ class LionReelV97Pipeline:
             layout_source = "cli"
 
         # Requirement 1b: CI-style contract check before any job starts
-        from scripts.check_contracts import check_all_contracts
-        call_count, contract_errors = check_all_contracts(verbose=False)
+        from scripts.check_contracts import check_contracts_if_code_changed
+        call_count, contract_errors = check_contracts_if_code_changed()
         if contract_errors:
             err_msg = f"CONTRACT CHECK FAILED ({len(contract_errors)} errors): {contract_errors}"
             log(f"STARTUP: {err_msg}", "ERROR")
@@ -3566,12 +3566,12 @@ class LionReelV97Pipeline:
                         passing_candidates = passing_candidates[:target_clips_count + 6]
 
                 render_target = target_clips_count
-                log(f"Stage 6 Rendering candidates using 2 parallel workers (needed: {target_clips_count}, available queue: {len(passing_candidates)})...")
+                max_render_workers = min(4, max(2, (os.cpu_count() or 4) // 3))
+                log(f"Stage 6 Rendering candidates using {max_render_workers} parallel workers (needed: {target_clips_count}, available queue: {len(passing_candidates)})...")
 
                 cand_queue = list(passing_candidates)
                 next_cand_idx = 0
                 active_futures = {}
-                max_render_workers = 2
 
                 with concurrent.futures.ThreadPoolExecutor(max_workers=max_render_workers) as executor:
                     while next_cand_idx < len(cand_queue) and len(active_futures) < max_render_workers and len(rendered_candidates_pool) < render_target:

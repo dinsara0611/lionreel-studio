@@ -327,3 +327,53 @@ def test_enlist_allows_a_fresh_window_from_a_cooldown_source(ledger, tmp_path):
     used = dict(fresh, clip_id="x", start_s=3.0, end_s=10.5)
     assert evaluate_candidate_for_enlistment(fresh, "job", "cat", ledger, [])["usable"] is True
     assert "ALREADY_USED" in evaluate_candidate_for_enlistment(used, "job", "cat", ledger, [])["reason"]
+
+
+def test_contract_scan_skipped_until_code_changes(tmp_path, monkeypatch):
+    import scripts.check_contracts as cc
+    calls = []
+    monkeypatch.setattr(cc, "check_all_contracts", lambda **k: (calls.append(1), (5, []))[1])
+    code = tmp_path / "code"
+    (code / "scripts").mkdir(parents=True)
+    (code / "a.py").write_text("x = 1")
+    monkeypatch.setenv("LIONREEL_DATA_DIR", str(tmp_path))
+    cc.check_contracts_if_code_changed(str(code))
+    cc.check_contracts_if_code_changed(str(code))
+    assert len(calls) == 1
+    (code / "a.py").write_text("x = 22")
+    cc.check_contracts_if_code_changed(str(code))
+    assert len(calls) == 2
+
+
+def test_failed_contract_scan_is_never_remembered(tmp_path, monkeypatch):
+    import scripts.check_contracts as cc
+    calls = []
+    monkeypatch.setattr(cc, "check_all_contracts", lambda **k: (calls.append(1), (5, ["bad"]))[1])
+    code = tmp_path / "code"
+    (code / "scripts").mkdir(parents=True)
+    monkeypatch.setenv("LIONREEL_DATA_DIR", str(tmp_path))
+    assert cc.check_contracts_if_code_changed(str(code))[1] == ["bad"]
+    assert cc.check_contracts_if_code_changed(str(code))[1] == ["bad"]
+    assert len(calls) == 2
+
+
+def test_ledger_schema_setup_runs_once_per_database(tmp_path, monkeypatch):
+    import clip_ledger
+    path = str(tmp_path / "once.db")
+    calls = []
+    real = clip_ledger.ClipLedger._init_db
+    monkeypatch.setattr(clip_ledger.ClipLedger, "_init_db", lambda self: (calls.append(1), real(self))[1])
+    clip_ledger.ClipLedger(path)
+    clip_ledger.ClipLedger(path)
+    assert len(calls) == 1
+
+
+def test_finished_cache_sees_a_new_file(tmp_path, monkeypatch):
+    import web_server
+    monkeypatch.setattr(web_server, "FINISHED_DIR", str(tmp_path))
+    monkeypatch.setattr(web_server, "OUTPUT_DIR", str(tmp_path / "none"))
+    web_server.FINISHED_CACHE.clear()
+    web_server.store_finished_response("/api/finished", b"old")
+    assert web_server.cached_finished_response("/api/finished") == b"old"
+    (tmp_path / "new.mp4").write_bytes(b"x")
+    assert web_server.cached_finished_response("/api/finished") is None

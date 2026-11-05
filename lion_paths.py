@@ -13,6 +13,14 @@ import sys
 PRODUCTION_ROOT = r"C:\LionReel"
 
 
+def use_local_pycache() -> None:
+    """Keeps compiled Python on the local disk: reading it through Google Drive is very slow."""
+    prefix = local_path("pycache")
+    os.environ.setdefault("PYTHONPYCACHEPREFIX", prefix)
+    if sys.pycache_prefix is None:
+        sys.pycache_prefix = prefix
+
+
 def root() -> str:
     return os.environ.get("LIONREEL_ROOT") or PRODUCTION_ROOT
 
@@ -64,3 +72,6 @@ def ffprobe_exe():
     except Exception:
         pass
     return shutil.which("ffprobe")
+
+
+use_local_pycache()

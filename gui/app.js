@@ -6554,7 +6554,17 @@ async function renderSelfHealingBanner(data, gotClips, targetClips, isNeedsSourc
     };
 }
 
-async function checkEngineStatus() {
+let engineStatusRequest = null;
+
+// The log poller and the timer both ask for status, so they share one request
+function checkEngineStatus() {
+    if (!engineStatusRequest) {
+        engineStatusRequest = runEngineStatusCheck().finally(() => { engineStatusRequest = null; });
+    }
+    return engineStatusRequest;
+}
+
+async function runEngineStatusCheck() {
     try {
         if (state.isStarting) {
             // Protect starting card state while launch request is in flight

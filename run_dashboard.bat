@@ -1,6 +1,7 @@
 @echo off
 title LionReel Studio Dashboard
 cd /d "%~dp0"
+if "%LIONREEL_ROOT%"=="" set "PYTHONPYCACHEPREFIX=C:\LionReel\pycache"
 echo ============================================================
 echo   Starting LionReel Studio Dashboard...
 echo ============================================================

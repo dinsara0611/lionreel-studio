@@ -280,11 +280,15 @@ class DatabaseLockTimeoutError(RuntimeError):
 
 class ClipLedger:
     is_same_moment = staticmethod(is_same_moment)
+    _schema_ready = set()
 
     def __init__(self, db_path=LEDGER_DB_PATH):
         self.db_path = db_path
         os.makedirs(os.path.dirname(self.db_path), exist_ok=True)
-        self._init_db()
+        # Polling builds a ClipLedger every second; schema setup only needs to run once
+        if self.db_path not in ClipLedger._schema_ready or not os.path.exists(self.db_path):
+            self._init_db()
+            ClipLedger._schema_ready.add(self.db_path)
 
     def _get_conn(self, timeout_sec: float = 10.0, immediate: bool = False):
         t0 = time.time()
