@@ -46,7 +46,8 @@ def evaluate_candidate_for_enlistment(
     animal_type: str,
     ledger,
     selected_clips: List[Dict[str, Any]],
-    target_clips_count: int = 4
+    target_clips_count: int = 4,
+    allow_reuse: bool = False
 ) -> Dict[str, Any]:
     """
     Evaluates whether a candidate can be enlisted right now, or logs the exact reason why not.
@@ -62,10 +63,12 @@ def evaluate_candidate_for_enlistment(
     if is_rej:
         return {"usable": False, "reason": f"OVERLAPS_REJECTED_WINDOW: {rej_reason}"}
 
-    # 2. Source cooldown check
-    cooldown_sources = ledger.get_cooldown_sources(channel=animal_type, last_n_jobs=3)
-    if src_base in cooldown_sources:
-        return {"usable": False, "reason": f"SOURCE_IN_COOLDOWN: source '{src_base}' was used in recent 3 jobs"}
+    # 2. Reuse off: never a moment already in a finished video. Cooldown only orders choices,
+    # so during a shortage a fresh window from a recent source is still allowed.
+    if not allow_reuse:
+        is_used, used_reason = ledger.is_window_used_in_production(src_base, st, en, channel=animal_type, exclude_job_id=job_id)
+        if is_used:
+            return {"usable": False, "reason": f"ALREADY_USED: {used_reason}"}
 
     # 3. 50% max clips per source
     max_per_source = max(1, target_clips_count // 2)

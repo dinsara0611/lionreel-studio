@@ -315,7 +315,7 @@ def calculate_unified_verdict(
     # Sort attention items by severity (Errors first, then Not-Run, then Warnings)
     # Deduplicate and cap to max 5 items
     unique_att: List[str] = []
-    for item in attention_items:
+    for item in critical_errors + not_run_gates + attention_items:
         if item not in unique_att:
             unique_att.append(item)
 

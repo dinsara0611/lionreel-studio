@@ -564,6 +564,41 @@ def run_harvest_loop(animal_mode: str = "cat", target_to_add: int = 15):
         except Exception:
             pass
 
+def recheck_sharpness_rejects(ledger, detector, animal_mode, target_needed, t0, max_seconds, _log) -> int:
+    """
+    Re-measures windows rejected as LOW_SHARPNESS by the old full-size reading, from sources
+    with a verified licence only. Nothing is downloaded. Returns windows newly verified.
+    """
+    from canonical_window import measure_window_sharpness
+    with ledger._get_conn() as conn:
+        rows = [dict(r) for r in conn.execute(
+            "SELECT clip_id, source_url_or_path, start_s, end_s FROM clips "
+            "WHERE animal_type = ? AND rejection_reason LIKE 'LOW_SHARPNESS%' AND (gate_version IS NULL OR gate_version != 'canonical_sharpness_v2')",
+            (animal_mode,)).fetchall()]
+    verified = 0
+    for r in rows:
+        if verified >= target_needed or time.time() - t0 > max_seconds:
+            break
+        path = r["source_url_or_path"]
+        if not os.path.exists(path) or source_licenses.status_of(path) != source_licenses.VERIFIED:
+            continue
+        start_s, end_s = float(r["start_s"]), float(r["end_s"])
+        sharp = measure_window_sharpness(path, start_s, end_s - start_s)
+        new_reason, is_ok = f"LOW_SHARPNESS ({sharp:.1f} < 150.0)", False
+        if sharp >= 150.0:
+            pet_ratio = fast_analyze_source_segment(path, start_s, end_s - start_s, animal_mode, detector=detector).get("pet_ratio", 0.0)
+            is_ok = pet_ratio >= 0.80
+            new_reason = None if is_ok else f"LOW_PET_PRESENCE ({pet_ratio*100:.0f}% < 80%)"
+        with ledger._get_conn() as conn:
+            conn.execute("UPDATE clips SET rejection_reason = ?, is_verified = ?, status = ?, sharpness = ?, gate_version = 'canonical_sharpness_v2' WHERE clip_id = ?",
+                         (new_reason, 1 if is_ok else 0, "verified" if is_ok else "rejected", sharp, r["clip_id"]))
+            conn.commit()
+        if is_ok:
+            verified += 1
+            _log(f"Window {r['clip_id']} VERIFIED on recheck (Sharpness: {sharp:.1f})")
+    return verified
+
+
 def run_real_harvest_sync(
     animal_mode: str = "cat",
     target_needed: int = 4,
@@ -587,7 +622,8 @@ def run_real_harvest_sync(
         if logger:
             try: logger(msg)
             except Exception: pass
-        print(f"[HARVEST-SYNC] {msg}", flush=True)
+        else:
+            print(f"[HARVEST-SYNC] {msg}", flush=True)
 
     # Cat video queries per type
     CAT_QUERIES = {
@@ -648,10 +684,18 @@ def run_real_harvest_sync(
         ffmpeg_dir = None
 
     from clip_ledger import ClipLedger, compute_window_5_phashes
-    from canonical_window import get_canonical_window
+    from canonical_window import get_canonical_window, measure_window_sharpness
     ledger = ClipLedger()
     detector = PetDetector()
     wm_detector = WatermarkDetector()
+
+    # Windows wrongly rejected by the old sharpness reading are the cheapest footage there is
+    windows_rechecked = recheck_sharpness_rejects(ledger, detector, animal_mode, target_needed, t0, max_seconds, _log)
+    if windows_rechecked >= target_needed:
+        _log(f"Recheck recovered {windows_rechecked} windows, no download needed.")
+        return {"success": True, "queries_run": 0, "videos_found": 0, "windows_cut": 0, "windows_verified": windows_rechecked,
+                "windows_rechecked": windows_rechecked, "rejects_by_reason": {}, "time_taken_s": round(time.time() - t0, 3), "sources_downloaded": []}
+    target_needed -= windows_rechecked
 
     if max_downloads is None:
         # A source yields a handful of windows at best, so scale downloads to the shortfall
@@ -804,15 +848,8 @@ def run_real_harvest_sync(
                     windows_cut += 1
                     cid = c_win["clip_id"]
 
-                    # 1. Fast screen standard sharpness at native resolution first (5ms)
-                    cap_w = cv2.VideoCapture(target_video)
-                    cap_w.set(cv2.CAP_PROP_POS_FRAMES, int((c_win["start_s"] + 3.75) * fps))
-                    ret_w, frame_w = cap_w.read()
-                    cap_w.release()
-                    native_sharpness = 0.0
-                    if ret_w and frame_w is not None:
-                        gray_w = cv2.cvtColor(frame_w, cv2.COLOR_BGR2GRAY)
-                        native_sharpness = float(cv2.Laplacian(gray_w, cv2.CV_64F).var())
+                    # 1. Sharpness on the canonical scale, the measure the render gate and QA use
+                    native_sharpness = measure_window_sharpness(target_video, c_win["start_s"], c_win["duration"])
 
                     # Quality floor 150 on the standard scale
                     if native_sharpness < 150.0:

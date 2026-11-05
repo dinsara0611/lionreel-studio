@@ -1139,7 +1139,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                     possible_length_s=round(c_ready * float(active_job_cfg.get("clip_time") or 7.5), 1),
                     reuse_share_pct=float(planner_info.get("repeat_share_pct") or 25.0)
                 ),
-                "shortageSentence": f"{c_ready} of {c_needed} clips ready, {max(0, c_needed - c_ready)} missing. Harvest found {wait_checkpoint.get('verified_count', 0) if wait_checkpoint else 0} new windows in {round(waiting_s / 60.0, 1) if waiting_s else 0} min.",
+                "shortageSentence": f"{c_ready} of {c_needed} clips ready, {max(0, c_needed - c_ready)} missing.",
                 "generatedFile": job_res.get("output_file") if (job_res and job_res.get("success")) else None,
                 "sha256": job_res.get("sha256") if (job_res and job_res.get("success")) else None,
                 "clipList": job_res.get("clip_list") if (job_res and job_res.get("success")) else [],

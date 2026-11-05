@@ -220,3 +220,26 @@ def detect_active_content_box(frames: list, orig_w: int, orig_h: int) -> Tuple[i
     act_h = (act_h // 2) * 2
     return act_x, act_y, act_w, act_h
 
+
+def measure_window_sharpness(video_path: str, start_s: float, dur_s: float, samples: int = 6) -> float:
+    """
+    Median canonical sharpness of a window, on the same 9:16 crop Stage A uses.
+    Measured against real renders this tracks the rendered score (correlation 1.0 on 10 windows);
+    the old single full-size frame reading rejected 9 of 10 windows that rendered well above 150.
+    """
+    import cv2
+    import statistics
+    cap = cv2.VideoCapture(video_path)
+    fps = cap.get(cv2.CAP_PROP_FPS) or 30.0
+    scores = []
+    for i in range(samples):
+        cap.set(cv2.CAP_PROP_POS_FRAMES, int((start_s + dur_s * (i + 0.5) / samples) * fps))
+        ok, frame = cap.read()
+        if not ok or frame is None:
+            continue
+        h, w = frame.shape[:2]
+        crop_w = min(w, int(h * 9 / 16))
+        x = (w - crop_w) // 2
+        scores.append(measure_canonical_sharpness(frame[:, x:x + crop_w]))
+    cap.release()
+    return float(statistics.median(scores)) if scores else 0.0

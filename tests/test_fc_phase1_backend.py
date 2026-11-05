@@ -268,3 +268,62 @@ def test_cleanup_never_offers_the_only_copy_of_a_master(tmp_path):
     assert mgr._holds_only_copy_of_master(str(local / "work" / "lionreel_cat_saved")) is False
     listed = [f["path"] for g in mgr.scan_candidates()["groups"] for f in g["files"]]
     assert not any("lionreel_cat_only" in p for p in listed)
+
+
+def test_harvest_sharpness_uses_the_canonical_measure(tmp_path):
+    """The old full-size reading rejected 9 of 10 windows that rendered above 150."""
+    src = open(os.path.join(BASE, "harvest_worker.py"), encoding="utf8").read()
+    assert "cv2.Laplacian" not in src.split("def run_real_harvest_sync")[1]
+    assert "measure_window_sharpness" in src
+
+
+def test_measure_window_sharpness_matches_canonical_on_a_crop(tmp_path):
+    import cv2
+    import numpy as np
+    from canonical_window import measure_window_sharpness, measure_canonical_sharpness
+    path = str(tmp_path / "w.mp4")
+    rng = np.random.default_rng(3)
+    frame = (rng.random((1080, 1920, 3)) * 255).astype(np.uint8)
+    out = cv2.VideoWriter(path, cv2.VideoWriter_fourcc(*"mp4v"), 30, (1920, 1080))
+    for _ in range(60):
+        out.write(frame)
+    out.release()
+    score = measure_window_sharpness(path, 0.0, 2.0)
+    assert score > 150 and abs(score - measure_canonical_sharpness(frame[:, 656:1263])) / score < 0.5
+
+
+def test_short_video_is_never_built_with_allow_shorter_off():
+    src = open(os.path.join(BASE, "lion_automate_v97.py"), encoding="utf8").read()
+    assert "Graceful fallback" not in src
+
+
+def test_qa_target_comes_from_stored_config(tmp_path):
+    import json
+    import qa_check
+    (tmp_path / "job_config.json").write_text(json.dumps({"mode": "short", "target_seconds": 30.0, "clip_count": 4}))
+    assert qa_check.load_job_config(str(tmp_path / "x.mp4"), str(tmp_path))["target_seconds"] == 30.0
+    source = open(os.path.join(BASE, "qa_check.py"), encoding="utf8").read()
+    assert 'target_dur = jcfg["target_seconds"]' in source
+
+
+def test_failure_message_leads_with_the_real_cause():
+    import verdict
+    gates = {g: True for g in verdict.REQUIRED_GATES}
+    gates["gate_1c_clip_count"] = False
+    clips = [{"uploader": "A", "license_status": "no licence shown", "clip_id": "c", "source_id": "s", "start_s": 0, "duration": 7}]
+    v = verdict.calculate_unified_verdict({"gates": gates}, clips, {})
+    assert "Clip Count" in v["attention_items"][0] and "icence" not in v["critical_errors"][0]
+
+
+def test_enlist_allows_a_fresh_window_from_a_cooldown_source(ledger, tmp_path):
+    from bank_enlist import evaluate_candidate_for_enlistment
+    src = _source(tmp_path)
+    _add(ledger, "fresh", src, 200)
+    with ledger._get_conn() as conn:
+        conn.execute("INSERT INTO finished_video_windows (job_id, video_index, source_id, source_url_or_path, start_s, end_s, is_production, channel, clip_id) "
+                     "VALUES ('oldjob', 1, 'cache_AAAAAAAAAAA', ?, 2.0, 9.5, 1, 'cat', 'older')", (src,))
+        conn.commit()
+    fresh = {"clip_id": "fresh", "source_id": "cache_AAAAAAAAAAA", "source_url_or_path": src, "start_s": 200.0, "end_s": 207.5}
+    used = dict(fresh, clip_id="x", start_s=3.0, end_s=10.5)
+    assert evaluate_candidate_for_enlistment(fresh, "job", "cat", ledger, [])["usable"] is True
+    assert "ALREADY_USED" in evaluate_candidate_for_enlistment(used, "job", "cat", ledger, [])["reason"]

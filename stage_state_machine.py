@@ -113,7 +113,7 @@ STAGE_DEFINITIONS = [
     {
         "id": 9,
         "key": "final_render_qa",
-        "label": "Final MP4 assembly & 10-gate QA validation",
+        "label": "Final MP4 assembly & QA validation",
         "prerequisites": [8],
         "input_artifact": "audio_mastered.json",
         "output_artifact": "qa_validated.json",

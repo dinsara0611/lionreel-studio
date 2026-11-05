@@ -1453,6 +1453,12 @@ def run_full_qa(video_path, report_path=None, contact_sheet_path=None, layout_mo
             if not target_dur and (jcfg.get("clip_count") or jcfg.get("clips")) and jcfg.get("clip_time"):
                 target_dur = float(jcfg.get("clip_count") or jcfg.get("clips")) * float(jcfg["clip_time"])
         expected_clips = jcfg.get("clip_count") or jcfg.get("clips")
+        if jcfg.get("allow_shorter") and jcfg.get("delivered_clip_count"):
+            expected_clips = jcfg["delivered_clip_count"]
+            target_dur = jcfg["delivered_seconds"]
+        elif jcfg.get("target_seconds"):
+            # The contract is the stored config, whatever the caller last computed
+            target_dur = jcfg["target_seconds"]
     if clip_mapping is None and work_job_dir and os.path.exists(os.path.join(work_job_dir, "clips_rendered.json")):
         try:
             with open(os.path.join(work_job_dir, "clips_rendered.json"), "r", encoding="utf-8") as f_map:

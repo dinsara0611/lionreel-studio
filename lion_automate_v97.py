@@ -78,6 +78,20 @@ CONFIG_FILE = os.path.join(BASE_DIR, "config.json")
 BENCHMARK_CONFIG = os.path.join(BASE_DIR, "config", "benchmark.json")
 BLOCKED_SOURCES_FILE = os.path.join(BASE_DIR, "config", "blocked_sources.json")
 
+def record_shorter_delivery(work_job_dir: str, clips: int, clip_sec: float) -> None:
+    """Allow shorter is on and footage ran out: QA checks against what the user agreed to."""
+    cfg_path = os.path.join(work_job_dir, "job_config.json")
+    try:
+        with open(cfg_path, "r", encoding="utf-8") as f:
+            cfg = json.load(f)
+        cfg["delivered_clip_count"] = clips
+        cfg["delivered_seconds"] = round(clips * clip_sec, 2)
+        with open(cfg_path, "w", encoding="utf-8") as f:
+            json.dump(cfg, f, indent=2)
+    except (OSError, ValueError) as e:
+        log(f"Could not record shorter delivery: {e}", "WARN")
+
+
 def write_concat_list(list_path: str, clip_paths: list, fps: int = 30) -> None:
     """
     Concat list with each clip's exact frame duration, so joins cannot drift.
@@ -2504,9 +2518,10 @@ class LionReelV97Pipeline:
                 deficit = target_clips_count - usable_count
                 log(f"Bank deficit detected ({usable_count} usable < {target_clips_count} needed). Running real harvest for {deficit} clips...", "INFO")
                 from harvest_worker import run_real_harvest_sync
+                # Some windows fail at render, so one clip short needs more than one window found
                 h_res = run_real_harvest_sync(
                     animal_mode=animal_mode,
-                    target_needed=deficit,
+                    target_needed=deficit * 3 + 2,
                     cat_video_type=video_cat_type,
                     dry_run=False,
                     logger=log
@@ -3700,6 +3715,8 @@ class LionReelV97Pipeline:
                             video_cat_type=video_cat_type
                         )
                     if len(rendered_candidates_pool) < target_clips_count and allow_shorter and len(rendered_candidates_pool) >= 2:
+                        record_shorter_delivery(work_job_dir, len(rendered_candidates_pool), target_clip_sec)
+                    if len(rendered_candidates_pool) < target_clips_count and allow_shorter and len(rendered_candidates_pool) >= 2:
                         target_clips_count = len(rendered_candidates_pool)
                         if contract_target_sec:
                             contract_target_sec = round(target_clips_count * target_clip_sec, 2)
@@ -3712,6 +3729,16 @@ class LionReelV97Pipeline:
                         wait_state["last_verified_count"] = baseline_ready
                         log(f"  [SELF-HEALING] Stage 6 shortage: Entering waiting work loop (job: {job_id}, baseline_ready: {baseline_ready}, budget: {wait_state.get('wait_budget_sec', patience_budget):.0f}s)...", "INFO")
                         
+                        # Search now instead of idling: nothing else adds footage during the wait
+                        if not is_test_job:
+                            try:
+                                from harvest_worker import run_real_harvest_sync
+                                still_needed = max(1, target_clips_count - len(rendered_candidates_pool))
+                                run_real_harvest_sync(animal_mode=animal_mode, target_needed=still_needed * 3 + 2, cat_video_type=video_cat_type,
+                                                      dry_run=False, max_seconds=patience_budget, logger=log)
+                            except Exception as e_wait_h:
+                                log(f"Harvest during wait failed: {e_wait_h}", "WARN")
+
                         # TASK 3: Waiting time is its own row in timings.json, never counted as reframe
                         timer.stop_stage("reframe")
                         timer.start_stage("waiting_for_footage")
@@ -3741,6 +3768,7 @@ class LionReelV97Pipeline:
                                     log(f"  [USER ACTION] User selected 'Keep searching'. Budget extended by 10m (new: {wait_state['wait_budget_sec']:.0f}s).", "INFO")
 
                             if allow_shorter and len(rendered_candidates_pool) >= 2:
+                                record_shorter_delivery(work_job_dir, len(rendered_candidates_pool), target_clip_sec)
                                 target_clips_count = len(rendered_candidates_pool)
                                 break
 
@@ -3791,6 +3819,7 @@ class LionReelV97Pipeline:
                                         if len(rendered_candidates_pool) >= target_clips_count:
                                             break
                                         eval_res = evaluate_candidate_for_enlistment(
+                                            allow_reuse=allow_reuse,
                                             cand=cand,
                                             job_id=job_id,
                                             animal_type=animal_mode,
@@ -3853,13 +3882,8 @@ class LionReelV97Pipeline:
                                     target_clips_count = len(rendered_candidates_pool)
                                     break
                                 elif allow_shorter and len(rendered_candidates_pool) >= 2:
+                                    record_shorter_delivery(work_job_dir, len(rendered_candidates_pool), target_clip_sec)
                                     log(f"  [PATIENCE EXCEEDED] Shortage wait limit reached: assembling video with {len(rendered_candidates_pool)} available clips (allow_shorter=True).", "INFO")
-                                    target_clips_count = len(rendered_candidates_pool)
-                                    if contract_target_sec:
-                                        contract_target_sec = round(target_clips_count * target_clip_sec, 2)
-                                    break
-                                elif len(rendered_candidates_pool) >= 2:
-                                    log(f"  [PATIENCE EXCEEDED] Graceful fallback: assembling video with {len(rendered_candidates_pool)} ready clips to avoid failure.", "WARN")
                                     target_clips_count = len(rendered_candidates_pool)
                                     if contract_target_sec:
                                         contract_target_sec = round(target_clips_count * target_clip_sec, 2)
@@ -3932,12 +3956,9 @@ class LionReelV97Pipeline:
                         )
                         target_clips_count = len(rendered_candidates_pool)
                     if len(rendered_candidates_pool) < target_clips_count and allow_shorter and len(rendered_candidates_pool) >= 2:
+                        record_shorter_delivery(work_job_dir, len(rendered_candidates_pool), target_clip_sec)
+                    if len(rendered_candidates_pool) < target_clips_count and allow_shorter and len(rendered_candidates_pool) >= 2:
                         log(f"  [AUTOPILOT ESCALATION] Fulfilling video with {len(rendered_candidates_pool)} valid clips (target was {target_clips_count}, allow_shorter=True).", "INFO")
-                        target_clips_count = len(rendered_candidates_pool)
-                        if contract_target_sec:
-                            contract_target_sec = round(target_clips_count * target_clip_sec, 2)
-                    elif len(rendered_candidates_pool) >= 2:
-                        log(f"  [AUTOPILOT ESCALATION] Graceful fallback: fulfilling video with {len(rendered_candidates_pool)} valid clips (target was {target_clips_count}).", "INFO")
                         target_clips_count = len(rendered_candidates_pool)
                         if contract_target_sec:
                             contract_target_sec = round(target_clips_count * target_clip_sec, 2)
@@ -4091,7 +4112,7 @@ class LionReelV97Pipeline:
                 "credits_data": credits_data,
                 "candidate_reports": candidate_reports
             }
-            ev_s6 = f"Rendered {len(processed_clip_paths)} vertical clips (CRF 12, {layout_mode}), 100% post-crop gate pass"
+            ev_s6 = f"Rendered {len(processed_clip_paths)} clips at {out_w}x{out_h} (CRF 12, {layout_mode}), each passed the post-crop gate"
             timer.stop_stage("reframe")
             sm.complete_stage(6, evidence=ev_s6, proof_data=proof_s6)
 
@@ -4311,7 +4332,7 @@ class LionReelV97Pipeline:
             # MP4 compilation with cas=0.6 sharpen, duration check, & 10-gate QA.
             # =========================================================================
             sm.start_stage(9)
-            self.update_pipeline_progress(job_id, 9, "Final MP4 assembly & 10-gate QA validation", 90, candidate_reports=candidate_reports)
+            self.update_pipeline_progress(job_id, 9, "Final MP4 assembly & QA validation", 90, candidate_reports=candidate_reports)
 
             with open(os.path.join(work_job_dir, "stages", "audio_mastered.json"), "r", encoding="utf-8") as f_art8:
                 s8_data = json.load(f_art8)
@@ -4544,13 +4565,14 @@ class LionReelV97Pipeline:
                 str(verified_cfg.get("BYPASS_QUALITY_GATE", "")).lower() in ("true", "1")
             )
             if not qa_passed and not bypass_qa:
-                err_msg = f"QA verdict {qa_report.get('verdict')}: " + "; ".join((qa_report.get("unified_verdict") or {}).get("attention_items", [])[:3])
+                unified_v = qa_report.get("unified_verdict") or {}
+                err_msg = f"QA verdict {qa_report.get('verdict')}: " + "; ".join((unified_v.get("critical_errors") or unified_v.get("not_run_gates") or [])[:3])
                 sm.fail_stage(9, err_msg, code="QA_FAILED")
                 self.ledger.release_reservation(job_id)
                 self.update_pipeline_progress(
-                    job_id, 9, "Final MP4 assembly & 10-gate QA validation", 90,
+                    job_id, 9, "Final MP4 assembly & QA validation", 90,
                     candidate_reports=candidate_reports, error=err_msg,
-                    failed_stage="Final MP4 assembly & 10-gate QA validation"
+                    failed_stage="Final MP4 assembly & QA validation"
                 )
                 return None
             elif not qa_passed and bypass_qa:

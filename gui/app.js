@@ -2886,7 +2886,7 @@ const DEFAULT_STAGE_DEFINITIONS = [
     { id: 6, key: "reframe_render_clips", label: "Reframe & render clip cuts", weight: 12 },
     { id: 7, key: "color_grading", label: "Auto color grading & contrast optimization", weight: 12 },
     { id: 8, key: "captions_and_audio", label: "Burn safe-zone captions & master audio ducking", weight: 8 },
-    { id: 9, key: "final_render_qa", label: "Final MP4 assembly & 10-gate QA validation", weight: 10 },
+    { id: 9, key: "final_render_qa", label: "Final MP4 assembly & QA validation", weight: 10 },
     { id: 10, key: "save_credits_export", label: "Save job artifacts, ledger commit & export", weight: 4 }
 ];
 let BACKEND_STAGES = [...DEFAULT_STAGE_DEFINITIONS];
@@ -3271,7 +3271,7 @@ function setRenderCardState(cardState, payload = {}) {
 
     } else if (cardState === "completed") {
         if (headline) headline.innerHTML = `<svg class="icon icon-md" style="color: var(--state-success, #10b981); vertical-align: -3px; margin-right: 8px;" aria-hidden="true"><use href="#icon-check-circle"></use></svg>All Pipeline Stages Complete!`;
-        if (subtitle) subtitle.innerText = payload.subtitle || "Master exported to finished/ • Video passed 10-gate QA validation.";
+        if (subtitle) subtitle.innerText = payload.subtitle || "Master exported to finished/ • Video passed QA validation.";
         if (pctEl) pctEl.innerText = "100%";
         if (fillEl) {
             fillEl.style.width = "100%";
@@ -5684,7 +5684,9 @@ function appendSequentialLogs(lines, jobId) {
             .replace(/^[\u26A0\uFE0F\u26A0]\s*/, "[WARN] "); // NO_EMOJI: warn symbol
 
         // Strict deduplication strictly by (job_id, seq) without dropping unseen or repeated text lines (Section 5)
-        const seqKey = `${activeJobId}:${seq}`;
+        // The job id can arrive on a later poll, so it must not be part of the key: the seen set
+        // is already cleared when the job changes
+        const seqKey = String(seq);
         if (state.seenLogKeys.has(seqKey)) {
             continue;
         }
@@ -6852,7 +6854,7 @@ async function checkEngineStatus() {
                 const isLongJob = (data.mode === "long" || data.mode === "both" || (data.config && (data.config.MODE === "long" || data.config.MODE === "both")));
                 setRenderCardState("completed", {
                     isLongJob,
-                    subtitle: data.jobResult && data.jobResult.output_file ? `Saved ${data.jobResult.output_file} • Passed 10-gate QA validation.` : "Master exported to finished/ • Video passed 10-gate QA validation."
+                    subtitle: data.jobResult && data.jobResult.output_file ? `Saved ${data.jobResult.output_file} • Passed QA validation.` : "Master exported to finished/ • Video passed QA validation."
                 });
 
                 const editBtn = document.getElementById("btn-render-edit-video");
@@ -6982,7 +6984,7 @@ async function checkEngineStatus() {
 
                 const subtitle = document.getElementById("render-subtitle");
                 if (subtitle) {
-                    subtitle.innerText = `${reasonCode}: ${errMsg}`;
+                    subtitle.innerText = (reasonCode && reasonCode !== "NONE") ? `${reasonCode}: ${errMsg}` : errMsg;
                 }
 
                 const heroCard = document.getElementById("render-hero-card");
@@ -7163,6 +7165,9 @@ async function checkEngineStatus() {
                             const cTime = (data.jobConfig && data.jobConfig.clip_time) ? data.jobConfig.clip_time : 7.5;
                             const newLen = Math.round(cReady * cTime);
                             lblChoiceShorten.innerText = `Make a shorter video (${newLen}s with ${cReady} clips)`;
+                            // A Short cannot go under 30 s, so this choice would not be real
+                            const isShortJob = data.jobConfig && (data.jobConfig.type === "short" || data.jobConfig.mode === "short");
+                            if (btnChoiceShorten) btnChoiceShorten.style.display = (isShortJob && newLen < 30) || cReady < 2 ? "none" : "";
                         }
                         if (btnChoiceShorten) {
                             btnChoiceShorten.onclick = async () => {
