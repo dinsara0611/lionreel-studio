@@ -816,6 +816,10 @@ function navigateToStep(stepNum, optTargetFile = null) {
         }
     }
 
+    // The Library has its own New compilation button, so the header's stays out of the way there
+    const headerNewBtn = document.getElementById("btn-header-new");
+    if (headerNewBtn) headerNewBtn.style.display = stepNum === 1 ? "none" : "";
+
     // View visibility mapping
     const viewMap = {
         1: "view-dashboard",
@@ -12492,6 +12496,24 @@ function formatCleanupBytes(bytes) {
     return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
 }
 
+function syncSafeCleanupSelectAll() {
+    const selectAll = document.getElementById("cleanup-select-all");
+    const listEl = document.getElementById("cleanup-groups-list");
+    if (!selectAll || !listEl) return;
+    const enabled = [...listEl.querySelectorAll(".cleanup-group-checkbox:not(:disabled)")];
+    const checked = enabled.filter(cb => cb.checked).length;
+    selectAll.disabled = enabled.length === 0;
+    selectAll.checked = enabled.length > 0 && checked === enabled.length;
+    selectAll.indeterminate = checked > 0 && checked < enabled.length;
+    if (!selectAll.dataset.bound) {
+        selectAll.dataset.bound = "true";
+        selectAll.addEventListener("change", () => {
+            listEl.querySelectorAll(".cleanup-group-checkbox:not(:disabled)").forEach(cb => { cb.checked = selectAll.checked; });
+            updateSafeCleanupSelectionSummary();
+        });
+    }
+}
+
 function updateSafeCleanupSelectionSummary() {
     const listEl = document.getElementById("cleanup-groups-list");
     const summaryEl = document.getElementById("cleanup-selected-summary");
@@ -12509,6 +12531,7 @@ function updateSafeCleanupSelectionSummary() {
         }
     });
 
+    syncSafeCleanupSelectAll();
     const sizeStr = formatCleanupBytes(selectedBytes);
     if (summaryEl) {
         summaryEl.textContent = `${selectedFiles} file${selectedFiles === 1 ? "" : "s"} (${sizeStr}) selected`;

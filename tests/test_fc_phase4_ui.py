@@ -78,6 +78,8 @@ def test_one_new_compilation_button(page):
     for step in (1, 2, 4, 5):
         page.evaluate("n => navigateToStep(n)", step)
         page.wait_for_timeout(200)
+        if step == 1:
+            assert _shown(page, "hero-btn-new") and page.evaluate("() => document.getElementById('hero-btn-new').offsetParent !== null")
         count = page.evaluate("""() => [...document.querySelectorAll('button')].filter(b =>
             b.offsetParent !== null && /new compilation/i.test(b.innerText || '')).length""")
         assert count == 1, f"step {step}: {count}"
@@ -158,3 +160,24 @@ def test_new_compilation_button_stays_inside_the_header(page):
 
 def test_no_css_uppercase_labels():
     assert "text-transform: uppercase" not in read("style.css")
+
+
+def test_cleanup_select_all(page):
+    page.set_viewport_size({"width": 1440, "height": 900})
+    page.evaluate("""() => {
+        document.getElementById('modal-safe-cleanup').style.display = 'flex';
+        _safeCleanupPreviewData = {groups: []};
+        document.getElementById('cleanup-groups-list').innerHTML = `
+          <input type=checkbox class=cleanup-group-checkbox data-count=2 data-bytes=10 checked>
+          <input type=checkbox class=cleanup-group-checkbox data-count=3 data-bytes=20>
+          <input type=checkbox class=cleanup-group-checkbox data-count=0 data-bytes=0 disabled>`;
+        updateSafeCleanupSelectionSummary();
+    }""")
+    state = "() => [...document.querySelectorAll('.cleanup-group-checkbox')].map(c => c.checked)"
+    assert page.evaluate("() => document.getElementById('cleanup-select-all').indeterminate")
+    page.check("#cleanup-select-all")
+    assert page.evaluate(state) == [True, True, False]
+    assert "5 file" in page.inner_text("#cleanup-selected-summary")
+    page.uncheck("#cleanup-select-all")
+    assert page.evaluate(state) == [False, False, False]
+    page.evaluate("() => { document.getElementById('modal-safe-cleanup').style.display = 'none'; }")

@@ -253,3 +253,18 @@ def test_render_rejection_blocks_the_moment_under_any_clip_id(ledger, tmp_path):
     windows = ledger.get_ledger_counts("cat", include_windows=True)["windows"]
     assert "c_cat_cache_AAAAAAAAAAA_29_36" in {w["clip_id"] for w in windows["rejected"]}
     assert "c_cache_AAAAAAAAAAA_100" in {w["clip_id"] for w in windows["usable_now"]}
+
+
+def test_cleanup_never_offers_the_only_copy_of_a_master(tmp_path):
+    from safe_cleanup import SafeCleanupManager
+    base, local = tmp_path / "proj", tmp_path / "local"
+    for d in (base / "finished", base / "output", local / "work" / "lionreel_cat_only", local / "work" / "lionreel_cat_saved"):
+        d.mkdir(parents=True)
+    (local / "work" / "lionreel_cat_only" / "lionreel_cat_only.mp4").write_bytes(b"x" * 4096)
+    (local / "work" / "lionreel_cat_saved" / "lionreel_cat_saved.mp4").write_bytes(b"x" * 4096)
+    (base / "finished" / "lionreel_cat_saved.mp4").write_bytes(b"x" * 4096)
+    mgr = SafeCleanupManager(base_dir=str(base), local_data_dir=str(local))
+    assert mgr._holds_only_copy_of_master(str(local / "work" / "lionreel_cat_only")) is True
+    assert mgr._holds_only_copy_of_master(str(local / "work" / "lionreel_cat_saved")) is False
+    listed = [f["path"] for g in mgr.scan_candidates()["groups"] for f in g["files"]]
+    assert not any("lionreel_cat_only" in p for p in listed)

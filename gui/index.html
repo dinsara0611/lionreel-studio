@@ -366,6 +366,10 @@
                         </p>
                         <div class="hero-actions-row">
                             <div class="hero-primary-actions">
+                                <button id="hero-btn-new" class="btn btn-primary btn-md">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                                    <span>New compilation</span>
+                                </button>
                                 <button id="hero-btn-sample" class="btn btn-secondary btn-md">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                                     <span>Use sample project</span>
@@ -3472,6 +3476,10 @@
 
                 <div id="cleanup-drive-notice" style="display: none; padding: 8px 12px; border-radius: 6px; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); font-size: 0.875rem; color: var(--text-primary);"></div>
 
+                <label class="cleanup-select-all-row" for="cleanup-select-all">
+                    <input type="checkbox" id="cleanup-select-all" class="themed-checkbox">
+                    <span>Select all</span>
+                </label>
                 <div id="cleanup-groups-list" style="display: flex; flex-direction: column; gap: 8px;">
                     <!-- Populated dynamically from /api/cleanup/preview -->
                 </div>

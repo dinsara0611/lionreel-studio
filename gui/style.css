@@ -6526,7 +6526,6 @@ body.light-mode #icon-theme-moon {
     font-size: 0.875rem !important;
     font-weight: 600 !important;
     color: var(--text-muted) !important;
-    text-transform: uppercase !important;
     letter-spacing: 0.05em !important;
 }
 
@@ -9655,4 +9654,15 @@ html[data-theme="light"] .badge-warning,
 html[data-theme="light"] .chip-warning,
 html[data-theme="light"] .chip-warning span {
     color: #7c4203 !important;
+}
+
+.cleanup-select-all-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 0 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
 }

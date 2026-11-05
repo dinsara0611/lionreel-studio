@@ -34,6 +34,7 @@ import hashlib
 import json
 import os
 import lion_paths
+import source_licenses
 import re
 import shutil
 import sqlite3
@@ -688,6 +689,22 @@ class SafeCleanupManager:
             except Exception:
                 pass
 
+    def _holds_only_copy_of_master(self, path: str) -> bool:
+        """True if this work file or folder holds a finished master found nowhere else."""
+        if os.path.isdir(path):
+            names = [f for _, _, files in os.walk(path) for f in files]
+        else:
+            names = [os.path.basename(path)]
+        for name in names:
+            stem, ext = os.path.splitext(name)
+            if ext.lower() != ".mp4" or is_test_identifier(stem):
+                continue
+            if not re.match(r"(lionreel_|job_)", name, re.I) or re.search(r"master_audio|assembled|_c\d\d|_cap|last_extended", name):
+                continue
+            if not (os.path.exists(os.path.join(self.finished_dir, name)) or os.path.exists(os.path.join(self.output_dir, stem, name))):
+                return True
+        return False
+
     def is_protected(self, path: str) -> bool:
         """
         Return True if `path` (file or folder) is protected and must NEVER be offered for deletion.
@@ -739,6 +756,10 @@ class SafeCleanupManager:
             if not os.path.exists(abs_p):
                 return
             if self.is_protected(abs_p):
+                return
+            if group_id == "temp_work_folders" and self._holds_only_copy_of_master(abs_p):
+                return
+            if group_id == "rejected_unreferenced_cache" and source_licenses.status_of(abs_p) == source_licenses.VERIFIED:
                 return
             try:
                 if os.path.isdir(abs_p):
