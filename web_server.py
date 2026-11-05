@@ -2325,6 +2325,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                     "repeat_share_pct": rep_pct,
                     "repeat_share_str": rep_str,
                     "verdict": qa_verdict,
+                    "attention_items": (qa_data.get("unified_verdict") or {}).get("attention_items", []) if qa_data else [],
                     "overall_passed": overall_passed,
                     "quality_score": quality_score,
                     "gates": gates_dict

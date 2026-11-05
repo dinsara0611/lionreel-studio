@@ -1247,7 +1247,6 @@ html.light-mode ::-webkit-scrollbar-thumb {
     font-size: 0.875rem;
     font-weight: 700;
     letter-spacing: 0.04em;
-    text-transform: uppercase;
     width: fit-content;
 }
 
@@ -2060,7 +2059,6 @@ html.light-mode ::-webkit-scrollbar-thumb {
     font-size: 0.875rem;
     font-weight: 700;
     color: var(--primary-emerald);
-    text-transform: uppercase;
     letter-spacing: 0.08em;
 }
 
@@ -3023,7 +3021,6 @@ html.light-mode ::-webkit-scrollbar-thumb {
 .inspector-section-title {
     font-size: 0.875rem;
     font-weight: 700;
-    text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--text-muted);
 }
@@ -3268,7 +3265,6 @@ body.light-mode .render-pct-large {
     gap: 6px;
     font-size: 0.875rem;
     font-weight: 700;
-    text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--text-muted);
 }
@@ -4060,7 +4056,6 @@ body.light-mode .render-config-strip {
     font-size: 0.875rem;
     font-weight: 700;
     color: var(--primary-emerald);
-    text-transform: uppercase;
     letter-spacing: 0.04em;
     white-space: nowrap;
 }
@@ -4131,7 +4126,6 @@ body.light-mode .render-config-strip {
     font-size: 0.875rem;
     font-weight: 700;
     color: var(--text-muted);
-    text-transform: uppercase;
     letter-spacing: 0.04em;
     white-space: nowrap;
 }
@@ -4639,7 +4633,6 @@ body.light-mode #icon-theme-moon {
     color: var(--primary-emerald);
     vertical-align: middle;
     margin-right: 6px;
-    text-transform: uppercase;
 }
 
 .live-clock-badge.paused {
@@ -4785,7 +4778,6 @@ body.light-mode #icon-theme-moon {
 .pool-stat-label {
     font-size: 0.875rem;
     font-weight: 600;
-    text-transform: uppercase;
     letter-spacing: 0.04em;
     color: var(--text-muted);
 }
@@ -5115,7 +5107,6 @@ body.light-mode #icon-theme-moon {
     font-size: 0.875rem;
     font-weight: 800;
     letter-spacing: 0.04em;
-    text-transform: uppercase;
 }
 
 .render-failure-msg {
@@ -7758,7 +7749,6 @@ body.light-mode #icon-theme-moon {
     font-size: 0.875rem;
     font-weight: 700;
     color: var(--text-muted);
-    text-transform: uppercase;
     letter-spacing: 0.04em;
 }
 
@@ -7965,7 +7955,6 @@ body.light-mode #icon-theme-moon {
     font-size: 0.875rem;
     font-weight: 700;
     color: var(--text-secondary);
-    text-transform: uppercase;
     letter-spacing: 0.04em;
 }
 
@@ -8621,7 +8610,6 @@ body.light-mode #icon-theme-moon {
     font-size: 0.92rem;
     font-weight: 700;
     color: var(--text-primary);
-    text-transform: uppercase;
     letter-spacing: 0.05em;
 }
 
@@ -9118,7 +9106,6 @@ body.light-mode #icon-theme-moon {
     font-weight: 700;
     color: var(--text-primary);
     letter-spacing: 0.05em;
-    text-transform: uppercase;
 }
 
 .cockpit-toggle-label {
@@ -9586,5 +9573,36 @@ body.light-mode #icon-theme-moon {
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
+    }
+}
+
+/* Header stays on one row: a long stage name must not push the New compilation button away */
+#topbar-activity-chip {
+    max-width: 220px;
+    min-width: 0;
+    overflow: hidden;
+}
+#topbar-activity-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+@media (max-width: 1024px) {
+    .export-col-preview {
+        position: static;
+        top: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .cockpit-filename {
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+    .cockpit-header-submeta, .cockpit-monospace-specs {
+        flex-wrap: wrap;
+        white-space: normal;
     }
 }

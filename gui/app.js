@@ -774,6 +774,18 @@ async function updatePreStartEstimate() {
     } catch (e) {}
 }
 
+function normalizeVerdict(raw) {
+    const text = String(raw || "").toUpperCase();
+    if (text.startsWith("PASSED WITH WARNINGS")) return "PASSED WITH WARNINGS";
+    if (text.startsWith("PASSED")) return "PASSED";
+    if (text.startsWith("FAILED") || text.startsWith("REJECTED")) return "FAILED";
+    return "NOT RUN";
+}
+
+function formatColomboTime(date = new Date()) {
+    return new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Colombo", hour: "2-digit", minute: "2-digit" }).format(date);
+}
+
 function navigateToStep(stepNum, optTargetFile = null) {
     state.workflowStep = stepNum;
     if (optTargetFile) {
@@ -875,18 +887,24 @@ async function loadPoolStatus(animalType) {
         const statCycle = document.getElementById("pool-stat-cycle");
         const alertBox = document.getElementById("pool-warning-alert");
 
-        if (badge) badge.innerText = `Cycle ${data.pool_cycle || 1}`;
-        if (usageText) usageText.innerText = `Clip pool: ${data.used_clips || 0} of ${data.total_clips || 0} used (${data.usage_pct || 0}%)`;
-        const remPct = Math.max(0, 100 - (data.usage_pct || 0)).toFixed(0);
-        if (remText) remText.innerText = `${remPct}% available`;
-        if (barFill) barFill.style.width = `${Math.min(100, data.usage_pct || 0)}%`;
-        if (statTotal) statTotal.innerText = data.total_clips || 0;
-        if (statUsed) statUsed.innerText = data.used_clips || 0;
-        if (statUnused) statUnused.innerText = data.unused_clips || 0;
-        if (statCycle) statCycle.innerText = data.pool_cycle || 1;
+        // Every number here comes from the ledger's one count function
+        const counts = data.counts || {};
+        const usableNow = counts.usable_now ?? 0;
+        const cooldown = counts.cooldown ?? 0;
+        const used = counts.used ?? 0;
+        const verified = counts.verified_total ?? 0;
+        if (badge) badge.innerText = `Updated ${formatColomboTime()} Colombo`;
+        if (usageText) usageText.innerText = counts.plain_summary || "Ledger counts not measured";
+        const freshPct = verified > 0 ? Math.round(((usableNow + cooldown) / verified) * 100) : 0;
+        if (remText) remText.innerText = `${freshPct}% of verified footage is unused`;
+        if (barFill) barFill.style.width = `${Math.min(100, freshPct)}%`;
+        if (statTotal) statTotal.innerText = counts.total_rows ?? 0;
+        if (statUsed) statUsed.innerText = used;
+        if (statUnused) statUnused.innerText = usableNow;
+        if (statCycle) statCycle.innerText = cooldown;
 
         if (alertBox) {
-            alertBox.style.display = (data.warning || (data.total_clips > 0 && remPct <= 15)) ? "flex" : "none";
+            alertBox.style.display = data.warning ? "flex" : "none";
         }
     } catch (e) {
         console.warn("Could not load pool status:", e);
@@ -4153,7 +4171,7 @@ function renderExportProjectsStrip(currentFilename) {
     } else {
         list = realFiles;
         if (countEl) {
-            countEl.innerText = `${realFiles.length} videos (${testFiles.length} test file${testFiles.length === 1 ? '' : 's'} hidden)`;
+            countEl.innerText = `${realFiles.length} video${realFiles.length === 1 ? "" : "s"} (${testFiles.length} test file${testFiles.length === 1 ? '' : 's'} hidden)`;
         }
     }
 
@@ -4823,10 +4841,14 @@ function setupExportScreen(finishedFile = null) {
 
     // 3 Status Chips:
     // 1. Quality Chip
-    const isQualityPass = (target.overall_passed !== false) && (target.verdict !== "FAILED") && (!target.status || target.status !== "failed");
+    // The card shows the stored verdict word for word, never its own judgement
+    const verdictText = normalizeVerdict(target.verdict);
+    const isQualityPass = verdictText === "PASSED";
+    const renderBadge = document.getElementById("export-render-badge");
+    if (renderBadge) renderBadge.innerText = "Render complete";
     if (chipQuality) {
         chipQuality.classList.toggle("chip-warning", !isQualityPass);
-        if (chipQualityText) chipQualityText.innerText = isQualityPass ? "Quality PASSED" : "Quality CHECK";
+        if (chipQualityText) chipQualityText.innerText = `Quality ${verdictText}`;
     }
 
     // 2. Length Contract Chip (+/-1.0s is completely within contract!)
@@ -4842,7 +4864,7 @@ function setupExportScreen(finishedFile = null) {
     const repShare = (target.repeat_share_pct !== undefined) ? target.repeat_share_pct : (state.lastRepeatSharePct || 0);
     if (chipRepeat) {
         chipRepeat.classList.toggle("chip-warning", repShare > 0);
-        if (chipRepeatText) chipRepeatText.innerText = repShare > 0 ? `Repeat ${repShare}%` : "100% Unique";
+        if (chipRepeatText) chipRepeatText.innerText = repShare > 0 ? `Repeat ${repShare}%` : "Repeat 0%";
     }
     const legacyRepEl = document.getElementById("export-repeat-share");
     if (legacyRepEl) {
@@ -4868,9 +4890,8 @@ function setupExportScreen(finishedFile = null) {
     const popRepeat = document.getElementById("popover-chip-repeat");
 
     if (popQuality) {
-        popQuality.innerText = isQualityPass 
-            ? "Quality PASSED: All 12 broadcast and safety gates passed (clean corners, Rec.709 color balance, -14 LUFS audio, stabilized frames)."
-            : "Quality CHECK: Potential broadcast warning detected in QA audit.";
+        const attention = target.attention_items || [];
+        popQuality.innerText = attention.length ? attention.join(" ") : `Stored verdict: ${verdictText}.`;
     }
     if (popLength) {
         const sign = lengthDiff >= 0 ? "+" : "";
@@ -4944,8 +4965,8 @@ function setupExportScreen(finishedFile = null) {
     if (headerSize) headerSize.innerText = sizeStr;
     const headerBadgeQa = document.getElementById("export-badge-qa");
     if (headerBadgeQa) {
-        headerBadgeQa.innerText = isQualityPass ? "QA: PASSED" : "QA: CHECK";
-        headerBadgeQa.className = `badge ${isQualityPass ? "badge-emerald" : "badge-warning"}`;
+        headerBadgeQa.innerText = `QA: ${verdictText}`;
+        headerBadgeQa.className = `badge ${isQualityPass ? "badge-emerald" : (verdictText === "FAILED" ? "badge-error" : "badge-warning")}`;
     }
 
     // Connect Header Actions

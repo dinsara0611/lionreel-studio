@@ -127,3 +127,34 @@ def test_no_horizontal_scroll_and_13px_floor(page, width, theme):
               && parseFloat(getComputedStyle(e).fontSize) < 13).map(e => e.tagName + '.' + e.className).slice(0, 5)})""")
         assert not res["scroll"], f"step {step}"
         assert not res["small"], f"step {step}: {res['small']}"
+
+
+def test_card_shows_stored_verdict_word_for_word(page):
+    res = page.evaluate("""() => ['PASSED WITH WARNINGS', 'PASSED', 'PASSED — READY FOR UPLOAD', 'FAILED', 'REJECTED — X', 'NOT RUN', '', null]
+        .map(normalizeVerdict)""")
+    assert res == ["PASSED WITH WARNINGS", "PASSED", "PASSED", "FAILED", "FAILED", "NOT RUN", "NOT RUN", "NOT RUN"]
+
+
+def test_no_card_logic_invents_a_quality_pass():
+    js = read("app.js")
+    assert 'target.overall_passed !== false' not in js
+    assert '"QA: PASSED"' not in js and '"Quality PASSED"' not in js
+
+
+def test_ledger_panel_shows_one_count_and_colombo_time(page):
+    page.set_viewport_size({"width": 1440, "height": 900})
+    page.evaluate("() => navigateToStep(1)")
+    page.wait_for_timeout(1200)
+    assert "Colombo" in page.inner_text("#pool-cycle-badge")
+    assert "usable now" in page.inner_text("#pool-usage-text")
+
+
+def test_new_compilation_button_stays_inside_the_header(page):
+    page.set_viewport_size({"width": 1280, "height": 800})
+    page.evaluate("() => { document.getElementById('topbar-activity-text').innerText = 'Burn safe-zone captions & master audio ducking and more'; }")
+    box = page.evaluate("() => document.getElementById('btn-header-new').getBoundingClientRect().right")
+    assert box <= 1280
+
+
+def test_no_css_uppercase_labels():
+    assert "text-transform: uppercase" not in read("style.css")

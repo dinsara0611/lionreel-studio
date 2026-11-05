@@ -331,7 +331,7 @@
             <!-- Primary Header CTA (Single New Compilation Button) -->
             <button id="btn-header-new" aria-label="New compilation" class="btn btn-primary btn-sm">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                <span>New Compilation</span>
+                <span>New compilation</span>
             </button>
 
             <!-- Creator Pro Profile Avatar -->
@@ -368,7 +368,7 @@
                             <div class="hero-primary-actions">
                                 <button id="hero-btn-sample" class="btn btn-secondary btn-md">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                                    <span>Use Sample Project</span>
+                                    <span>Use sample project</span>
                                 </button>
                             </div>
                             <div class="hero-utility-actions">
@@ -379,14 +379,14 @@
                                         <line x1="10" y1="11" x2="10" y2="17"></line>
                                         <line x1="14" y1="11" x2="14" y2="17"></line>
                                     </svg>
-                                    <span>Purge Temp Files</span>
+                                    <span>Purge temp files</span>
                                 </button>
                                 <button id="hero-btn-clean-all" class="btn btn-secondary btn-sm hero-clean-btn" title="Clean clip history, candidate thumbnails, and timeline state (Finished videos are preserved)">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
                                         <path d="M3 3v5h5"/>
                                     </svg>
-                                    <span>Clean All &amp; Reset</span>
+                                    <span>Clean all and reset</span>
                                 </button>
                             </div>
                         </div>
@@ -444,13 +444,13 @@
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
                             </div>
                             <div>
-                                <div class="pool-panel-title">Clip Ledger &amp; Footage Pool</div>
+                                <div class="pool-panel-title">Clip ledger</div>
                                 <div class="pool-panel-sub" id="pool-panel-sub">Tracks clip usage across shorts to prevent repeated content.</div>
                             </div>
                         </div>
                         <div style="display: flex; gap: 8px; align-items: center;">
                             <span class="badge badge-emerald" id="pool-cycle-badge">Cycle 1</span>
-                            <button id="btn-pool-add-sources" class="btn btn-secondary btn-sm" title="Add fresh sources to the clip pool">+ Add More Sources</button>
+                            <button id="btn-pool-add-sources" class="btn btn-secondary btn-sm" title="Add fresh sources to the clip pool">+ Add more sources</button>
                         </div>
                     </div>
 
@@ -468,19 +468,19 @@
                     <!-- Stats grid -->
                     <div class="pool-stats-row">
                         <div class="pool-stat-card">
-                            <span class="pool-stat-label">Total Pool</span>
+                            <span class="pool-stat-label">Ledger rows</span>
                             <span class="pool-stat-val" id="pool-stat-total">0</span>
                         </div>
                         <div class="pool-stat-card">
-                            <span class="pool-stat-label">Used Clips</span>
+                            <span class="pool-stat-label">Used</span>
                             <span class="pool-stat-val" id="pool-stat-used">0</span>
                         </div>
                         <div class="pool-stat-card">
-                            <span class="pool-stat-label">Unused Remaining</span>
+                            <span class="pool-stat-label">Usable now</span>
                             <span class="pool-stat-val pool-stat-val-hero" id="pool-stat-unused">0</span>
                         </div>
                         <div class="pool-stat-card">
-                            <span class="pool-stat-label">Pool Cycle</span>
+                            <span class="pool-stat-label">On cooldown</span>
                             <span class="pool-stat-val pool-stat-val-cycle" id="pool-stat-cycle">1</span>
                         </div>
                     </div>
@@ -489,7 +489,7 @@
                     <div id="pool-warning-alert" class="pool-warning-box" style="display: none;">
                         <div style="display: flex; align-items: center; gap: 8px;">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0; color: #eab308;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                            <span><strong>Clip pool low (&lt; 15% remaining):</strong> Add more video sources to maintain 100% fresh, non-repeating footage.</span>
+                            <span><strong>Clip pool low:</strong> Add more video sources to maintain 100% fresh, non-repeating footage.</span>
                         </div>
                         <button id="btn-pool-warning-add" class="btn btn-primary btn-sm" style="background: #eab308; border-color: #eab308; color: #020805; padding: 2px 10px; font-size: 0.875rem;">Fetch Sources</button>
                     </div>
@@ -2213,7 +2213,7 @@
                 <div class="cockpit-header-actions">
                     <button type="button" class="btn btn-secondary btn-sm" id="btn-export-to-editor" title="Open in Step 3 Editor to adjust cuts, trim, or color grading">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><path d="M8.12 8.12 12 12"/><path d="M20 4 8.12 15.88"/><circle cx="6" cy="18" r="3"/><path d="M14.8 14.8 20 20"/></svg>
-                        <span>Edit Cuts</span>
+                        <span>Edit cuts</span>
                     </button>
                     <button type="button" class="btn btn-secondary btn-sm" id="btn-header-thumbnail" title="Open YouTube 16:9 Thumbnail Maker studio" style="display: none;">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
@@ -2221,11 +2221,11 @@
                     </button>
                     <button type="button" class="btn btn-secondary btn-sm" id="btn-header-view-report" title="View interactive executive PDF & HTML production report">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                        <span>View Report</span>
+                        <span>View report</span>
                     </button>
                     <button type="button" class="btn btn-primary btn-sm" id="btn-header-quick-download" title="Download pristine MP4 master file">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                        <span>Download Master</span>
+                        <span>Download master</span>
                     </button>
                 </div>
             </div>
@@ -2325,10 +2325,10 @@
                             </div>
                         </div>
 
-                        <!-- Base Title Field -->
+                        <!-- Title Field -->
                         <div class="cockpit-field-group">
                             <div class="cockpit-field-label-row">
-                                <label for="export-meta-title" class="cockpit-field-label">Base Title</label>
+                                <label for="export-meta-title" class="cockpit-field-label">Title</label>
                                 <div class="cockpit-field-meta-actions">
                                     <span class="meta-char-badge" id="count-meta-title">0 / 100</span>
                                     <button type="button" class="btn btn-secondary btn-xs meta-copy-btn" id="btn-copy-meta-title" title="Copy title to clipboard">Copy</button>
@@ -2341,7 +2341,7 @@
                         <!-- Base Description Field -->
                         <div class="cockpit-field-group" id="row-meta-desc">
                             <div class="cockpit-field-label-row">
-                                <label for="export-meta-desc" class="cockpit-field-label">Base Description &amp; CC</label>
+                                <label for="export-meta-desc" class="cockpit-field-label">Description</label>
                                 <div class="cockpit-field-meta-actions">
                                     <span class="meta-char-badge" id="count-meta-desc">0 / 5000</span>
                                     <button type="button" class="btn btn-secondary btn-xs meta-copy-btn" id="btn-copy-meta-desc" title="Copy description to clipboard">Copy</button>
@@ -2353,7 +2353,7 @@
                         <!-- Base Hashtags Field -->
                         <div class="cockpit-field-group" id="row-meta-tags">
                             <div class="cockpit-field-label-row">
-                                <label for="export-meta-tags" class="cockpit-field-label">Base Hashtags &amp; Tags</label>
+                                <label for="export-meta-tags" class="cockpit-field-label">Hashtags</label>
                                 <div class="cockpit-field-meta-actions">
                                     <span class="meta-char-badge" id="count-meta-tags">0 / 500</span>
                                     <button type="button" class="btn btn-secondary btn-xs meta-copy-btn" id="btn-copy-meta-tags" title="Copy hashtags to clipboard">Copy</button>
@@ -2367,7 +2367,7 @@
                     <div class="cockpit-section-card" id="export-platforms-card">
                         <div class="cockpit-card-header">
                             <span class="cockpit-card-title">Platforms</span>
-                            <span class="cockpit-card-hint">4 platforms &bull; tailored limits</span>
+                            <span class="cockpit-card-hint">4 platforms</span>
                         </div>
 
                         <div class="platform-rows-list" id="export-platform-rows-list">
@@ -2381,7 +2381,7 @@
                                         <div class="platform-row-name-wrap">
                                             <div class="platform-row-title-line">
                                                 <span class="platform-row-name">YouTube Shorts</span>
-                                                <span class="badge-best-fit" id="best-fit-youtube_shorts" style="display: none;">BEST FIT</span>
+                                                <span class="badge-best-fit" id="best-fit-youtube_shorts" style="display: none;">Best fit</span>
                                             </div>
                                             <div class="platform-row-status" id="status-youtube_shorts">Checking format...</div>
                                         </div>
@@ -2447,7 +2447,7 @@
                                         <div class="platform-row-name-wrap">
                                             <div class="platform-row-title-line">
                                                 <span class="platform-row-name">YouTube video</span>
-                                                <span class="badge-best-fit" id="best-fit-youtube_video" style="display: none;">BEST FIT</span>
+                                                <span class="badge-best-fit" id="best-fit-youtube_video" style="display: none;">Best fit</span>
                                             </div>
                                             <div class="platform-row-status" id="status-youtube_video">Checking format...</div>
                                         </div>
@@ -2513,7 +2513,7 @@
                                         <div class="platform-row-name-wrap">
                                             <div class="platform-row-title-line">
                                                 <span class="platform-row-name">TikTok Studio</span>
-                                                <span class="badge-best-fit" id="best-fit-tiktok" style="display: none;">BEST FIT</span>
+                                                <span class="badge-best-fit" id="best-fit-tiktok" style="display: none;">Best fit</span>
                                             </div>
                                             <div class="platform-row-status" id="status-tiktok">Checking format...</div>
                                         </div>
@@ -2569,7 +2569,7 @@
                                         <div class="platform-row-name-wrap">
                                             <div class="platform-row-title-line">
                                                 <span class="platform-row-name">Instagram Reels</span>
-                                                <span class="badge-best-fit" id="best-fit-instagram_reels" style="display: none;">BEST FIT</span>
+                                                <span class="badge-best-fit" id="best-fit-instagram_reels" style="display: none;">Best fit</span>
                                             </div>
                                             <div class="platform-row-status" id="status-instagram_reels">Checking format...</div>
                                         </div>
@@ -2636,7 +2636,7 @@
                                             <span class="files-row-title">Download video</span>
                                             <span class="badge badge-subtle" id="btn-quick-download-badge"></span>
                                         </div>
-                                        <span class="files-row-sub">Pristine MP4 master &bull; Download Center</span>
+                                        <span class="files-row-sub">MP4 master</span>
                                     </div>
                                 </div>
                                 <div class="files-row-actions">
@@ -2654,7 +2654,7 @@
                                     </div>
                                     <div class="files-row-info">
                                         <span class="files-row-title">Production report</span>
-                                        <span class="files-row-sub">Interactive executive PDF &amp; HTML audit</span>
+                                        <span class="files-row-sub">PDF and HTML report</span>
                                     </div>
                                 </div>
                                 <div class="files-row-actions">
@@ -2777,7 +2777,7 @@
                     <div class="cockpit-filmstrip-header">
                         <div class="cockpit-filmstrip-title-wrap">
                             <span class="cockpit-filmstrip-title">FINISHED COMPILATIONS</span>
-                            <span class="badge badge-subtle" id="export-projects-count">5 videos (1 test file hidden)</span>
+                            <span class="badge badge-subtle" id="export-projects-count">0 videos (0 test file hidden)</span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                             <label class="cockpit-toggle-label" title="Show sandbox and test render files in filmstrip">
