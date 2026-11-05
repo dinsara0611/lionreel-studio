@@ -2390,7 +2390,7 @@ class LionReelV97Pipeline:
             log(p_log)
 
         # Persist planner decision (Section 5 / Autopilot Contract)
-        f_card_line = getattr(fulfillment_plan, "freshness_card_line", None) or getattr(fulfillment_plan, "status_card_line", "New footage: 100% / Reused from earlier videos: 0%")
+        f_card_line = getattr(fulfillment_plan, "freshness_card_line", None) or getattr(fulfillment_plan, "status_card_line", "New footage: not measured")
         planner_decision_data = {
             "job_id": job_id,
             "animal_mode": animal_mode,
@@ -4528,7 +4528,7 @@ class LionReelV97Pipeline:
                 str(verified_cfg.get("BYPASS_QUALITY_GATE", "")).lower() in ("true", "1")
             )
             if not qa_passed and not bypass_qa:
-                err_msg = "QA validation failed: 10-gate quality threshold not met"
+                err_msg = f"QA verdict {qa_report.get('verdict')}: " + "; ".join((qa_report.get("unified_verdict") or {}).get("attention_items", [])[:3])
                 sm.fail_stage(9, err_msg, code="QA_FAILED")
                 self.ledger.release_reservation(job_id)
                 self.update_pipeline_progress(
@@ -4552,7 +4552,7 @@ class LionReelV97Pipeline:
                 "credits_data": credits_data,
                 "candidate_reports": candidate_reports
             }
-            ev_s9 = f"Final master rendered ({real_dur:.1f}s, single-pass pipeline), passed 10/10 automated QA gates (SHA256: {sha256_str[:12]}...)"
+            ev_s9 = f"Final master rendered ({real_dur:.1f}s), QA verdict {qa_report.get('verdict')} (SHA256: {sha256_str[:12]}...)"
             sm.complete_stage(9, evidence=ev_s9, proof_data=proof_s9)
 
             # =========================================================================
@@ -4568,7 +4568,7 @@ class LionReelV97Pipeline:
             # Footage Freshness & Single Source of Truth
             from clip_ledger import compute_footage_freshness
             freshness = compute_footage_freshness(clip_mapping_data, ledger=self.ledger, current_job_id=job_id, channel=animal_mode)
-            freshness_card_line = freshness.get("card_line", "New footage: 100% / Reused from earlier videos: 0%")
+            freshness_card_line = freshness.get("card_line", "New footage: not measured")
 
             # Metadata Generation & Guaranteed Unique Title
             title_pool = TITLES_DOG if animal_mode == "dog" else (TITLES_DUO if animal_mode == "duo" else TITLES_CAT)

@@ -17,6 +17,7 @@ Validates master video files against strict benchmark criteria:
 
 import os
 import lion_paths
+from verdict import calculate_unified_verdict, is_pass
 import sys
 import re
 import json
@@ -110,34 +111,16 @@ def run_ffprobe_analysis(video_path):
 
     cmd = [
         ffprobe_exe, "-v", "error",
-        "-show_entries", "stream=width,height,codec_name,profile,pix_fmt,r_frame_rate,avg_frame_rate,bit_rate,channels,sample_rate,duration",
+        "-show_entries", "stream=codec_type,width,height,codec_name,profile,pix_fmt,r_frame_rate,avg_frame_rate,nb_frames,bit_rate,channels,sample_rate,duration,color_space,color_transfer,color_primaries",
         "-show_entries", "format=duration,size,bit_rate",
         "-of", "json", video_path
     ]
-    try:
-        res = subprocess.run(cmd, capture_output=True, text=True, timeout=15)
-        if res.returncode == 0:
-            return json.loads(res.stdout)
-    except Exception:
-        pass
+    # No OpenCV fallback: it rounds 29.97 down to 29/1 and reports it as a measurement.
+    res = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+    if res.returncode != 0:
+        raise RuntimeError(f"ffprobe failed: {res.stderr.strip()[:200]}")
+    return json.loads(res.stdout)
 
-    # Fallback to OpenCV
-    cap = cv2.VideoCapture(video_path)
-    w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-    h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    fps = cap.get(cv2.CAP_PROP_FPS) or 30.0
-    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    dur = total_frames / fps if fps > 0 else 0.0
-    cap.release()
-    file_bytes = os.path.getsize(video_path)
-    calc_bitrate = int((file_bytes * 8) / max(dur, 1.0))
-    return {
-        "streams": [
-            {"width": w, "height": h, "codec_name": "h264", "profile": "High", "pix_fmt": "yuv420p", "r_frame_rate": f"{int(fps)}/1", "bit_rate": str(calc_bitrate)},
-            {"codec_name": "aac", "channels": 2, "sample_rate": "48000"}
-        ],
-        "format": {"duration": str(dur), "size": str(file_bytes), "bit_rate": str(calc_bitrate)}
-    }
 
 def check_black_and_freeze(video_path):
     ffmpeg_exe = imageio_ffmpeg.get_ffmpeg_exe()
@@ -162,7 +145,7 @@ def check_black_and_freeze(video_path):
             "details": black_hits[:3] + freeze_hits[:3]
         }
     except Exception as e:
-        return {"passed": True, "error": str(e), "black_hits": 0, "freeze_hits": 0}
+        return {"passed": None, "skipped": True, "reason": f"Check crashed: {e}", "black_hits": None, "freeze_hits": None}
 
 def check_loudness_ebur128(video_path):
     ffmpeg_exe = imageio_ffmpeg.get_ffmpeg_exe()
@@ -197,83 +180,51 @@ def check_loudness_ebur128(video_path):
     except Exception:
         pass
 
-    # 2. Loudnorm EBU R128 analysis
-    cmd = [
-        ffmpeg_exe, "-i", video_path,
-        "-af", "loudnorm=print_format=json",
-        "-f", "null", "-"
-    ]
+    # 2. EBU R128 measurement of the final file, same filter the proof tools use
+    cmd = [ffmpeg_exe, "-hide_banner", "-nostats", "-i", video_path, "-af", "ebur128=peak=true:framelog=quiet", "-f", "null", "-"]
     try:
-        proc = subprocess.run(cmd, stderr=subprocess.PIPE, stdout=subprocess.DEVNULL, text=True, timeout=40)
-        json_lines = []
-        in_json = False
-        for line in proc.stderr.splitlines():
-            if line.strip() == "{":
-                in_json = True
-                json_lines = ["{"]
-            elif in_json:
-                json_lines.append(line)
-                if line.strip() == "}":
-                    break
-        if json_lines:
-            data = json.loads("\n".join(json_lines))
-            input_i = float(data.get("input_i", -99.0))
-            input_tp = float(data.get("input_tp", 99.0))
-            input_lra = float(data.get("input_lra", 10.0))
+        limit = max(60.0, float(v_dur or 0.0) * 1.5)
+        proc = subprocess.run(cmd, stderr=subprocess.PIPE, stdout=subprocess.DEVNULL, text=True, errors="replace", timeout=limit)
+        summary = proc.stderr[proc.stderr.rfind("Summary:"):] if "Summary:" in proc.stderr else ""
+        m_i = re.search(r"I:\s+(-?[\d.]+) LUFS", summary)
+        m_lra = re.search(r"LRA:\s+(-?[\d.]+) LU", summary)
+        m_tp = re.search(r"Peak:\s+(-?[\d.]+) dBFS", summary)
+        if not m_i or not m_tp:
+            return {"passed": None, "skipped": True, "reason": "ebur128 produced no summary (no audio stream?)",
+                    "integrated_lufs": None, "true_peak_dbtp": None, "sample_rate": audio_sample_rate, "drift_ms": drift_ms}
+        input_i = float(m_i.group(1))
+        input_tp = float(m_tp.group(1))
+        input_lra = float(m_lra.group(1)) if m_lra else None
 
-            # Target compliance checks:
-            # - Integrated LUFS in [-14.5, -13.5] (target -14.0 +/- 0.5 LUFS)
-            # - True Peak <= -1.0 dBTP
-            # - 48000 Hz, stereo (2ch)
-            # - Drift <= 20 ms
-            lufs_ok = (-14.5 <= round(input_i, 2) <= -13.5)
-            tp_ok = (input_tp <= -1.0)
-            rate_ok = (audio_sample_rate == 48000)
-            ch_ok = (audio_channels == 2)
-            drift_ok = (drift_ms <= 20.0)
+        lufs_ok = (-14.5 <= input_i <= -13.5)
+        tp_ok = (input_tp <= -1.0)
+        rate_ok = (audio_sample_rate == 48000)
+        ch_ok = (audio_channels == 2)
+        drift_ok = (drift_ms <= 20.0)
+        return {
+            "passed": bool(lufs_ok and tp_ok and rate_ok and ch_ok and drift_ok),
+            "integrated_lufs": round(input_i, 2),
+            "true_peak_dbtp": round(input_tp, 2),
+            "lra": input_lra,
+            "target_lufs": TARGET_LUFS,
+            "target_true_peak": TARGET_TRUE_PEAK,
+            "margin_lufs": round(0.5 - abs(input_i - (-14.0)), 2),
+            "margin_tp": round(-1.0 - input_tp, 2),
+            "sample_rate": audio_sample_rate,
+            "channels": audio_channels,
+            "drift_ms": drift_ms,
+            "lufs_ok": lufs_ok,
+            "tp_ok": tp_ok,
+            "rate_ok": rate_ok,
+            "ch_ok": ch_ok,
+            "drift_ok": drift_ok,
+            "measured_on": "final_file_ebur128",
+        }
+    except Exception as e:
+        return {"passed": None, "skipped": True, "reason": f"Check crashed: {e}",
+                "integrated_lufs": None, "true_peak_dbtp": None, "sample_rate": audio_sample_rate, "drift_ms": drift_ms}
 
-            passed = lufs_ok and tp_ok and rate_ok and ch_ok and drift_ok
-            return {
-                "passed": passed,
-                "integrated_lufs": round(input_i, 2),
-                "true_peak_dbtp": round(input_tp, 2),
-                "lra": round(input_lra, 2),
-                "target_lufs": TARGET_LUFS,
-                "target_true_peak": TARGET_TRUE_PEAK,
-                "margin_lufs": round(0.5 - abs(input_i - (-14.0)), 2),
-                "margin_tp": round(-1.0 - input_tp, 2),
-                "sample_rate": audio_sample_rate,
-                "channels": audio_channels,
-                "drift_ms": drift_ms,
-                "lufs_ok": lufs_ok,
-                "tp_ok": tp_ok,
-                "rate_ok": rate_ok,
-                "ch_ok": ch_ok,
-                "drift_ok": drift_ok
-            }
-    except Exception:
-        pass
-    return {
-        "passed": False,
-        "integrated_lufs": -99.0,
-        "true_peak_dbtp": 99.0,
-        "lra": 10.0,
-        "sample_rate": audio_sample_rate,
-        "channels": audio_channels,
-        "drift_ms": drift_ms,
-        "note": "loudness measurement failed"
-    }
 
-def check_pet_centering(video_path, n_samples=24, has_vertical_slack=False):
-    """
-    QA Gate 4:
-    On the cropped video, run the pet detector on 24 frames.
-    At least 90% of frames must have:
-    - Pet box fully inside the frame
-    - Center within x: 38% - 62% of frame width
-    - Center within y: 30% - 62% of frame height
-    - Box height between 30% and 70% of frame height
-    """
 def get_layout_gate_rules(layout_mode: str = "smart_crop") -> dict:
     """
     Returns declarative gate specification for layout verification.
@@ -1353,6 +1304,131 @@ def generate_contact_sheet(video_path, out_sheet_path, grid=(4, 3)):
     canvas.save(out_sheet_path, "PNG", quality=95)
     return out_sheet_path
 
+def run_gate(fn, *args, **kwargs):
+    """Runs one gate. A crash is NOT RUN (passed=None), never a pass and never a fail."""
+    try:
+        res = fn(*args, **kwargs)
+        return res if isinstance(res, dict) else {"passed": None, "skipped": True, "reason": "Gate returned no result"}
+    except Exception as e:
+        return {"passed": None, "skipped": True, "reason": f"Check crashed: {e}"}
+
+
+def _ratio(text):
+    try:
+        n, d = str(text).split("/")
+        return float(n) / float(d) if float(d) else 0.0
+    except Exception:
+        return 0.0
+
+
+def check_stream_contract(probe, expected_aspect=None):
+    """Gate 1: resolution, even size, H.264 High yuv420p, exact 30 fps CFR, bt709 tags, AAC 192 kbps."""
+    streams = probe.get("streams", []) if isinstance(probe, dict) else []
+    video = next((s for s in streams if s.get("codec_type") == "video" or s.get("width")), None)
+    if not video:
+        return {"passed": None, "skipped": True, "reason": "ffprobe gave no stream data", "problems": []}
+    audio = next((s for s in streams if s.get("codec_type") == "audio"), None)
+    width, height = int(video.get("width", 0)), int(video.get("height", 0))
+    dur = float(probe.get("format", {}).get("duration", 0.0) or 0.0)
+    expected = {"16:9": (1920, 1080), "1:1": (1080, 1080), "9:16": (1080, 1920)}
+    problems = []
+    if expected_aspect in expected:
+        if (width, height) != expected[expected_aspect]:
+            problems.append(f"resolution {width}x{height}, expected {expected[expected_aspect][0]}x{expected[expected_aspect][1]}")
+    elif (width, height) not in expected.values():
+        problems.append(f"resolution {width}x{height} is not a standard output size")
+    if width % 2 or height % 2:
+        problems.append(f"odd dimensions {width}x{height}")
+    if video.get("codec_name") != "h264":
+        problems.append(f"codec {video.get('codec_name')}, expected h264")
+    if video.get("profile") != "High":
+        problems.append(f"profile {video.get('profile')}, expected High")
+    if video.get("pix_fmt") != "yuv420p":
+        problems.append(f"pixel format {video.get('pix_fmt')}, expected yuv420p")
+    r_fps, avg_fps = _ratio(video.get("r_frame_rate")), _ratio(video.get("avg_frame_rate"))
+    if abs(r_fps - 30.0) > 0.001 or abs(avg_fps - 30.0) > 0.01:
+        problems.append(f"frame rate r={video.get('r_frame_rate')} avg={video.get('avg_frame_rate')}, expected constant 30")
+    for tag in ("color_space", "color_transfer", "color_primaries"):
+        if video.get(tag) != "bt709":
+            problems.append(f"{tag} is {video.get(tag)}, expected bt709")
+    size = int(probe.get("format", {}).get("size", 0) or 0)
+    bitrate = int(size * 8 / (dur * 1000)) if dur > 0 else 0
+    if bitrate < 2500:
+        problems.append(f"bitrate {bitrate} kbps below 2500")
+    if audio is None:
+        problems.append("no audio stream")
+    else:
+        if audio.get("codec_name") != "aac":
+            problems.append(f"audio codec {audio.get('codec_name')}, expected aac")
+        a_rate = int(audio.get("bit_rate") or 0)
+        if a_rate and not 170000 <= a_rate <= 215000:
+            problems.append(f"audio bitrate {a_rate // 1000} kbps, expected about 192")
+    return {
+        "passed": not problems, "problems": problems, "reason": "; ".join(problems) or "Stream contract met",
+        "width": width, "height": height, "codec": video.get("codec_name"), "profile": video.get("profile"),
+        "pix_fmt": video.get("pix_fmt"), "r_frame_rate": video.get("r_frame_rate"), "avg_frame_rate": video.get("avg_frame_rate"),
+        "nb_frames": video.get("nb_frames"), "color_space": video.get("color_space"), "color_transfer": video.get("color_transfer"),
+        "color_primaries": video.get("color_primaries"), "audio_codec": audio.get("codec_name") if audio else None,
+        "audio_bit_rate": audio.get("bit_rate") if audio else None, "bitrate_kbps": bitrate, "duration_sec": round(dur, 2),
+    }
+
+
+def check_clip_sharpness(video_path, clip_mapping, floor=None, frames_per_clip=6):
+    """Gate 9: every clip's median sharpness must meet the floor on the canonical scale."""
+    floor = float(floor if floor is not None else MIN_SHARPNESS_FLOOR)
+    clips = [c for c in (clip_mapping or []) if isinstance(c, dict) and float(c.get("duration") or c.get("dur_s") or 0.0) > 0]
+    if not clips:
+        return {"passed": None, "skipped": True, "reason": "No clip map, cannot check each clip", "median_sharpness": None, "min_sharpness": None, "benchmark_floor": floor}
+    from canonical_window import measure_canonical_sharpness
+    cap = cv2.VideoCapture(video_path)
+    fps = cap.get(cv2.CAP_PROP_FPS) or 30.0
+    per_clip, t0 = [], 0.0
+    for clip in clips:
+        dur = float(clip.get("duration") or clip.get("dur_s"))
+        vals = []
+        for i in range(frames_per_clip):
+            cap.set(cv2.CAP_PROP_POS_FRAMES, int((t0 + dur * (i + 0.5) / frames_per_clip) * fps))
+            ok, frame = cap.read()
+            if ok and frame is not None:
+                vals.append(measure_canonical_sharpness(frame))
+        per_clip.append(round(float(np.median(vals)), 1) if vals else None)
+        t0 += dur
+    cap.release()
+    if any(v is None for v in per_clip):
+        return {"passed": None, "skipped": True, "reason": "Could not read frames for every clip", "clip_sharpness": per_clip, "median_sharpness": None, "min_sharpness": None, "benchmark_floor": floor}
+    result = evaluate_sharpness_floor(per_clip, floor=floor)
+    result.update({"clip_sharpness": per_clip, "benchmark_floor": floor})
+    return result
+
+
+def _label(status):
+    return "NOT RUN" if status is None else ("PASS" if status else "FAIL")
+
+
+def _gate_status(res):
+    """pass/fail/None from a gate result dict."""
+    if res.get("skipped") or res.get("passed") is None:
+        return None
+    return bool(res.get("passed"))
+
+
+def load_job_config(video_path, work_job_dir=None):
+    base_dir = os.path.dirname(video_path)
+    base_name = os.path.splitext(os.path.basename(video_path))[0]
+    candidates = []
+    if work_job_dir:
+        candidates.append(os.path.join(work_job_dir, "job_config.json"))
+    candidates += [os.path.join(base_dir, "job_config.json"), os.path.join(base_dir, f"{base_name}_job_config.json")]
+    for path in candidates:
+        if os.path.exists(path):
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            except Exception:
+                pass
+    return {}
+
+
 def run_full_qa(video_path, report_path=None, contact_sheet_path=None, layout_mode="smart_crop", clip_mapping=None, work_job_dir=None, expected_aspect=None, target_dur=None):
     if not os.path.exists(video_path):
         print(f"[QA] Error: Video file not found: {video_path}")
@@ -1363,144 +1439,136 @@ def run_full_qa(video_path, report_path=None, contact_sheet_path=None, layout_mo
     report_path = report_path or os.path.join(base_dir, f"{base_name}_qa_report.json")
     contact_sheet_path = contact_sheet_path or os.path.join(base_dir, f"{base_name}_contact_sheet.png")
 
-    # Discover job_config.json if expected_aspect or target_dur is missing
-    if not expected_aspect or target_dur is None:
-        cfg_candidates = []
-        if work_job_dir:
-            cfg_candidates.append(os.path.join(work_job_dir, "job_config.json"))
-        cfg_candidates.append(os.path.join(base_dir, "job_config.json"))
-        cfg_candidates.append(os.path.join(base_dir, f"{base_name}_job_config.json"))
-        for cpath in cfg_candidates:
-            if os.path.exists(cpath):
-                try:
-                    with open(cpath, "r", encoding="utf-8") as f_cfg:
-                        jcfg = json.load(f_cfg)
-                        if "_teaser" in base_name and isinstance(jcfg.get("teaser"), dict):
-                            expected_aspect = jcfg["teaser"].get("ratio", "9:16")
-                            target_dur = float(jcfg["teaser"].get("seconds", 45.0))
-                        else:
-                            if not expected_aspect:
-                                expected_aspect = jcfg.get("ratio") or jcfg.get("aspect_ratio")
-                            if target_dur is None:
-                                target_dur = jcfg.get("target_seconds") or jcfg.get("expected_total_sec") or jcfg.get("target_dur")
-                                if not target_dur and (jcfg.get("clip_count") or jcfg.get("clips")) and jcfg.get("clip_time"):
-                                    c_n = float(jcfg.get("clip_count") or jcfg.get("clips"))
-                                    target_dur = c_n * float(jcfg["clip_time"])
-                        break
-                except Exception:
-                    pass
+    jcfg = load_job_config(video_path, work_job_dir)
+    is_teaser = "_teaser" in base_name and isinstance(jcfg.get("teaser"), dict)
+    expected_clips = None
+    if is_teaser:
+        expected_aspect = jcfg["teaser"].get("ratio", "9:16")
+        target_dur = float(jcfg["teaser"].get("seconds", 45.0))
+        expected_clips = jcfg["teaser"].get("clips")
+    else:
+        expected_aspect = expected_aspect or jcfg.get("ratio") or jcfg.get("aspect_ratio")
+        if target_dur is None:
+            target_dur = jcfg.get("target_seconds") or jcfg.get("expected_total_sec") or jcfg.get("target_dur")
+            if not target_dur and (jcfg.get("clip_count") or jcfg.get("clips")) and jcfg.get("clip_time"):
+                target_dur = float(jcfg.get("clip_count") or jcfg.get("clips")) * float(jcfg["clip_time"])
+        expected_clips = jcfg.get("clip_count") or jcfg.get("clips")
+    if clip_mapping is None and work_job_dir and os.path.exists(os.path.join(work_job_dir, "clips_rendered.json")):
+        try:
+            with open(os.path.join(work_job_dir, "clips_rendered.json"), "r", encoding="utf-8") as f_map:
+                loaded = json.load(f_map)
+            clip_mapping = loaded if isinstance(loaded, list) else loaded.get("clips")
+        except Exception:
+            clip_mapping = None
+    job_mode = str(jcfg.get("mode") or jcfg.get("type") or "").lower()
 
     print(f"\n[QA ENGINE V97] Running LionReel Master Quality Audit on: {os.path.basename(video_path)}")
     print("=" * 72)
 
     # 1. Stream Metadata
-    probe = run_ffprobe_analysis(video_path)
-    v_stream = next((s for s in probe.get("streams", []) if s.get("width")), {})
-    
-    width = int(v_stream.get("width", 0))
-    height = int(v_stream.get("height", 0))
-    codec = v_stream.get("codec_name", "")
-    profile = v_stream.get("profile", "")
-    fmt_size = int(probe.get("format", {}).get("size", os.path.getsize(video_path)))
-    dur = float(probe.get("format", {}).get("duration", 0.0))
-    calc_bitrate_kbps = int((fmt_size * 8) / (dur * 1000)) if dur > 0 else 0
+    probe = run_gate(run_ffprobe_analysis, video_path)
+    fmt = probe.get("format", {}) if isinstance(probe, dict) else {}
+    dur = float(fmt.get("duration", 0.0) or 0.0)
 
-    # Gate 1: Stream Specs
-    if expected_aspect == "16:9":
-        res_ok = (width == 1920 and height == 1080)
-    elif expected_aspect == "1:1":
-        res_ok = (width == 1080 and height == 1080)
-    elif expected_aspect == "9:16":
-        res_ok = (width == 1080 and height == 1920)
-    else:
-        res_ok = ((width == 1080 and height == 1920) or
-                  (width == 1920 and height == 1080) or
-                  (width == 1080 and height == 1080))
-    bitrate_ok = (calc_bitrate_kbps >= 2500)
-    stream_passed = res_ok and (codec == "h264") and bitrate_ok
-    print(f"  Gate 1: Stream Specs Gate: {width}x{height} (expected: {expected_aspect or 'standard'}) | {codec.upper()} {profile} | Bitrate: {calc_bitrate_kbps} kbps -> {'PASS ✅' if stream_passed else 'FAIL ❌'}")
+    # Gate 1: Stream contract
+    stream = check_stream_contract(probe, expected_aspect)
+    stream_passed = _gate_status(stream)
+    width, height = stream.get("width", 0), stream.get("height", 0)
+    print(f"  Gate 1: Stream Specs Gate: {stream.get('reason')} -> {_label(stream_passed)}")
 
-    # Gate 1b: Exact Duration Contract Gate (Contract: strictly +/- 1.0s)
+    # Gate 1b: Duration contract, +/- 1.0 s against the stored config
     dur_diff = None
-    duration_passed = True
-    dur_reason = "No target contract specified"
-    if target_dur is not None:
+    if target_dur is None:
+        duration_passed = None
+        dur_reason = "No target duration stored in job_config.json"
+    elif dur <= 0:
+        duration_passed = None
+        dur_reason = "File duration could not be measured"
+    else:
         target_dur_f = float(target_dur)
         dur_diff = abs(dur - target_dur_f)
-        allowed_tolerance = 1.0  # Strict +/- 1.0s contract
-        duration_passed = (dur_diff <= allowed_tolerance)
-        dur_reason = f"Actual: {dur:.2f}s, Target: {target_dur_f:.2f}s, Diff: {dur_diff:.2f}s (Contract: <= {allowed_tolerance:.2f}s)"
-    print(f"  Gate 1b: Exact Duration Contract Gate: {dur_reason} -> {'PASS ✅' if duration_passed else 'FAIL ❌'}")
+        duration_passed = dur_diff <= 1.0
+        dur_reason = f"Actual: {dur:.2f}s, Target: {target_dur_f:.2f}s, Diff: {dur_diff:.2f}s (Contract: <= 1.00s)"
+    print(f"  Gate 1b: Exact Duration Contract Gate: {dur_reason} -> {_label(duration_passed)}")
+
+    # Gate 1c: Clip count against the stored config
+    actual_clips = len(clip_mapping) if clip_mapping else None
+    if expected_clips is None or actual_clips is None:
+        count_passed = None
+        count_reason = "Clip count or stored target missing"
+    else:
+        count_passed = int(actual_clips) == int(expected_clips)
+        count_reason = f"Delivered {actual_clips} clips, config says {expected_clips}"
+    print(f"  Gate 1c: Clip Count Gate: {count_reason} -> {_label(count_passed)}")
 
     # Gate 2: Defect Detection (black & frozen frames)
-    defects = check_black_and_freeze(video_path)
-    print(f"  Gate 2: Stream Defects Gate: Black: {defects['black_hits']}, Frozen: {defects['freeze_hits']} -> {'PASS ✅' if defects['passed'] else 'FAIL ❌'}")
+    defects = run_gate(check_black_and_freeze, video_path)
+    print(f"  Gate 2: Stream Defects Gate: Black: {defects.get('black_hits')}, Frozen: {defects.get('freeze_hits')} -> {_label(_gate_status(defects))}")
 
-    # Gate 3: Audio Loudness (EBU R128)
-    loudness = check_loudness_ebur128(video_path)
-    print(f"  Gate 3: Broadcast Audio Loudness Gate: Integrated {loudness['integrated_lufs']:.2f} LUFS, Peak {loudness['true_peak_dbtp']:.2f} dBTP, Rate {loudness.get('sample_rate', 48000)}Hz, Drift {loudness.get('drift_ms', 0.0):.1f}ms (target {TARGET_LUFS:.1f} +/- 0.5, TP <= -1.0) -> {'PASS ✅' if loudness['passed'] else 'FAIL ❌'}")
+    # Gate 3: Audio Loudness (EBU R128) measured on the final file
+    loudness = run_gate(check_loudness_ebur128, video_path)
+    print(f"  Gate 3: Broadcast Audio Loudness Gate: Integrated {loudness.get('integrated_lufs')} LUFS, Peak {loudness.get('true_peak_dbtp')} dBTP, Rate {loudness.get('sample_rate')}Hz, Drift {loudness.get('drift_ms')}ms (target {TARGET_LUFS:.1f} +/- 0.5, TP <= -1.0) -> {_label(_gate_status(loudness))}")
 
-    # Gate 4: Pet Centering Check (24 frames for long, 16 for short)
-    is_long_video = (dur >= 179.0 or (target_dur is not None and float(target_dur) >= 180.0))
-    n_center_samples = 24 if is_long_video else 16
-    centering = check_pet_centering(video_path, n_center_samples, layout_mode=layout_mode)
-    print(f"  Gate 4: Pet Centering Gate: Compliance {centering.get('compliance_ratio', 0.0):.1%} -> {'PASS ✅' if centering['passed'] else 'FAIL ❌'}")
+    # Gate 4: Pet Centering, percent is passed frames over sampled frames
+    is_long_video = job_mode in ("long", "compilation", "both") and not is_teaser if job_mode else dur >= 179.0
+    n_center_samples = 24 if dur >= 179.0 else 16
+    centering = run_gate(check_pet_centering, video_path, n_center_samples, layout_mode=layout_mode)
+    if _gate_status(centering) is not None and centering.get("sampled_frames"):
+        centering["centering_pct"] = round(100.0 * centering["passed_frames"] / centering["sampled_frames"], 1)
+        centering["passed"] = centering["centering_pct"] >= 85.0
+    print(f"  Gate 4: Pet Centering Gate: {centering.get('centering_pct')}% ({centering.get('passed_frames')}/{centering.get('sampled_frames')} frames) -> {_label(_gate_status(centering))}")
 
     # Gate 5: Layout Fill Gate (no pure black bars/letterbox)
-    layout_fill = check_layout_fill(video_path, 16, layout_mode=layout_mode)
-    fill_label = f"Full {width}x{height} cover" if layout_mode not in ("blur_fit", "blur_fit_16_9") else "Blur-fit layout verified"
-    print(f"  Gate 5: Layout Fill Gate: {'PASS ✅ (' + fill_label + ')' if layout_fill['passed'] else 'FAIL ❌ (' + layout_fill.get('reason', '') + ')'}")
+    layout_fill = run_gate(check_layout_fill, video_path, 16, layout_mode=layout_mode)
+    print(f"  Gate 5: Layout Fill Gate: {layout_fill.get('reason', 'layout ok')} -> {_label(_gate_status(layout_fill))}")
 
     # Gate 6: Watermark / Corner Logo Gate
-    wm_skipped = False
+    wm_corner, wm_conf = None, 0.0
     try:
         from watermark_detector import WatermarkDetector
-        wm_det = WatermarkDetector()
-        has_wm, wm_corner, wm_conf, wm_reason = wm_det.check_video_corners(video_path)
+        has_wm, wm_corner, wm_conf, wm_reason = WatermarkDetector().check_video_corners(video_path)
         wm_passed = not has_wm
+        wm_skipped = False
     except Exception as e:
-        wm_passed = False
+        wm_passed = None
         wm_skipped = True
         wm_reason = f"Check crashed: {e}"
-        wm_corner = None
-        wm_conf = 0.0
-    print(f"  Gate 6: Watermark Gate: {'NOT RUN ⚠️ (' + wm_reason + ')' if wm_skipped else ('PASS ✅ (Clean corners)' if wm_passed else f'FAIL ❌ (Logo in {wm_corner}: {wm_reason})')}")
+    print(f"  Gate 6: Watermark Gate: {wm_reason} -> {_label(wm_passed)}")
 
     # Gate 6b: Clean Clips (Burned-in Text & Overlay Gate)
-    text_gate_skipped = False
     try:
         from overlay_text_detector import check_window_burned_in_text
         text_gate_res = check_window_burned_in_text(video_path, 0.0, dur, n_samples=16, is_master_with_captions=True)
         text_gate_passed = bool(text_gate_res.get("passed"))
+        text_gate_skipped = False
         text_gate_reason = text_gate_res.get("reason", "Clean footage")
     except Exception as e_tg:
-        text_gate_passed = False
+        text_gate_passed = None
         text_gate_skipped = True
         text_gate_reason = f"Check crashed: {e_tg}"
-    print(f"  Gate 6b: Clean Clips Gate: {'NOT RUN ⚠️ (' + text_gate_reason + ')' if text_gate_skipped else ('PASS ✅ (No burned-in overlays/banners)' if text_gate_passed else f'FAIL ❌ ({text_gate_reason})')}")
+    print(f"  Gate 6b: Clean Clips Gate: {text_gate_reason} -> {_label(text_gate_passed)}")
 
     # Gate 7: Peak Quality Gate (Phase 4.4)
-    peak_qa = check_peak_quality_gate(video_path, layout_mode=layout_mode)
-    print(f"  Gate 7: Peak Quality Gate: {'PASS ✅ (100% visible at peak)' if peak_qa['passed'] else 'FAIL ❌ (' + peak_qa['reason'] + ')'}")
+    peak_qa = run_gate(check_peak_quality_gate, video_path, layout_mode=layout_mode)
+    print(f"  Gate 7: Peak Quality Gate: {peak_qa.get('reason', 'ok')} -> {_label(_gate_status(peak_qa))}")
 
     # Gate 8: Real Footage / Cartoon & CGI Classifier (16 frames)
-    cartoon = check_cartoon_classifier(video_path, 16, layout_mode=layout_mode)
-    print(f"  Gate 8: Real Footage Gate: Negative Prob {cartoon['mean_negative_probability']:.1%} -> {'PASS ✅' if cartoon['passed'] else 'FAIL ❌'}")
+    cartoon = run_gate(check_cartoon_classifier, video_path, 16, layout_mode=layout_mode)
+    print(f"  Gate 8: Real Footage Gate: Negative Prob {cartoon.get('mean_negative_probability')} -> {_label(_gate_status(cartoon))}")
 
-    # Gate 9: Visual Sharpness (Laplacian on 540x960 >= 150.0)
-    sharpness = check_visual_sharpness(video_path, 16)
-    print(f"  Gate 9: Visual Sharpness Gate: Median LapVar {sharpness['median_sharpness']} (target >= {MIN_SHARPNESS_FLOOR:.1f}) -> {'PASS ✅' if sharpness['passed'] else 'FAIL ❌'}")
+    # Gate 9: Every clip at or above the sharpness floor on the canonical scale
+    sharpness = run_gate(check_clip_sharpness, video_path, clip_mapping)
+    print(f"  Gate 9: Visual Sharpness Gate: min clip {sharpness.get('min_sharpness')} (floor {MIN_SHARPNESS_FLOOR:.1f}) -> {_label(_gate_status(sharpness))}")
 
     # Gate 10: Safe-Zone Captions & Spacing Integrity Gate
-    # Gate 10: Safe-Zone Captions & Spacing Integrity Gate
-    caption_qc = check_caption_safe_zone(video_path, 16)
-    repeat_spacing = check_repeat_spacing_gate(video_path, clip_mapping=clip_mapping, work_job_dir=work_job_dir)
-    source_guard = check_source_guard(video_path)
-    gate10_passed = bool(caption_qc['passed'] and repeat_spacing['passed'] and source_guard['passed'])
-    print(f"  Gate 10: Safe-Zone Captions & Spacing Gate: {'PASS ✅ (Safe zones ok, spacing >= min(8, unique-1))' if gate10_passed else 'FAIL ❌'}")
+    caption_qc = run_gate(check_caption_safe_zone, video_path, 16)
+    repeat_spacing = run_gate(check_repeat_spacing_gate, video_path, clip_mapping=clip_mapping, work_job_dir=work_job_dir)
+    source_guard = run_gate(check_source_guard, video_path)
+    gate10_parts = [_gate_status(caption_qc), _gate_status(repeat_spacing), _gate_status(source_guard)]
+    gate10_passed = False if False in gate10_parts else (None if None in gate10_parts else True)
+    print(f"  Gate 10: Safe-Zone Captions & Spacing Gate: -> {_label(gate10_passed)}")
 
     # Gate 11: 16:9 Custom Thumbnail Gate (Contract: Long videos only)
-    is_long_video = (dur >= 179.0 or (target_dur is not None and float(target_dur) >= 180.0))
     thumb_gate_passed = True
     thumb_report_data = None
     thumb_rep_path = None
@@ -1544,41 +1612,42 @@ def run_full_qa(video_path, report_path=None, contact_sheet_path=None, layout_mo
     sheet_file = generate_contact_sheet(video_path, contact_sheet_path)
     print(f"  Proof: Generated 12-frame contact sheet: {os.path.basename(sheet_file)} ✅")
 
-    # Overall Verdict across all gates
-    all_passed = bool(stream_passed and duration_passed and defects['passed'] and loudness['passed'] and
-                      centering['passed'] and layout_fill['passed'] and wm_passed and text_gate_passed and
-                      peak_qa['passed'] and cartoon['passed'] and sharpness['passed'] and 
-                      gate10_passed and (thumb_gate_passed if is_long_video else True))
-    verdict = "PASSED — READY FOR UPLOAD" if all_passed else "REJECTED — QUALITY THRESHOLD NOT MET"
-    print("=" * 72)
-    print(f"  FINAL QA VERDICT: {verdict}\n")
+    gates = {
+        "gate_1_stream_specs": stream_passed,
+        "gate_1b_duration_contract": duration_passed,
+        "gate_1c_clip_count": count_passed,
+        "gate_2_stream_defects": _gate_status(defects),
+        "gate_3_broadcast_loudness": _gate_status(loudness),
+        "gate_4_pet_centering": _gate_status(centering),
+        "gate_5_layout_fill": _gate_status(layout_fill),
+        "gate_6_watermark_cleanliness": wm_passed,
+        "gate_6b_clean_overlays": text_gate_passed,
+        "gate_7_peak_quality": _gate_status(peak_qa),
+        "gate_8_real_footage": _gate_status(cartoon),
+        "gate_9_visual_sharpness": _gate_status(sharpness),
+        "gate_10_captions_and_spacing": gate10_passed,
+    }
+    if is_long_video:
+        gates["gate_11_thumbnail"] = thumb_gate_passed
+    gate_reasons = {k: v.get("reason", "") for k, v in {
+        "gate_1_stream_specs": stream, "gate_2_stream_defects": defects, "gate_3_broadcast_loudness": loudness,
+        "gate_4_pet_centering": centering, "gate_5_layout_fill": layout_fill, "gate_7_peak_quality": peak_qa,
+        "gate_8_real_footage": cartoon, "gate_9_visual_sharpness": sharpness,
+    }.items()}
+    gate_reasons.update({"gate_1b_duration_contract": dur_reason, "gate_1c_clip_count": count_reason,
+                         "gate_6_watermark_cleanliness": wm_reason, "gate_6b_clean_overlays": text_gate_reason})
 
     bm_hash = get_benchmark_config_hash()
     report = {
         "video_file": video_path,
-        "overall_passed": all_passed,
-        "verdict": verdict,
         "benchmark_config_hash": bm_hash,
         "benchmark_thresholds": {
             "min_sharpness_laplacian_540x960": MIN_SHARPNESS_FLOOR,
             "target_integrated_lufs": TARGET_LUFS,
             "target_true_peak_dbtp": TARGET_TRUE_PEAK
         },
-        "gates": {
-            "gate_1_stream_specs": stream_passed,
-            "gate_1b_duration_contract": duration_passed,
-            "gate_2_stream_defects": defects['passed'],
-            "gate_3_broadcast_loudness": loudness['passed'],
-            "gate_4_pet_centering": centering['passed'],
-            "gate_5_layout_fill": layout_fill['passed'],
-            "gate_6_watermark_cleanliness": wm_passed,
-            "gate_6b_clean_overlays": text_gate_passed,
-            "gate_7_peak_quality": peak_qa['passed'],
-            "gate_8_real_footage": cartoon['passed'],
-            "gate_9_visual_sharpness": sharpness['passed'],
-            "gate_10_captions_and_spacing": gate10_passed,
-            "gate_11_thumbnail": (thumb_gate_passed if is_long_video else True)
-        },
+        "gates": gates,
+        "gate_reasons": gate_reasons,
         "thumbnail_gate": {
             "is_long_video": is_long_video,
             "passed": thumb_gate_passed if is_long_video else True,
@@ -1589,22 +1658,16 @@ def run_full_qa(video_path, report_path=None, contact_sheet_path=None, layout_mo
             "expected_duration_s": round(float(target_dur), 2) if target_dur is not None else None,
             "real_duration_s": round(dur, 2),
             "duration_diff_s": round(dur_diff, 2) if dur_diff is not None else None,
-            "passed": duration_passed
+            "passed": duration_passed,
+            "reason": dur_reason
         },
+        "clip_count_contract": {"expected": expected_clips, "actual": actual_clips, "passed": count_passed, "reason": count_reason},
         "burned_in_text_gate": {
             "passed": text_gate_passed,
             "skipped": text_gate_skipped,
             "reason": text_gate_reason
         },
-        "stream_specs": {
-            "passed": stream_passed,
-            "width": width,
-            "height": height,
-            "codec": codec,
-            "profile": profile,
-            "bitrate_kbps": calc_bitrate_kbps,
-            "duration_sec": round(dur, 2)
-        },
+        "stream_specs": stream,
         "defects": defects,
         "loudness": loudness,
         "pet_centering": centering,
@@ -1635,10 +1698,19 @@ def run_full_qa(video_path, report_path=None, contact_sheet_path=None, layout_mo
             freshness_info = compute_footage_freshness(clip_mapping, current_job_id=base_name)
         except Exception:
             freshness_info = None
-    f_card_line = (freshness_info.get("card_line") if freshness_info else "New footage: 100% / Reused from earlier videos: 0%")
+    f_card_line = freshness_info.get("card_line") if freshness_info else "New footage: not measured"
     report["freshness"] = freshness_info
     report["freshness_card_line"] = f_card_line
     report["status_card_line"] = f_card_line
+
+    unified = calculate_unified_verdict(report, clip_mapping or [], jcfg)
+    verdict_text = unified["badge"]
+    all_passed = is_pass(verdict_text)
+    report["verdict"] = verdict_text
+    report["overall_passed"] = all_passed
+    report["unified_verdict"] = unified
+    print("=" * 72)
+    print(f"  FINAL QA VERDICT: {verdict_text}\n")
 
     with open(report_path, "w", encoding="utf-8") as f_rep:
         json.dump(report, f_rep, indent=2)

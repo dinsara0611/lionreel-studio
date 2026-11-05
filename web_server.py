@@ -2093,9 +2093,9 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 rep_str = None
                 stream_w = None
                 stream_h = None
-                qa_verdict = "PASSED"
-                overall_passed = True
-                quality_score = 96.0
+                qa_verdict = "NOT RUN"
+                overall_passed = False
+                quality_score = None
                 gates_dict = {}
 
                 if os.path.exists(mapping_p):
@@ -2137,8 +2137,8 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                     s_specs = qa_data.get("stream_specs", {})
                     stream_w = s_specs.get("width")
                     stream_h = s_specs.get("height")
-                    qa_verdict = qa_data.get("verdict", "PASSED")
-                    overall_passed = qa_data.get("overall_passed", True)
+                    qa_verdict = qa_data.get("verdict", "NOT RUN")
+                    overall_passed = bool(qa_data.get("overall_passed", False))
                     gates_dict = qa_data.get("gates", {})
                     if "repeat_share_pct" in qa_data and qa_data["repeat_share_pct"] is not None:
                         rep_pct = float(qa_data["repeat_share_pct"])
