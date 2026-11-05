@@ -1925,7 +1925,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         elif self.path.startswith("/api/cleanup/preview"):
             try:
                 from safe_cleanup import SafeCleanupManager
-                mgr = SafeCleanupManager(project_root=BASE_DIR, current_job_id=CURRENT_JOB_ID)
+                mgr = SafeCleanupManager(base_dir=BASE_DIR, current_job_id=CURRENT_JOB_ID)
                 preview_data = mgr.scan_candidates()
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
@@ -2708,7 +2708,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         elif self.path.startswith("/api/cleanup/preview"):
             try:
                 from safe_cleanup import SafeCleanupManager
-                mgr = SafeCleanupManager(project_root=BASE_DIR, current_job_id=CURRENT_JOB_ID)
+                mgr = SafeCleanupManager(base_dir=BASE_DIR, current_job_id=CURRENT_JOB_ID)
                 preview_data = mgr.scan_candidates()
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
@@ -2729,7 +2729,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 dry_run = bool(body.get("dry_run", False))
                 use_recycle_bin = bool(body.get("use_recycle_bin", True))
                 confirmed = bool(body.get("confirmed", False))
-                mgr = SafeCleanupManager(project_root=BASE_DIR, current_job_id=CURRENT_JOB_ID)
+                mgr = SafeCleanupManager(base_dir=BASE_DIR, current_job_id=CURRENT_JOB_ID)
                 res_exec = mgr.execute_cleanup(
                     selected_groups=selected_groups,
                     dry_run=dry_run,
@@ -3366,7 +3366,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 dry_run = bool(body.get("dry_run", False))
                 use_recycle_bin = bool(body.get("use_recycle_bin", True))
                 confirmed = bool(body.get("confirmed", True))
-                mgr = SafeCleanupManager(project_root=BASE_DIR, current_job_id=CURRENT_JOB_ID)
+                mgr = SafeCleanupManager(base_dir=BASE_DIR, current_job_id=CURRENT_JOB_ID)
                 res_exec = mgr.execute_cleanup(
                     selected_groups=selected_groups,
                     dry_run=dry_run,
