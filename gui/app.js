@@ -7316,6 +7316,101 @@ function releaseAllVideoPlayers() {
 // ==========================================================================
 // 9. FINISHED COMPILATIONS & RECENT PROJECTS LOADER
 // ==========================================================================
+function updateLibrarySelection() {
+    const boxes = [...document.querySelectorAll("#recent-projects-grid .project-select")];
+    const checked = boxes.filter(b => b.checked);
+    const bytes = checked.reduce((sum, b) => sum + parseInt(b.dataset.bytes || "0", 10), 0);
+    const count = document.getElementById("library-selected-count");
+    const selectAll = document.getElementById("library-select-all");
+    const deleteBtn = document.getElementById("btn-delete-selected");
+    if (count) count.innerText = checked.length ? `${checked.length} selected (${formatCleanupBytes(bytes)})` : "0 selected";
+    if (selectAll) {
+        selectAll.checked = boxes.length > 0 && checked.length === boxes.length;
+        selectAll.indeterminate = checked.length > 0 && checked.length < boxes.length;
+    }
+    if (deleteBtn) deleteBtn.disabled = checked.length === 0;
+}
+
+async function deleteSelectedVideos() {
+    const checked = [...document.querySelectorAll("#recent-projects-grid .project-select:checked")];
+    if (!checked.length) return;
+    const bytes = checked.reduce((sum, b) => sum + parseInt(b.dataset.bytes || "0", 10), 0);
+    const noun = checked.length === 1 ? "video" : "videos";
+    const ok = await showConfirmModal({
+        title: `Delete ${checked.length} ${noun}`,
+        message: `Move ${checked.length} ${noun} (${formatCleanupBytes(bytes)}) and their reports to the Recycle Bin? You can restore them from there.`,
+        confirmText: "Delete",
+        isDanger: true
+    });
+    if (!ok) return;
+
+    releaseAllVideoPlayers();
+    await new Promise(r => setTimeout(r, 60));
+    let moved = 0;
+    const failed = [];
+    for (const box of checked) {
+        const name = box.dataset.name;
+        try {
+            const res = await fetch(`${API_BASE}/api/delete-file`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ filename: name })
+            });
+            const data = await res.json().catch(() => ({}));
+            if (res.ok && data.success) {
+                moved += 1;
+                state.librarySelected.delete(name);
+                if (state.activeFinishedProjectName === name) state.activeFinishedProjectName = null;
+            } else {
+                failed.push(name);
+            }
+        } catch (err) {
+            failed.push(name);
+        }
+    }
+    if (failed.length) {
+        showToast(`Moved ${moved} to the Recycle Bin. ${failed.length} could not be moved: ${failed[0]}`, "error");
+    } else {
+        showToast(`Moved ${moved} ${moved === 1 ? "video" : "videos"} to the Recycle Bin`, "success");
+    }
+    await loadFinishedProjects();
+}
+
+function wireLibrarySelection(grid) {
+    if (!state.librarySelected) state.librarySelected = new Set();
+    const selected = state.librarySelected;
+    const current = new Set((state.finishedProjects || []).map(p => p.name));
+    [...selected].forEach(name => { if (!current.has(name)) selected.delete(name); });
+
+    grid.querySelectorAll(".project-select").forEach(box => {
+        box.checked = selected.has(box.dataset.name);
+        box.addEventListener("change", () => {
+            if (box.checked) selected.add(box.dataset.name);
+            else selected.delete(box.dataset.name);
+            updateLibrarySelection();
+        });
+    });
+
+    const selectAll = document.getElementById("library-select-all");
+    if (selectAll && !selectAll.dataset.wired) {
+        selectAll.dataset.wired = "true";
+        selectAll.addEventListener("change", () => {
+            document.querySelectorAll("#recent-projects-grid .project-select").forEach(box => {
+                box.checked = selectAll.checked;
+                if (box.checked) selected.add(box.dataset.name);
+                else selected.delete(box.dataset.name);
+            });
+            updateLibrarySelection();
+        });
+    }
+    const deleteBtn = document.getElementById("btn-delete-selected");
+    if (deleteBtn && !deleteBtn.dataset.wired) {
+        deleteBtn.dataset.wired = "true";
+        deleteBtn.addEventListener("click", deleteSelectedVideos);
+    }
+    updateLibrarySelection();
+}
+
 async function loadFinishedProjects() {
     const grid = document.getElementById("recent-projects-grid");
     const emptyState = document.getElementById("recent-empty-state");
@@ -7369,7 +7464,7 @@ async function loadFinishedProjects() {
         if (!dur) dur = "--:--";
         const durDiff = proj.duration_diff_str ? ` <small class="duration-variance">${escapeHtml(proj.duration_diff_str)}</small>` : '';
 
-        const size = proj.sizeBytes ? `${(proj.sizeBytes / (1024 * 1024)).toFixed(1)} MB` : "24.5 MB";
+        const size = proj.sizeBytes ? `${(proj.sizeBytes / (1024 * 1024)).toFixed(1)} MB` : "size not measured";
         const isLandscape = name.includes("_long") || name.includes("16-9") || name.includes("landscape") || proj.aspectRatio === "16:9" || proj.is169;
         const isComp = proj.is_compilation || (proj.config_line && proj.config_line.includes("mode=compilation")) || (proj.duration && proj.duration >= 60.0) || (proj.expected_duration_s && proj.expected_duration_s >= 60.0);
         
@@ -7394,6 +7489,9 @@ async function loadFinishedProjects() {
         return `
             <div class="project-card" data-proj-name="${name}">
                 <div class="project-thumb-wrap">
+                    <label class="project-select-label" title="Select this video">
+                        <input type="checkbox" class="project-select" data-name="${escapeHtml(name)}" data-bytes="${proj.sizeBytes || 0}" aria-label="Select ${escapeHtml(name)}">
+                    </label>
                     <img src="${thumb}" alt="${escapeHtml(name)}" loading="lazy" onerror="this.onerror=null; this.src='${isLandscape ? "https://images.unsplash.com/photo-1548767797-d8c844163c4c?w=640&q=80" : "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=640&q=80"}';">
                     <div class="project-card-play" data-play-url="${fileUrl}" data-play-name="${escapeHtml(name)}" title="Play compilation">
                         <svg class="icon icon-md" aria-hidden="true"><use href="#icon-play"></use></svg>
@@ -7498,6 +7596,8 @@ async function loadFinishedProjects() {
         });
     });
 
+    wireLibrarySelection(grid);
+
     grid.querySelectorAll(".project-card-play").forEach(btn => {
         btn.addEventListener("click", () => {
             const url = btn.getAttribute("data-play-url");
@@ -7515,7 +7615,7 @@ async function loadFinishedProjects() {
             const name = btn.getAttribute("data-del");
             const ok = await showConfirmModal({
                 title: "Delete Compilation",
-                message: `Are you sure you want to permanently delete "${name}" and all its files from disk?`,
+                message: `Move "${name}" and its files to the Recycle Bin?`,
                 confirmText: "Delete",
                 isDanger: true
             });
@@ -7532,7 +7632,7 @@ async function loadFinishedProjects() {
                     });
                     const data = await res.json().catch(() => ({}));
                     if (res.ok && data.success) {
-                        showToast(`Deleted ${name} permanently from disk`, "success");
+                        showToast(`Moved ${name} to the Recycle Bin`, "success");
                         if (state.activeFinishedProjectName === name) {
                             state.activeFinishedProjectName = null;
                         }
@@ -12262,6 +12362,26 @@ function formatCleanupBytes(bytes) {
     return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
 }
 
+function setSafeCleanupScanning(scanning, failed = false) {
+    const blocked = scanning || failed;
+    ["btn-confirm-safe-cleanup", "btn-cleanup-dry-run", "cleanup-select-all"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.disabled = blocked;
+    });
+    const selectAll = document.getElementById("cleanup-select-all");
+    if (selectAll && blocked) {
+        selectAll.checked = false;
+        selectAll.indeterminate = false;
+    }
+    if (scanning) {
+        _safeCleanupPreviewData = null;
+        const summaryEl = document.getElementById("cleanup-selected-summary");
+        const confirmLabelEl = document.getElementById("btn-confirm-safe-cleanup-label");
+        if (summaryEl) summaryEl.textContent = "Scanning...";
+        if (confirmLabelEl) confirmLabelEl.textContent = "Clean Up Selected";
+    }
+}
+
 function syncSafeCleanupSelectAll() {
     const selectAll = document.getElementById("cleanup-select-all");
     const listEl = document.getElementById("cleanup-groups-list");
@@ -12321,6 +12441,7 @@ async function openSafeCleanupModal() {
 
     modal.style.display = "flex";
     if (resultBannerEl) resultBannerEl.style.display = "none";
+    setSafeCleanupScanning(true);
     listEl.innerHTML = `<div style="padding: 18px; text-align: center; color: var(--text-muted); font-size: 0.875rem;">Scanning candidate groups (nothing deleted yet)…</div>`;
 
     try {
@@ -12369,8 +12490,10 @@ async function openSafeCleanupModal() {
         listEl.querySelectorAll(".cleanup-group-checkbox").forEach((cb) => {
             cb.addEventListener("change", updateSafeCleanupSelectionSummary);
         });
+        setSafeCleanupScanning(false);
         updateSafeCleanupSelectionSummary();
     } catch (err) {
+        setSafeCleanupScanning(false, true);
         listEl.innerHTML = `<div style="padding: 14px; color: var(--error, #ef4444); font-size: 0.875rem;">Failed to load clean-up preview: ${err.message}</div>`;
     }
 }

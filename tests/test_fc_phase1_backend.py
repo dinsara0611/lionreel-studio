@@ -408,3 +408,12 @@ def test_stored_licence_label_is_never_presented_as_verified(tmp_path, monkeypat
 
 def test_no_number_suffix_on_titles():
     assert '#{random.randint' not in open(os.path.join(BASE, "lion_automate_v97.py"), encoding="utf8").read()
+
+
+def test_video_delete_goes_to_the_recycle_bin_not_permanent():
+    import web_server
+    source = web_server.delete_compilation_files.__code__.co_names
+    assert "move_to_trash" in source
+    text = open(os.path.join(BASE, "web_server.py"), encoding="utf8").read()
+    body = text[text.index("def delete_compilation_files"):text.index("def delete_compilation_files") + 3600]
+    assert "robust_remove(fp)" not in body and "robust_remove(job_dir)" not in body

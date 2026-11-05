@@ -409,6 +409,18 @@ def robust_remove(filepath, max_retries=6, delay=0.15):
 
     return not os.path.exists(filepath)
 
+def move_to_trash(path):
+    """Deleted videos go to the Recycle Bin, or Google Drive Trash, so a slip can be undone."""
+    from safe_cleanup import send_to_recycle_bin
+    for attempt in range(3):
+        ok, _ = send_to_recycle_bin(path)
+        if ok or not os.path.exists(path):
+            return True
+        gc.collect()
+        time.sleep(0.3 * (attempt + 1))
+    return False
+
+
 def delete_compilation_files(filename):
     """
     Deletes a compilation and ALL its related artifacts across:
@@ -454,7 +466,7 @@ def delete_compilation_files(filename):
                 is_match = True
             
             if is_match:
-                if robust_remove(fp):
+                if move_to_trash(fp):
                     deleted_files.append(f"finished/{f}")
                 else:
                     failed_locks.append(f"finished/{f}")
@@ -464,7 +476,7 @@ def delete_compilation_files(filename):
         # Dedicated job subfolder in output/
         job_dir = os.path.join(OUTPUT_DIR, stem)
         if os.path.exists(job_dir):
-            if robust_remove(job_dir):
+            if move_to_trash(job_dir):
                 deleted_files.append(f"output/{stem}/")
             else:
                 failed_locks.append(f"output/{stem}/")
@@ -474,7 +486,7 @@ def delete_compilation_files(filename):
             fp = os.path.join(OUTPUT_DIR, f)
             if os.path.isfile(fp):
                 if f == clean_name or f.startswith(stem + "_") or f.startswith(stem + "."):
-                    if robust_remove(fp):
+                    if move_to_trash(fp):
                         deleted_files.append(f"output/{f}")
                     else:
                         failed_locks.append(f"output/{f}")
@@ -483,7 +495,7 @@ def delete_compilation_files(filename):
     if os.path.exists(WORK_DIR):
         work_job_dir = os.path.join(WORK_DIR, stem)
         if os.path.exists(work_job_dir):
-            if robust_remove(work_job_dir):
+            if move_to_trash(work_job_dir):
                 deleted_files.append(f"work/{stem}/")
 
     # 4. Clear JOB_RESULT_FILE if it points to this output
@@ -514,7 +526,7 @@ def delete_compilation_files(filename):
     if not deleted_files:
         direct_p = os.path.join(FINISHED_DIR, clean_name)
         if os.path.exists(direct_p):
-            if not robust_remove(direct_p):
+            if not move_to_trash(direct_p):
                 return False, [], f"Could not remove locked file: {clean_name}"
             deleted_files.append(f"finished/{clean_name}")
         else:

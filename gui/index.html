@@ -598,6 +598,18 @@
                         </div>
                     </div>
 
+                    <!-- Select videos to delete together -->
+                    <div class="library-select-bar">
+                        <label class="library-select-all" for="library-select-all">
+                            <input type="checkbox" id="library-select-all" class="themed-checkbox">
+                            <span>Select all</span>
+                        </label>
+                        <span id="library-selected-count" class="library-selected-count">0 selected</span>
+                        <button type="button" id="btn-delete-selected" class="btn btn-secondary btn-sm library-delete-btn" disabled>
+                            <span>Delete selected</span>
+                        </button>
+                    </div>
+
                     <!-- Recent Projects Grid -->
                     <div id="recent-projects-grid" class="projects-grid">
                         <!-- Populated dynamically via JS -->

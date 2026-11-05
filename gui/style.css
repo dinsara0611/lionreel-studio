@@ -9666,3 +9666,49 @@ html[data-theme="light"] .chip-warning span {
     color: var(--text-primary);
     cursor: pointer;
 }
+
+.library-select-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+.library-select-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+}
+.library-selected-count {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    color: var(--text-muted);
+}
+.library-delete-btn {
+    margin-left: auto;
+}
+.library-delete-btn:not(:disabled) {
+    color: var(--error);
+    border-color: var(--error);
+}
+.project-select-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    cursor: pointer;
+}
+.project-select {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}

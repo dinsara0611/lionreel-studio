@@ -181,3 +181,42 @@ def test_cleanup_select_all(page):
     page.uncheck("#cleanup-select-all")
     assert page.evaluate(state) == [False, False, False]
     page.evaluate("() => { document.getElementById('modal-safe-cleanup').style.display = 'none'; }")
+
+
+def test_library_select_all_and_delete_selected(page):
+    calls = []
+    fake = {"files": [{"name": "a.mp4", "sizeBytes": 1048576, "url": "/finished/a.mp4"}, {"name": "b.mp4", "sizeBytes": 2097152, "url": "/finished/b.mp4"}],
+            "total_count": 2, "real_count": 2, "test_count": 0}
+    if True:
+        ctx = page.context.browser.new_context(viewport={"width": 1440, "height": 900})
+        pg = ctx.new_page()
+        pg.route("**/api/finished*", lambda r: r.fulfill(status=200, content_type="application/json", body=json.dumps(fake)))
+
+        def on_delete(route):
+            calls.append(json.loads(route.request.post_data)["filename"])
+            route.fulfill(status=200, content_type="application/json", body=json.dumps({"success": True}))
+        pg.route("**/api/delete-file*", on_delete)
+        pg.goto(URL, wait_until="domcontentloaded")
+        pg.wait_for_timeout(1800)
+        pg.evaluate("() => { navigateToStep(1); loadFinishedProjects(); }")
+        pg.wait_for_selector("#recent-projects-grid .project-select", state="attached")
+        assert pg.is_disabled("#btn-delete-selected")
+        pg.check("#library-select-all")
+        assert "2 selected" in pg.inner_text("#library-selected-count")
+        pg.click("#btn-delete-selected")
+        assert "2 videos" in pg.inner_text("#modal-confirm-message") and "Recycle Bin" in pg.inner_text("#modal-confirm-message")
+        assert calls == []
+        pg.click("#btn-confirm-ok")
+        pg.wait_for_timeout(800)
+        ctx.close()
+    assert calls == ["a.mp4", "b.mp4"]
+
+
+def test_cleanup_cannot_run_while_scanning(page):
+    page.evaluate("""() => {
+        document.getElementById('modal-safe-cleanup').style.display = 'flex';
+        setSafeCleanupScanning(true);
+    }""")
+    assert page.is_disabled("#btn-confirm-safe-cleanup") and page.is_disabled("#btn-cleanup-dry-run")
+    assert "Scanning" in page.inner_text("#cleanup-selected-summary")
+    page.evaluate("() => { setSafeCleanupScanning(false); document.getElementById('modal-safe-cleanup').style.display = 'none'; }")
