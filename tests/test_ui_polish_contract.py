@@ -19,7 +19,7 @@ import json
 import time
 from playwright.sync_api import sync_playwright
 
-BASE_URL = "http://127.0.0.1:8000"
+BASE_URL = "http://127.0.0.1:8100"
 
 def get_browser(p):
     return p.chromium.launch(channel="chrome", headless=True)

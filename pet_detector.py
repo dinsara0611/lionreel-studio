@@ -4,6 +4,7 @@ Detects cats (class 15) and dogs (class 16) with robust bounding box regression.
 """
 
 import os
+import lion_paths
 import cv2
 import numpy as np
 
@@ -46,7 +47,7 @@ class PetDetector:
         # Cache to local SSD to prevent Google Drive virtual disk locks/latency
         load_path = model_path
         try:
-            local_dir = r"C:\LionReel\models"
+            local_dir = lion_paths.models_root()
             os.makedirs(local_dir, exist_ok=True)
             local_cached = os.path.join(local_dir, os.path.basename(model_path))
             if not os.path.exists(local_cached) or os.path.getsize(local_cached) != os.path.getsize(model_path):

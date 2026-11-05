@@ -6,6 +6,7 @@ Uses low-resolution fast scanning, cached fingerprints, and parallel workers.
 """
 
 import os
+import lion_paths
 import sys
 
 # Self-heal Python runtime: C-extensions (OpenCV, NumPy) are compiled for Python 3.12.
@@ -38,16 +39,16 @@ CONFIG_FILE = os.path.join(BASE_DIR, "config.json")
 RAW_DIR = os.path.join(BASE_DIR, "raw")
 OWN_DIR = os.path.join(BASE_DIR, "own_footage")
 REF_DIR = os.path.join(BASE_DIR, "reference")
-CACHE_DIR = os.environ.get("LIONREEL_CACHE_DIR", r"C:\LionReel\cache")
+CACHE_DIR = lion_paths.cache_root()
 
 def get_status_file_path() -> str:
-    local_data = os.path.join("C:\\", "LionReel", "data")
+    local_data = lion_paths.data_root()
     if os.path.exists(local_data):
         return os.path.join(local_data, "harvest_status.json")
     return os.path.join(BASE_DIR, "data", "harvest_status.json")
 
 def get_lock_file_path() -> str:
-    local_data = os.path.join("C:\\", "LionReel", "data")
+    local_data = lion_paths.data_root()
     if os.path.exists(local_data):
         return os.path.join(local_data, "harvest.lock")
     return os.path.join(BASE_DIR, "data", "harvest.lock")
@@ -895,7 +896,7 @@ def trigger_background_harvest_if_needed(animal_mode: str = "cat", min_low_water
     needs_harvest = (verified_unused < needed_threshold) or (verified_sources < 4) or source_dominated
     if needs_harvest and not is_harvest_running():
         # Spawn background process
-        local_venv_py = r"C:\LionReel\venv\Scripts\python.exe"
+        local_venv_py = lion_paths.venv_python()
         python_exe = local_venv_py if os.path.exists(local_venv_py) else (sys.executable or "python")
         worker_script = os.path.join(BASE_DIR, "harvest_worker.py")
         target_to_add = 20

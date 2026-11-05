@@ -11,6 +11,7 @@ Handles both SUCCESS and FAILED jobs (diagnostic report).
 """
 
 import os
+import lion_paths
 import sys
 import json
 import re
@@ -38,7 +39,7 @@ def get_work_dir():
                     return c["LOCAL_WORK_DIR"]
     except Exception:
         pass
-    local_p = os.path.join("C:\\", "LionReel", "work")
+    local_p = lion_paths.work_root()
     if os.path.exists(local_p):
         return local_p
     return os.path.join(BASE_DIR, "work")
@@ -465,11 +466,7 @@ def run_ffprobe(filepath: str) -> Dict[str, Any]:
     
     # Try finding ffprobe via imageio_ffmpeg
     try:
-        import imageio_ffmpeg
-        ffmpeg_exe = imageio_ffmpeg.get_ffmpeg_exe()
-        ffprobe_exe = os.path.join(os.path.dirname(ffmpeg_exe), "ffprobe.exe")
-        if not os.path.exists(ffprobe_exe):
-            ffprobe_exe = shutil.which("ffprobe") or "ffprobe"
+        ffprobe_exe = lion_paths.ffprobe_exe() or "ffprobe"
     except Exception:
         ffprobe_exe = shutil.which("ffprobe") or "ffprobe"
 

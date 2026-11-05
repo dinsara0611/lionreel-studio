@@ -5,12 +5,13 @@ Prevents duplicate concurrent engine launches and manages lock lifecycle.
 """
 
 import os
+import lion_paths
 import sys
 import json
 import time
 import ctypes
 
-GLOBAL_LOCK_PATH = os.path.join("C:\\", "LionReel", "data", "global_engine.lock")
+GLOBAL_LOCK_PATH = os.path.join(lion_paths.data_root(), "global_engine.lock")
 
 def is_pid_alive(pid: int) -> bool:
     """Checks if a process with given PID is currently alive on the system."""
@@ -80,7 +81,7 @@ def get_job_lock_path(job_id: str, lock_dir: str = None, job_dir: str = None) ->
         return os.path.join(job_dir, "engine.lock")
     if lock_dir:
         return os.path.join(lock_dir, f"{job_id}.lock")
-    return os.path.join("C:\\", "LionReel", "work", job_id, "engine.lock")
+    return os.path.join(lion_paths.work_root(), job_id, "engine.lock")
 
 def acquire_engine_lock(job_id: str, pid: int = None, lock_dir: str = None, job_dir: str = None) -> tuple:
     """

@@ -48,7 +48,7 @@ test.describe('Progress Card & Estimator Verification Suite', () => {
             });
         });
 
-        await page1.goto('http://127.0.0.1:8000');
+        await page1.goto('http://127.0.0.1:8100');
         await page1.waitForTimeout(600);
 
         // Switch to View 4 (Render step)
@@ -96,7 +96,7 @@ test.describe('Progress Card & Estimator Verification Suite', () => {
         await page2.route('**/api/status', async route => {
             await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(mockStatus) });
         });
-        await page2.goto('http://127.0.0.1:8000');
+        await page2.goto('http://127.0.0.1:8100');
         await page2.waitForTimeout(600);
         await page2.evaluate(() => {
             if (typeof window.navigateToStep === 'function') window.navigateToStep(4);
@@ -208,7 +208,7 @@ test.describe('Progress Card & Estimator Verification Suite', () => {
                         });
                     });
 
-                    await page.goto('http://127.0.0.1:8000');
+                    await page.goto('http://127.0.0.1:8100');
                     await page.waitForTimeout(400);
 
                     await page.evaluate(({ theme, stateData }) => {

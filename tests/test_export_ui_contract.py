@@ -9,7 +9,7 @@ import sys
 import json
 from playwright.sync_api import sync_playwright
 
-SERVER_URL = "http://127.0.0.1:8000"
+SERVER_URL = "http://127.0.0.1:8100"
 TARGET_SHORT_ID = "lionreel_cat_20261016_084742_31bc5d3b"
 
 def test_export_ui_contract():

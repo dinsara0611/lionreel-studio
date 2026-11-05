@@ -55,7 +55,7 @@ def test_playwright_acceptance():
                         color_scheme=theme
                     )
                     page = context.new_page()
-                    page.goto("http://127.0.0.1:8000", timeout=15000)
+                    page.goto("http://127.0.0.1:8100", timeout=15000)
                     page.wait_for_timeout(600)
 
                     # Setup state in UI
@@ -170,7 +170,7 @@ def test_playwright_acceptance():
         print("\n--- 2. Testing Pre-Flight Panel & Taking Screenshot ---")
         context = browser.new_context(viewport={"width": 1440, "height": 900}, color_scheme="dark")
         page = context.new_page()
-        page.goto("http://127.0.0.1:8000", timeout=15000)
+        page.goto("http://127.0.0.1:8100", timeout=15000)
         page.wait_for_timeout(600)
 
         page.evaluate("""() => {
@@ -200,7 +200,7 @@ def test_playwright_acceptance():
         print("\n--- 3. Verifying Waiting Card Elements & Actions ---")
         context = browser.new_context(viewport={"width": 1440, "height": 900}, color_scheme="dark")
         page = context.new_page()
-        page.goto("http://127.0.0.1:8000", timeout=15000)
+        page.goto("http://127.0.0.1:8100", timeout=15000)
         page.wait_for_timeout(600)
 
         # Trigger checkEngineStatus with mock waiting state from backend
@@ -265,7 +265,7 @@ def test_playwright_acceptance():
         print("\n--- 4. Testing Invalid Request (HTTP 400 Rejection) ---")
         context = browser.new_context(viewport={"width": 1440, "height": 900})
         page = context.new_page()
-        page.goto("http://127.0.0.1:8000", timeout=15000)
+        page.goto("http://127.0.0.1:8100", timeout=15000)
         page.wait_for_timeout(500)
 
         res_json = page.evaluate("""async () => {
@@ -303,7 +303,7 @@ def test_playwright_acceptance():
 
         context = browser.new_context(viewport={"width": 1440, "height": 900}, color_scheme="dark")
         page = context.new_page()
-        page.goto("http://127.0.0.1:8000", timeout=15000)
+        page.goto("http://127.0.0.1:8100", timeout=15000)
         page.wait_for_timeout(500)
 
         page.evaluate("async () => { await checkEngineStatus(); }")

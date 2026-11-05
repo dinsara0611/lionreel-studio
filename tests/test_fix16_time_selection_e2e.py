@@ -24,7 +24,7 @@ class TestFix16TimeSelectionE2E(unittest.TestCase):
 
     def test_api_preflight_respects_explicit_clips(self):
         """Preflight API must honor explicit clips parameter and return is_ready=True when target <= capacity."""
-        url = "http://127.0.0.1:8000/api/preflight?animal=cat&type=long&clips=8"
+        url = "http://127.0.0.1:8100/api/preflight?animal=cat&type=long&clips=8"
         req = urllib.request.urlopen(url)
         data = json.loads(req.read().decode("utf-8"))
 
@@ -37,7 +37,7 @@ class TestFix16TimeSelectionE2E(unittest.TestCase):
 
     def test_api_preflight_shortfall_shows_accurate_capacity(self):
         """When 100 clips requested, preflight accurately reports 8 clips capacity from 4 sources."""
-        url = "http://127.0.0.1:8000/api/preflight?animal=cat&type=long&clips=100"
+        url = "http://127.0.0.1:8100/api/preflight?animal=cat&type=long&clips=100"
         req = urllib.request.urlopen(url)
         data = json.loads(req.read().decode("utf-8"))
 
@@ -52,7 +52,7 @@ class TestFix16TimeSelectionE2E(unittest.TestCase):
         with sync_playwright() as p:
             browser = p.chromium.launch(channel="chrome", headless=True)
             page = browser.new_page(viewport={"width": 1440, "height": 900})
-            page.goto("http://127.0.0.1:8000/", wait_until="domcontentloaded")
+            page.goto("http://127.0.0.1:8100/", wait_until="domcontentloaded")
             page.wait_for_timeout(1000)
 
             # Trigger preflight modal with 100 clips shortfall

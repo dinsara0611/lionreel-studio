@@ -41,7 +41,7 @@ from auto_reframe import AutoReframeEngine
 
 SCREENSHOTS_DIR = os.path.join(BASE_DIR, "data", "screenshots")
 os.makedirs(SCREENSHOTS_DIR, exist_ok=True)
-SERVER_URL = "http://localhost:8000"
+SERVER_URL = "http://localhost:8100"
 
 
 class TestEditStepE2E(unittest.TestCase):

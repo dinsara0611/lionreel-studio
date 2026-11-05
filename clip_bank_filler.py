@@ -14,6 +14,7 @@ Features:
 """
 
 import os
+import lion_paths
 import sys
 import time
 import json
@@ -157,7 +158,7 @@ class ClipBankFiller:
 
                     # Check wait_checkpoint in work dir if job_id exists
                     if job_id:
-                        for work_base in ["C:\\LionReel\\work", os.path.join(BASE_DIR, "work")]:
+                        for work_base in [lion_paths.work_root(), os.path.join(BASE_DIR, "work")]:
                             cp_file = os.path.join(work_base, job_id, "wait_checkpoint.json")
                             if os.path.exists(cp_file):
                                 try:
@@ -177,7 +178,7 @@ class ClipBankFiller:
         lock_file = os.path.join(DATA_DIR, "render_job.lock")
         if os.path.exists(lock_file):
             # Check if any recent work directory has an active waiting checkpoint
-            for work_base in ["C:\\LionReel\\work", os.path.join(BASE_DIR, "work")]:
+            for work_base in [lion_paths.work_root(), os.path.join(BASE_DIR, "work")]:
                 if os.path.exists(work_base):
                     try:
                         for jid in os.listdir(work_base):

@@ -5,7 +5,7 @@ const path = require('path');
 test.describe('Fix 6 - Candidate Audit Table & UI Verification', () => {
     test('verify candidate audit table columns, expandable rows, formatters, and retry flow', async ({ page }) => {
         // 1. Navigate to dashboard
-        await page.goto('http://localhost:8000');
+        await page.goto('http://localhost:8100');
         await page.waitForTimeout(1500);
 
         // 2. Navigate to Step 4 (Render step)

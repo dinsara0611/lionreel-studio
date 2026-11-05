@@ -13,6 +13,7 @@ Fully implements Master Prompt V2 requirements:
 """
 
 import os
+import lion_paths
 import sys
 import subprocess
 
@@ -102,9 +103,9 @@ LOGS_DIR = os.path.join(BASE_DIR, "logs")
 JOB_RESULT_FILE = os.path.join(BASE_DIR, "job_result.json")
 
 # Heavy I/O directories stored on local SSD
-WORK_DIR = get_local_path("LOCAL_WORK_DIR", "C:\\LionReel\\work", "work")
-DATA_DIR = get_local_path("LOCAL_DATA_DIR", "C:\\LionReel\\data", "data")
-CACHE_DIR = get_local_path("LOCAL_CACHE_DIR", "C:\\LionReel\\cache", "cache")
+WORK_DIR = get_local_path("LOCAL_WORK_DIR", lion_paths.work_root(), "work")
+DATA_DIR = get_local_path("LOCAL_DATA_DIR", lion_paths.data_root(), "data")
+CACHE_DIR = get_local_path("LOCAL_CACHE_DIR", lion_paths.cache_root(), "cache")
 
 for d in [RAW_DIR, OWN_DIR, REF_DIR, OUT_DIR, DATA_DIR, LOGS_DIR, WORK_DIR, OUTPUT_DIR, CACHE_DIR]:
     os.makedirs(d, exist_ok=True)
@@ -168,7 +169,7 @@ def verify_layout_gate_compatibility(layout_mode: str):
             raise RuntimeError("LAYOUT_GATE_CONFLICT: Auto mode sub-gates contain contradictory blurred bar policies!")
 
 FFMPEG_EXE = imageio_ffmpeg.get_ffmpeg_exe()
-FFPROBE_EXE = os.path.join(os.path.dirname(FFMPEG_EXE), "ffprobe.exe")
+FFPROBE_EXE = lion_paths.ffprobe_exe() or "ffprobe"
 if not os.path.exists(FFPROBE_EXE):
     FFPROBE_EXE = "ffprobe"
 

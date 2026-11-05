@@ -25,7 +25,7 @@ class TestPlaywrightFix14(unittest.TestCase):
                 permissions=["clipboard-read", "clipboard-write"]
             )
             page = context.new_page()
-            page.goto("http://127.0.0.1:8000", timeout=15000)
+            page.goto("http://127.0.0.1:8100", timeout=15000)
             page.wait_for_timeout(1000)
 
             # 1. Test Preflight Modal with capacity warning and "Set K clips" button

@@ -46,7 +46,7 @@ os.makedirs(SCREENSHOT_DIR, exist_ok=True)
 os.makedirs(ANALYSIS_SCREENSHOTS, exist_ok=True)
 
 TARGET_JOB_ID = "lionreel_cat_20261016_065802_502f5dd4"
-SERVER_URL = "http://127.0.0.1:8000"
+SERVER_URL = "http://127.0.0.1:8100"
 
 
 def save_screenshot(page, filename):

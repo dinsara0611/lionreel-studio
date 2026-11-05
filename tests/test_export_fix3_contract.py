@@ -5,7 +5,7 @@ import time
 import unittest
 from playwright.sync_api import sync_playwright
 
-BASE_URL = "http://127.0.0.1:8000"
+BASE_URL = "http://127.0.0.1:8100"
 
 class TestExportFix3Contract(unittest.TestCase):
     """

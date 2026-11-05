@@ -4,7 +4,7 @@ import json
 
 class TestFix6Backend(unittest.TestCase):
     def test_status_endpoint_returns_audit_and_elapsed(self):
-        url = "http://localhost:8000/api/status"
+        url = "http://localhost:8100/api/status"
         req = urllib.request.urlopen(url)
         self.assertEqual(req.status, 200)
         data = json.loads(req.read().decode('utf-8'))
@@ -16,7 +16,7 @@ class TestFix6Backend(unittest.TestCase):
 
     def test_logs_endpoint_monotonic_seq(self):
         # Test logs endpoint with dummy or current job
-        url = "http://localhost:8000/api/logs"
+        url = "http://localhost:8100/api/logs"
         req = urllib.request.urlopen(url)
         self.assertEqual(req.status, 200)
         data = json.loads(req.read().decode('utf-8'))

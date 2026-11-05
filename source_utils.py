@@ -5,6 +5,7 @@ and fast source caching.
 """
 
 import os
+import lion_paths
 import sys
 
 _BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -24,11 +25,7 @@ def get_ffmpeg_exe() -> str:
     return imageio_ffmpeg.get_ffmpeg_exe()
 
 def get_ffprobe_exe() -> str:
-    ffmpeg_exe = get_ffmpeg_exe()
-    probe_candidate = os.path.join(os.path.dirname(ffmpeg_exe), "ffprobe.exe")
-    if os.path.exists(probe_candidate):
-        return probe_candidate
-    return "ffprobe"
+    return lion_paths.ffprobe_exe() or "ffprobe"
 
 def compute_source_fingerprint(video_path: str) -> str:
     """Computes fast 64-character hash using file size and first 4MB header."""

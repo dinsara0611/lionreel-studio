@@ -15,7 +15,7 @@ const VIEWPORTS = [
 test.describe('LionReel Studio — Step 3 Edit Step Comprehensive Audit', () => {
 
     test('Part A: Video Loaded Details & Empty State Flow', async ({ page }) => {
-        await page.goto('http://localhost:8000');
+        await page.goto('http://localhost:8100');
         await page.waitForTimeout(1000);
 
         // 1. Test Empty State when no video is loaded
@@ -69,7 +69,7 @@ test.describe('LionReel Studio — Step 3 Edit Step Comprehensive Audit', () => 
     });
 
     test('Part A: Preview Player Multi-Tabs (Final, Edit preview, Before / after)', async ({ page }) => {
-        await page.goto('http://localhost:8000');
+        await page.goto('http://localhost:8100');
         await page.waitForTimeout(1000);
 
         await page.evaluate(async () => {
@@ -111,7 +111,7 @@ test.describe('LionReel Studio — Step 3 Edit Step Comprehensive Audit', () => 
     });
 
     test('Part A: Non-destructive Re-render Endpoint & Button Flow', async ({ page }) => {
-        await page.goto('http://localhost:8000');
+        await page.goto('http://localhost:8100');
         await page.waitForTimeout(1000);
 
         await page.evaluate(async () => {
@@ -139,7 +139,7 @@ test.describe('LionReel Studio — Step 3 Edit Step Comprehensive Audit', () => 
         for (const vp of VIEWPORTS) {
             for (const theme of ['dark', 'light']) {
                 await page.setViewportSize({ width: vp.width, height: vp.height });
-                await page.goto('http://localhost:8000');
+                await page.goto('http://localhost:8100');
                 await page.waitForTimeout(600);
 
                 // Set theme and navigate to Step 3 with MP4 video loaded
@@ -241,7 +241,7 @@ test.describe('LionReel Studio — Step 3 Edit Step Comprehensive Audit', () => 
     });
 
     test('Part C: Guided Tour 10-Step Interactive Tour Verification', async ({ page }) => {
-        await page.goto('http://localhost:8000');
+        await page.goto('http://localhost:8100');
         await page.waitForTimeout(1000);
 
         // Reset tour seen flag in localStorage and load video

@@ -5,6 +5,7 @@ tracking perceptual fingerprints, managing pool usage cycles, and releasing clip
 """
 
 import os
+import lion_paths
 import sys
 import time
 import json
@@ -38,7 +39,7 @@ def get_ledger_db_path() -> str:
             pass
 
     # 3. Default to fast local SSD (C:\LionReel\data\clip_ledger.db) on Windows
-    local_default = os.path.join("C:\\", "LionReel", "data", "clip_ledger.db")
+    local_default = os.path.join(lion_paths.data_root(), "clip_ledger.db")
     try:
         os.makedirs(os.path.dirname(local_default), exist_ok=True)
         return local_default

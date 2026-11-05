@@ -27,7 +27,7 @@ if os.path.exists(_VENV_SITE) and _VENV_SITE not in sys.path:
 
 from playwright.sync_api import sync_playwright
 
-SERVER_URL = "http://localhost:8000"
+SERVER_URL = "http://localhost:8100"
 TARGET_JOB_ID = "lionreel_cat_20261010_210235_2c0674b7"
 SCREENSHOTS_DIR = os.path.join(BASE_DIR, "data", "screenshots")
 os.makedirs(SCREENSHOTS_DIR, exist_ok=True)

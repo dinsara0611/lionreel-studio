@@ -8,7 +8,7 @@ const ARTIFACTS_DIR = 'C:/Users/dinsa/.gemini/antigravity-ide/brain/d2de3fbc-7e2
 test.describe('10 Automated Pipeline Stages - Dynamic Order & Evidence UI', () => {
     test('renders mid-run and completed stages in dark and light modes', async ({ page }) => {
         await page.setViewportSize({ width: 1280, height: 950 });
-        await page.goto('http://localhost:8000');
+        await page.goto('http://localhost:8100');
         await page.waitForTimeout(1000);
 
         // Navigate to Step 4 (Render step)

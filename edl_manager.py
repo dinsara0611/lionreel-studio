@@ -5,6 +5,7 @@ color enhancement presets, playback speed, and crop reframing).
 """
 
 import os
+import lion_paths
 import sys
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -37,7 +38,7 @@ def get_work_dir() -> str:
                     return c["LOCAL_WORK_DIR"]
         except Exception:
             pass
-    local_p = os.path.join("C:\\", "LionReel", "work")
+    local_p = lion_paths.work_root()
     if os.path.exists(local_p):
         return local_p
     return os.path.join(BASE_DIR, "work")

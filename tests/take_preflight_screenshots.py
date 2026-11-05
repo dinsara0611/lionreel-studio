@@ -20,7 +20,7 @@ def take_screenshots():
 
         for w, h, is_dark, fname in configs:
             page = browser.new_page(viewport={"width": w, "height": h})
-            page.goto("http://127.0.0.1:8000/", wait_until="domcontentloaded")
+            page.goto("http://127.0.0.1:8100/", wait_until="domcontentloaded")
             
             # Set theme
             if is_dark:
@@ -66,7 +66,7 @@ def take_screenshots():
 
         # Also capture one with K=0 showing suggestion banner and hidden Start anyway
         page_k0 = browser.new_page(viewport={"width": 1440, "height": 900})
-        page_k0.goto("http://127.0.0.1:8000/", wait_until="domcontentloaded")
+        page_k0.goto("http://127.0.0.1:8100/", wait_until="domcontentloaded")
         page_k0.evaluate("() => { document.documentElement.setAttribute('data-theme', 'dark'); }")
         page_k0.evaluate("""() => {
             const ls = document.getElementById('app-loading-screen');
@@ -101,7 +101,7 @@ def take_screenshots():
 
         # Also capture live harvest progress view state
         page_prog = browser.new_page(viewport={"width": 1440, "height": 900})
-        page_prog.goto("http://127.0.0.1:8000/", wait_until="domcontentloaded")
+        page_prog.goto("http://127.0.0.1:8100/", wait_until="domcontentloaded")
         page_prog.evaluate("() => { document.documentElement.setAttribute('data-theme', 'dark'); }")
         page_prog.evaluate("""() => {
             const ls = document.getElementById('app-loading-screen');

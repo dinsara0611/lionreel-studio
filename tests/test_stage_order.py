@@ -256,14 +256,14 @@ class TestStageOrderStateMachine(unittest.TestCase):
         """Verify that reloading or checking status returns the full 10-stage list with honest evidence."""
         import urllib.request
         try:
-            req = urllib.request.urlopen("http://localhost:8000/api/stages", timeout=3)
+            req = urllib.request.urlopen("http://localhost:8100/api/stages", timeout=3)
             res = json.loads(req.read().decode())
             self.assertIn("stages", res)
             self.assertEqual(len(res["stages"]), 10)
             self.assertEqual(res["stages"][0]["key"], "collect_candidates")
             self.assertEqual(res["stages"][9]["key"], "save_credits_export")
         except Exception as e:
-            self.skipTest(f"Web server not reachable on localhost:8000: {e}")
+            self.skipTest(f"Web server not reachable on localhost:8100: {e}")
 
 if __name__ == "__main__":
     unittest.main()

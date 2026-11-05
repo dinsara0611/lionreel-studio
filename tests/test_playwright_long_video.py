@@ -26,7 +26,7 @@ class TestPlaywrightLongVideo(unittest.TestCase):
                 viewport={"width": 1440, "height": 900}
             )
             page = context.new_page()
-            page.goto("http://127.0.0.1:8000", timeout=15000)
+            page.goto("http://127.0.0.1:8100", timeout=15000)
             page.wait_for_timeout(1000)
 
             # 1. Verify UI controls & state

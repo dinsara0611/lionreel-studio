@@ -1,4 +1,5 @@
 import os
+import lion_paths
 import sys
 
 # Self-heal Python runtime: C-extensions (OpenCV, NumPy) are compiled for Python 3.12.
@@ -172,7 +173,7 @@ def get_local_work_dir():
                     return c["LOCAL_WORK_DIR"]
     except Exception:
         pass
-    local_p = os.path.join("C:\\", "LionReel", "work")
+    local_p = lion_paths.work_root()
     try:
         os.makedirs(local_p, exist_ok=True)
         return local_p
@@ -3545,7 +3546,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
 
             # Spawn Python script using local SSD virtual environment (Section 4)
             try:
-                local_venv_py = r"C:\LionReel\venv\Scripts\python.exe"
+                local_venv_py = lion_paths.venv_python()
                 if os.path.exists(local_venv_py):
                     python_exe = local_venv_py
                 else:
@@ -3779,7 +3780,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                         self.wfile.write(json.dumps({"success": True, "job_id": target_job, "action": action, "active": True}).encode())
                         return
 
-                    local_venv_py = r"C:\LionReel\venv\Scripts\python.exe"
+                    local_venv_py = lion_paths.venv_python()
                     py_exe = local_venv_py if os.path.exists(local_venv_py) else (sys.executable or "python")
                     job_log_file = os.path.join(WORK_DIR, target_job, "job.log") if target_job else LOG_FILE
                     log_fd = open(job_log_file, "a", encoding="utf-8", errors="ignore")
@@ -3861,7 +3862,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                     return
 
                 elif action in ("allow_reuse_old_footage", "allow_reuse"):
-                    local_venv_py = r"C:\LionReel\venv\Scripts\python.exe"
+                    local_venv_py = lion_paths.venv_python()
                     py_exe = local_venv_py if os.path.exists(local_venv_py) else (sys.executable or "python")
                     job_log_file = os.path.join(WORK_DIR, target_job, "job.log") if target_job else LOG_FILE
                     log_fd = open(job_log_file, "a", encoding="utf-8", errors="ignore")
@@ -4058,7 +4059,7 @@ if __name__ == "__main__":
                     with open(job_log_file, "w", encoding="utf-8") as f_jinit:
                         f_jinit.write(launch_banner)
                     log_fd = open(job_log_file, "a", encoding="utf-8", errors="ignore")
-                    python_exe = r"C:\LionReel\venv\Scripts\python.exe"
+                    python_exe = lion_paths.venv_python()
                     if not os.path.exists(python_exe):
                         python_exe = os.path.join(BASE_DIR, ".venv", "Scripts", "python.exe")
                     if not os.path.exists(python_exe):

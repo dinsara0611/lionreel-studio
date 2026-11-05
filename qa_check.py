@@ -16,6 +16,7 @@ Validates master video files against strict benchmark criteria:
 """
 
 import os
+import lion_paths
 import sys
 import re
 import json
@@ -97,9 +98,7 @@ def evaluate_duration_contract(actual_s, target_s, tolerance=1.0):
 
 def run_ffprobe_analysis(video_path):
     ffmpeg_exe = imageio_ffmpeg.get_ffmpeg_exe()
-    ffprobe_exe = os.path.join(os.path.dirname(ffmpeg_exe), "ffprobe.exe")
-    if not os.path.exists(ffprobe_exe):
-        ffprobe_exe = "ffprobe"
+    ffprobe_exe = lion_paths.ffprobe_exe() or "ffprobe"
 
     cmd = [
         ffprobe_exe, "-v", "error",
@@ -159,9 +158,7 @@ def check_black_and_freeze(video_path):
 
 def check_loudness_ebur128(video_path):
     ffmpeg_exe = imageio_ffmpeg.get_ffmpeg_exe()
-    ffprobe_exe = os.path.join(os.path.dirname(ffmpeg_exe), "ffprobe.exe")
-    if not os.path.exists(ffprobe_exe):
-        ffprobe_exe = "ffprobe"
+    ffprobe_exe = lion_paths.ffprobe_exe() or "ffprobe"
 
     # 1. Probe audio stream parameters & drift
     audio_sample_rate = 48000
@@ -1133,7 +1130,7 @@ def check_repeat_spacing_gate(video_path, clip_mapping=None, work_job_dir=None):
             if vid_dir and os.path.exists(vid_dir):
                 search_dirs.append(vid_dir)
             base_name = os.path.splitext(os.path.basename(video_path))[0]
-            work_match = os.path.join(r"C:\LionReel\work", base_name)
+            work_match = os.path.join(lion_paths.work_root(), base_name)
             if os.path.exists(work_match):
                 search_dirs.append(work_match)
 

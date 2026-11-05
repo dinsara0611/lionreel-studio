@@ -5,6 +5,7 @@ graceful process tree termination, and safe cleanup for stalled pipeline jobs.
 """
 
 import os
+import lion_paths
 import sys
 import json
 import time
@@ -268,7 +269,7 @@ def cleanup_stuck_job(job_id: str, job_dir: str = None, ledger = None, stop_proc
     Nothing is deleted.
     """
     if job_dir is None:
-        job_dir = os.path.join("C:\\", "LionReel", "work", job_id)
+        job_dir = os.path.join(lion_paths.work_root(), job_id)
 
     if ledger is None:
         try:
@@ -357,7 +358,8 @@ def cleanup_stuck_job(job_id: str, job_dir: str = None, ledger = None, stop_proc
         "message": f"Job {job_id} successfully cleaned up. Preserved {preserved_count} clips and released reservations."
     }
 
-def detect_stale_jobs(work_root: str = "C:\\LionReel\\work", max_stale_sec: float = 60.0) -> list:
+def detect_stale_jobs(work_root: str = None, max_stale_sec: float = 60.0) -> list:
+    work_root = work_root or lion_paths.work_root()
     """
     Scans work directory for stale/stuck jobs.
     Returns a list of stuck job info dicts with time_str and summary_line.

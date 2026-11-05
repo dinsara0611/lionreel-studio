@@ -33,6 +33,7 @@ import datetime
 import hashlib
 import json
 import os
+import lion_paths
 import re
 import shutil
 import sqlite3
@@ -41,7 +42,7 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 
 
 DEFAULT_BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DEFAULT_LOCAL_DATA_DIR = r"C:\LionReel" if os.path.exists(r"C:\LionReel") else DEFAULT_BASE_DIR
+DEFAULT_LOCAL_DATA_DIR = lion_paths.root() if os.path.exists(lion_paths.root()) else DEFAULT_BASE_DIR
 
 
 def format_bytes(size_bytes: int) -> str:

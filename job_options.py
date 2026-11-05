@@ -12,6 +12,7 @@ Defines:
 """
 
 import sys
+import lion_paths
 import argparse
 from typing import Dict, Any, Tuple, Optional, List
 
@@ -446,7 +447,7 @@ def normalize_cli_parsed_args(args: argparse.Namespace) -> argparse.Namespace:
 
 def get_job_work_dir(job_id: str, work_base_dir: str = None, **kwargs) -> str:
     import os
-    base = kwargs.get("work_dir") or work_base_dir or (r"C:\LionReel\work" if os.path.exists(r"C:\LionReel\work") else os.path.join(os.path.dirname(os.path.abspath(__file__)), "work"))
+    base = kwargs.get("work_dir") or work_base_dir or (lion_paths.work_root() if os.path.exists(lion_paths.work_root()) else os.path.join(os.path.dirname(os.path.abspath(__file__)), "work"))
     if os.path.basename(base) == job_id:
         return base
     if (job_id.startswith("sandbox_") or job_id.startswith("test_")) and not base.endswith("sandbox") and not os.path.basename(base).startswith("test_sandbox_acc_"):
