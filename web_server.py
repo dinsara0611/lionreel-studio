@@ -509,6 +509,9 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             elif clean_path.startswith("/raw/"):
                 rel_path = urllib.parse.unquote(clean_path[len("/raw/"):].lstrip("/\\"))
                 base_dir = RAW_DIR
+                # Harvested sources live in the local cache, so previews look there too
+                if not os.path.exists(os.path.join(RAW_DIR, rel_path)) and os.path.exists(os.path.join(lion_paths.cache_root(), rel_path)):
+                    base_dir = lion_paths.cache_root()
             elif clean_path.startswith("/work/"):
                 rel_path = urllib.parse.unquote(clean_path[len("/work/"):].lstrip("/\\"))
                 base_dir = WORK_DIR
@@ -2446,6 +2449,9 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             elif clean_path.startswith("/raw/"):
                 rel_path = urllib.parse.unquote(clean_path[len("/raw/"):].lstrip("/\\"))
                 base_dir = RAW_DIR
+                # Harvested sources live in the local cache, so previews look there too
+                if not os.path.exists(os.path.join(RAW_DIR, rel_path)) and os.path.exists(os.path.join(lion_paths.cache_root(), rel_path)):
+                    base_dir = lion_paths.cache_root()
             elif clean_path.startswith("/work/"):
                 rel_path = urllib.parse.unquote(clean_path[len("/work/"):].lstrip("/\\"))
                 base_dir = WORK_DIR

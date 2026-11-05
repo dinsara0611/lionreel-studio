@@ -50,12 +50,19 @@ MEASURE = r"""
     return 0.2126 * f(c.r) + 0.7152 * f(c.g) + 0.0722 * f(c.b);
   };
   const bgOf = el => {
+    // Blends translucent layers down to the first solid one
+    const layers = [];
     for (let p = el; p; p = p.parentElement) {
       const c = toRgb(getComputedStyle(p).backgroundColor);
-      if (c && c.a >= 0.99) return c;
+      if (c && c.a > 0) layers.push(c);
+      if (c && c.a >= 0.99) break;
       if (getComputedStyle(p).backgroundImage !== 'none') return null;
     }
-    return {r: 255, g: 255, b: 255, a: 1};
+    let base = {r: 255, g: 255, b: 255, a: 1};
+    for (const l of layers.reverse()) {
+      base = {r: l.r * l.a + base.r * (1 - l.a), g: l.g * l.a + base.g * (1 - l.a), b: l.b * l.a + base.b * (1 - l.a), a: 1};
+    }
+    return base;
   };
   const out = {hscroll: document.documentElement.scrollWidth > vw + 1, scrollWidth: document.documentElement.scrollWidth, vw,
                overflow: [], small_text: [], small_touch: [], clipped: [], low_contrast: [], no_label: []};
@@ -81,7 +88,8 @@ MEASURE = r"""
       if ((s.overflow === 'hidden' || s.overflowX === 'hidden') && s.whiteSpace !== 'normal' && el.scrollWidth > el.clientWidth + 1 && s.textOverflow !== 'ellipsis') out.clipped.push(label(el));
     }
     if (el.matches('button, a[href], input:not([type=hidden]), select, textarea, [role=button]')) {
-      if (r.height < 44 || r.width < 44) out.small_touch.push(`${label(el)} ${Math.round(r.width)}x${Math.round(r.height)}`);
+      const box = (el.matches('input[type=checkbox], input[type=radio]') && el.closest('label')) ? el.closest('label').getBoundingClientRect() : r;
+      if (box.height < 44 || box.width < 44) out.small_touch.push(`${label(el)} ${Math.round(box.width)}x${Math.round(box.height)}`);
       if (el.matches('button, [role=button]') && !(el.innerText || '').trim() && !el.getAttribute('aria-label') && !el.title) out.no_label.push(label(el));
     }
   }

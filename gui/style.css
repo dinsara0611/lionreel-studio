@@ -9606,3 +9606,37 @@ body.light-mode #icon-theme-moon {
         white-space: normal;
     }
 }
+
+/* Contrast: text on the accent, and text on panels that stay dark in both themes */
+.step-item.active, .step-item.active .step-num, .step-item.completed .step-num,
+.avatar-circle, .btn-primary, .speed-btn.active,
+.render-stage-row.running .stage-status-bullet {
+    color: var(--accent-contrast) !important;
+}
+.logs-drawer-header, .logs-drawer-header span, .logs-drawer-header .badge,
+.project-duration-tag, .project-duration-tag small, .time-display-text,
+#enhancement-label, .safe-zone-pill-label, .mockup-phone-frame .badge {
+    color: #f1f5f3 !important;
+}
+.editor-tab-btn.active, .editor-tab-btn.active span {
+    color: var(--accent-contrast) !important;
+}
+.badge-emerald[style*="position: absolute"] {
+    color: #f1f5f3 !important;
+    background: rgba(0, 0, 0, 0.78) !important;
+}
+html[data-theme="light"] .badge-amber,
+html[data-theme="light"] .render-stage-row.waiting .stage-status-bullet,
+html[data-theme="light"] .render-stage-row.waiting .badge {
+    color: #7c4203 !important;
+}
+.duration-variance {
+    font-size: inherit;
+}
+
+@media (max-width: 1024px), (pointer: coarse) {
+    .meta-copy-btn, .btn-xs {
+        min-height: 44px !important;
+        height: auto !important;
+    }
+}
