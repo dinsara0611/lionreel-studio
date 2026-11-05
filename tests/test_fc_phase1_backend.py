@@ -377,3 +377,34 @@ def test_finished_cache_sees_a_new_file(tmp_path, monkeypatch):
     assert web_server.cached_finished_response("/api/finished") == b"old"
     (tmp_path / "new.mp4").write_bytes(b"x")
     assert web_server.cached_finished_response("/api/finished") is None
+
+
+def test_bank_query_never_returns_a_used_moment_with_reuse_off(ledger, tmp_path):
+    src = _source(tmp_path)
+    _add(ledger, "fresh", src, 200)
+    _add(ledger, "overlaps_finished", src, 34.0, 41.5)
+    with ledger._get_conn() as conn:
+        conn.execute("INSERT INTO finished_video_windows (job_id, video_index, source_id, source_url_or_path, start_s, end_s, is_production, channel, clip_id) "
+                     "VALUES ('oldjob', 1, 'cache_AAAAAAAAAAA', ?, 32.0, 39.5, 1, 'cat', 'older')", (src,))
+        conn.commit()
+    assert {c["clip_id"] for c in ledger.get_verified_clips("cat")} == {"fresh"}
+    assert {c["clip_id"] for c in ledger.get_verified_clips("cat", allow_reuse=True)} == {"fresh", "overlaps_finished"}
+
+
+def test_reused_footage_with_reuse_off_fails_the_verdict():
+    import verdict
+    qa = {"gates": {g: True for g in verdict.REQUIRED_GATES}, "freshness": {"reused_windows": 2}}
+    assert verdict.calculate_unified_verdict(qa, [], {"allow_reuse": False})["badge"] == "FAILED"
+    assert verdict.calculate_unified_verdict(qa, [], {"allow_reuse": True})["badge"] == "PASSED"
+
+
+def test_stored_licence_label_is_never_presented_as_verified(tmp_path, monkeypatch):
+    import source_licenses as sl
+    monkeypatch.setattr(sl, "load_records", lambda: {"AAAAAAAAAAA": {"status": sl.NOT_SHOWN, "license": None}})
+    assert sl.license_of("cache_AAAAAAAAAAA.mp4", "Creative Commons CC-BY 4.0") == sl.NOT_SHOWN
+    assert sl.license_of("cache_BBBBBBBBBBB.mp4", "CC-BY") == "CC-BY (not verified)"
+    assert sl.license_of("cache_BBBBBBBBBBB.mp4") == sl.NOT_RECORDED
+
+
+def test_no_number_suffix_on_titles():
+    assert '#{random.randint' not in open(os.path.join(BASE, "lion_automate_v97.py"), encoding="utf8").read()

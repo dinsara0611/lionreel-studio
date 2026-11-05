@@ -2048,9 +2048,9 @@ class LionReelV97Pipeline:
         # In addition to rendered_candidates_pool, also load all verified bank clips for diversity
         try:
             filter_cat_type = video_cat_type if video_cat_type and video_cat_type not in ("auto", "mixed") else None
-            db_verified = self.ledger.get_verified_clips(animal_type="cat", limit=100, cat_video_type=filter_cat_type)
+            db_verified = self.ledger.get_verified_clips(animal_type="cat", limit=100, current_job_id=job_id, cat_video_type=filter_cat_type)
             if not db_verified and filter_cat_type:
-                db_verified = self.ledger.get_verified_clips(animal_type="cat", limit=100)
+                db_verified = self.ledger.get_verified_clips(animal_type="cat", limit=100, current_job_id=job_id)
             for vc in db_verified:
                 v_cid = vc.get("clip_id") or ""
                 clean_v = re.sub(r'_(?:rep|use)\d+.*$', '', v_cid)
@@ -3110,6 +3110,8 @@ class LionReelV97Pipeline:
                         bank_clips = self.ledger.get_verified_clips(
                             animal_type=animal_mode,
                             limit=36,
+                            allow_reuse=allow_reuse,
+                            current_job_id=job_id,
                             exclude_clip_ids=list(existing_cids),
                             cat_video_type=video_cat_type if video_cat_type and video_cat_type != "auto" else None
                         )
@@ -4629,8 +4631,14 @@ class LionReelV97Pipeline:
                         if meta_pkg: meta_pkg["title"] = clean_title
                         break
                 else:
-                    clean_title = f"{clean_title} #{random.randint(100, 999)}"
-                    if meta_pkg: meta_pkg["title"] = clean_title
+                    # The title pool is used up: take the best fresh title, never a "#123" suffix
+                    from metadata_generator import MetadataGenerator
+                    for cand_t in MetadataGenerator(self.ledger).generate_candidate_titles(animal_mode, count=60, video_type=video_type):
+                        alt_title = cand_t.get("title") if isinstance(cand_t, dict) else cand_t
+                        if alt_title and not self.ledger.is_title_used(alt_title, channel=animal_mode):
+                            clean_title = alt_title
+                            if meta_pkg: meta_pkg["title"] = clean_title
+                            break
 
             is_prod_job = not bool(str(job_id).startswith("test_") or "test" in str(job_id).lower() or "acceptance" in str(job_id).lower() or "sandbox" in str(job_id).lower() or cfg.get("IS_TEST", False) or os.environ.get("IS_TEST"))
             log(f"QA PASSED. Committing clips in ledger for {job_id} (is_production={is_prod_job}).")
@@ -4698,7 +4706,7 @@ class LionReelV97Pipeline:
             with open(os.path.join(work_job_dir, f"{job_id}_credits.json"), "w", encoding="utf-8") as f_cred:
                 json.dump(credits_data_payload, f_cred, indent=2)
             with open(os.path.join(work_job_dir, f"{job_id}_credits.txt"), "w", encoding="utf-8") as f_cred_txt:
-                f_cred_txt.write(f"Credits & Creative Commons Attribution for {job_id}:\n\n")
+                f_cred_txt.write(f"Credits and sources for {job_id}:\n\n")
                 for c in credits_data:
                     src = c.get("source") or c.get("source_file") or "Source Video"
                     credit = c.get("credit") or c.get("channel") or source_licenses.NOT_RECORDED

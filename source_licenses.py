@@ -105,4 +105,8 @@ def creator_of(source, fallback=None) -> str:
 
 
 def license_of(source, fallback=None) -> str:
-    return lookup(source).get("license") or fallback or NOT_RECORDED
+    """The platform's words, or a plain statement. A stored label is never shown as a verified licence."""
+    record = lookup(source)
+    if record:
+        return record.get("license") or NOT_SHOWN
+    return f"{fallback} (not verified)" if fallback else NOT_RECORDED

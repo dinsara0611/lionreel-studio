@@ -23,6 +23,7 @@ if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
 import report_generator
+from verdict import REQUIRED_GATES
 
 
 class TestVerdictsSandbox(unittest.TestCase):
@@ -116,7 +117,7 @@ class TestVerdictsSandbox(unittest.TestCase):
             "gates": {
                 "gate_1_stream_specs": {"passed": True, "status": "PASS"},
                 "gate_1b_duration_contract": {"passed": True, "status": "PASS"},
-                "gate_1c_clip_count": True,
+                **{g: True for g in REQUIRED_GATES},
                 "gate_2_audio_loudness": {"passed": True, "status": "PASS"},
                 "gate_3_black_frames": {"passed": True, "status": "PASS"},
                 "gate_4_pet_centering": {"passed": True, "status": "PASS"},
@@ -197,7 +198,7 @@ class TestVerdictsSandbox(unittest.TestCase):
             "gates": {
                 "gate_1_stream_specs": {"passed": True},
                 "gate_1b_duration_contract": {"passed": True},
-                "gate_1c_clip_count": True,
+                **{g: True for g in REQUIRED_GATES},
                 "gate_2_audio_loudness": {"passed": True},
                 "gate_3_black_frames": {"passed": True},
                 "gate_4_pet_centering": {"passed": True},
@@ -336,7 +337,7 @@ class TestVerdictsSandbox(unittest.TestCase):
             "gates": {
                 "gate_1_stream_specs": {"passed": True},
                 "gate_1b_duration_contract": {"passed": True},
-                "gate_1c_clip_count": True,
+                **{g: True for g in REQUIRED_GATES},
                 "gate_2_audio_loudness": {"passed": True},
                 "gate_3_black_frames": {"passed": True},
                 "gate_4_pet_centering": {"passed": True},

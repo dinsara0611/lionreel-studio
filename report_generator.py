@@ -656,7 +656,7 @@ def build_report_data(
             uploader_clean = uploader_raw.strip()
 
         lic_raw = str(c.get("license") or "not recorded")
-        if lic_raw != "not recorded" and ("cc" in lic_raw.lower() or "creative" in lic_raw.lower()):
+        if lic_raw != "not recorded" and ("cc" in lic_raw.lower() or "creative" in lic_raw.lower() or "licence" in lic_raw.lower() or "verified" in lic_raw.lower()):
             lic_clean = lic_raw
         elif "standard" in lic_raw.lower() or "youtube" in lic_raw.lower():
             lic_clean = "YouTube Standard License"

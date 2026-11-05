@@ -255,6 +255,13 @@ def calculate_unified_verdict(
             not_run_gates.append(f"Gate 6 Watermark was NOT RUN ({wm.get('reason')})")
             attention_items.append(f"Gate 6 Watermark: NOT RUN ({wm.get('reason')})")
 
+    # Reuse off is a contract: a reused window fails the video, whatever path selected it
+    reused = (qa_data.get("freshness") or {}).get("reused_windows") or 0
+    if job_config.get("allow_reuse") is False and reused > 0:
+        msg = f"Fresh footage failed: {reused} clip(s) reuse earlier videos with Allow reuse off"
+        critical_errors.append(msg)
+        attention_items.append(msg)
+
     # 3. Soft Warnings
     rep_pct = div_stats["repeat_share_pct"]
     if rep_pct > 30.0:

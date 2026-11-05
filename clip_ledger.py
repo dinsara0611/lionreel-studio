@@ -1821,6 +1821,11 @@ class ClipLedger:
                 ORDER BY COALESCE(framing_score, quality_score) DESC
             """, (target_animal,))
             rows = [dict(r) for r in cur.fetchall()]
+        # times_used misses a window that overlaps a finished video, so the count function decides
+        if not kwargs.get("allow_reuse"):
+            windows = self.get_ledger_counts(target_animal, current_job_id=kwargs.get("current_job_id"), include_windows=True)["windows"]
+            fresh_ids = {w["clip_id"] for w in windows["usable_now"] + windows["cooldown"]}
+            rows = [r for r in rows if r["clip_id"] in fresh_ids]
         if cat_type and cat_type.lower() not in ("auto", "mixed", "all", "none"):
             type_rows = [r for r in rows if (r.get("cat_video_type") or "").lower() == cat_type.lower()]
             if type_rows:

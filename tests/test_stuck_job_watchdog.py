@@ -137,7 +137,7 @@ class TestStuckJobWatchdog(unittest.TestCase):
         self.ledger.add_clip(
             clip_id="c1",
             source_id="s1",
-            source_url_or_path="s1.mp4",
+            source_url_or_path="test_s1.mp4",
             license_name="CC-BY",
             start_s=0.0,
             end_s=5.0,
