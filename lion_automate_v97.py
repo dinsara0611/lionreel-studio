@@ -78,6 +78,34 @@ CONFIG_FILE = os.path.join(BASE_DIR, "config.json")
 BENCHMARK_CONFIG = os.path.join(BASE_DIR, "config", "benchmark.json")
 BLOCKED_SOURCES_FILE = os.path.join(BASE_DIR, "config", "blocked_sources.json")
 
+def normalize_cfr_timestamps(video_path: str, fps: int = 30) -> bool:
+    """
+    Rewrites timestamps to exact constant frame rate without re-encoding.
+    Stream-copy concat of many clips drifts (5398 frames at 29.993 avg fps was measured).
+    """
+    work = f"{video_path}.cfr.h264"
+    fixed = f"{video_path}.cfr.mp4"
+    try:
+        subprocess.run([FFMPEG_EXE, "-y", "-i", video_path, "-map", "0:v:0", "-c:v", "copy",
+                        "-bsf:v", "h264_mp4toannexb", "-f", "h264", work],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+        subprocess.run([FFMPEG_EXE, "-y", "-fflags", "+genpts", "-r", str(fps), "-f", "h264", "-i", work, "-i", video_path,
+                        "-map", "0:v:0", "-map", "1:a?", "-c", "copy", "-movflags", "+faststart", fixed],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+        os.replace(fixed, video_path)
+        return True
+    except Exception as e:
+        log(f"CFR timestamp normalize failed: {e}", "WARN")
+        return False
+    finally:
+        for leftover in (work, fixed):
+            if os.path.exists(leftover):
+                try:
+                    os.remove(leftover)
+                except OSError:
+                    pass
+
+
 def _active_model_version() -> str:
     try:
         from feedback_manager import FeedbackManager
@@ -4249,6 +4277,7 @@ class LionReelV97Pipeline:
                     raw_assembled
                 ]
                 subprocess.run(concat_cmd_fallback, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+            normalize_cfr_timestamps(raw_assembled)
             timer.stop_stage("concat")
 
             # Master audio
@@ -4940,7 +4969,7 @@ class LionReelV97Pipeline:
                     pace_profile=pace_profile,
                     slicing_mode=slicing_mode,
                     allow_shorter=allow_shorter,
-                    allow_reuse=True,
+                    allow_reuse=allow_reuse,
                     job_start_time=job_start_time,
                     aspect_ratio="9:16",
                     video_cat_type=video_cat_type

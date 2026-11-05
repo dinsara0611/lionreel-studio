@@ -173,10 +173,13 @@ def normalize_job_options(cfg: Dict[str, Any]) -> Tuple[bool, Dict[str, Any], Op
 
     # Aspect Ratio resolution (Long Video follows 16:9 widescreen 1920x1080, Short = 9:16 1080x1920, 1:1 = 1080x1080)
     raw_aspect = str(cfg.get("ASPECT_RATIO") or cfg.get("aspect_ratio") or cfg.get("ratio") or "").strip().lower()
-    if raw_aspect and raw_aspect in ASPECT_RATIO_MAP:
+    if canonical_type == "short":
+        # Mode contract: a Short is always vertical, whatever an old setting says
+        canonical_aspect = "9:16"
+    elif raw_aspect and raw_aspect in ASPECT_RATIO_MAP:
         canonical_aspect = ASPECT_RATIO_MAP[raw_aspect]
     else:
-        canonical_aspect = "16:9" if canonical_type in ["long", "compilation", "both"] else "9:16"
+        canonical_aspect = "16:9"
     out_w, out_h = RESOLUTION_BY_ASPECT.get(canonical_aspect, (1080, 1920))
 
     # Cat Video Type (Auto, double_cats, dubbed_talking, etc.)
@@ -245,6 +248,11 @@ def normalize_job_options(cfg: Dict[str, Any]) -> Tuple[bool, Dict[str, Any], Op
         # Short Video: 30-60s total. User edits clips and clip_time. Total = clips * clip_time.
         clips_val = cfg.get("TARGET_CLIPS") if cfg.get("TARGET_CLIPS") is not None else cfg.get("clips", 4)
         clips = int(clips_val)
+        req_short_s = float(cfg.get("target_duration_s") or 0)
+        if req_short_s > 0:
+            req_short_s = min(60.0, max(30.0, req_short_s))
+            clips = max(2, int(round(req_short_s / clip_time)))
+            clip_time = round(req_short_s / clips, 3)
         total_sec = clips * clip_time
         if total_sec > 60.0:
             clips = max(2, int(60.0 / clip_time))
@@ -282,7 +290,9 @@ def normalize_job_options(cfg: Dict[str, Any]) -> Tuple[bool, Dict[str, Any], Op
         teaser_info = {
             "seconds": 45.0,
             "ratio": "9:16",
-            "resolution": "1080x1920"
+            "resolution": "1080x1920",
+            "clips": 6,
+            "clip_time": 7.5
         }
 
     allow_shorter = bool(cfg.get("ALLOW_SHORTER", False))
