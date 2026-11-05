@@ -1,42 +1,50 @@
-# LionReel Studio — Final Cleanup Execution Plan
+# Clean-up plan
 
-**Method**: Windows Recycle Bin (C:\) & Google Drive Trash (G:\) via Shell32 `SHFileOperationW` (`FOF_ALLOWUNDO`). Zero permanent deletes.
+Built on 2026-11-05 from a read-only scan. Every group below is recoverable: the full backup is at `D:\LionReel_backup_20261105`, and items also go to the Recycle Bin or stay in git history.
 
-## Candidate Groups Summary
+**Planned: 1106 items, 22.63 GB to the Recycle Bin, plus 5 paths (5.2 MB) removed with git.**
 
-| Group ID | Candidate Category | File Count | Total Size | Confirmation Checkbox |
+## To the Recycle Bin
+
+| Group | Items | Size | Why it is safe | How to get it back |
 |---|---|---|---|---|
-| `intermediate_renders` | Intermediate Renders | 2 | 770 B | [x] Approved |
-| `old_ui_backups` | Old Ui Backups | 2 | 618.8 KB | [x] Approved |
-| `python_cache` | Python Cache | 17 | 694.5 KB | [x] Approved |
-| `scratch_temp_files` | Scratch Temp Files | 37 | 3.06 MB | [x] Approved |
-| **TOTAL** | **All Candidate Groups** | **58** | **4.35 MB** | **[x] Confirmed** |
+| `temp_work_folders` | 1054 | 22.14 GB | Work files of finished or failed jobs. Rendered clips of Waiting or Interrupted jobs are skipped by the scanner. Masters and reports live in `output/` and `finished/`, which are not touched | Recycle Bin, or the D: backup |
+| `rejected_unreferenced_cache` | 20 | 503.8 MB | Cached downloads whose video id is not in the ledger at all (checked by id, not by the scanner alone) | Recycle Bin, or the D: backup |
+| `empty_folders` | 23 | 0.0 KB | Empty | Recreated when needed |
+| `python_cache` | 1 | 700.6 KB | Rebuilt by Python | Rebuilt automatically |
+| `project_leftovers` | 8 | 1.4 MB | See the list below | Google Drive Trash for 30 days, or the D: backup |
 
-## Sample Removal Paths
+## Project leftovers
 
-- `[scratch_temp_files]` `scratch_prompt.txt` (965 B)
-- `[scratch_temp_files]` `scratch_last_prompt.txt` (4.1 KB)
-- `[scratch_temp_files]` `scratch_full_last.txt` (4.1 KB)
-- `[scratch_temp_files]` `scratch_sharpness.py` (1.5 KB)
-- `[scratch_temp_files]` `scratch_ledger.py` (258 B)
-- `[scratch_temp_files]` `scratch_check_sources.py` (1.3 KB)
-- `[scratch_temp_files]` `scratch_check_sharpness_fast.py` (1.6 KB)
-- `[scratch_temp_files]` `scratch_check_lap.py` (477 B)
-- `[scratch_temp_files]` `scratch_test_zcb.py` (983 B)
-- `[scratch_temp_files]` `scratch_scan_raw.py` (1.2 KB)
-- `[scratch_temp_files]` `scratch_unsharp.py` (886 B)
-- `[scratch_temp_files]` `scratch_clean_reservations.py` (466 B)
-- `[scratch_temp_files]` `scratch_ozazz_f100.jpg` (209.0 KB)
-- `[scratch_temp_files]` `scratch_ozazz_banner.jpg` (42.1 KB)
-- `[scratch_temp_files]` `scratch_ozazz_bot.jpg` (32.2 KB)
-- `[scratch_temp_files]` `scratch_825za_bot.jpg` (55.7 KB)
-- `[scratch_temp_files]` `scratch_825za_top.jpg` (22.6 KB)
-- `[scratch_temp_files]` `scratch_oz_top.jpg` (71.3 KB)
-- `[scratch_temp_files]` `scratch_cache_KWA1jfqvZmg.jpg` (281.3 KB)
-- `[scratch_temp_files]` `scratch_cache_cMlweIcxyZQ.jpg` (99.2 KB)
-- `[scratch_temp_files]` `scratch_cache_Rr9701_s-Qs.jpg` (161.2 KB)
-- `[scratch_temp_files]` `scratch_htlvw.jpg` (293.4 KB)
-- `[scratch_temp_files]` `scratch_inspect_audio.py` (906 B)
-- `[scratch_temp_files]` `scratch_analyze_source.py` (1.3 KB)
-- `[scratch_temp_files]` `scratch_measure_rms.py` (1.3 KB)
-- ... and 33 more items detailed in `cleanup_plan.csv`.
+| Path | Size | Why |
+|---|---|---|
+| `web_server.py.bak` | 132.1 KB | Old copy of web_server.py, not tracked, git history holds every version |
+| `credits_registry.csv.bak` | 4.0 KB | Old copy, not imported or read by any code |
+| `test_mf.mp4` | 269.8 KB | Test render left in the project root |
+| `raw_c0.wav` | 937.6 KB | Audio stem left by a debug run |
+| `test_scale.png` | 8.6 KB | Debug image |
+| `gui_run.log` | 0.1 KB | Old log, 64 bytes |
+| `untruncated_prompt.txt` | 10.9 KB | Saved prompt text, no code reads it |
+| `import_timing_gdrive.txt` | 34.9 KB | Old timing dump, no code reads it |
+
+## Removed with git (recoverable from any earlier commit)
+
+| Path | Size | Why |
+|---|---|---|
+| `LionReel_backup_before_ui_polish` | 1.7 MB | Old backup folder, tracked in git |
+| `LionReel_backup_before_stage_order` | 3.4 MB | Old backup folder, tracked in git |
+| `lion_automate.py` | 155.4 KB | Old V94 engine. Nothing imports it. Only a fallback name in web_server.py that is removed with it |
+| `rerender_job_6b8cce5c.py` | 10.4 KB | One-off script for one job. No references found |
+| `run_real_3min_job.py` | 5.4 KB | One-off script. No references found |
+
+## Kept on purpose
+
+| Item | Why |
+|---|---|
+| `cache_eQsvgKdAl4s.mp4` (45.1 MB) | The scanner called it unreferenced, but video id is in the ledger |
+| `cache_nzUdF0qtNOg.mp4` (38.0 MB) | The scanner called it unreferenced, but video id is in the ledger |
+| `cache_zCBhhLo6lIM.mp4` (89.7 MB) | The scanner called it unreferenced, but video id is in the ledger |
+| `C:\LionReel\backups` (2.0 GB) | Holds older ledger snapshots. Your call, not a safe group |
+| `analysis/`, `ui_audit/`, `data/backups` | Earlier evidence and history |
+| `.venv` | The dashboard launcher uses it |
+| Everything on the protected list | Finished videos and their reports, ledger, verified bank, config, analytics, `output/` |
