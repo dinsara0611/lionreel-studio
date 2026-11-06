@@ -9712,3 +9712,81 @@ html[data-theme="light"] .chip-warning span {
     height: 20px;
     cursor: pointer;
 }
+
+/* ==========================================================================
+   MOTION: transform and opacity only, removed by prefers-reduced-motion
+   ========================================================================== */
+@keyframes lr-rise {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes lr-pop {
+    from { opacity: 0; transform: translateY(8px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes lr-fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@keyframes lr-breathe {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.55; }
+}
+
+.workspace-view.active {
+    animation: lr-rise 320ms var(--ease-enter) backwards;
+}
+.step-item.active .step-num {
+    animation: lr-pop 240ms var(--ease-enter) backwards;
+}
+.modal-overlay[style*="flex"] {
+    animation: lr-fade 180ms var(--ease-standard) backwards;
+}
+.modal-overlay[style*="flex"] .modal-card {
+    animation: lr-pop 240ms var(--ease-enter) backwards;
+}
+
+.btn, .btn-icon, .format-btn, .project-actions .btn {
+    transition: transform 140ms var(--ease-standard), opacity 140ms var(--ease-standard);
+}
+.btn:not(:disabled):hover, .btn-icon:not(:disabled):hover {
+    transform: translateY(-1px);
+}
+.btn:not(:disabled):active, .btn-icon:not(:disabled):active {
+    transform: scale(0.97);
+}
+
+.project-card {
+    transition: transform 200ms var(--ease-enter), opacity 240ms var(--ease-standard);
+}
+.project-card:hover {
+    transform: translateY(-4px);
+}
+.cards-enter .project-card {
+    animation: lr-rise 360ms var(--ease-enter) backwards;
+    animation-delay: calc(var(--card-i, 0) * 38ms);
+}
+.project-card.is-working {
+    animation: lr-breathe 900ms var(--ease-standard) infinite;
+}
+.project-card.is-leaving {
+    animation: none;
+    opacity: 0;
+    transform: scale(0.94);
+}
+
+.pool-stat-card {
+    transition: transform 180ms var(--ease-enter);
+}
+.pool-stat-card:hover {
+    transform: translateY(-2px);
+}
+.library-delete-btn.is-busy {
+    animation: lr-breathe 900ms var(--ease-standard) infinite;
+}
+.library-selected-count {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 50vw;
+}

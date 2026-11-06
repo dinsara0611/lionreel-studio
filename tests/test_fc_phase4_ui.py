@@ -220,3 +220,37 @@ def test_cleanup_cannot_run_while_scanning(page):
     assert page.is_disabled("#btn-confirm-safe-cleanup") and page.is_disabled("#btn-cleanup-dry-run")
     assert "Scanning" in page.inner_text("#cleanup-selected-summary")
     page.evaluate("() => { setSafeCleanupScanning(false); document.getElementById('modal-safe-cleanup').style.display = 'none'; }")
+
+
+def test_delete_selected_shows_progress_while_it_runs(page):
+    fake = {"files": [{"name": "a.mp4", "sizeBytes": 1048576, "url": "/finished/a.mp4"}, {"name": "b.mp4", "sizeBytes": 2097152, "url": "/finished/b.mp4"}],
+            "total_count": 2, "real_count": 2, "test_count": 0}
+    ctx = page.context.browser.new_context(viewport={"width": 1440, "height": 900})
+    pg = ctx.new_page()
+    pg.route("**/api/finished*", lambda r: r.fulfill(status=200, content_type="application/json", body=json.dumps(fake)))
+
+    def slow_delete(route):
+        import time
+        time.sleep(0.5)
+        route.fulfill(status=200, content_type="application/json", body=json.dumps({"success": True}))
+    pg.route("**/api/delete-file*", slow_delete)
+    pg.goto(URL, wait_until="domcontentloaded")
+    pg.wait_for_timeout(1800)
+    pg.evaluate("() => { navigateToStep(1); loadFinishedProjects(); }")
+    pg.wait_for_selector("#recent-projects-grid .project-select", state="attached")
+    pg.check("#library-select-all")
+    pg.click("#btn-delete-selected")
+    pg.click("#btn-confirm-ok")
+    pg.wait_for_function("() => /Deleting 1 of 2/.test(document.getElementById('btn-delete-selected').innerText)", timeout=3000)
+    assert pg.is_disabled("#btn-delete-selected")
+    assert pg.evaluate("() => document.querySelector('.project-card.is-working') !== null")
+    pg.wait_for_function("() => document.getElementById('btn-delete-selected').innerText.includes('Delete selected')", timeout=8000)
+    ctx.close()
+
+
+def test_motion_uses_only_transform_and_opacity():
+    css = read("style.css")
+    for block in re.findall(r"@keyframes lr-[\w-]+ \{(.*?)\n\}", css, re.S):
+        props = set(re.findall(r"([a-z-]+):", block))
+        assert props <= {"opacity", "transform"}, props
+    assert "prefers-reduced-motion" in css

@@ -7317,6 +7317,7 @@ function releaseAllVideoPlayers() {
 // 9. FINISHED COMPILATIONS & RECENT PROJECTS LOADER
 // ==========================================================================
 function updateLibrarySelection() {
+    if (state.libraryDeleting) return;
     const boxes = [...document.querySelectorAll("#recent-projects-grid .project-select")];
     const checked = boxes.filter(b => b.checked);
     const bytes = checked.reduce((sum, b) => sum + parseInt(b.dataset.bytes || "0", 10), 0);
@@ -7348,8 +7349,25 @@ async function deleteSelectedVideos() {
     await new Promise(r => setTimeout(r, 60));
     let moved = 0;
     const failed = [];
-    for (const box of checked) {
+    const total = checked.length;
+    const deleteBtn = document.getElementById("btn-delete-selected");
+    const selectAll = document.getElementById("library-select-all");
+    const count = document.getElementById("library-selected-count");
+    const label = deleteBtn ? deleteBtn.querySelector("span") : null;
+    state.libraryDeleting = true;
+    if (deleteBtn) {
+        deleteBtn.disabled = true;
+        deleteBtn.classList.add("is-busy");
+    }
+    if (selectAll) selectAll.disabled = true;
+
+    // Files move through Google Drive one at a time, so show each step as it happens
+    for (const [index, box] of checked.entries()) {
         const name = box.dataset.name;
+        const card = box.closest(".project-card");
+        if (label) label.innerText = `Deleting ${index + 1} of ${total}`;
+        if (count) count.innerText = name;
+        if (card) card.classList.add("is-working");
         try {
             const res = await fetch(`${API_BASE}/api/delete-file`, {
                 method: "POST",
@@ -7361,13 +7379,22 @@ async function deleteSelectedVideos() {
                 moved += 1;
                 state.librarySelected.delete(name);
                 if (state.activeFinishedProjectName === name) state.activeFinishedProjectName = null;
+                if (card) card.classList.add("is-leaving");
             } else {
                 failed.push(name);
+                if (card) card.classList.remove("is-working");
             }
         } catch (err) {
             failed.push(name);
+            if (card) card.classList.remove("is-working");
         }
     }
+    await new Promise(r => setTimeout(r, 260));
+
+    state.libraryDeleting = false;
+    if (deleteBtn) deleteBtn.classList.remove("is-busy");
+    if (selectAll) selectAll.disabled = false;
+    if (label) label.innerText = "Delete selected";
     if (failed.length) {
         showToast(`Moved ${moved} to the Recycle Bin. ${failed.length} could not be moved: ${failed[0]}`, "error");
     } else {
@@ -7487,7 +7514,7 @@ async function loadFinishedProjects() {
         const fileUrl = proj.url || `/finished/${encodeURIComponent(name)}`;
 
         return `
-            <div class="project-card" data-proj-name="${name}">
+            <div class="project-card" data-proj-name="${name}" style="--card-i: ${Math.min(state.finishedProjects.indexOf(proj), 11)}">
                 <div class="project-thumb-wrap">
                     <label class="project-select-label" title="Select this video">
                         <input type="checkbox" class="project-select" data-name="${escapeHtml(name)}" data-bytes="${proj.sizeBytes || 0}" aria-label="Select ${escapeHtml(name)}">
@@ -7596,6 +7623,10 @@ async function loadFinishedProjects() {
         });
     });
 
+    // Cards animate in when the list changes, not on every refresh
+    const libraryKey = state.finishedProjects.map(p => p.name).join("|");
+    grid.classList.toggle("cards-enter", libraryKey !== state.libraryRenderedKey);
+    state.libraryRenderedKey = libraryKey;
     wireLibrarySelection(grid);
 
     grid.querySelectorAll(".project-card-play").forEach(btn => {
