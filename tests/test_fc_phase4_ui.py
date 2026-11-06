@@ -147,6 +147,7 @@ def test_ledger_panel_shows_one_count_and_colombo_time(page):
     page.set_viewport_size({"width": 1440, "height": 900})
     page.evaluate("() => navigateToStep(1)")
     page.wait_for_timeout(1200)
+    page.wait_for_function("() => document.getElementById('pool-cycle-badge').innerText.includes('Colombo')", timeout=5000)
     assert "Colombo" in page.inner_text("#pool-cycle-badge")
     assert "usable now" in page.inner_text("#pool-usage-text")
 
@@ -254,3 +255,98 @@ def test_motion_uses_only_transform_and_opacity():
         props = set(re.findall(r"([a-z-]+):", block))
         assert props <= {"opacity", "transform"}, props
     assert "prefers-reduced-motion" in css
+
+
+def test_step_playhead_travels_to_the_active_step(page):
+    page.set_viewport_size({"width": 1440, "height": 900})
+    page.evaluate("() => navigateToStep(1)")
+    page.wait_for_timeout(600)
+    first = page.evaluate("() => document.getElementById('step-playhead').style.transform")
+    page.evaluate("() => navigateToStep(4)")
+    page.wait_for_timeout(600)
+    assert page.evaluate("() => document.getElementById('step-playhead').style.transform") != first
+
+
+def test_render_timeline_shows_the_real_stage(page):
+    page.evaluate("() => navigateToStep(4)")
+    page.wait_for_timeout(150)
+    page.evaluate("() => updateRenderTimeline(6, 'running')")
+    assert page.locator(".render-cell.is-done").count() == 5
+    assert page.get_attribute(".render-cell.is-current", "data-stage") == "6"
+    page.evaluate("() => updateRenderTimeline(6, 'completed')")
+    assert page.locator(".render-cell.is-done").count() == 10
+
+
+def test_idle_render_says_nothing_is_rendering(page):
+    page.evaluate("""() => { navigateToStep(4); applyRenderIdleState({status: 'idle', isRunning: false, isWaiting: false}); }""")
+    assert page.inner_text(".render-idle-copy h2") == "Nothing is rendering"
+    assert not page.is_visible("#render-headline") and not page.is_visible(".render-stages-card")
+    assert page.is_visible("#btn-render-idle-new") and not page.is_visible("#render-percentage-text")
+    page.evaluate("() => applyRenderIdleState({status: 'running', isRunning: true})")
+    assert page.is_visible("#render-percentage-text")
+
+
+def test_destructive_actions_are_not_in_the_hero():
+    html = read("index.html")
+    hero = html[html.index("<!-- Bench: what is being worked on -->"):html.index("<!-- Clip Ledger Pool Status Panel")]
+    assert "hero-btn-purge-files" not in hero and "hero-btn-clean-all" not in hero
+    assert "library-maintenance" in html and html.count('id="hero-btn-purge-files"') == 1
+
+
+def test_reel_uses_real_videos_or_empty_frames(page):
+    page.evaluate("""() => {
+        navigateToStep(1);
+        state.finishedProjects = [{name: 'x.mp4', thumbnail: '/finished/x.webp'}];
+        renderHeroReel();
+    }""")
+    assert page.locator("#hero-reel button.film-frame").count() == 1
+    assert page.locator("#hero-reel .film-frame-empty").count() == 6
+    assert page.evaluate("() => document.querySelector('#hero-reel .film-frame-empty').offsetHeight") > 100
+    assert page.inner_text("#hero-reel-note") == "Latest video"
+
+
+def test_motion_keyframes_stay_on_transform_and_opacity():
+    css = read("style.css")
+    for name, block in re.findall(r"@keyframes (lr-[\w-]+) \{(.*?)\n\}", css, re.S):
+        assert set(re.findall(r"([a-z-]+):", block)) <= {"opacity", "transform"}, name
+
+
+def test_render_page_has_no_decorative_pass_ticks():
+    html = read("index.html")
+    for text in ("quality-checks-grid", "Beat drop synchronized", "1920 60 FPS", "12 Automated Quality Verifications"):
+        assert text not in html, text
+
+
+def test_idle_render_card_has_no_dead_space(page):
+    page.evaluate("() => navigateToStep(4)")
+    page.wait_for_selector("#render-hero-card.is-idle", timeout=6000)
+    gap = page.evaluate("""() => {
+        const card = document.getElementById('render-hero-card').getBoundingClientRect();
+        const btn = document.getElementById('btn-render-idle-new').getBoundingClientRect();
+        return card.bottom - btn.bottom;
+    }""")
+    assert gap <= 48, gap
+
+
+def test_top_bar_controls_do_not_touch_at_1440(page):
+    page.set_viewport_size({"width": 1440, "height": 900})
+    page.evaluate("() => navigateToStep(4)")
+    page.wait_for_timeout(300)
+    left, step, right = page.evaluate("""() => ['.header-left', '#workflow-stepper', '.header-right'].map(s => {
+        const r = document.querySelector(s).getBoundingClientRect();
+        return [r.left, r.right];
+    })""")
+    assert step[0] - left[1] >= 8 and right[0] - step[1] >= 8, (left, step, right)
+
+
+def test_maintenance_buttons_are_tall_enough_on_a_phone(page):
+    ctx = page.context.browser.new_context(viewport={"width": 390, "height": 844})
+    pg = ctx.new_page()
+    pg.goto(URL, wait_until="domcontentloaded")
+    pg.wait_for_timeout(1500)
+    pg.evaluate("() => navigateToStep(1)")
+    pg.evaluate("() => { document.querySelector('.library-maintenance').open = true; }")
+    pg.wait_for_timeout(400)
+    heights = pg.evaluate("() => ['hero-btn-purge-files', 'hero-btn-clean-all'].map(i => document.getElementById(i).offsetHeight)")
+    ctx.close()
+    assert min(heights) >= 44, heights

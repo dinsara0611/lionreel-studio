@@ -254,6 +254,7 @@
 
         <!-- 5-Step Workflow Stepper -->
         <nav class="workflow-stepper" id="workflow-stepper" aria-label="Creation Workflow">
+            <span class="step-playhead" id="step-playhead" aria-hidden="true"></span>
             <div class="step-item active" data-step="1" id="step-btn-1" title="Go to Home & Projects">
                 <span class="step-num">1</span>
                 <span>Create</span>
@@ -353,90 +354,25 @@
         <section id="view-dashboard" class="workspace-view active">
             <div class="home-grid">
 
-                <!-- Hero Section with 9:16 Vertical Short-Video Showcase -->
-                <div class="home-hero-card">
-                    <div class="hero-text-col">
-                        <div class="hero-pill-badge">
-                            <span class="hero-pill-dot"></span>
-                            <span>LionReel Engine 2026</span>
-                        </div>
-                        <h1 class="hero-title">Create scroll-stopping <span>animal compilations.</span></h1>
-                        <p class="hero-desc">
-                            Find the best moments, refine every clip, and export polished videos for TikTok, Instagram Reels, and YouTube Shorts.
-                        </p>
-                        <div class="hero-actions-row">
-                            <div class="hero-primary-actions">
-                                <button id="hero-btn-new" class="btn btn-primary btn-md">
+                <!-- Bench: what is being worked on -->
+                <div class="home-hero-card bench">
+                    <div class="bench-text">
+                        <h1 class="hero-title">What are we cutting today?</h1>
+                        <p class="hero-desc">Pick a format. LionReel finds the moments, trims the clips and checks the finished video.</p>
+                        <div class="hero-primary-actions">
+                            <button id="hero-btn-new" class="btn btn-primary btn-md">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
                                     <span>New compilation</span>
                                 </button>
-                                <button id="hero-btn-sample" class="btn btn-secondary btn-md">
+                            <button id="hero-btn-sample" class="btn btn-secondary btn-md">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                                     <span>Use sample project</span>
                                 </button>
-                            </div>
-                            <div class="hero-utility-actions">
-                                <button id="hero-btn-purge-files" class="btn btn-secondary btn-sm hero-purge-btn" title="Purge all temporary files (TEMP_MPY, scratch), thumbnail files, raw video cache, and old history in Cat make folder">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <polyline points="3 6 5 6 21 6"></polyline>
-                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                        <line x1="10" y1="11" x2="10" y2="17"></line>
-                                        <line x1="14" y1="11" x2="14" y2="17"></line>
-                                    </svg>
-                                    <span>Purge temp files</span>
-                                </button>
-                                <button id="hero-btn-clean-all" class="btn btn-secondary btn-sm hero-clean-btn" title="Clean clip history, candidate thumbnails, and timeline state (Finished videos are preserved)">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-                                        <path d="M3 3v5h5"/>
-                                    </svg>
-                                    <span>Clean all and reset</span>
-                                </button>
-                            </div>
                         </div>
                     </div>
-
-                    <!-- Visual Vertical Short-Video Preview Card -->
-                    <div class="hero-mockup-col">
-                        <div class="mockup-phone-frame" id="hero-mockup-frame" title="Click to preview vertical compilation">
-                            <img class="mockup-thumb-img" src="lion_logo.png" alt="LionReel compilation preview">
-                            
-                            <div class="mockup-overlay-top">
-                                <div class="mockup-platform-pills">
-                                    <span class="mockup-pill">TikTok</span>
-                                    <span class="mockup-pill">Reels</span>
-                                    <span class="mockup-pill">Shorts</span>
-                                </div>
-                                <span class="badge badge-emerald" style="font-size: 0.875rem; padding: 2px 6px;">Ready</span>
-                            </div>
-
-                            <div class="mockup-overlay-center">
-                                <div class="mockup-play-btn">
-                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-                                </div>
-                            </div>
-
-                            <div class="mockup-overlay-bottom">
-                                <div class="mockup-waveform">
-                                    <div class="waveform-bar" style="height: 35%;"></div>
-                                    <div class="waveform-bar" style="height: 65%;"></div>
-                                    <div class="waveform-bar" style="height: 100%;"></div>
-                                    <div class="waveform-bar" style="height: 45%;"></div>
-                                    <div class="waveform-bar" style="height: 80%;"></div>
-                                    <div class="waveform-bar" style="height: 90%;"></div>
-                                    <div class="waveform-bar" style="height: 50%;"></div>
-                                    <div class="waveform-bar" style="height: 75%;"></div>
-                                    <div class="waveform-bar" style="height: 95%;"></div>
-                                    <div class="waveform-bar" style="height: 40%;"></div>
-                                    <div class="waveform-bar" style="height: 70%;"></div>
-                                    <div class="waveform-bar" style="height: 85%;"></div>
-                                </div>
-                                <div class="mockup-meta-row">
-                                    <span>6 CLIPS • 33s</span>
-                                    <span>9:16 • 1080×1920</span>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="reel" aria-label="Recent videos">
+                        <div class="reel-strip" id="hero-reel"></div>
+                        <p class="reel-note" id="hero-reel-note">Finished videos appear here</p>
                     </div>
                 </div>
 
@@ -498,13 +434,13 @@
                         <button id="btn-pool-warning-add" class="btn btn-primary btn-sm" style="background: #eab308; border-color: #eab308; color: #020805; padding: 2px 10px; font-size: 0.875rem;">Fetch Sources</button>
                     </div>
 
-                    <!-- Upload Metadata Mode Setting (Full / Title only) -->
+                    <!-- Upload metadata mode Setting (Full / Title only) -->
                     <div class="metadata-mode-setting-box" id="metadata-mode-setting-box">
                         <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
                             <div>
                                 <div style="font-size: 0.88rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
                                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                                    <span>Upload Metadata Mode</span>
+                                    <span>Upload metadata mode</span>
                                     <span class="badge badge-emerald" id="badge-metadata-mode-status" style="font-size: 0.875rem; padding: 1px 6px;">FULL (DEFAULT)</span>
                                 </div>
                                 <div style="font-size: 0.875rem; color: var(--text-muted); margin-top: 3px;">
@@ -523,11 +459,11 @@
                     </div>
                 </div>
 
-                <!-- Quick Start Templates Section -->
+                <!-- Quick start templates Section -->
                 <div class="templates-section">
                     <div class="section-header">
                         <div>
-                            <h2 class="section-title">Quick Start Templates</h2>
+                            <h2 class="section-title">Quick start templates</h2>
                             <p class="section-sub">Select a high-converting formula with pre-tuned pace, duration, and sound profile</p>
                         </div>
                     </div>
@@ -579,7 +515,7 @@
                 <div class="recent-projects-section">
                     <div class="section-header">
                         <div>
-                            <h2 class="section-title">Recent Compilations</h2>
+                            <h2 class="section-title">Recent compilations</h2>
                             <p class="section-sub">Rendered master files ready for download or social distribution</p>
                         </div>
                         <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
@@ -587,13 +523,34 @@
                                 <input type="checkbox" id="toggle-show-test-files" style="cursor: pointer;">
                                 <span>Show test files</span>
                             </label>
+                            <details class="library-maintenance">
+                                <summary>Maintenance</summary>
+                                <div class="library-maintenance-menu">
+                                    <button id="hero-btn-purge-files" class="btn btn-secondary btn-sm hero-purge-btn" title="Purge all temporary files (TEMP_MPY, scratch), thumbnail files, raw video cache, and old history in Cat make folder">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                                    </svg>
+                                    <span>Purge temp files</span>
+                                </button>
+                                    <button id="hero-btn-clean-all" class="btn btn-secondary btn-sm hero-clean-btn" title="Clean clip history, candidate thumbnails, and timeline state (Finished videos are preserved)">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                                        <path d="M3 3v5h5"/>
+                                    </svg>
+                                    <span>Clean all and reset</span>
+                                </button>
+                                </div>
+                            </details>
                             <button id="btn-reset-history-home" class="btn btn-secondary btn-sm" title="Reset clip history & candidate pool (Keeps finished videos safe)">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-                                <span>Reset Clip History</span>
+                                <span>Reset clip history</span>
                             </button>
                             <button id="btn-refresh-finished" class="btn btn-secondary btn-sm" title="Refresh local compilation library">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-                                <span>Refresh Library</span>
+                                <span>Refresh library</span>
                             </button>
                         </div>
                     </div>
@@ -620,11 +577,11 @@
                         <div class="empty-state-icon">
                             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
                         </div>
-                        <h3 class="empty-state-title">No finished compilations yet</h3>
+                        <h3 class="empty-state-title">No finished videos</h3>
                         <p class="empty-state-desc">Create your first 9:16 short-form compilation using our automated AI slicing and beat-matching engine.</p>
                         <button id="btn-empty-new" class="btn btn-primary btn-md">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                            <span>Create First Compilation</span>
+                            <span>Start a video</span>
                         </button>
                     </div>
                 </div>
@@ -1896,6 +1853,10 @@
                     <div class="render-hero-glow"></div>
 
                     <div class="render-hero-header">
+                        <div class="render-idle-copy">
+                            <h2>Nothing is rendering</h2>
+                            <p>Start a new compilation and its progress appears here.</p>
+                        </div>
                         <h2 class="render-title" id="render-headline">Rendering your video</h2>
                         <p class="render-subtitle" id="render-subtitle">Multi-clip slicing, vertical reframing, and audio mixing.</p>
                     </div>
@@ -1913,6 +1874,12 @@
                         <svg class="icon icon-sm text-amber" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
                         <span id="prediction-warning-text">Taking longer than predicted.</span>
                     </div>
+
+                    <!-- Stage timeline with the render playhead -->
+                    <div class="render-timeline" id="render-timeline" aria-hidden="true">
+                        <span class="render-playhead" id="render-playhead"></span>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-md render-idle-new" id="btn-render-idle-new">New compilation</button>
 
                     <!-- Progress Percentage & Shimmer Bar -->
                     <div class="render-progress-wrap">
@@ -2069,7 +2036,7 @@
                 <!-- 10 Processing Stages Checklist -->
                 <div class="render-stages-card">
                     <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 6px; border-bottom: 1px solid var(--border);">
-                        <span style="font-size: 0.9rem; font-weight: 700;">10 Automated Pipeline Stages</span>
+                        <span style="font-size: 0.9rem; font-weight: 700;">Pipeline stages</span>
                         <span class="badge badge-emerald" id="render-stage-fraction">Stage 1 of 10</span>
                     </div>
 
@@ -2085,97 +2052,6 @@
                         </button>
                         <div class="live-engine-log-body" id="live-engine-log-body" style="display: none;">
                             <pre class="live-engine-log-pre" id="live-engine-log-content">Waiting for engine logs...</pre>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 12 Quality Checks Status Grid -->
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <div style="font-size: 0.88rem; font-weight: 700;">12 Automated Quality Verifications &amp; Content Filters</div>
-                    <div class="quality-checks-grid" id="quality-checks-grid">
-                        <div class="quality-check-card verified" id="qc-1">
-                            <div class="quality-check-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
-                            <div class="quality-check-content">
-                                <div class="quality-check-name">Sharpness Filter</div>
-                                <div class="quality-check-desc">Above threshold (&gt;85)</div>
-                            </div>
-                        </div>
-                        <div class="quality-check-card verified" id="qc-2">
-                            <div class="quality-check-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
-                            <div class="quality-check-content">
-                                <div class="quality-check-name">Shake Detector</div>
-                                <div class="quality-check-desc">Stabilized frame sync</div>
-                            </div>
-                        </div>
-                        <div class="quality-check-card verified" id="qc-3">
-                            <div class="quality-check-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
-                            <div class="quality-check-content">
-                                <div class="quality-check-name">Watermark Detector</div>
-                                <div class="quality-check-desc">Clean corners validated</div>
-                            </div>
-                        </div>
-                        <div class="quality-check-card verified" id="qc-4">
-                            <div class="quality-check-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
-                            <div class="quality-check-content">
-                                <div class="quality-check-name">Duplicate Detector</div>
-                                <div class="quality-check-desc">Zero frame collisions</div>
-                            </div>
-                        </div>
-                        <div class="quality-check-card verified" id="qc-5">
-                            <div class="quality-check-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
-                            <div class="quality-check-content">
-                                <div class="quality-check-name">Auto Color Grading</div>
-                                <div class="quality-check-desc">Rec.709 color balance</div>
-                            </div>
-                        </div>
-                        <div class="quality-check-card verified" id="qc-6">
-                            <div class="quality-check-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
-                            <div class="quality-check-content">
-                                <div class="quality-check-name">Smart Center Crop</div>
-                                <div class="quality-check-desc">Subject locked in 9:16</div>
-                            </div>
-                        </div>
-                        <div class="quality-check-card verified" id="qc-7">
-                            <div class="quality-check-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
-                            <div class="quality-check-content">
-                                <div class="quality-check-name">Music Overlay</div>
-                                <div class="quality-check-desc">Beat drop synchronized</div>
-                            </div>
-                        </div>
-                        <div class="quality-check-card verified" id="qc-8">
-                            <div class="quality-check-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
-                            <div class="quality-check-content">
-                                <div class="quality-check-name">Audio Level Check</div>
-                                <div class="quality-check-desc">Standard -14 LUFS</div>
-                            </div>
-                        </div>
-                        <div class="quality-check-card verified" id="qc-9">
-                            <div class="quality-check-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
-                            <div class="quality-check-content">
-                                <div class="quality-check-name">Aspect Ratio Check</div>
-                                <div class="quality-check-desc">1080 × 1920 60 FPS</div>
-                            </div>
-                        </div>
-                        <div class="quality-check-card verified" id="qc-10">
-                            <div class="quality-check-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
-                            <div class="quality-check-content">
-                                <div class="quality-check-name">AI Video Detector</div>
-                                <div class="quality-check-desc">Synthetic AI rejected</div>
-                            </div>
-                        </div>
-                        <div class="quality-check-card verified" id="qc-11">
-                            <div class="quality-check-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
-                            <div class="quality-check-content">
-                                <div class="quality-check-name">Cartoon Filter</div>
-                                <div class="quality-check-desc">Real pets verified</div>
-                            </div>
-                        </div>
-                        <div class="quality-check-card verified" id="qc-12">
-                            <div class="quality-check-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
-                            <div class="quality-check-content">
-                                <div class="quality-check-name">Ad &amp; Promo Filter</div>
-                                <div class="quality-check-desc">Clean non-ad footage</div>
-                            </div>
                         </div>
                     </div>
                 </div>

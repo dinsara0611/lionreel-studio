@@ -5,7 +5,7 @@
 
 /* System Font Fallback Stacks (Zero Google Fonts Runtime Requests) */
 :root {
-    --font-heading: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-heading: "Bahnschrift", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --font-mono: "Cascadia Code", "SF Mono", "Consolas", "Roboto Mono", monospace;
 
@@ -9789,4 +9789,318 @@ html[data-theme="light"] .chip-warning span {
     text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 50vw;
+}
+
+/* ==========================================================================
+   EDITING ROOM: the playhead is the one signature element
+   ========================================================================== */
+h1, h2, h3, h4 {
+    font-weight: 600;
+    letter-spacing: 0;
+}
+
+/* Stepper playhead */
+.workflow-stepper {
+    position: relative;
+}
+.step-playhead {
+    position: absolute;
+    top: -9px;
+    height: 12px;
+    left: 0;
+    width: 2px;
+    margin-left: -1px;
+    background: var(--primary-emerald);
+    transform: translateX(0);
+    transition: transform 460ms cubic-bezier(0.65, 0, 0.2, 1);
+    pointer-events: none;
+    z-index: 2;
+}
+.step-playhead::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -4px;
+    width: 10px;
+    height: 7px;
+    background: var(--primary-emerald);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+
+/* Views move the way you are going */
+body[data-view-direction="forward"] .workspace-view.active {
+    animation: lr-view-forward 340ms var(--ease-enter) backwards;
+}
+body[data-view-direction="back"] .workspace-view.active {
+    animation: lr-view-back 340ms var(--ease-enter) backwards;
+}
+@keyframes lr-view-forward {
+    from { opacity: 0; transform: translateX(22px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+@keyframes lr-view-back {
+    from { opacity: 0; transform: translateX(-22px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* Bench hero */
+.home-hero-card.bench {
+    display: grid;
+    grid-template-columns: minmax(280px, 1fr) minmax(0, 1.25fr);
+    gap: 40px;
+    align-items: center;
+    padding: 44px 44px 40px;
+    background: var(--bg-card);
+}
+.home-hero-card.bench::before {
+    display: none;
+}
+.bench .hero-title {
+    font-size: clamp(2.5rem, 4.6vw, 4.2rem);
+    line-height: 1.02;
+    font-weight: 600;
+    font-stretch: 87%;
+    letter-spacing: 0;
+    margin: 0 0 16px;
+}
+.bench .hero-desc {
+    max-width: 44ch;
+    margin: 0 0 24px;
+}
+.hero-primary-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Film strip made of real thumbnails */
+.reel {
+    min-width: 0;
+}
+.reel-strip {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 16px 8px;
+    overflow: hidden;
+    background: var(--media-surface);
+    border-radius: var(--radius-sm);
+    position: relative;
+}
+.reel-strip::before, .reel-strip::after {
+    content: "";
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    height: 0;
+    border-top: 6px dotted #39423f;
+}
+.reel-strip::before { top: 5px; }
+.reel-strip::after { bottom: 5px; }
+.film-frame {
+    flex: 0 0 auto;
+    width: 104px;
+    height: 185px;
+    padding: 0;
+    border: 0;
+    border-radius: 3px;
+    background: #171d1b;
+    overflow: hidden;
+    cursor: pointer;
+    min-width: 0;
+    min-height: 0;
+    animation: lr-reel 520ms var(--ease-enter) backwards;
+    animation-delay: calc(var(--i, 0) * 55ms);
+    transition: transform 180ms var(--ease-enter);
+}
+button.film-frame:hover {
+    transform: translateY(-3px);
+}
+.film-frame-empty {
+    cursor: default;
+}
+.film-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.reel-note {
+    margin: 8px 2px 0;
+    color: var(--text-muted);
+}
+@keyframes lr-reel {
+    from { opacity: 0; transform: translateX(34px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* Render timeline */
+.render-timeline {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 3px;
+    width: min(680px, 100%);
+    margin: 18px auto 6px;
+    height: 22px;
+}
+.render-cell {
+    position: relative;
+    overflow: hidden;
+    background: var(--border);
+    border-radius: 2px;
+}
+.render-cell::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--primary-emerald);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 420ms var(--ease-enter);
+}
+.render-cell.is-done::after {
+    transform: scaleX(1);
+}
+.render-cell.is-current::after {
+    transform: scaleX(1);
+    animation: lr-breathe 1400ms var(--ease-standard) infinite;
+}
+.render-timeline.is-failed .render-cell.is-current::after {
+    background: var(--error);
+    animation: none;
+}
+.render-playhead {
+    position: absolute;
+    top: -7px;
+    bottom: -7px;
+    left: 0;
+    width: 2px;
+    margin-left: -1px;
+    background: var(--text-primary);
+    transition: transform 520ms cubic-bezier(0.65, 0, 0.2, 1);
+    z-index: 2;
+}
+.render-idle-new, .render-idle-copy {
+    display: none;
+}
+.render-hero-card.is-idle .render-idle-copy {
+    display: block;
+}
+.render-idle-copy h2 {
+    font-size: 2rem;
+    margin: 0 0 8px;
+}
+.render-idle-copy p {
+    color: var(--text-muted);
+    margin: 0;
+}
+.render-hero-card.is-idle .render-title,
+.render-hero-card.is-idle .render-subtitle,
+#view-render.is-idle-view .render-stages-card {
+    display: none !important;
+}
+
+/* Nothing running: no bars, no zero percent, no Retry */
+.render-hero-card.is-idle .render-progress-wrap,
+.render-hero-card.is-idle .render-timeline,
+.render-hero-card.is-idle .render-stat-card,
+.render-hero-card.is-idle .render-config-strip,
+.render-hero-card.is-idle #live-clock-badge,
+.render-hero-card.is-idle .render-config-chips,
+.render-hero-card.is-idle #render-config-chips,
+.render-hero-card.is-idle #btn-render-retry {
+    display: none !important;
+}
+.render-hero-card.is-idle .render-idle-new {
+    display: inline-flex;
+    margin: 18px auto 4px;
+}
+
+/* Maintenance stays out of the way */
+.library-maintenance {
+    position: relative;
+}
+.library-maintenance summary {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 0 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    list-style: none;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+.library-maintenance summary::-webkit-details-marker {
+    display: none;
+}
+.library-maintenance-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 6px);
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+    animation: lr-pop 180ms var(--ease-enter) backwards;
+}
+
+@media (max-width: 900px) {
+    .home-hero-card.bench {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 28px 20px;
+        gap: 24px;
+    }
+    .film-frame {
+        width: 84px;
+        height: 149px;
+    }
+}
+
+/* Text on the dark film strip and on tinted warning badges */
+.mockup-phone-frame .badge {
+    color: #f1f5f3 !important;
+}
+
+@media (max-width: 768px) {
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+}
+
+/* The warning colour stays on the border; the words use the text colour for contrast */
+.export-repeat-note {
+    color: var(--text-primary);
+}
+
+@media (max-width: 768px) {
+    .library-maintenance summary,
+    .library-maintenance-menu .btn {
+        min-height: 44px;
+    }
+}
+
+/* Idle render card: empty stat and action rows take no space */
+.render-hero-card.is-idle .render-stats-grid,
+.render-hero-card.is-idle .render-hero-actions {
+    display: none;
+}
+
+/* The top bar is exactly full at 1440: the avatar stays, its label goes */
+.app-header {
+    gap: 12px;
+}
+@media (max-width: 1560px) {
+    .user-avatar-btn span {
+        display: none;
+    }
 }

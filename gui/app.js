@@ -783,7 +783,95 @@ function formatColomboTime(date = new Date()) {
     return new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Colombo", hour: "2-digit", minute: "2-digit" }).format(date);
 }
 
+function moveStepPlayhead() {
+    const nav = document.getElementById("workflow-stepper");
+    const head = document.getElementById("step-playhead");
+    const active = nav ? nav.querySelector(".step-item.active") : null;
+    if (!nav || !head || !active || !nav.offsetWidth) return;
+    const navBox = nav.getBoundingClientRect();
+    const box = active.getBoundingClientRect();
+    head.style.transform = `translateX(${Math.round(box.left - navBox.left + box.width / 2)}px)`;
+}
+
+function updateRenderTimeline(stageIndex, status) {
+    const line = document.getElementById("render-timeline");
+    const head = document.getElementById("render-playhead");
+    if (!line || !head) return;
+    if (!line.querySelector(".render-cell")) {
+        for (let i = 1; i <= 10; i++) {
+            const cell = document.createElement("span");
+            cell.className = "render-cell";
+            cell.dataset.stage = i;
+            line.appendChild(cell);
+        }
+    }
+    const stage = Math.max(1, Math.min(10, stageIndex || 1));
+    line.querySelectorAll(".render-cell").forEach(cell => {
+        const n = parseInt(cell.dataset.stage, 10);
+        cell.classList.toggle("is-done", n < stage || status === "completed");
+        cell.classList.toggle("is-current", n === stage && status !== "completed");
+    });
+    line.classList.toggle("is-failed", status === "error" || status === "failed");
+    head.style.transform = `translateX(${Math.round(line.offsetWidth * ((status === "completed" ? 10 : stage - 0.5) / 10))}px)`;
+}
+
+function applyRenderIdleState(data) {
+    const card = document.getElementById("render-hero-card");
+    if (!card) return;
+    const idle = Boolean(data) && data.status === "idle" && !data.isRunning && !data.isWaiting && !state.isStarting;
+    card.classList.toggle("is-idle", idle);
+    document.getElementById("view-render")?.classList.toggle("is-idle-view", idle);
+}
+
+function animateNumber(el, value) {
+    if (!el) return;
+    const target = Number(value) || 0;
+    const from = parseInt(el.dataset.shown ?? "", 10);
+    el.dataset.shown = target;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced || Number.isNaN(from) || from === target) {
+        el.innerText = target;
+        return;
+    }
+    const start = performance.now();
+    const step = now => {
+        const t = Math.min(1, (now - start) / 420);
+        const eased = 1 - Math.pow(1 - t, 3);
+        el.innerText = Math.round(from + (target - from) * eased);
+        if (t < 1 && Number(el.dataset.shown) === target) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+}
+
+function renderHeroReel() {
+    const strip = document.getElementById("hero-reel");
+    const note = document.getElementById("hero-reel-note");
+    if (!strip) return;
+    const projects = (state.finishedProjects || []).slice(0, 7);
+    const key = projects.map(p => p.name).join("|") || "empty";
+    if (strip.dataset.key === key) return;
+    strip.dataset.key = key;
+    const frames = [];
+    for (let i = 0; i < 7; i++) {
+        const proj = projects[i];
+        const thumb = proj && proj.thumbnail && !proj.thumbnail.includes("contact_sheet") ? proj.thumbnail : "";
+        if (proj) {
+            frames.push(`<button type="button" class="film-frame" style="--i: ${i}" data-name="${escapeHtml(proj.name)}" aria-label="Open ${escapeHtml(proj.name)}">${thumb ? `<img src="${thumb}" alt="" loading="lazy">` : ""}</button>`);
+        } else {
+            frames.push(`<span class="film-frame film-frame-empty" style="--i: ${i}"></span>`);
+        }
+    }
+    strip.innerHTML = frames.join("");
+    strip.querySelectorAll("button.film-frame").forEach(btn => {
+        btn.addEventListener("click", () => navigateToStep(5, btn.dataset.name));
+    });
+    if (note) {
+        note.innerText = projects.length ? `Latest ${projects.length === 1 ? "video" : `${projects.length} videos`}` : "Finished videos appear here";
+    }
+}
+
 function navigateToStep(stepNum, optTargetFile = null) {
+    document.body.dataset.viewDirection = stepNum >= (state.workflowStep || 1) ? "forward" : "back";
     state.workflowStep = stepNum;
     if (optTargetFile) {
         state.activeFinishedProjectName = optTargetFile;
@@ -816,6 +904,12 @@ function navigateToStep(stepNum, optTargetFile = null) {
     // The Library has its own New compilation button, so the header's stays out of the way there
     const headerNewBtn = document.getElementById("btn-header-new");
     if (headerNewBtn) headerNewBtn.style.display = stepNum === 1 ? "none" : "";
+
+    requestAnimationFrame(moveStepPlayhead);
+    if (stepNum === 4) {
+        requestAnimationFrame(() => updateRenderTimeline(state.renderStageIndex || 1, state.lastEngineStatus));
+        applyRenderIdleState(state.lastEngineData);
+    }
 
     // View visibility mapping
     const viewMap = {
@@ -899,10 +993,10 @@ async function loadPoolStatus(animalType) {
         const freshPct = verified > 0 ? Math.round(((usableNow + cooldown) / verified) * 100) : 0;
         if (remText) remText.innerText = `${freshPct}% of verified footage is unused`;
         if (barFill) barFill.style.width = `${Math.min(100, freshPct)}%`;
-        if (statTotal) statTotal.innerText = counts.total_rows ?? 0;
-        if (statUsed) statUsed.innerText = used;
-        if (statUnused) statUnused.innerText = usableNow;
-        if (statCycle) statCycle.innerText = cooldown;
+        animateNumber(statTotal, counts.total_rows ?? 0);
+        animateNumber(statUsed, used);
+        animateNumber(statUnused, usableNow);
+        animateNumber(statCycle, cooldown);
 
         if (alertBox) {
             alertBox.style.display = data.warning ? "flex" : "none";
@@ -6576,6 +6670,10 @@ async function runEngineStatusCheck() {
         const res = await fetch(queryUrl);
         if (res.ok) {
             const data = await res.json();
+            state.lastEngineData = data;
+            state.lastEngineStatus = data.status;
+            if (typeof data.stageIndex === "number" && data.status !== "idle") updateRenderTimeline(data.stageIndex, data.status);
+            setTimeout(() => applyRenderIdleState(state.lastEngineData), 0);
 
             // Update Stale Job Banner (Watchdog)
             const staleBanner = document.getElementById("stale-job-banner");
@@ -7454,6 +7552,7 @@ async function loadFinishedProjects() {
             const showTests = document.getElementById("toggle-show-test-files")?.checked || false;
             let filteredList = showTests ? mp4List : mp4List.filter(f => !f.is_test);
             state.finishedProjects = filteredList;
+            renderHeroReel();
         }
     } catch (e) {
         console.warn("Could not load backend finished videos:", e);
@@ -7691,6 +7790,16 @@ async function syncConfigToServer() {
         });
     } catch (e) {}
 }
+
+window.addEventListener("resize", () => {
+    moveStepPlayhead();
+    if (state.workflowStep === 4) updateRenderTimeline(state.renderStageIndex || 1, state.lastEngineStatus);
+});
+window.addEventListener("load", () => {
+    requestAnimationFrame(moveStepPlayhead);
+    const idleNew = document.getElementById("btn-render-idle-new");
+    if (idleNew) idleNew.addEventListener("click", () => document.getElementById("hero-btn-new")?.click());
+});
 
 function setVideoType(type, notify = true) {
     // 1. Remember settings from previous mode before switching
