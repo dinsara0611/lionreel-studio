@@ -453,7 +453,7 @@
                             </div>
                         </div>
                         <div style="display: flex; gap: 8px; align-items: center;">
-                            <span class="badge badge-emerald" id="pool-cycle-badge">Cycle 1</span>
+                            <span class="badge badge-emerald" id="pool-cycle-badge">Loading</span>
                             <button id="btn-pool-add-sources" class="btn btn-secondary btn-sm" title="Add fresh sources to the clip pool">+ Add more sources</button>
                         </div>
                     </div>
@@ -461,8 +461,8 @@
                     <!-- Progress bar -->
                     <div>
                         <div style="display: flex; justify-content: space-between; font-size: 0.875rem; margin-bottom: 6px;">
-                            <span style="font-weight: 600; color: var(--text-primary);" id="pool-usage-text">Clip pool: 0 of 0 used (0%)</span>
-                            <span style="color: var(--text-muted);" id="pool-remaining-text">100% available</span>
+                            <span style="font-weight: 600; color: var(--text-primary);" id="pool-usage-text">Loading ledger counts</span>
+                            <span style="color: var(--text-muted);" id="pool-remaining-text"></span>
                         </div>
                         <div class="pool-bar-track">
                             <div class="pool-bar-fill" id="pool-bar-fill" style="width: 0%;"></div>
@@ -473,19 +473,19 @@
                     <div class="pool-stats-row">
                         <div class="pool-stat-card">
                             <span class="pool-stat-label">Ledger rows</span>
-                            <span class="pool-stat-val" id="pool-stat-total">0</span>
+                            <span class="pool-stat-val" id="pool-stat-total">-</span>
                         </div>
                         <div class="pool-stat-card">
                             <span class="pool-stat-label">Used</span>
-                            <span class="pool-stat-val" id="pool-stat-used">0</span>
+                            <span class="pool-stat-val" id="pool-stat-used">-</span>
                         </div>
                         <div class="pool-stat-card">
                             <span class="pool-stat-label">Usable now</span>
-                            <span class="pool-stat-val pool-stat-val-hero" id="pool-stat-unused">0</span>
+                            <span class="pool-stat-val pool-stat-val-hero" id="pool-stat-unused">-</span>
                         </div>
                         <div class="pool-stat-card">
                             <span class="pool-stat-label">On cooldown</span>
-                            <span class="pool-stat-val pool-stat-val-cycle" id="pool-stat-cycle">1</span>
+                            <span class="pool-stat-val pool-stat-val-cycle" id="pool-stat-cycle">-</span>
                         </div>
                     </div>
 
