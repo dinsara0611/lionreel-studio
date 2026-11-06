@@ -350,3 +350,131 @@ def test_maintenance_buttons_are_tall_enough_on_a_phone(page):
     heights = pg.evaluate("() => ['hero-btn-purge-files', 'hero-btn-clean-all'].map(i => document.getElementById(i).offsetHeight)")
     ctx.close()
     assert min(heights) >= 44, heights
+
+
+def test_loading_screen_only_names_steps_it_really_does():
+    assert "render tools" not in read("app.js") and "codecs" not in read("index.html").split("STICKY HEADER")[0]
+
+
+def test_loading_screen_closes_and_marks_all_steps(page):
+    ctx = page.context.browser.new_context(viewport={"width": 1440, "height": 900})
+    pg = ctx.new_page()
+    pg.goto(URL, wait_until="domcontentloaded")
+    pg.wait_for_function("() => document.getElementById('app-loading-screen').style.display === 'none'", timeout=8000)
+    assert pg.get_attribute("#loading-timeline", "aria-valuenow") == "3"
+    assert pg.locator("#loading-timeline .ls-cell.is-done").count() == 3
+    assert not pg.is_visible("#loading-error-box")
+    ctx.close()
+
+
+def test_loading_screen_says_so_when_the_server_is_gone(page):
+    ctx = page.context.browser.new_context(viewport={"width": 1440, "height": 900})
+    pg = ctx.new_page()
+    pg.route("**/api/status*", lambda r: r.abort())
+    pg.goto(URL, wait_until="domcontentloaded")
+    pg.wait_for_selector("#loading-error-box", state="visible", timeout=5000)
+    assert "local server" in pg.inner_text("#loading-error-title")
+    assert pg.is_visible("#btn-loading-retry")
+    pg.wait_for_timeout(1800)
+    assert pg.is_visible("#app-loading-screen")
+    ctx.close()
+
+
+@pytest.mark.parametrize("width", [390, 1440, 1921])
+def test_film_frame_stops_inside_the_gate(page, width):
+    ctx = page.context.browser.new_context(viewport={"width": width, "height": 844})
+    pg = ctx.new_page()
+    pg.route("**/api/status*", lambda r: r.abort())
+    pg.goto(URL, wait_until="domcontentloaded")
+    offset = pg.evaluate("""() => {
+        const film = document.querySelector('.ls-film');
+        film.style.animation = 'none';
+        const gate = document.querySelector('.ls-gate').getBoundingClientRect();
+        return (gate.left + gate.width / 2 - film.getBoundingClientRect().left) % 110;
+    }""")
+    assert abs(offset - 55) <= 0.5, offset
+    ctx.close()
+
+
+def test_every_id_in_the_page_is_unique():
+    ids = re.findall(r'\bid="([^"$]+)"', read("index.html"))
+    assert sorted({i for i in ids if ids.count(i) > 1}) == []
+
+
+CLIPS = """() => {
+    state.selectedClips = [
+        {title: 'first clip', trimStart: 1, trimEnd: 6, source_duration: 30},
+        {title: 'second clip', trimStart: 2, trimEnd: 7, source_duration: 30},
+        {title: 'third clip', trimStart: 3, trimEnd: 8, source_duration: 30},
+    ];
+    state.activeClipIndex = 0;
+    state.trimMode = 'slide';
+    document.getElementById('slider-trim-start').max = 30;
+    document.getElementById('slider-trim-end').max = 30;
+    updateTrimWindow(1, 6, 1);
+}"""
+
+
+def test_trim_nudge_moves_exactly_one_tenth(page):
+    page.evaluate(CLIPS)
+    page.evaluate("() => document.getElementById('btn-nudge-start-plus').click()")
+    assert page.evaluate("() => state.selectedClips[0].trimStart") == pytest.approx(1.1, abs=0.001)
+
+
+def test_undo_restores_one_step_and_keeps_the_clips(page):
+    page.evaluate(CLIPS)
+    page.evaluate("""() => {
+        state.timelineHistory = [JSON.stringify(state.selectedClips.slice(0, 1)), JSON.stringify(state.selectedClips)];
+        document.getElementById('btn-timeline-undo').click();
+    }""")
+    assert page.evaluate("() => [state.timelineHistory.length, state.selectedClips.length]") == [1, 3]
+
+
+@pytest.mark.parametrize("button", ["btn-copy-meta-title", "btn-copy-meta-desc", "btn-copy-meta-tags", "btn-copy-meta-all"])
+def test_copy_buttons_copy_once(page, button):
+    count = page.evaluate("""async (id) => {
+        navigateToStep(5);
+        await new Promise(r => setTimeout(r, 200));
+        setupPlatformDrawerActions();
+        let copies = 0;
+        const fake = {writeText: () => { copies += 1; return Promise.resolve(); }};
+        Object.defineProperty(navigator, 'clipboard', {value: fake, configurable: true});
+        for (const f of ['export-meta-title', 'export-meta-desc', 'export-meta-tags']) {
+            const el = document.getElementById(f);
+            if (el) el.value = 'text';
+        }
+        document.getElementById(id).click();
+        await new Promise(r => setTimeout(r, 100));
+        return copies;
+    }""", button)
+    assert count == 1
+
+
+def test_new_suggestions_needs_a_video_and_sends_one_request(page):
+    ctx = page.context.browser.new_context(viewport={"width": 1440, "height": 900})
+    pg = ctx.new_page()
+    posts = []
+    pg.route("**/metadata/generate*", lambda r: (posts.append(r.request.url), r.fulfill(status=200, content_type="application/json", body="{}")))
+    pg.goto(URL, wait_until="domcontentloaded")
+    pg.wait_for_function("() => document.getElementById('app-loading-screen').style.display === 'none'", timeout=8000)
+    pg.wait_for_timeout(500)
+    pg.evaluate("() => { state.currentJobId = null; state.activeFinishedProjectName = null; document.getElementById('btn-meta-generate-fresh').click(); }")
+    pg.wait_for_timeout(200)
+    assert posts == []
+    pg.evaluate("() => { state.currentJobId = 'job_a'; document.getElementById('btn-meta-generate-fresh').click(); }")
+    pg.wait_for_timeout(400)
+    assert len(posts) == 1
+    assert pg.inner_text("#btn-meta-generate-fresh").strip() == "New suggestions"
+    ctx.close()
+
+
+def test_show_test_files_toggles_stay_in_step(page):
+    page.evaluate("() => { const t = document.getElementById('toggle-show-test-files-export'); t.checked = true; t.dispatchEvent(new Event('change')); }")
+    page.wait_for_timeout(300)
+    assert page.evaluate("() => document.getElementById('toggle-show-test-files').checked")
+    page.evaluate("() => { const t = document.getElementById('toggle-show-test-files'); t.checked = false; t.dispatchEvent(new Event('change')); }")
+
+
+def test_maintenance_menu_closes_on_outside_click(page):
+    page.evaluate("() => { navigateToStep(1); const m = document.querySelector('.library-maintenance'); m.open = true; document.body.click(); }")
+    assert not page.evaluate("() => document.querySelector('.library-maintenance').open")

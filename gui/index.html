@@ -32,7 +32,7 @@
         })();
     </script>
     
-    <link rel="stylesheet" href="style.css?v=2026_fix_export_v101">
+    <link rel="stylesheet" href="style.css?v=2026_v103_loading_film">
     <style>
         /* CRITICAL EXPORT PAGE OVERFLOW CONTAINMENT */
         .export-workspace-grid {
@@ -181,51 +181,34 @@
   <symbol id="icon-zoom-out" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></symbol>
   <symbol id="icon-folder-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 14 1.45-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.55 6a2 2 0 0 1-1.94 1.5H4a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2h3.93a2 2 0 0 1 1.66.9l.82 1.2a2 2 0 0 0 1.66.9H18a2 2 0 0 1 2 2v2"/></symbol>
   <symbol id="icon-archive" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect width="22" height="5" x="1" y="3" rx="1"/><line x1="10" y1="12" x2="14" y2="12"/></symbol>
-  <symbol id="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
-  <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></symbol>
   <symbol id="icon-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
 </svg>
 
 
-    <!-- ====================================================================
-         VIDEO REEL ASSEMBLY LOADING SCREEN
-         Centered composition with crowned lion logo, 4 film clips, and progress line
-         ==================================================================== -->
-    <div id="app-loading-screen" class="app-loading-screen" aria-live="polite">
+    <!-- Loading screen: film advances through a fixed gate; the playhead follows the real load steps -->
+    <div id="app-loading-screen" class="app-loading-screen">
+        <div class="ls-shutter ls-shutter-top" aria-hidden="true"></div>
+        <div class="ls-shutter ls-shutter-bottom" aria-hidden="true"></div>
         <div class="loading-container">
-            <!-- 4 Rounded Film Strip Clips moving into position around crowned lion emblem -->
-            <div class="reel-assembly-stage">
-                <div class="ambient-emerald-glow"></div>
-                <div class="assembly-frames-wrap">
-                    <div class="reel-frame rf-1"></div>
-                    <div class="reel-frame rf-2"></div>
-                    <div class="reel-frame rf-3"></div>
-                    <div class="reel-frame rf-4"></div>
-                </div>
-                <div class="assembly-center-lion">
-                    <img src="lion_logo.png" alt="LionReel Studio Crowned Logo">
-                </div>
+            <div class="ls-strip" aria-hidden="true">
+                <div class="ls-film"></div>
+                <div class="ls-gate"><img src="lion_logo.png" alt=""></div>
             </div>
 
-            <div class="loading-brand-meta">
-                <h1 class="loading-brand-title">LionReel <span>Studio</span></h1>
-                <p class="loading-brand-sub">Advanced Video Slicing &amp; Compilation Suite</p>
+            <p class="loading-brand-title">LionReel Studio</p>
+
+            <div class="ls-timeline" id="loading-timeline" role="progressbar" aria-label="Loading LionReel Studio" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0">
+                <span class="ls-cell"></span>
+                <span class="ls-cell"></span>
+                <span class="ls-cell"></span>
+                <span class="ls-head"></span>
             </div>
+            <div class="loading-status-text" id="loading-status-text" role="status">Loading your settings</div>
 
-            <div class="loading-status-text" id="loading-status-text">Preparing your creative workspace…</div>
-
-            <!-- Thin Animated Emerald Progress Line -->
-            <div class="loading-bar-wrap">
-                <div id="loading-bar-fill" class="loading-bar-fill"></div>
-            </div>
-
-            <!-- Fallback Error Card -->
-            <div id="loading-error-box" class="loading-error-box">
-                <p>LionReel Studio couldn't connect to the local processing server.</p>
-                <div style="display: flex; gap: 8px; justify-content: center; margin-top: 6px;">
-                    <button id="btn-loading-retry" class="btn btn-primary btn-sm">Try Again</button>
-                    <button id="btn-loading-reload" class="btn btn-secondary btn-sm" onclick="window.location.reload()">Reload App</button>
-                </div>
+            <div id="loading-error-box" class="loading-error-box" role="alert">
+                <p class="loading-error-title" id="loading-error-title"></p>
+                <p class="loading-error-desc" id="loading-error-desc"></p>
+                <button id="btn-loading-retry" class="btn btn-primary btn-sm" onclick="window.location.reload()">Try again</button>
             </div>
         </div>
     </div>
@@ -429,9 +412,9 @@
                     <div id="pool-warning-alert" class="pool-warning-box" style="display: none;">
                         <div style="display: flex; align-items: center; gap: 8px;">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0; color: #eab308;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                            <span><strong>Clip pool low:</strong> Add more video sources to maintain 100% fresh, non-repeating footage.</span>
+                            <span><strong>Clip pool low:</strong> Add more video sources so new videos don't repeat footage.</span>
                         </div>
-                        <button id="btn-pool-warning-add" class="btn btn-primary btn-sm" style="background: #eab308; border-color: #eab308; color: #020805; padding: 2px 10px; font-size: 0.875rem;">Fetch Sources</button>
+                        <button id="btn-pool-warning-add" class="btn btn-secondary btn-sm">Add more sources</button>
                     </div>
 
                     <!-- Upload metadata mode Setting (Full / Title only) -->
@@ -2673,7 +2656,7 @@
                         </div>
                         <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                             <label class="cockpit-toggle-label" title="Show sandbox and test render files in filmstrip">
-                                <input type="checkbox" id="toggle-show-test-files" class="themed-checkbox">
+                                <input type="checkbox" id="toggle-show-test-files-export" class="themed-checkbox">
                                 <span>Show test files</span>
                             </label>
                             <button type="button" class="btn btn-secondary btn-xs" id="btn-open-safe-cleanup" title="Safely clean up unneeded temporary, intermediate, and test files">
@@ -3284,6 +3267,6 @@
 
     <!-- Application Script -->
     <script src="tour_strings.js"></script>
-    <script src="app.js?v=2026_v102_export_cockpit"></script>
+    <script src="app.js?v=2026_v103_loading_film"></script>
 </body>
 </html>

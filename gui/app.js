@@ -309,6 +309,8 @@ const CURATED_SOURCES = [
 ];
 
 let appBootStartTime = Date.now();
+let appBootWatchdog = null;
+let appListenersWired = false;
 let renderSimulationTimer = null;
 let pollLogsInterval = null;
 
@@ -381,24 +383,34 @@ async function initApp() {
     initAppLoadingScreen();
     initTopbarActivityPanel();
 
+    if (!(await serverIsReachable())) {
+        showLoadingError("LionReel can't reach its local server",
+            "Check that the LionReel window is still open, then try again.");
+        return;
+    }
+    appBootWatchdog = setTimeout(() => {
+        showLoadingError("Loading is taking longer than usual",
+            "A slow Google Drive folder can cause this. Keep waiting, or try again.");
+    }, 15000);
+
     try {
-        updateLoadingProgress(25, "Loading your studio…");
         await loadConfig();
 
-        updateLoadingProgress(55, "Preparing your timeline & sources…");
+        updateLoadingProgress(1, "Loading your finished videos");
         initCuratedSources();
         await loadFinishedProjects();
         setupExportScreen(null);
 
-        updateLoadingProgress(80, "Checking render tools & codecs…");
+        updateLoadingProgress(2, "Setting up the editor");
         setupKeyboardShortcuts();
         setupPlayerListeners();
         setupUIEventListeners();
         initClipBankFillerUI();
         initSoundNotifications();
         initMetadataModeControls();
+        appListenersWired = true;
 
-        updateLoadingProgress(100, "Ready to create.");
+        updateLoadingProgress(3, "Ready");
         finishAppLoadingScreen();
 
         await loadBackendStages();
@@ -461,11 +473,13 @@ async function initApp() {
     } catch (err) {
         console.error("LionReel Studio init warning:", err);
         // Fall back gracefully so user is never locked out
-        initCuratedSources();
-        setupKeyboardShortcuts();
-        setupPlayerListeners();
-        setupUIEventListeners();
-        initSoundNotifications();
+        if (!appListenersWired) {
+            initCuratedSources();
+            setupKeyboardShortcuts();
+            setupPlayerListeners();
+            setupUIEventListeners();
+            initSoundNotifications();
+        }
         finishAppLoadingScreen();
     }
 }
@@ -473,31 +487,58 @@ async function initApp() {
 function initAppLoadingScreen() {
     const screen = document.getElementById("app-loading-screen");
     if (!screen) return;
-    screen.classList.remove("fade-out");
+    screen.classList.remove("fade-out", "is-stuck");
     screen.style.display = "flex";
-    updateLoadingProgress(15, "Preparing your creative workspace…");
+    updateLoadingProgress(0, "Loading your settings");
 }
 
-function updateLoadingProgress(pct, message) {
-    const bar = document.getElementById("loading-bar-fill");
+// A timeout is not proof the server is gone, so only a refused connection stops the boot
+async function serverIsReachable() {
+    try {
+        await fetch(`${API_BASE}/api/status`, { signal: AbortSignal.timeout(8000) });
+        return true;
+    } catch (err) {
+        return err.name === "TimeoutError";
+    }
+}
+
+function showLoadingError(title, detail) {
+    const screen = document.getElementById("app-loading-screen");
+    const titleEl = document.getElementById("loading-error-title");
+    const descEl = document.getElementById("loading-error-desc");
+    if (!screen || screen.classList.contains("fade-out")) return;
+    if (titleEl) titleEl.innerText = title;
+    if (descEl) descEl.innerText = detail;
+    screen.classList.add("is-stuck");
+}
+
+// stepsDone counts finished load steps, 0 to 3
+function updateLoadingProgress(stepsDone, message) {
+    const timeline = document.getElementById("loading-timeline");
     const status = document.getElementById("loading-status-text");
-    if (bar) bar.style.width = `${pct}%`;
+    if (timeline) {
+        timeline.style.setProperty("--ls-head", `${(stepsDone / 3) * 100}%`);
+        timeline.setAttribute("aria-valuenow", String(stepsDone));
+        timeline.querySelectorAll(".ls-cell").forEach((cell, i) => cell.classList.toggle("is-done", i < stepsDone));
+    }
     if (status && message) status.innerText = message;
 }
 
 function finishAppLoadingScreen() {
     const screen = document.getElementById("app-loading-screen");
     if (!screen) return;
+    clearTimeout(appBootWatchdog);
     const elapsed = Date.now() - appBootStartTime;
     // Guaranteed 1.35s display time to prevent flashing
     const minDisplayMs = 1350;
     const remainingWait = Math.max(0, minDisplayMs - elapsed);
 
     setTimeout(() => {
+        screen.classList.remove("is-stuck");
         screen.classList.add("fade-out");
         setTimeout(() => {
             screen.style.display = "none";
-        }, 400);
+        }, 640);
     }, remainingWait);
 }
 
@@ -4241,14 +4282,7 @@ function renderExportProjectsStrip(currentFilename) {
     const countEl = document.getElementById("export-projects-count");
     if (!listEl) return;
 
-    const toggleEl = document.getElementById("toggle-show-test-files");
-    if (toggleEl && !toggleEl.dataset.bound) {
-        toggleEl.dataset.bound = "true";
-        toggleEl.addEventListener("change", () => {
-            renderExportProjectsStrip(state.activeFinishedProjectName || currentFilename);
-        });
-    }
-
+    const toggleEl = document.getElementById("toggle-show-test-files-export");
     const showTests = toggleEl?.checked || false;
     let list = state.finishedProjects || [];
 
@@ -4728,33 +4762,6 @@ ${el.value}`);
     }
 
     // Shared "New suggestions" button
-    const genFreshBtn = document.getElementById("btn-meta-generate-fresh");
-    if (genFreshBtn && !genFreshBtn.dataset.bound) {
-        genFreshBtn.dataset.bound = "true";
-        genFreshBtn.addEventListener("click", async () => {
-            const activeFile = state.activeFinishedProjectName || "";
-            const jobId = state.currentJobId || activeFile.replace(/\.mp4$/i, "") || "current_job";
-            showToast("Generating fresh suggestions…", "info");
-            try {
-                const animal = state.activeCategory || (state.config && state.config.VIDEO_MODE) || "cat";
-                const res = await fetch(`${API_BASE}/api/jobs/${encodeURIComponent(jobId)}/metadata/generate`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ animal_type: animal, mode: "full" })
-                });
-                if (res.ok) {
-                    const freshPkg = await res.json();
-                    state.metadataPackage = freshPkg;
-                    renderMetadataCard(freshPkg);
-                    showToast("Fresh suggestions loaded!", "success");
-                } else {
-                    showToast("Could not regenerate suggestions", "error");
-                }
-            } catch (e) {
-                showToast(`Generation error: ${e.message}`, "error");
-            }
-        });
-    }
 }
 
 function initExportHousekeeping(filename) {
@@ -7569,15 +7576,6 @@ async function loadFinishedProjects() {
     grid.style.display = "grid";
     if (emptyState) emptyState.style.display = "none";
 
-    // Ensure test files toggle triggers reload
-    const testToggle = document.getElementById("toggle-show-test-files");
-    if (testToggle && !testToggle.dataset.wired) {
-        testToggle.dataset.wired = "true";
-        testToggle.addEventListener("change", () => {
-            loadFinishedProjects();
-        });
-    }
-
     grid.innerHTML = state.finishedProjects.map(proj => {
         const name = proj.name || "lionreel_compilation.mp4";
         let dur = proj.duration_str;
@@ -8650,7 +8648,7 @@ function setupUIEventListeners() {
 
     if (editorColorGradeSwitch) {
         editorColorGradeSwitch.addEventListener("change", () => {
-            updateColorGradingState(editorColorGradeSwitch.checked, true);
+            updateColorGradingState(editorColorGradeSwitch.checked, false);
         });
     }
 
@@ -9546,7 +9544,6 @@ function setupUIEventListeners() {
     // 8. Timeline Track Action Buttons (Undo, Redo, Add Clip)
     const btnTimelineUndo = document.getElementById("btn-timeline-undo");
     const btnTimelineRedo = document.getElementById("btn-timeline-redo");
-    const btnTimelineAddClip = document.getElementById("btn-timeline-add-clip");
 
     if (btnTimelineUndo) {
         btnTimelineUndo.addEventListener("click", () => undoTimelineChange());
@@ -9554,12 +9551,6 @@ function setupUIEventListeners() {
     if (btnTimelineRedo) {
         btnTimelineRedo.addEventListener("click", () => {
             showToast("No further changes to redo", "info");
-        });
-    }
-    if (btnTimelineAddClip) {
-        btnTimelineAddClip.addEventListener("click", () => {
-            openReplaceClipModal();
-            showToast("Select a verified clip from the bank to add to sequence", "info");
         });
     }
 
@@ -9755,10 +9746,16 @@ function setupUIEventListeners() {
     const btnMetaFresh = document.getElementById("btn-meta-generate-fresh");
     if (btnMetaFresh) {
         btnMetaFresh.addEventListener("click", async () => {
+            const activeFile = state.activeFinishedProjectName || "";
+            const jobId = state.currentJobId || activeFile.replace(/\.mp4$/i, "");
+            if (!jobId) {
+                showToast("Pick a finished video first", "info");
+                return;
+            }
+            const label = btnMetaFresh.querySelector("span");
             btnMetaFresh.disabled = true;
-            btnMetaFresh.innerText = "Generating…";
-            showToast("Generating 30 fresh candidates scored against quality checklist…", "info");
-            const jobId = state.currentJobId || "active_draft";
+            if (label) label.innerText = "Generating…";
+            showToast("Generating new suggestions…", "info");
             const animal = state.activeCategory || (state.config && state.config.VIDEO_MODE) || "cat";
             try {
                 const res = await fetch(`${API_BASE}/api/jobs/${encodeURIComponent(jobId)}/metadata/generate`, {
@@ -9770,58 +9767,15 @@ function setupUIEventListeners() {
                     const pkg = await res.json();
                     state.metadataPackage = pkg;
                     renderMetadataCard(pkg);
-                    showToast("Fresh metadata candidates generated & scored", "success");
+                    showToast("New suggestions ready", "success");
                 } else {
-                    showToast("Failed to generate fresh metadata", "error");
+                    showToast("Could not generate new suggestions", "error");
                 }
             } catch (err) {
-                showToast("Network error generating metadata", "error");
+                showToast("Could not reach the server to generate suggestions", "error");
             } finally {
                 btnMetaFresh.disabled = false;
-                btnMetaFresh.innerText = "Fresh Candidates";
-            }
-        });
-    }
-
-    // 1-Click Copy Buttons
-    const btnCopyTitle = document.getElementById("btn-copy-meta-title");
-    const btnCopyDesc = document.getElementById("btn-copy-meta-desc");
-    const btnCopyTags = document.getElementById("btn-copy-meta-tags");
-    const btnCopyAll = document.getElementById("btn-copy-meta-all");
-
-    if (btnCopyTitle) {
-        btnCopyTitle.addEventListener("click", () => {
-            const el = document.getElementById("export-meta-title");
-            if (el && el.value) {
-                copyTextToClipboard(el.value, "Title copied to clipboard");
-            }
-        });
-    }
-    if (btnCopyDesc) {
-        btnCopyDesc.addEventListener("click", () => {
-            const el = document.getElementById("export-meta-desc");
-            if (el && el.value) {
-                copyTextToClipboard(el.value, "Description copied to clipboard");
-            }
-        });
-    }
-    if (btnCopyTags) {
-        btnCopyTags.addEventListener("click", () => {
-            const el = document.getElementById("export-meta-tags");
-            if (el && el.value) {
-                copyTextToClipboard(el.value, "Hashtags copied to clipboard");
-            }
-        });
-    }
-    if (btnCopyAll) {
-        btnCopyAll.addEventListener("click", () => {
-            const title = (document.getElementById("export-meta-title") || {}).value || "";
-            const desc = (document.getElementById("export-meta-desc") || {}).value || "";
-            const tags = (document.getElementById("export-meta-tags") || {}).value || "";
-            const mode = state.activeMetadataMode || "full";
-            const textToCopy = mode === "title_only" ? title : `${title}\n\n${desc}\n\n${tags}`.trim();
-            if (textToCopy) {
-                copyTextToClipboard(textToCopy, mode === "title_only" ? "Title copied to clipboard" : "All metadata copied to clipboard");
+                if (label) label.innerText = "New suggestions";
             }
         });
     }
@@ -9999,13 +9953,26 @@ function setupUIEventListeners() {
         });
     }
 
-    const toggleShowTestFiles = document.getElementById("toggle-show-test-files");
-    if (toggleShowTestFiles) {
-        toggleShowTestFiles.addEventListener("change", () => {
-            loadFinishedProjects();
-            showToast(toggleShowTestFiles.checked ? "Showing all files including test runs" : "Showing production compilations only", "info");
+    const testFileToggles = ["toggle-show-test-files", "toggle-show-test-files-export"]
+        .map(id => document.getElementById(id)).filter(Boolean);
+    testFileToggles.forEach(toggle => {
+        toggle.addEventListener("change", async () => {
+            testFileToggles.forEach(other => { other.checked = toggle.checked; });
+            await loadFinishedProjects();
+            renderExportProjectsStrip(state.activeFinishedProjectName);
+            showToast(toggle.checked ? "Showing all files including test runs" : "Showing production compilations only", "info");
         });
-    }
+    });
+
+    // Maintenance menu closes on an outside click or Escape
+    document.addEventListener("click", (e) => {
+        const menu = document.querySelector(".library-maintenance");
+        if (menu && menu.open && !menu.contains(e.target)) menu.open = false;
+    });
+    document.addEventListener("keydown", (e) => {
+        const menu = document.querySelector(".library-maintenance");
+        if (e.key === "Escape" && menu) menu.open = false;
+    });
 
     // Open in Explorer / Copy Path Actions on Export View
     const openFolderBtn = document.getElementById("btn-open-folder");
@@ -10058,7 +10025,6 @@ function setupUIEventListeners() {
     const copyTitleBtn = document.getElementById("btn-copy-meta-title");
     const copyDescBtn = document.getElementById("btn-copy-meta-desc");
     const copyTagsBtn = document.getElementById("btn-copy-meta-tags");
-    const copyAllBtn = document.getElementById("btn-copy-meta-all");
 
     if (copyTitleBtn) {
         copyTitleBtn.addEventListener("click", () => {
@@ -10069,7 +10035,7 @@ function setupUIEventListeners() {
     if (copyDescBtn) {
         copyDescBtn.addEventListener("click", () => {
             const val = document.getElementById("export-meta-desc").value;
-            copyTextWithFeedback(val, copyDescBtn, "Description & Tags");
+            copyTextWithFeedback(val, copyDescBtn, "Description");
         });
     }
     if (copyTagsBtn) {
@@ -10078,16 +10044,6 @@ function setupUIEventListeners() {
             copyTextWithFeedback(val, copyTagsBtn, "Hashtags");
         });
     }
-    if (copyAllBtn) {
-        copyAllBtn.addEventListener("click", () => {
-            const title = document.getElementById("export-meta-title")?.value || "";
-            const desc = document.getElementById("export-meta-desc")?.value || "";
-            const tags = document.getElementById("export-meta-tags")?.value || "";
-            const combined = `${title}\n\n${desc}\n\n${tags}`;
-            copyTextWithFeedback(combined, copyAllBtn, "All Metadata");
-        });
-    }
-
     // Platform Upload Redirect Links Event Listeners
     const linkTiktok = document.getElementById("link-upload-tiktok");
     const linkReels = document.getElementById("link-upload-reels");
@@ -10528,50 +10484,7 @@ async function purgeTempAndOldFiles() {
         };
     }
 
-    // Loading Screen Retry Button
-    const btnLoadingRetry = document.getElementById("btn-loading-retry");
-    if (btnLoadingRetry) {
-        btnLoadingRetry.addEventListener("click", () => {
-            const errBox = document.getElementById("loading-error-box");
-            if (errBox) errBox.style.display = "none";
-            showToast("Connecting to LionReel Studio backend...", "info");
-            initApp();
-        });
-    }
-
     // Timeline Track Header Controls (Undo, Redo, Add Clip)
-    const timelineAddBtn = document.getElementById("btn-timeline-add-clip");
-    const timelineUndoBtn = document.getElementById("btn-timeline-undo");
-    const timelineRedoBtn = document.getElementById("btn-timeline-redo");
-
-    if (timelineAddBtn) {
-        timelineAddBtn.addEventListener("click", () => {
-            state.wizardStage = 2;
-            navigateToStep(2);
-            showToast("Select or upload clips to add to timeline sequence", "info");
-        });
-    }
-
-    if (timelineUndoBtn) {
-        timelineUndoBtn.addEventListener("click", () => {
-            if (state.selectedClips.length > 1) {
-                const popped = state.selectedClips.pop();
-                state.activeClipIndex = Math.max(0, state.selectedClips.length - 1);
-                renderTimelineTrack();
-                updateTimelineClipCount();
-                loadActiveClipIntoPlayer();
-                showToast(`Undid last clip: removed "${popped.title.substring(0, 18)}…"`, "info");
-            } else {
-                showToast("Cannot undo further: at least 1 clip required", "info");
-            }
-        });
-    }
-
-    if (timelineRedoBtn) {
-        timelineRedoBtn.addEventListener("click", () => {
-            showToast("Timeline sequence is at latest edit", "info");
-        });
-    }
 
     // Shortcuts Modal triggers
     const shortcutsBtn = document.getElementById("btn-open-shortcuts");
@@ -11396,46 +11309,6 @@ function initEditStepAlignmentListeners() {
         });
     }
 
-    // Nudge steppers (-0.1s, +0.1s)
-    const nudgeStartMinus = document.getElementById("btn-nudge-start-minus");
-    const nudgeStartPlus = document.getElementById("btn-nudge-start-plus");
-    const nudgeEndMinus = document.getElementById("btn-nudge-end-minus");
-    const nudgeEndPlus = document.getElementById("btn-nudge-end-plus");
-
-    if (nudgeStartMinus) {
-        nudgeStartMinus.addEventListener("click", () => {
-            if (sliderStart) {
-                sliderStart.value = Math.max(0, parseFloat(sliderStart.value) - 0.1);
-                sliderStart.dispatchEvent(new Event("input"));
-            }
-        });
-    }
-    if (nudgeStartPlus) {
-        nudgeStartPlus.addEventListener("click", () => {
-            if (sliderStart) {
-                sliderStart.value = parseFloat(sliderStart.value) + 0.1;
-                sliderStart.dispatchEvent(new Event("input"));
-            }
-        });
-    }
-    if (nudgeEndMinus) {
-        nudgeEndMinus.addEventListener("click", () => {
-            if (sliderEnd) {
-                sliderEnd.value = Math.max(0, parseFloat(sliderEnd.value) - 0.1);
-                sliderEnd.dispatchEvent(new Event("input"));
-            }
-        });
-    }
-    if (nudgeEndPlus) {
-        nudgeEndPlus.addEventListener("click", () => {
-            if (sliderEnd) {
-                const max = parseFloat(sliderEnd.max) || 30;
-                sliderEnd.value = Math.min(max, parseFloat(sliderEnd.value) + 0.1);
-                sliderEnd.dispatchEvent(new Event("input"));
-            }
-        });
-    }
-
     // Trim mode toggle buttons (Slide vs Resize)
     const btnSlide = document.getElementById("btn-mode-slide");
     const btnResize = document.getElementById("btn-mode-resize");
@@ -11453,40 +11326,6 @@ function initEditStepAlignmentListeners() {
             btnSlide.classList.remove("active");
             btnSlide.setAttribute("aria-pressed", "false");
             state.trimMode = "resize";
-        });
-    }
-
-    // Snap to funny
-    const btnSnap = document.getElementById("btn-snap-funny");
-    if (btnSnap) {
-        btnSnap.addEventListener("click", () => {
-            const clip = state.selectedClips ? state.selectedClips[state.activeClipIndex] : null;
-            if (clip && clip.funny_moment_s !== undefined && clip.funny_moment_s !== null) {
-                const peak = clip.funny_moment_s;
-                const dur = clip.duration || 5.5;
-                const newStart = Math.max(0, peak - (dur / 2));
-                const newEnd = newStart + dur;
-                if (sliderStart) sliderStart.value = newStart;
-                if (sliderEnd) sliderEnd.value = newEnd;
-                updateTrimSliderVisuals();
-                showToast(`Snapped window around peak at ${peak.toFixed(1)}s`, "info");
-            } else {
-                showToast("No funny moment peak detected for this clip", "info");
-            }
-        });
-    }
-
-    // Reset to auto
-    const btnReset = document.getElementById("btn-reset-trim");
-    if (btnReset) {
-        btnReset.addEventListener("click", () => {
-            const clip = state.selectedClips ? state.selectedClips[state.activeClipIndex] : null;
-            if (clip) {
-                if (sliderStart) sliderStart.value = 0;
-                if (sliderEnd) sliderEnd.value = clip.duration || 5.5;
-                updateTrimSliderVisuals();
-                showToast("Reset trim window to auto-detected boundaries", "info");
-            }
         });
     }
 
