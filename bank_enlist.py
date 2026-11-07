@@ -9,6 +9,32 @@ Fixes the bank growth bug:
 import os
 from typing import Dict, Any, List
 
+# Frozen frames at the end of a video are a defect, so only a blink's worth may be padded.
+MAX_CLONE_PAD_SEC = 0.5
+
+
+def extended_window(start_s: float, end_s: float, target_sec: float, source_dur: float, is_free):
+    """
+    Grows a short window to target_sec with the footage right after it, or else right before it.
+    is_free(a, b) says whether that added footage may be used. None means neither side can.
+    """
+    need = target_sec - (end_s - start_s)
+    if need <= 0:
+        return start_s, end_s
+    if end_s + need <= source_dur and is_free(end_s, end_s + need):
+        return start_s, end_s + need
+    if start_s - need >= 0 and is_free(start_s - need, start_s):
+        return start_s - need, end_s
+    return None
+
+
+def clone_pad_seconds(shortfall_sec: float, allow_shorter: bool = False) -> float:
+    """Seconds of cloned frames allowed to close a gap at the end of the video."""
+    if allow_shorter or shortfall_sec <= 0.05 or shortfall_sec > MAX_CLONE_PAD_SEC:
+        return 0.0
+    return shortfall_sec
+
+
 class BankGrowthManager:
     def __init__(self, initial_count: int = 0):
         self.last_count = initial_count

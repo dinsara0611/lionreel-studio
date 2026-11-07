@@ -1853,6 +1853,27 @@ class LionReelV97Pipeline:
             out_w, out_h = job_options.RESOLUTION_BY_ASPECT.get(aspect_ratio, (1080, 1920) if aspect_ratio != "16:9" else (1920, 1080))
 
         cid = cand.get("clip_id") or cinfo.get("clip_id", f"c_{clip_idx:03d}")
+
+        # A short bank window would leave the video under length: use the real footage next to it.
+        # The post-crop gate below checks the whole longer clip.
+        if target_clip_sec - dur_s > 0.5 and not cand.get("is_repeat"):
+            src_key = cand.get("source_id") or os.path.basename(str(src_path or ""))
+            channel = cand.get("animal_type")
+
+            def footage_is_free(a, b):
+                return (not self.ledger.is_window_rejected_by_overlap(src_key, a, b)[0]
+                        and not self.ledger.is_window_used_in_production(src_key, a, b, channel=channel, exclude_job_id=job_id)[0])
+
+            from bank_enlist import extended_window
+            window = extended_window(start_s, start_s + dur_s, target_clip_sec, get_video_duration(local_src), footage_is_free)
+            if window:
+                log(f"  [FULL LENGTH] Clip {cid}: {dur_s:.1f}s window grown to {target_clip_sec:.1f}s from real footage ({window[0]:.1f}s-{window[1]:.1f}s)")
+                start_s, dur_s = window[0], round(window[1] - window[0], 3)
+                cand["plan"] = None
+                cand["grown_window"] = True
+            else:
+                log(f"  [FULL LENGTH] Clip {cid}: {dur_s:.1f}s window cannot grow to {target_clip_sec:.1f}s, the footage around it is rejected, already used or missing", "WARN")
+
         plan = cand.get("plan")
         if not plan or plan.get("aspect_ratio") != aspect_ratio or plan.get("out_w") != out_w or not plan.get("crop_w") or not plan.get("active_box"):
             plan = self.reframer.plan_reframe(
@@ -1969,7 +1990,8 @@ class LionReelV97Pipeline:
         if not post_ok:
             cand["result"] = "REJECT"
             cand["reason"] = f"POST_CROP_GATE_FAIL ({post_msg})"
-            if "ANALYSIS_FAILED" not in post_msg and "UNREADABLE" not in post_msg:
+            # A failed grown clip says nothing against the shorter verified window inside it
+            if "ANALYSIS_FAILED" not in post_msg and "UNREADABLE" not in post_msg and not cand.get("grown_window"):
                 self.ledger.reject_window(src_path, start_s, start_s + dur_s, cand["reason"])
             try: os.remove(clip_out)
             except Exception: pass
@@ -3617,8 +3639,9 @@ class LionReelV97Pipeline:
                                     pass
                             else:
                                 rej_msg = c_ret.get('reason', 'FAILED') if isinstance(c_ret, dict) else 'FAILED'
-                                self.ledger.release_single_clip(cid, reason=rej_msg)
-                                log(f"Stage 6 candidate {cid} rejected ({rej_msg}), marked rejected in ledger", "WARN")
+                                grown = isinstance(c_ret, dict) and c_ret.get("grown_window")
+                                self.ledger.release_single_clip(cid, reason=None if grown else rej_msg)
+                                log(f"Stage 6 candidate {cid} rejected ({rej_msg}){', short window kept' if grown else ', marked rejected in ledger'}", "WARN")
                                 # Child Abort: drop pending repeat children when a parent fails post-crop gate
                                 dropped_children = []
                                 for q_cand in list(cand_queue[next_cand_idx:]):
@@ -3696,6 +3719,10 @@ class LionReelV97Pipeline:
                                         pass
                                 else:
                                     f_rej = f_ret.get('reason', 'FAILED') if isinstance(f_ret, dict) else 'FAILED'
+                                    log(f"Stage 6 replenishment candidate {f_cid} rejected ({f_rej})", "WARN")
+                                    if isinstance(f_ret, dict) and f_ret.get("grown_window"):
+                                        self.ledger.release_single_clip(f_cid)
+                                        continue
                                     if hasattr(self.ledger, "record_candidate_evaluation_failure"):
                                         self.ledger.record_candidate_evaluation_failure(f_cid, score=f_ret.get("actual_score", 0.0) if isinstance(f_ret, dict) else 0.0, reason=f_rej)
                                     self.ledger.release_single_clip(f_cid, reason=f_rej)
@@ -3845,6 +3872,10 @@ class LionReelV97Pipeline:
                                                 record_clip_rendered(work_job_dir, f_meta)
                                             else:
                                                 f_rej = f_ret.get('reason', 'FAILED') if isinstance(f_ret, dict) else 'FAILED'
+                                                log(f"Stage 6 bank growth candidate {f_cid} rejected ({f_rej})", "WARN")
+                                                if isinstance(f_ret, dict) and f_ret.get("grown_window"):
+                                                    self.ledger.release_single_clip(f_cid)
+                                                    continue
                                                 if hasattr(self.ledger, "record_candidate_evaluation_failure"):
                                                     self.ledger.record_candidate_evaluation_failure(f_cid, score=f_ret.get("actual_score", 0.0) if isinstance(f_ret, dict) else 0.0, reason=f_rej)
                                                 self.ledger.release_single_clip(f_cid, reason=f_rej)
@@ -4193,9 +4224,12 @@ class LionReelV97Pipeline:
                 curr_total = sum(get_video_duration(p) for p in processed_clip_paths)
                 diff = float(contract_target_sec) - curr_total
 
-                if diff > 0.05 and not allow_shorter:
-                    # Video is shorter than contract target and allow_shorter is False:
-                    # Pad the final clip cleanly with cloned frames and padded audio to hit contract_target_sec
+                from bank_enlist import clone_pad_seconds
+                if diff > 0.05 and not allow_shorter and not clone_pad_seconds(diff):
+                    # Never hide missing footage behind a freeze: the duration gate reports it instead
+                    log(f"  [CONTRACT SHORT] Video is {diff:.2f}s under the {contract_target_sec:.1f}s target, too much to pad with frozen frames", "WARN")
+                elif clone_pad_seconds(diff, allow_shorter):
+                    # A few frames short: pad the final clip with cloned frames and padded audio
                     last_clip = processed_clip_paths[-1]
                     extended_last = os.path.join(work_job_dir, f"{job_id}_last_extended.mp4")
                     cmd_ext = [
