@@ -1429,6 +1429,44 @@ def load_job_config(video_path, work_job_dir=None):
     return {}
 
 
+def check_clips_source_text(clip_mapping):
+    """
+    Gate 6b: burned-in text in the source footage of every clip.
+    The master carries LionReel's own captions, so the check reads each clip's source window
+    instead. A clip whose source cannot be read leaves the gate NOT RUN, never passed.
+    """
+    from overlay_text_detector import check_window_still_text
+    clips = [c for c in (clip_mapping or []) if isinstance(c, dict)]
+    if not clips:
+        return {"passed": None, "reason": "No clip list recorded: source text not checked", "clips": []}
+    seen, results = set(), []
+    for c in clips:
+        cand = c.get("cand") if isinstance(c.get("cand"), dict) else {}
+        src = (c.get("source_abs_path") or c.get("source_path") or c.get("source_file")
+               or c.get("source_url_or_path") or cand.get("source_url_or_path"))
+        start = c.get("start_s")
+        dur = c.get("dur_s") or c.get("duration")
+        cid = c.get("clip_id") or "?"
+        if not src or start is None or not dur:
+            results.append({"clip_id": cid, "passed": None, "reason": "source window not recorded"})
+            continue
+        key = (os.path.normcase(str(src)), round(float(start), 2), round(float(dur), 2))
+        if key in seen:
+            continue
+        seen.add(key)
+        r = check_window_still_text(str(src), float(start), float(dur))
+        results.append({"clip_id": cid, "passed": r.get("passed"), "reason": r.get("reason")})
+    failed = [r for r in results if r["passed"] is False]
+    unknown = [r for r in results if r["passed"] is None]
+    if failed:
+        names = ", ".join(r["clip_id"] for r in failed)
+        return {"passed": False, "reason": f"Burned-in source text in {len(failed)}/{len(results)} clips: {names}", "clips": results}
+    if unknown:
+        names = ", ".join(f"{r['clip_id']} ({r['reason']})" for r in unknown)
+        return {"passed": None, "reason": f"Source text not checked for {len(unknown)}/{len(results)} clips: {names}", "clips": results}
+    return {"passed": True, "reason": f"No burned-in source text in {len(results)} clips", "clips": results}
+
+
 def run_full_qa(video_path, report_path=None, contact_sheet_path=None, layout_mode="smart_crop", clip_mapping=None, work_job_dir=None, expected_aspect=None, target_dur=None):
     if not os.path.exists(video_path):
         print(f"[QA] Error: Video file not found: {video_path}")
@@ -1543,11 +1581,10 @@ def run_full_qa(video_path, report_path=None, contact_sheet_path=None, layout_mo
 
     # Gate 6b: Clean Clips (Burned-in Text & Overlay Gate)
     try:
-        from overlay_text_detector import check_window_burned_in_text
-        text_gate_res = check_window_burned_in_text(video_path, 0.0, dur, n_samples=16, is_master_with_captions=True)
-        text_gate_passed = bool(text_gate_res.get("passed"))
-        text_gate_skipped = False
-        text_gate_reason = text_gate_res.get("reason", "Clean footage")
+        text_gate_res = check_clips_source_text(clip_mapping)
+        text_gate_passed = text_gate_res["passed"]
+        text_gate_skipped = text_gate_passed is None
+        text_gate_reason = text_gate_res["reason"]
     except Exception as e_tg:
         text_gate_passed = None
         text_gate_skipped = True

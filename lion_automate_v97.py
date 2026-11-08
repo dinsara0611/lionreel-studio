@@ -1919,6 +1919,23 @@ class LionReelV97Pipeline:
             cand["actual_score"] = 0.0
             return False, cid, None, cand
 
+        # Burned-in source text (captions, handles, comment bubbles) sits still while the footage moves
+        from overlay_text_detector import check_window_still_text
+        try:
+            text_res = check_window_still_text(local_src, start_s, dur_s)
+        except Exception as e_txt:
+            text_res = {"passed": None, "reason": f"Check crashed: {e_txt}"}
+        if text_res.get("passed") is False:
+            cand["result"] = "REJECT"
+            cand["reason"] = f"BURNED_IN_SOURCE_TEXT ({text_res.get('reason')})"
+            cand["actual_score"] = 0.0
+            # A grown window may have picked up text the shorter verified window does not have
+            if not cand.get("grown_window"):
+                self.ledger.reject_window(src_path, start_s, start_s + dur_s, cand["reason"])
+            return False, cid, None, cand
+        if text_res.get("passed") is None:
+            log(f"  [TEXT CHECK] Clip {cid}: source text check not run ({text_res.get('reason')}); final QA checks it again", "WARN")
+
         quarantine_dir = os.path.join(work_job_dir, "quarantine")
         reusable, r_msg = False, ""
         if os.path.exists(checkpoint_clip):

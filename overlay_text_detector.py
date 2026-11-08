@@ -270,3 +270,152 @@ def check_window_burned_in_text(video_path: str, start_s: float, dur_s: float, n
         "border_fail_rate": border_fail_rate,
         "reasons_detail": reasons_counter
     }
+
+
+# ---------------------------------------------------------------------------
+# Still text: captions, handles, comment bubbles and banners burned into the source.
+# An overlay stays at the same pixels while the footage behind it moves, so the check
+# looks for sharp edges that do not change across a short run of frames, then keeps
+# only regions that binarise into a row of letter-sized shapes.
+# ---------------------------------------------------------------------------
+
+STILL_TEXT_PROC_H = 720
+STILL_TEXT_RUN_FRAMES = 5
+STILL_TEXT_RUN_STEP_S = 0.2
+STILL_TEXT_MIN_EDGE = 70        # morphological gradient a glyph edge keeps in every frame of the run
+STILL_TEXT_MAX_FLICKER = 10.0   # per-pixel standard deviation across the run
+STILL_TEXT_MIN_LETTERS = 3
+STILL_TEXT_MIN_LETTERS_AT_EDGE = 6
+STILL_TEXT_MIN_CONTRAST = 70.0  # letters against their background, grey levels
+STILL_TEXT_FEW_LETTERS = 5
+STILL_TEXT_FEW_LETTERS_CONTRAST = 100.0
+STILL_TEXT_MIN_BRIGHT = 150.0   # overlays are made to be read: white or bright text, or a bright box
+STILL_TEXT_CLOSE = (15, 3)     # joins letters into words, keeps stacked lines apart
+
+
+def _count_letters(crop: np.ndarray, touches_edge: bool = False) -> Tuple[int, float, float]:
+    """Letter-sized shapes in a binarised text-line crop, the letter/background contrast,
+    and the mean grey of the brighter of the two."""
+    if crop.size == 0 or crop.shape[0] < 4:
+        return 0, 0.0, 0.0
+    _, binary = cv2.threshold(crop, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    fg, bg = crop[binary > 0], crop[binary == 0]
+    if not fg.size or not bg.size:
+        return 0, 0.0, 0.0
+    contrast = abs(float(fg.mean()) - float(bg.mean()))
+    bright = max(float(fg.mean()), float(bg.mean()))
+    h = crop.shape[0]
+    best = 0
+    for m in (binary, 255 - binary):
+        share = np.count_nonzero(m) / float(m.size)
+        if not 0.05 <= share <= 0.6:
+            continue
+        n, _, stats, _ = cv2.connectedComponentsWithStats(m)
+        k = 0
+        for i in range(1, n):
+            y, ch, cw, area = stats[i, 1], stats[i, 3], stats[i, 2], stats[i, 4]
+            inside = touches_edge or (y > 0 and y + ch < h)
+            if 0.3 * h <= ch <= 0.95 * h and cw <= 1.5 * h and area >= 6 and inside:
+                k += 1
+        best = max(best, k)
+    return best, contrast, bright
+
+
+def find_still_text(gray_frames: List[np.ndarray]) -> List[Dict[str, Any]]:
+    """Text boxes that stay fixed across a run of greyscale frames (same size, 720 px high)."""
+    if len(gray_frames) < 3:
+        return []
+    stack = np.stack(gray_frames).astype(np.float32)
+    grads = np.stack([cv2.morphologyEx(g, cv2.MORPH_GRADIENT, np.ones((3, 3), np.uint8)) for g in gray_frames])
+    mask = ((grads.min(axis=0) >= STILL_TEXT_MIN_EDGE) & (stack.std(axis=0) <= STILL_TEXT_MAX_FLICKER)).astype(np.uint8) * 255
+
+    # Only the sharp picture reaches the output: blurred or black side bars are cropped away
+    energy = cv2.blur(grads.max(axis=0).mean(axis=0).astype(np.float32).reshape(1, -1), (31, 1)).ravel()
+    w = energy.size
+    centre = float(np.median(energy[w // 3: 2 * w // 3]))
+    live = np.where(energy >= 0.25 * centre)[0] if centre > 0 else np.arange(w)
+    if live.size:
+        mask[:, :int(live[0])] = 0
+        mask[:, int(live[-1]) + 1:] = 0
+
+    closed = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_RECT, STILL_TEXT_CLOSE))
+    contours, _ = cv2.findContours(closed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    mean = stack.mean(axis=0).astype(np.uint8)
+    h = mask.shape[0]
+    boxes = []
+    for cnt in contours:
+        x, y, bw, bh = cv2.boundingRect(cnt)
+        if bh < 8 or bh > 90 or bw < 1.8 * bh or bw * bh < 250:
+            continue
+        pad = 3
+        crop = mean[max(0, y - pad):y + bh + pad, max(0, x - pad):x + bw + pad]
+        at_edge = y - pad < 0 or y + bh + pad > h
+        letters, contrast, bright = _count_letters(crop, touches_edge=at_edge)
+        # A line cut by the frame edge needs more letters: half shapes there are often scenery
+        need = STILL_TEXT_MIN_LETTERS_AT_EDGE if at_edge else STILL_TEXT_MIN_LETTERS
+        # A short run of shapes is weaker evidence than a word: it must stand out more
+        min_contrast = STILL_TEXT_FEW_LETTERS_CONTRAST if letters < STILL_TEXT_FEW_LETTERS else STILL_TEXT_MIN_CONTRAST
+        if letters >= need and contrast >= min_contrast and bright >= STILL_TEXT_MIN_BRIGHT:
+            boxes.append({"x": x, "y": y, "w": bw, "h": bh, "letters": letters, "contrast": round(contrast, 1)})
+    return boxes
+
+
+def check_window_still_text(video_path: str, start_s: float, dur_s: float, n_runs: int = 8) -> Dict[str, Any]:
+    """
+    Burned-in source text in a source window. Reads the window once, front to back, and
+    tests n_runs short runs of frames spread across it. Any run with still text fails it.
+    passed is None when the window could not be read: that is not a pass.
+    """
+    if not video_path or not os.path.exists(video_path):
+        return {"passed": None, "reason": "SOURCE_NOT_FOUND", "runs": 0, "text_runs": 0}
+    cap = cv2.VideoCapture(video_path)
+    try:
+        fps = cap.get(cv2.CAP_PROP_FPS) or 0.0
+        total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        if fps <= 0 or total <= 0 or dur_s <= 0:
+            return {"passed": None, "reason": "INVALID_VIDEO_SPAN", "runs": 0, "text_runs": 0}
+        start_f = max(0, int(round(start_s * fps)))
+        end_f = min(total, start_f + int(round(dur_s * fps)))
+        step = max(1, int(round(STILL_TEXT_RUN_STEP_S * fps)))
+        run_len = step * (STILL_TEXT_RUN_FRAMES - 1)
+        span = end_f - 1 - start_f - run_len  # the last frame of the window is end_f - 1
+        if span < 0:
+            return {"passed": None, "reason": "WINDOW_TOO_SHORT", "runs": 0, "text_runs": 0}
+        n_runs = max(1, min(n_runs, span // step + 1))
+        wanted = {}
+        for r in range(n_runs):
+            f0 = start_f + (span * r) // max(1, n_runs - 1) if n_runs > 1 else start_f + span // 2
+            for j in range(STILL_TEXT_RUN_FRAMES):
+                wanted.setdefault(f0 + j * step, []).append(r)
+
+        runs = [[] for _ in range(n_runs)]
+        cap.set(cv2.CAP_PROP_POS_FRAMES, start_f)
+        pos = start_f
+        last = max(wanted)
+        while pos <= last:
+            if pos in wanted:
+                ok, frame = cap.read()
+                if not ok or frame is None:
+                    break
+                fh, fw = frame.shape[:2]
+                small = cv2.resize(frame, (max(1, int(fw * STILL_TEXT_PROC_H / float(fh))), STILL_TEXT_PROC_H))
+                gray = cv2.cvtColor(small, cv2.COLOR_BGR2GRAY)
+                for r in wanted[pos]:
+                    runs[r].append(gray)
+            elif not cap.grab():
+                break
+            pos += 1
+    finally:
+        cap.release()
+
+    complete = [r for r in runs if len(r) == STILL_TEXT_RUN_FRAMES]
+    if not complete:
+        return {"passed": None, "reason": "FAILED_TO_DECODE_FRAMES", "runs": 0, "text_runs": 0}
+    hits = []
+    for i, run in enumerate(complete):
+        boxes = find_still_text(run)
+        if boxes:
+            hits.append({"run": i, "boxes": boxes[:4]})
+    passed = not hits
+    reason = "CLEAN_NO_SOURCE_TEXT" if passed else f"BURNED_IN_SOURCE_TEXT ({len(hits)}/{len(complete)} frame runs)"
+    return {"passed": passed, "reason": reason, "runs": len(complete), "text_runs": len(hits), "hits": hits}
