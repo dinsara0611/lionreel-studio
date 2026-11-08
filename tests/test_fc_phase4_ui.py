@@ -294,15 +294,22 @@ def test_destructive_actions_are_not_in_the_hero():
 
 
 def test_reel_uses_real_videos_or_empty_frames(page):
-    page.evaluate("""() => {
+    # Read in the same step: the page's own finished-video load may redraw the strip afterwards
+    got = page.evaluate("""() => {
         navigateToStep(1);
         state.finishedProjects = [{name: 'x.mp4', thumbnail: '/finished/x.webp'}];
         renderHeroReel();
+        const reel = document.getElementById('hero-reel');
+        return {
+            frames: reel.querySelectorAll('button.film-frame').length,
+            empty: reel.querySelectorAll('.film-frame-empty').length,
+            height: reel.querySelector('.film-frame-empty').offsetHeight,
+            note: document.getElementById('hero-reel-note').innerText,
+        };
     }""")
-    assert page.locator("#hero-reel button.film-frame").count() == 1
-    assert page.locator("#hero-reel .film-frame-empty").count() == 6
-    assert page.evaluate("() => document.querySelector('#hero-reel .film-frame-empty').offsetHeight") > 100
-    assert page.inner_text("#hero-reel-note") == "Latest video"
+    assert got["frames"] == 1 and got["empty"] == 6
+    assert got["height"] > 100
+    assert got["note"] == "Latest video"
 
 
 def test_motion_keyframes_stay_on_transform_and_opacity():

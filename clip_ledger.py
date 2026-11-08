@@ -6,6 +6,7 @@ tracking perceptual fingerprints, managing pool usage cycles, and releasing clip
 
 import os
 import lion_paths
+import source_licenses
 import sys
 import time
 import json
@@ -696,6 +697,10 @@ class ClipLedger:
     def is_blocked_source(self, filepath_or_url: str, frame_phashes: list = None) -> bool:
         norm_target = os.path.normpath(str(filepath_or_url)).lower()
         bname = os.path.basename(filepath_or_url).lower()
+
+        # Legal sources only: the platform showed no Creative Commons licence for this video
+        if source_licenses.status_of(filepath_or_url) == source_licenses.NOT_SHOWN:
+            return True
 
         # 0. Check SQLite blocked_sources table
         try:

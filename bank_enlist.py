@@ -7,6 +7,8 @@ Fixes the bank growth bug:
 """
 
 import os
+
+import source_licenses
 from typing import Dict, Any, List
 
 # Frozen frames at the end of a video are a defect, so only a blink's worth may be padded.
@@ -83,6 +85,10 @@ def evaluate_candidate_for_enlistment(
     src_base = os.path.splitext(src)[0].lower()
     st = float(cand.get("start_s") or 0.0)
     en = float(cand.get("end_s") or (st + 7.5))
+
+    # 0. Legal sources only
+    if source_licenses.status_of(cand.get("source_url_or_path") or src) == source_licenses.NOT_SHOWN:
+        return {"usable": False, "reason": "NO_CC_LICENCE: the platform shows no Creative Commons licence for this video"}
 
     # 1. Rejection memory check
     is_rej, rej_reason = ledger.is_window_rejected_by_overlap(src_base, st, en)

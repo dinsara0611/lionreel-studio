@@ -1823,6 +1823,12 @@ class LionReelV97Pipeline:
     def _render_and_gate_candidate(self, cand, work_job_dir, clip_checkpoints_dir, target_clip_sec, layout_mode, job_id, clip_idx, aspect_ratio="9:16", out_w=1080, out_h=1920):
         cinfo = cand.get("clip_info") or cand
         src_path = cand.get("source_url_or_path") or cinfo.get("source_url_or_path") or cinfo.get("source_path")
+        if source_licenses.status_of(src_path) == source_licenses.NOT_SHOWN:
+            # Legal sources only. The bank row itself is left as it is.
+            cand["result"] = "REJECT"
+            cand["reason"] = "NO_CC_LICENCE"
+            cand["keep_window"] = True
+            return False, cand.get("clip_id") or cinfo.get("clip_id"), None, cand
         local_src = ensure_local_source_copy(src_path)
         start_s = cand.get("start_s") if "start_s" in cand else cinfo.get("start_s", 0.0)
         dur_s = cand.get("dur_s") or cinfo.get("computed_dur", cinfo.get("end_s", start_s + target_clip_sec) - start_s)
@@ -1871,6 +1877,7 @@ class LionReelV97Pipeline:
                 start_s, dur_s = window[0], round(window[1] - window[0], 3)
                 cand["plan"] = None
                 cand["grown_window"] = True
+                cand["keep_window"] = True
             else:
                 log(f"  [FULL LENGTH] Clip {cid}: {dur_s:.1f}s window cannot grow to {target_clip_sec:.1f}s, the footage around it is rejected, already used or missing", "WARN")
 
@@ -3639,9 +3646,9 @@ class LionReelV97Pipeline:
                                     pass
                             else:
                                 rej_msg = c_ret.get('reason', 'FAILED') if isinstance(c_ret, dict) else 'FAILED'
-                                grown = isinstance(c_ret, dict) and c_ret.get("grown_window")
+                                grown = isinstance(c_ret, dict) and c_ret.get("keep_window")
                                 self.ledger.release_single_clip(cid, reason=None if grown else rej_msg)
-                                log(f"Stage 6 candidate {cid} rejected ({rej_msg}){', short window kept' if grown else ', marked rejected in ledger'}", "WARN")
+                                log(f"Stage 6 candidate {cid} rejected ({rej_msg}){', bank clip kept' if grown else ', marked rejected in ledger'}", "WARN")
                                 # Child Abort: drop pending repeat children when a parent fails post-crop gate
                                 dropped_children = []
                                 for q_cand in list(cand_queue[next_cand_idx:]):
@@ -3720,7 +3727,7 @@ class LionReelV97Pipeline:
                                 else:
                                     f_rej = f_ret.get('reason', 'FAILED') if isinstance(f_ret, dict) else 'FAILED'
                                     log(f"Stage 6 replenishment candidate {f_cid} rejected ({f_rej})", "WARN")
-                                    if isinstance(f_ret, dict) and f_ret.get("grown_window"):
+                                    if isinstance(f_ret, dict) and f_ret.get("keep_window"):
                                         self.ledger.release_single_clip(f_cid)
                                         continue
                                     if hasattr(self.ledger, "record_candidate_evaluation_failure"):
@@ -3873,7 +3880,7 @@ class LionReelV97Pipeline:
                                             else:
                                                 f_rej = f_ret.get('reason', 'FAILED') if isinstance(f_ret, dict) else 'FAILED'
                                                 log(f"Stage 6 bank growth candidate {f_cid} rejected ({f_rej})", "WARN")
-                                                if isinstance(f_ret, dict) and f_ret.get("grown_window"):
+                                                if isinstance(f_ret, dict) and f_ret.get("keep_window"):
                                                     self.ledger.release_single_clip(f_cid)
                                                     continue
                                                 if hasattr(self.ledger, "record_candidate_evaluation_failure"):
