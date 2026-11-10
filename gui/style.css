@@ -9649,6 +9649,12 @@ html[data-theme="light"] .chip-warning span {
     color: var(--error);
     border-color: var(--error);
 }
+.library-delete-btn.library-delete-all {
+    margin-left: 0;
+}
+.library-leftovers-btn[hidden] {
+    display: none;
+}
 .project-select-label {
     position: absolute;
     top: 0;

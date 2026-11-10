@@ -4804,7 +4804,9 @@ class LionReelV97Pipeline:
                 src_art = os.path.join(work_job_dir, artifact_f)
                 if os.path.exists(src_art):
                     shutil.copy2(src_art, os.path.join(output_job_dir, artifact_f))
-                    shutil.copy2(src_art, os.path.join(OUT_DIR, artifact_f))
+                    # finished/ only takes files named after the job, so deleting the video removes them all
+                    if artifact_f.startswith(job_id):
+                        shutil.copy2(src_art, os.path.join(OUT_DIR, artifact_f))
                     copied_artifacts.append(artifact_f)
             timer.stop_stage("export_copy")
 

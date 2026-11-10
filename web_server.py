@@ -454,9 +454,15 @@ def delete_compilation_files(filename):
     if os.path.exists(FINISHED_DIR):
         for f in os.listdir(FINISHED_DIR):
             fp = os.path.join(FINISHED_DIR, f)
-            if not os.path.isfile(fp):
-                continue
             is_match = False
+            if os.path.isdir(fp):
+                # Folders such as <stem>_thumbnails belong to the video too
+                if f.startswith(stem + "_"):
+                    if move_to_trash(fp):
+                        deleted_files.append(f"finished/{f}/")
+                    else:
+                        failed_locks.append(f"finished/{f}/")
+                continue
             if f == clean_name or f == f"{stem}.mp4" or f == f"{stem}.txt":
                 is_match = True
             elif f.startswith(stem + "_") or f.startswith(stem + "."):
@@ -533,6 +539,114 @@ def delete_compilation_files(filename):
             return True, [], f"File was already removed or not found: {clean_name}"
 
     return True, deleted_files, ""
+
+
+# Files the engine used to copy into finished/ without the job name in them
+LOOSE_JOB_FILES = ("mapping.json", "metadata.json", "qa_report.json", "planner_decision.json", "timings.json")
+JOB_NAME_PREFIXES = ("lionreel_", "lion_", "job_")
+
+
+def existing_video_stems():
+    """Stems of every video the library can show: finished/*.mp4 and output/<job>/*.mp4."""
+    stems = set()
+    if os.path.isdir(FINISHED_DIR):
+        stems.update(os.path.splitext(f)[0] for f in os.listdir(FINISHED_DIR) if f.endswith(".mp4"))
+    if os.path.isdir(OUTPUT_DIR):
+        for sub in os.listdir(OUTPUT_DIR):
+            sub_p = os.path.join(OUTPUT_DIR, sub)
+            if os.path.isdir(sub_p):
+                stems.update(os.path.splitext(f)[0] for f in os.listdir(sub_p) if f.endswith(".mp4"))
+    return stems
+
+
+def _active_job_id():
+    if RUNNING_PROCESS is not None and RUNNING_PROCESS.poll() is None and CURRENT_JOB_ID:
+        return CURRENT_JOB_ID
+    try:
+        from engine_lock import get_active_engine_lock
+        lock = get_active_engine_lock()
+        return (lock or {}).get("job_id") or None
+    except Exception:
+        return None
+
+
+def _path_size(p):
+    if os.path.isfile(p):
+        return os.path.getsize(p)
+    total = 0
+    for root, _, files in os.walk(p):
+        for f in files:
+            try:
+                total += os.path.getsize(os.path.join(root, f))
+            except OSError:
+                pass
+    return total
+
+
+def find_leftover_files():
+    """
+    Reports, timings, thumbnails and job folders whose video no longer exists.
+    Anything belonging to a video still in the library, or to the running job, is kept.
+    Files that do not look like job files are never listed.
+    """
+    stems = existing_video_stems()
+    active = _active_job_id()
+    keep = set(stems) | ({active} if active else set())
+
+    def owned(name):
+        return any(name == s or name.startswith(s + "_") or name.startswith(s + ".") for s in keep)
+
+    items = []
+    if os.path.isdir(FINISHED_DIR):
+        for f in sorted(os.listdir(FINISHED_DIR)):
+            fp = os.path.join(FINISHED_DIR, f)
+            if f in LOOSE_JOB_FILES:
+                job = None
+                try:
+                    with open(fp, "r", encoding="utf-8") as fh:
+                        data = json.load(fh)
+                    job = data.get("job_id") or os.path.splitext(str(data.get("output_file") or ""))[0] or None
+                except Exception:
+                    job = None
+                if job and job in keep:
+                    continue
+                items.append(("finished", f, fp))
+            elif f.startswith(JOB_NAME_PREFIXES) and not f.endswith(".mp4") and not owned(f):
+                items.append(("finished", f, fp))
+    if os.path.isdir(OUTPUT_DIR):
+        for sub in sorted(os.listdir(OUTPUT_DIR)):
+            sub_p = os.path.join(OUTPUT_DIR, sub)
+            if not os.path.isdir(sub_p) or sub in keep or not sub.startswith(JOB_NAME_PREFIXES):
+                continue
+            if not any(f.endswith(".mp4") for f in os.listdir(sub_p)):
+                items.append(("output", sub + "/", sub_p))
+    return [{"where": w, "name": n, "path": p, "bytes": _path_size(p)} for w, n, p in items]
+
+
+def clean_leftover_files():
+    """Moves every leftover to the Recycle Bin. Returns (moved, failed) lists of names."""
+    moved, failed = [], []
+    for item in find_leftover_files():
+        label = f"{item['where']}/{item['name']}"
+        (moved if move_to_trash(item["path"]) else failed).append(label)
+    return moved, failed
+
+
+def delete_all_videos():
+    """Every video in the library and everything that belongs to it, then the leftovers."""
+    deleted, failed = [], []
+    active = _active_job_id()
+    for stem in sorted(existing_video_stems()):
+        if stem == active:
+            continue
+        ok, files, err = delete_compilation_files(stem + ".mp4")
+        deleted.extend(files)
+        if not ok:
+            failed.append(err or stem)
+    moved, not_moved = clean_leftover_files()
+    deleted.extend(moved)
+    failed.extend(not_moved)
+    return deleted, failed
 
 
 class DashboardHandler(SimpleHTTPRequestHandler):
@@ -2072,6 +2186,20 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             }).encode())
             return
 
+        elif self.path.startswith("/api/leftovers"):
+            try:
+                items = find_leftover_files()
+                body = {"success": True, "count": len(items), "bytes": sum(i["bytes"] for i in items),
+                        "items": [{"where": i["where"], "name": i["name"], "bytes": i["bytes"]} for i in items]}
+                code = 200
+            except Exception as e_lo:
+                body, code = {"success": False, "error": str(e_lo)}, 500
+            self.send_response(code)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(json.dumps(body).encode())
+            return
+
         elif self.path.startswith("/api/finished"):
             cached_body = cached_finished_response(self.path)
             if cached_body is not None:
@@ -3295,40 +3423,29 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 self.wfile.write(json.dumps({"success": False, "error": str(e_smm)}).encode())
             return
 
+        elif self.path.startswith("/api/clean-leftovers"):
+            try:
+                moved, failed = clean_leftover_files()
+                code = 200 if not failed else 409
+                body = {"success": not failed, "count": len(moved), "moved": moved}
+                if failed:
+                    body["error"] = f"Some files are open in another program: {', '.join(failed)}"
+            except Exception as e_cl:
+                code, body = 500, {"success": False, "error": str(e_cl)}
+            self.send_response(code)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(json.dumps(body).encode())
+            return
+
         elif self.path.startswith("/api/clear-finished"):
             try:
-                deleted_all = []
-                failed_all = []
-                # 1. FINISHED_DIR: delete all files
-                if os.path.exists(FINISHED_DIR):
-                    for f in os.listdir(FINISHED_DIR):
-                        fp = os.path.join(FINISHED_DIR, f)
-                        if os.path.isfile(fp):
-                            stem = os.path.splitext(f)[0]
-                            # Clean corresponding output/<stem> if video
-                            if f.endswith(".mp4"):
-                                out_job_dir = os.path.join(OUTPUT_DIR, stem)
-                                if os.path.exists(out_job_dir):
-                                    robust_remove(out_job_dir)
-                            if robust_remove(fp):
-                                deleted_all.append(f"finished/{f}")
-                            else:
-                                failed_all.append(f"finished/{f}")
-                
-                # 2. Clear job_result.json
+                # Every video and all its files go to the Recycle Bin; each video releases its own clips
+                deleted_all, failed_all = delete_all_videos()
+
+                # Clear job_result.json
                 if os.path.exists(JOB_RESULT_FILE):
                     robust_remove(JOB_RESULT_FILE)
-                
-                # 3. Clear output_registry in ledger & release clips
-                try:
-                    from clip_ledger import ClipLedger
-                    ledger = ClipLedger()
-                    with ledger._get_conn() as conn:
-                        conn.execute("DELETE FROM output_registry")
-                        conn.execute("UPDATE clips SET times_used = 0, last_used_short_id = NULL, pending_short_id = NULL")
-                        conn.commit()
-                except Exception as e_led:
-                    print(f"Notice: ledger clear: {e_led}")
 
                 if failed_all:
                     self.send_response(409)

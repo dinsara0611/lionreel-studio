@@ -7543,7 +7543,24 @@ function wireLibrarySelection(grid) {
     updateLibrarySelection();
 }
 
+async function refreshLeftovers() {
+    const btn = document.getElementById("btn-clean-leftovers");
+    const label = document.getElementById("leftovers-label");
+    if (!btn) return;
+    try {
+        const res = await fetch(`${API_BASE}/api/leftovers`);
+        const data = await res.json();
+        state.leftovers = { count: data.count || 0, bytes: data.bytes || 0 };
+    } catch (e) {
+        state.leftovers = { count: 0, bytes: 0 };
+    }
+    const n = state.leftovers.count;
+    btn.hidden = n === 0;
+    if (label) label.innerText = `Clean up ${n} ${n === 1 ? "leftover" : "leftovers"}`;
+}
+
 async function loadFinishedProjects() {
+    refreshLeftovers();
     const grid = document.getElementById("recent-projects-grid");
     const emptyState = document.getElementById("recent-empty-state");
 
@@ -10096,37 +10113,68 @@ function setupUIEventListeners() {
     if (clearRawHomeBtn) clearRawHomeBtn.addEventListener("click", handleClearRawCache);
     if (clearRawExportBtn) clearRawExportBtn.addEventListener("click", handleClearRawCache);
 
-    // Clear All Finished Compilations Handler
+    // Delete every video, and clean up files left from videos that are gone
     const clearFinishedBtn = document.getElementById("btn-clear-all-finished");
     if (clearFinishedBtn) {
         clearFinishedBtn.addEventListener("click", async () => {
+            const count = (state.allFinishedProjects || []).length;
             const ok = await showConfirmModal({
-                title: "Delete All Compilations",
-                message: "Are you sure you want to delete ALL rendered compilations from disk? This cannot be undone.",
-                confirmText: "Delete All",
+                title: "Delete all videos",
+                message: `Move all ${count} ${count === 1 ? "video" : "videos"}, their reports, timings and thumbnails, and any leftover files to the Recycle Bin? You can restore them from there.`,
+                confirmText: "Delete all",
                 isDanger: true
             });
-            if (ok) {
-                releaseAllVideoPlayers();
-                await new Promise(r => setTimeout(r, 60));
-
-                try {
-                    const res = await fetch(`${API_BASE}/api/clear-finished`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" }
-                    });
-                    const data = await res.json().catch(() => ({}));
-                    if (res.ok && data.success) {
-                        showToast("All finished compilations permanently deleted from disk", "success");
-                        state.activeFinishedProjectName = null;
-                    } else {
-                        showToast(`Failed to delete all compilations: ${data.error || "File locked"}`, "error");
-                    }
-                    await loadFinishedProjects();
-                } catch (e) {
-                    showToast("Error clearing finished compilations", "warning");
+            if (!ok) return;
+            releaseAllVideoPlayers();
+            await new Promise(r => setTimeout(r, 60));
+            clearFinishedBtn.disabled = true;
+            clearFinishedBtn.classList.add("is-busy");
+            clearFinishedBtn.querySelector("span").innerText = "Deleting";
+            try {
+                const res = await fetch(`${API_BASE}/api/clear-finished`, { method: "POST", headers: { "Content-Type": "application/json" } });
+                const data = await res.json().catch(() => ({}));
+                if (res.ok && data.success) {
+                    showToast(`Moved ${data.count} ${data.count === 1 ? "file" : "files and folders"} to the Recycle Bin`, "success");
+                    state.activeFinishedProjectName = null;
+                    state.librarySelected && state.librarySelected.clear();
+                } else {
+                    showToast(`Delete all stopped: ${data.error || "a file is open in another program"}`, "error");
                 }
+            } catch (e) {
+                showToast(`Delete all failed: ${e.message}`, "error");
             }
+            clearFinishedBtn.disabled = false;
+            clearFinishedBtn.classList.remove("is-busy");
+            clearFinishedBtn.querySelector("span").innerText = "Delete all";
+            await loadFinishedProjects();
+        });
+    }
+
+    const leftoversBtn = document.getElementById("btn-clean-leftovers");
+    if (leftoversBtn) {
+        leftoversBtn.addEventListener("click", async () => {
+            const info = state.leftovers || { count: 0, bytes: 0 };
+            const ok = await showConfirmModal({
+                title: "Clean up leftovers",
+                message: `Move ${info.count} leftover ${info.count === 1 ? "file" : "files and folders"} (${formatCleanupBytes(info.bytes)}) to the Recycle Bin? These are reports, timings and folders from videos that no longer exist. Videos in the library are not touched.`,
+                confirmText: "Clean up",
+                isDanger: true
+            });
+            if (!ok) return;
+            leftoversBtn.disabled = true;
+            try {
+                const res = await fetch(`${API_BASE}/api/clean-leftovers`, { method: "POST" });
+                const data = await res.json().catch(() => ({}));
+                if (res.ok && data.success) {
+                    showToast(`Moved ${data.count} leftover ${data.count === 1 ? "file" : "files"} to the Recycle Bin`, "success");
+                } else {
+                    showToast(`Clean up stopped: ${data.error || "a file is open in another program"}`, "error");
+                }
+            } catch (e) {
+                showToast(`Clean up failed: ${e.message}`, "error");
+            }
+            leftoversBtn.disabled = false;
+            await refreshLeftovers();
         });
     }
 
