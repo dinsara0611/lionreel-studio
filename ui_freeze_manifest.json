@@ -1,0 +1,46 @@
+{
+  "gui/app.js": {
+    "sha256": "5a7d8f43e652efcad50e98937812f55cfe35098e3b9cf0aae2c1884ac403a671",
+    "size": 612427
+  },
+  "gui/fonts/fonts.css": {
+    "sha256": "d97adf17e053aac090eb2b38159421bc262d680cabbf3b3b127228d33d1648b0",
+    "size": 1451
+  },
+  "gui/fonts/ibm-plex-mono-400-normal.woff2": {
+    "sha256": "08949f728dc52d528e69b1667d15c89a5686a4ee9a296ff90983985f99c380f7",
+    "size": 14708
+  },
+  "gui/fonts/ibm-plex-mono-600-normal.woff2": {
+    "sha256": "0d1f0b8d0722224e32e9f28261bdc86c79115be73444ae5eceb73976a1bcdf83",
+    "size": 15620
+  },
+  "gui/fonts/ibm-plex-sans-400-normal.woff2": {
+    "sha256": "e2291e842cf5af167122a22881a740c7f2dda7716f1e8cd76680264f4a859470",
+    "size": 45712
+  },
+  "gui/fonts/ibm-plex-sans-600-normal.woff2": {
+    "sha256": "e2291e842cf5af167122a22881a740c7f2dda7716f1e8cd76680264f4a859470",
+    "size": 45712
+  },
+  "gui/index.html": {
+    "sha256": "1477b3ff79c30353761b18b27dbec4f9569e6101b4a063bc8ca102dd687b01cc",
+    "size": 315224
+  },
+  "gui/lion_logo.png": {
+    "sha256": "2a4ad8f9e59ec25ff73c19f540f0d60d12081082e80b317a0e9419015a49f3f6",
+    "size": 27712
+  },
+  "gui/lion_logo.svg": {
+    "sha256": "9cfa5ca0531fec74cdc1e6f573d044009d178b9038b6550234ee4a79f6c9a733",
+    "size": 672
+  },
+  "gui/style.css": {
+    "sha256": "1b64eab0587b5b3e9f9560a5acff0f4a3da5c54addf8cd168999b6d72f3531f4",
+    "size": 222808
+  },
+  "gui/tour_strings.js": {
+    "sha256": "603f89e227cf682a6ae8043272bde297d0d39f5b548fb07b25f7974a368e98f3",
+    "size": 7024
+  }
+}

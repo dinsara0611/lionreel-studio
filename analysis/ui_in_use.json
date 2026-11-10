@@ -1,0 +1,387 @@
+{
+  "timestamp": "2026-10-10 04:09:34",
+  "total_urls_recorded": 53,
+  "recorded_urls": [
+    "http://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=Ibc4A_SFW6LLvFa0vPO_SfWDp0TzmNB0pjGPZxK3l2tthHzt-tOdPAO8kZnCXeQu",
+    "http://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=ODcgUbVnTAKvtzV9lcP14h02yycD_UMZNaYesdKXBkqhvqbNUZPVxUJ8FLAghATB",
+    "http://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=bQjbzU90kvARON9UggaftSkUoWFEs-spvkAdfK1DaXNFPzLTZ11QURAR5h7giXGg",
+    "http://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=gRw-oC_IvFsX_XOEwIebmTuO_8mJKmvLdXfsx-2WPdPwSCJ9S_alKTU2Y1kXa-Sk",
+    "http://localhost:8000/",
+    "http://localhost:8000/api/clip-bank?animal=cat",
+    "http://localhost:8000/api/config",
+    "http://localhost:8000/api/finished",
+    "http://localhost:8000/api/jobs/lionreel_cat_20261010_020004_49dfa336/edits",
+    "http://localhost:8000/api/jobs/lionreel_cat_20261010_020004_49dfa336/edits/check_framing",
+    "http://localhost:8000/api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata/generate",
+    "http://localhost:8000/api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata?v=1791585546479",
+    "http://localhost:8000/api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata?v=1791585552457",
+    "http://localhost:8000/api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata?v=1791585554022",
+    "http://localhost:8000/api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata?v=1791585560277",
+    "http://localhost:8000/api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata?v=1791585561612",
+    "http://localhost:8000/api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata?v=1791585566676",
+    "http://localhost:8000/api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata?v=1791585567873",
+    "http://localhost:8000/api/pool?animal=cat",
+    "http://localhost:8000/api/settings/metadata-mode",
+    "http://localhost:8000/api/stages",
+    "http://localhost:8000/api/status",
+    "http://localhost:8000/app.js?v=2026_v97_layout",
+    "http://localhost:8000/finished/lionreel_cat_20261007_182131_1eb4d48b_contact_sheet.png",
+    "http://localhost:8000/finished/lionreel_cat_20261009_200332_d1c8b4a1_contact_sheet.png",
+    "http://localhost:8000/finished/lionreel_cat_20261009_201329_7699d461_contact_sheet.png",
+    "http://localhost:8000/finished/lionreel_cat_20261010_005833_ea8bd457_contact_sheet.png",
+    "http://localhost:8000/finished/lionreel_cat_20261010_010228_9cf316c3_contact_sheet.png",
+    "http://localhost:8000/finished/lionreel_cat_20261010_014846_74393d2a_contact_sheet.png",
+    "http://localhost:8000/finished/lionreel_cat_20261010_015423_14aa701e_contact_sheet.png",
+    "http://localhost:8000/finished/lionreel_cat_20261010_020004_49dfa336.mp4?v=1791585546448",
+    "http://localhost:8000/finished/lionreel_cat_20261010_020004_49dfa336.mp4?v=1791585552443",
+    "http://localhost:8000/finished/lionreel_cat_20261010_020004_49dfa336.mp4?v=1791585553983",
+    "http://localhost:8000/finished/lionreel_cat_20261010_020004_49dfa336.mp4?v=1791585560252",
+    "http://localhost:8000/finished/lionreel_cat_20261010_020004_49dfa336.mp4?v=1791585561582",
+    "http://localhost:8000/finished/lionreel_cat_20261010_020004_49dfa336.mp4?v=1791585566660",
+    "http://localhost:8000/finished/lionreel_cat_20261010_020004_49dfa336.mp4?v=1791585567841",
+    "http://localhost:8000/finished/lionreel_cat_20261010_020004_49dfa336_contact_sheet.png",
+    "http://localhost:8000/finished/lionreel_cat_acceptance_fix7_1791472484_contact_sheet.png",
+    "http://localhost:8000/finished/lionreel_cat_blurfit_test_1791473715_contact_sheet.png",
+    "http://localhost:8000/finished/trace_normal_1791527853_contact_sheet.png",
+    "http://localhost:8000/lion_logo.png",
+    "http://localhost:8000/lion_logo.svg",
+    "http://localhost:8000/raw/cache_ByH9LuSILxU.mp4",
+    "http://localhost:8000/raw/cache_Rr9701_s-Qs.mp4",
+    "http://localhost:8000/raw/cache_cMlweIcxyZQ.mp4",
+    "http://localhost:8000/raw/cache_zCBhhLo6lIM.mp4",
+    "http://localhost:8000/style.css?v=2026_fix_export_v101",
+    "https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap",
+    "https://fonts.gstatic.com/s/firacode/v27/uU9NCBsR6Z2vfE9aq3bh3dSD.woff2",
+    "https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2",
+    "https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJtEtq.woff2",
+    "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=640&q=80"
+  ],
+  "mapped_files": {
+    "http://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=Ibc4A_SFW6LLvFa0vPO_SfWDp0TzmNB0pjGPZxK3l2tthHzt-tOdPAO8kZnCXeQu": {
+      "path": "/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js",
+      "disk_file": "FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js",
+      "exists": false,
+      "size": 0
+    },
+    "http://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=ODcgUbVnTAKvtzV9lcP14h02yycD_UMZNaYesdKXBkqhvqbNUZPVxUJ8FLAghATB": {
+      "path": "/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js",
+      "disk_file": "FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js",
+      "exists": false,
+      "size": 0
+    },
+    "http://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=bQjbzU90kvARON9UggaftSkUoWFEs-spvkAdfK1DaXNFPzLTZ11QURAR5h7giXGg": {
+      "path": "/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js",
+      "disk_file": "FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js",
+      "exists": false,
+      "size": 0
+    },
+    "http://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=gRw-oC_IvFsX_XOEwIebmTuO_8mJKmvLdXfsx-2WPdPwSCJ9S_alKTU2Y1kXa-Sk": {
+      "path": "/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js",
+      "disk_file": "FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js",
+      "exists": false,
+      "size": 0
+    },
+    "http://localhost:8000/": {
+      "path": "/",
+      "disk_file": "gui/index.html",
+      "exists": true,
+      "size": 178975
+    },
+    "http://localhost:8000/api/clip-bank?animal=cat": {
+      "path": "/api/clip-bank",
+      "disk_file": "web_server.py (API: /api/clip-bank)",
+      "exists": true,
+      "size": 0
+    },
+    "http://localhost:8000/api/config": {
+      "path": "/api/config",
+      "disk_file": "web_server.py (API: /api/config)",
+      "exists": true,
+      "size": 0
+    },
+    "http://localhost:8000/api/finished": {
+      "path": "/api/finished",
+      "disk_file": "web_server.py (API: /api/finished)",
+      "exists": true,
+      "size": 0
+    },
+    "http://localhost:8000/api/jobs/lionreel_cat_20261010_020004_49dfa336/edits": {
+      "path": "/api/jobs/lionreel_cat_20261010_020004_49dfa336/edits",
+      "disk_file": "web_server.py (API: /api/jobs/lionreel_cat_20261010_020004_49dfa336/edits)",
+      "exists": true,
+      "size": 0
+    },
+    "http://localhost:8000/api/jobs/lionreel_cat_20261010_020004_49dfa336/edits/check_framing": {
+      "path": "/api/jobs/lionreel_cat_20261010_020004_49dfa336/edits/check_framing",
+      "disk_file": "web_server.py (API: /api/jobs/lionreel_cat_20261010_020004_49dfa336/edits/check_framing)",
+      "exists": true,
+      "size": 0
+    },
+    "http://localhost:8000/api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata/generate": {
+      "path": "/api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata/generate",
+      "disk_file": "web_server.py (API: /api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata/generate)",
+      "exists": true,
+      "size": 0
+    },
+    "http://localhost:8000/api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata?v=1791585546479": {
+      "path": "/api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata",
+      "disk_file": "web_server.py (API: /api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata)",
+      "exists": true,
+      "size": 0
+    },
+    "http://localhost:8000/api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata?v=1791585552457": {
+      "path": "/api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata",
+      "disk_file": "web_server.py (API: /api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata)",
+      "exists": true,
+      "size": 0
+    },
+    "http://localhost:8000/api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata?v=1791585554022": {
+      "path": "/api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata",
+      "disk_file": "web_server.py (API: /api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata)",
+      "exists": true,
+      "size": 0
+    },
+    "http://localhost:8000/api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata?v=1791585560277": {
+      "path": "/api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata",
+      "disk_file": "web_server.py (API: /api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata)",
+      "exists": true,
+      "size": 0
+    },
+    "http://localhost:8000/api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata?v=1791585561612": {
+      "path": "/api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata",
+      "disk_file": "web_server.py (API: /api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata)",
+      "exists": true,
+      "size": 0
+    },
+    "http://localhost:8000/api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata?v=1791585566676": {
+      "path": "/api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata",
+      "disk_file": "web_server.py (API: /api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata)",
+      "exists": true,
+      "size": 0
+    },
+    "http://localhost:8000/api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata?v=1791585567873": {
+      "path": "/api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata",
+      "disk_file": "web_server.py (API: /api/jobs/lionreel_cat_20261010_020004_49dfa336/metadata)",
+      "exists": true,
+      "size": 0
+    },
+    "http://localhost:8000/api/pool?animal=cat": {
+      "path": "/api/pool",
+      "disk_file": "web_server.py (API: /api/pool)",
+      "exists": true,
+      "size": 0
+    },
+    "http://localhost:8000/api/settings/metadata-mode": {
+      "path": "/api/settings/metadata-mode",
+      "disk_file": "web_server.py (API: /api/settings/metadata-mode)",
+      "exists": true,
+      "size": 0
+    },
+    "http://localhost:8000/api/stages": {
+      "path": "/api/stages",
+      "disk_file": "web_server.py (API: /api/stages)",
+      "exists": true,
+      "size": 0
+    },
+    "http://localhost:8000/api/status": {
+      "path": "/api/status",
+      "disk_file": "web_server.py (API: /api/status)",
+      "exists": true,
+      "size": 0
+    },
+    "http://localhost:8000/app.js?v=2026_v97_layout": {
+      "path": "/app.js",
+      "disk_file": "gui\\app.js",
+      "exists": true,
+      "size": 341224
+    },
+    "http://localhost:8000/finished/lionreel_cat_20261007_182131_1eb4d48b_contact_sheet.png": {
+      "path": "/finished/lionreel_cat_20261007_182131_1eb4d48b_contact_sheet.png",
+      "disk_file": "finished/lionreel_cat_20261007_182131_1eb4d48b_contact_sheet.png",
+      "exists": true,
+      "size": 2200581
+    },
+    "http://localhost:8000/finished/lionreel_cat_20261009_200332_d1c8b4a1_contact_sheet.png": {
+      "path": "/finished/lionreel_cat_20261009_200332_d1c8b4a1_contact_sheet.png",
+      "disk_file": "finished/lionreel_cat_20261009_200332_d1c8b4a1_contact_sheet.png",
+      "exists": true,
+      "size": 1659826
+    },
+    "http://localhost:8000/finished/lionreel_cat_20261009_201329_7699d461_contact_sheet.png": {
+      "path": "/finished/lionreel_cat_20261009_201329_7699d461_contact_sheet.png",
+      "disk_file": "finished/lionreel_cat_20261009_201329_7699d461_contact_sheet.png",
+      "exists": true,
+      "size": 1751987
+    },
+    "http://localhost:8000/finished/lionreel_cat_20261010_005833_ea8bd457_contact_sheet.png": {
+      "path": "/finished/lionreel_cat_20261010_005833_ea8bd457_contact_sheet.png",
+      "disk_file": "finished/lionreel_cat_20261010_005833_ea8bd457_contact_sheet.png",
+      "exists": true,
+      "size": 1645309
+    },
+    "http://localhost:8000/finished/lionreel_cat_20261010_010228_9cf316c3_contact_sheet.png": {
+      "path": "/finished/lionreel_cat_20261010_010228_9cf316c3_contact_sheet.png",
+      "disk_file": "finished/lionreel_cat_20261010_010228_9cf316c3_contact_sheet.png",
+      "exists": true,
+      "size": 1759630
+    },
+    "http://localhost:8000/finished/lionreel_cat_20261010_014846_74393d2a_contact_sheet.png": {
+      "path": "/finished/lionreel_cat_20261010_014846_74393d2a_contact_sheet.png",
+      "disk_file": "finished/lionreel_cat_20261010_014846_74393d2a_contact_sheet.png",
+      "exists": true,
+      "size": 1555754
+    },
+    "http://localhost:8000/finished/lionreel_cat_20261010_015423_14aa701e_contact_sheet.png": {
+      "path": "/finished/lionreel_cat_20261010_015423_14aa701e_contact_sheet.png",
+      "disk_file": "finished/lionreel_cat_20261010_015423_14aa701e_contact_sheet.png",
+      "exists": true,
+      "size": 1551390
+    },
+    "http://localhost:8000/finished/lionreel_cat_20261010_020004_49dfa336.mp4?v=1791585546448": {
+      "path": "/finished/lionreel_cat_20261010_020004_49dfa336.mp4",
+      "disk_file": "finished/lionreel_cat_20261010_020004_49dfa336.mp4",
+      "exists": true,
+      "size": 43606312
+    },
+    "http://localhost:8000/finished/lionreel_cat_20261010_020004_49dfa336.mp4?v=1791585552443": {
+      "path": "/finished/lionreel_cat_20261010_020004_49dfa336.mp4",
+      "disk_file": "finished/lionreel_cat_20261010_020004_49dfa336.mp4",
+      "exists": true,
+      "size": 43606312
+    },
+    "http://localhost:8000/finished/lionreel_cat_20261010_020004_49dfa336.mp4?v=1791585553983": {
+      "path": "/finished/lionreel_cat_20261010_020004_49dfa336.mp4",
+      "disk_file": "finished/lionreel_cat_20261010_020004_49dfa336.mp4",
+      "exists": true,
+      "size": 43606312
+    },
+    "http://localhost:8000/finished/lionreel_cat_20261010_020004_49dfa336.mp4?v=1791585560252": {
+      "path": "/finished/lionreel_cat_20261010_020004_49dfa336.mp4",
+      "disk_file": "finished/lionreel_cat_20261010_020004_49dfa336.mp4",
+      "exists": true,
+      "size": 43606312
+    },
+    "http://localhost:8000/finished/lionreel_cat_20261010_020004_49dfa336.mp4?v=1791585561582": {
+      "path": "/finished/lionreel_cat_20261010_020004_49dfa336.mp4",
+      "disk_file": "finished/lionreel_cat_20261010_020004_49dfa336.mp4",
+      "exists": true,
+      "size": 43606312
+    },
+    "http://localhost:8000/finished/lionreel_cat_20261010_020004_49dfa336.mp4?v=1791585566660": {
+      "path": "/finished/lionreel_cat_20261010_020004_49dfa336.mp4",
+      "disk_file": "finished/lionreel_cat_20261010_020004_49dfa336.mp4",
+      "exists": true,
+      "size": 43606312
+    },
+    "http://localhost:8000/finished/lionreel_cat_20261010_020004_49dfa336.mp4?v=1791585567841": {
+      "path": "/finished/lionreel_cat_20261010_020004_49dfa336.mp4",
+      "disk_file": "finished/lionreel_cat_20261010_020004_49dfa336.mp4",
+      "exists": true,
+      "size": 43606312
+    },
+    "http://localhost:8000/finished/lionreel_cat_20261010_020004_49dfa336_contact_sheet.png": {
+      "path": "/finished/lionreel_cat_20261010_020004_49dfa336_contact_sheet.png",
+      "disk_file": "finished/lionreel_cat_20261010_020004_49dfa336_contact_sheet.png",
+      "exists": true,
+      "size": 2003618
+    },
+    "http://localhost:8000/finished/lionreel_cat_acceptance_fix7_1791472484_contact_sheet.png": {
+      "path": "/finished/lionreel_cat_acceptance_fix7_1791472484_contact_sheet.png",
+      "disk_file": "finished/lionreel_cat_acceptance_fix7_1791472484_contact_sheet.png",
+      "exists": true,
+      "size": 1727106
+    },
+    "http://localhost:8000/finished/lionreel_cat_blurfit_test_1791473715_contact_sheet.png": {
+      "path": "/finished/lionreel_cat_blurfit_test_1791473715_contact_sheet.png",
+      "disk_file": "finished/lionreel_cat_blurfit_test_1791473715_contact_sheet.png",
+      "exists": true,
+      "size": 1494883
+    },
+    "http://localhost:8000/finished/trace_normal_1791527853_contact_sheet.png": {
+      "path": "/finished/trace_normal_1791527853_contact_sheet.png",
+      "disk_file": "finished/trace_normal_1791527853_contact_sheet.png",
+      "exists": true,
+      "size": 2014962
+    },
+    "http://localhost:8000/lion_logo.png": {
+      "path": "/lion_logo.png",
+      "disk_file": "gui\\lion_logo.png",
+      "exists": true,
+      "size": 27712
+    },
+    "http://localhost:8000/lion_logo.svg": {
+      "path": "/lion_logo.svg",
+      "disk_file": "gui\\lion_logo.svg",
+      "exists": true,
+      "size": 672
+    },
+    "http://localhost:8000/raw/cache_ByH9LuSILxU.mp4": {
+      "path": "/raw/cache_ByH9LuSILxU.mp4",
+      "disk_file": "raw/cache_ByH9LuSILxU.mp4",
+      "exists": true,
+      "size": 72116760
+    },
+    "http://localhost:8000/raw/cache_Rr9701_s-Qs.mp4": {
+      "path": "/raw/cache_Rr9701_s-Qs.mp4",
+      "disk_file": "raw/cache_Rr9701_s-Qs.mp4",
+      "exists": true,
+      "size": 6493313
+    },
+    "http://localhost:8000/raw/cache_cMlweIcxyZQ.mp4": {
+      "path": "/raw/cache_cMlweIcxyZQ.mp4",
+      "disk_file": "raw/cache_cMlweIcxyZQ.mp4",
+      "exists": true,
+      "size": 5808311
+    },
+    "http://localhost:8000/raw/cache_zCBhhLo6lIM.mp4": {
+      "path": "/raw/cache_zCBhhLo6lIM.mp4",
+      "disk_file": "raw/cache_zCBhhLo6lIM.mp4",
+      "exists": true,
+      "size": 94035712
+    },
+    "http://localhost:8000/style.css?v=2026_fix_export_v101": {
+      "path": "/style.css",
+      "disk_file": "gui\\style.css",
+      "exists": true,
+      "size": 121679
+    },
+    "https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap": {
+      "path": "/css2",
+      "disk_file": "css2",
+      "exists": false,
+      "size": 0
+    },
+    "https://fonts.gstatic.com/s/firacode/v27/uU9NCBsR6Z2vfE9aq3bh3dSD.woff2": {
+      "path": "/s/firacode/v27/uU9NCBsR6Z2vfE9aq3bh3dSD.woff2",
+      "disk_file": "s/firacode/v27/uU9NCBsR6Z2vfE9aq3bh3dSD.woff2",
+      "exists": false,
+      "size": 0
+    },
+    "https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2": {
+      "path": "/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2",
+      "disk_file": "s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2",
+      "exists": false,
+      "size": 0
+    },
+    "https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJtEtq.woff2": {
+      "path": "/s/outfit/v15/QGYvz_MVcBeNP4NJtEtq.woff2",
+      "disk_file": "s/outfit/v15/QGYvz_MVcBeNP4NJtEtq.woff2",
+      "exists": false,
+      "size": 0
+    },
+    "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=640&q=80": {
+      "path": "/photo-1514888286974-6c03e2ca1dba",
+      "disk_file": "photo-1514888286974-6c03e2ca1dba",
+      "exists": false,
+      "size": 0
+    }
+  },
+  "static_gui_files": [
+    "gui/app.js",
+    "gui/clipforge_logo.svg",
+    "gui/index.html",
+    "gui/lion_logo.png",
+    "gui/lion_logo.svg",
+    "gui/style.css"
+  ]
+}

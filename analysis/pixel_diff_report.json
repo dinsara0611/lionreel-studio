@@ -1,0 +1,118 @@
+{
+  "timestamp": "2026-10-10 13:51:36",
+  "all_pixel_identical": true,
+  "console_errors": [],
+  "network_failures": [],
+  "results": [
+    {
+      "file": "baseline_step1_create_1440_dark.png",
+      "diff_pixels": 0,
+      "status": "IDENTICAL"
+    },
+    {
+      "file": "baseline_step1_create_1440_light.png",
+      "diff_pixels": 0,
+      "status": "IDENTICAL"
+    },
+    {
+      "file": "baseline_step1_create_390_dark.png",
+      "diff_pixels": 0,
+      "status": "IDENTICAL"
+    },
+    {
+      "file": "baseline_step1_create_390_light.png",
+      "diff_pixels": 0,
+      "status": "IDENTICAL"
+    },
+    {
+      "file": "baseline_step2_sources_1440_dark.png",
+      "diff_pixels": 0,
+      "status": "IDENTICAL"
+    },
+    {
+      "file": "baseline_step2_sources_1440_light.png",
+      "diff_pixels": 0,
+      "status": "IDENTICAL"
+    },
+    {
+      "file": "baseline_step2_sources_390_dark.png",
+      "diff_pixels": 0,
+      "status": "IDENTICAL"
+    },
+    {
+      "file": "baseline_step2_sources_390_light.png",
+      "diff_pixels": 0,
+      "status": "IDENTICAL"
+    },
+    {
+      "file": "baseline_step3_edit_1440_dark.png",
+      "diff_pixels": 0,
+      "status": "IDENTICAL"
+    },
+    {
+      "file": "baseline_step3_edit_1440_light.png",
+      "diff_pixels": 0,
+      "status": "IDENTICAL"
+    },
+    {
+      "file": "baseline_step3_edit_390_dark.png",
+      "diff_pixels": 0,
+      "status": "IDENTICAL"
+    },
+    {
+      "file": "baseline_step3_edit_390_light.png",
+      "diff_pixels": 0,
+      "status": "IDENTICAL"
+    },
+    {
+      "file": "baseline_step3_modal_swap_1440_dark.png",
+      "diff_pixels": 0,
+      "status": "IDENTICAL"
+    },
+    {
+      "file": "baseline_step3_modal_swap_1440_light.png",
+      "diff_pixels": 0,
+      "status": "IDENTICAL"
+    },
+    {
+      "file": "baseline_step4_render_1440_dark.png",
+      "diff_pixels": 0,
+      "status": "IDENTICAL"
+    },
+    {
+      "file": "baseline_step4_render_1440_light.png",
+      "diff_pixels": 0,
+      "status": "IDENTICAL"
+    },
+    {
+      "file": "baseline_step4_render_390_dark.png",
+      "diff_pixels": 0,
+      "status": "IDENTICAL"
+    },
+    {
+      "file": "baseline_step4_render_390_light.png",
+      "diff_pixels": 0,
+      "status": "IDENTICAL"
+    },
+    {
+      "file": "baseline_step5_export_1440_dark.png",
+      "diff_pixels": 0,
+      "status": "IDENTICAL"
+    },
+    {
+      "file": "baseline_step5_export_1440_light.png",
+      "diff_pixels": 0,
+      "status": "IDENTICAL"
+    },
+    {
+      "file": "baseline_step5_export_390_dark.png",
+      "diff_pixels": 0,
+      "status": "IDENTICAL"
+    },
+    {
+      "file": "baseline_step5_export_390_light.png",
+      "diff_pixels": 0,
+      "status": "IDENTICAL"
+    }
+  ]
+}

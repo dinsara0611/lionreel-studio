@@ -1,0 +1,21 @@
+{
+  "choice-yt-shorts": "Clicked successfully. Primary button updated to 'Upload to YouTube Shorts'",
+  "choice-yt-video": "Clicked successfully. Primary button updated to 'Upload to YouTube Video'",
+  "choice-tiktok": "Clicked successfully. Primary button updated to 'Upload to TikTok'",
+  "choice-reels": "Clicked successfully. Primary button updated to 'Upload to Instagram Reels'",
+  "btn-copy-meta-title": "Clicked; feedback triggered",
+  "btn-copy-meta-desc": "Clicked; feedback triggered",
+  "btn-copy-meta-tags": "Clicked; feedback triggered",
+  "btn-copy-meta-all": "Clicked; copied all combined fields",
+  "btn-meta-generate-fresh": "Clicked; triggered candidate generation",
+  "btn-quick-download-master": "Valid download link '/finished/lionreel_cat_20261017_102216_9ed2b729.mp4?v=1792217292448' with size '25.4 MB'",
+  "btn-export-report": "Configured to open executive production report",
+  "btn-open-folder": "Clicked; triggered folder opening in Windows Explorer",
+  "btn-copy-path": "Clicked; copied relative/absolute disk path",
+  "btn-export-more-menu": "Clicked; dropdown visibility is True",
+  "btn-delete-export-video": "Clicked; confirmation modal open=True targeting 'lionreel_cat_20261017_102216_9ed2b729.mp4'",
+  "btn-cancel-delete": "Clicked; modal closed safely=True",
+  "mute-controls": "Mute state toggled correctly (state1=False, state2=True)",
+  "btn-export-new-compilation": "Clicked; navigated back to 'view-dashboard'",
+  "btn-export-thumbnails": "Visible for Long video=True"
+}

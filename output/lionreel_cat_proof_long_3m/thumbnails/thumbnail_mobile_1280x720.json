@@ -1,0 +1,36 @@
+{
+  "type": "mobile_safe",
+  "resolution": "1280x720",
+  "aspect_ratio": "16:9",
+  "quality": 94,
+  "size_bytes": 128897,
+  "provenance": {
+    "video_file": "lionreel_cat_proof_long_3m.mp4",
+    "timestamp_sec": 11.28,
+    "clip_id": "c_cache_ByH9LuSILxU_1070_1145",
+    "source_window": [
+      0.0,
+      7.5
+    ],
+    "decoder": "opencv_videocapture_pixel_decode"
+  },
+  "scores": {
+    "sharpness_lapvar": 43.4,
+    "head_fill_pct": 65.0,
+    "pet_height_pct": 65.0,
+    "eye_line_pct": 40.0,
+    "expression_score": 30.0,
+    "composite": 94.7
+  },
+  "gates": {
+    "full_bleed": true,
+    "exact_16_9": true,
+    "exact_1280x720": true,
+    "size_under_2mb": true,
+    "no_bars": true,
+    "clean_no_text": true,
+    "has_provenance": true,
+    "long_video_only": true,
+    "ultra_hd_4k_available": true
+  }
+}

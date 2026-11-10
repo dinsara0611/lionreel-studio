@@ -1,0 +1,121 @@
+{
+  "job_id": "job_real_contract_short_9_16_1792066863",
+  "wall_clock_start": "2026-10-15 17:51:04.279",
+  "wall_clock_end": "2026-10-15 17:52:22.966",
+  "total_wall_time_sec": 78.688,
+  "total_duration_sec": 78.688,
+  "sum_stages_sec": 77.964,
+  "unaccounted_sec": 0.725,
+  "unaccounted_pct": 0.92,
+  "stages": {
+    "startup": {
+      "duration_sec": 0.554,
+      "total_duration_sec": 0.554,
+      "exclusive_sec": 0.554,
+      "duration_ms": 554.0,
+      "percentage": 0.7,
+      "share_pct": 0.7,
+      "start_epoch": 1792066864.279614,
+      "end_epoch": 1792066864.8336139,
+      "count": 1,
+      "parent": null
+    },
+    "prepare": {
+      "duration_sec": 9.689,
+      "total_duration_sec": 9.689,
+      "exclusive_sec": 9.689,
+      "duration_ms": 9688.5,
+      "percentage": 12.31,
+      "share_pct": 12.31,
+      "start_epoch": 1792066864.8340757,
+      "end_epoch": 1792066874.521836,
+      "count": 1,
+      "parent": null
+    },
+    "harvest": {
+      "duration_sec": 0.008,
+      "total_duration_sec": 0.008,
+      "exclusive_sec": 0.008,
+      "duration_ms": 8.1,
+      "percentage": 0.01,
+      "share_pct": 0.01,
+      "start_epoch": 1792066874.5399463,
+      "end_epoch": 1792066874.548556,
+      "count": 1,
+      "parent": null
+    },
+    "reserve": {
+      "duration_sec": 0.076,
+      "total_duration_sec": 0.076,
+      "exclusive_sec": 0.076,
+      "duration_ms": 76.4,
+      "percentage": 0.1,
+      "share_pct": 0.1,
+      "start_epoch": 1792066874.548556,
+      "end_epoch": 1792066874.624341,
+      "count": 1,
+      "parent": null
+    },
+    "prepare_sources": {
+      "duration_sec": 0.035,
+      "total_duration_sec": 0.035,
+      "exclusive_sec": 0.035,
+      "duration_ms": 34.7,
+      "percentage": 0.04,
+      "share_pct": 0.04,
+      "start_epoch": 1792066874.8457918,
+      "end_epoch": 1792066874.881123,
+      "count": 1,
+      "parent": null
+    },
+    "ffprobe": {
+      "duration_sec": 0.082,
+      "total_duration_sec": 0.082,
+      "exclusive_sec": 0.082,
+      "duration_ms": 82.1,
+      "percentage": 0.1,
+      "share_pct": 0.1,
+      "start_epoch": 1792066875.009519,
+      "end_epoch": 1792066875.0910807,
+      "count": 1,
+      "parent": null
+    },
+    "watermark": {
+      "duration_sec": 2.717,
+      "total_duration_sec": 2.717,
+      "exclusive_sec": 2.717,
+      "duration_ms": 2717.2,
+      "percentage": 3.45,
+      "share_pct": 3.45,
+      "start_epoch": 1792066875.195139,
+      "end_epoch": 1792066877.913145,
+      "count": 1,
+      "parent": null
+    },
+    "stage_5_predict_framing": {
+      "duration_sec": 20.14,
+      "total_duration_sec": 20.14,
+      "exclusive_sec": 20.14,
+      "duration_ms": 20139.5,
+      "percentage": 25.59,
+      "share_pct": 25.59,
+      "start_epoch": 1792066878.0596106,
+      "end_epoch": 1792066898.199304,
+      "count": 1,
+      "parent": null
+    },
+    "reframe": {
+      "duration_sec": 44.663,
+      "total_duration_sec": 44.663,
+      "exclusive_sec": 44.663,
+      "duration_ms": 44663.0,
+      "percentage": 56.76,
+      "share_pct": 56.76,
+      "start_epoch": 1792066898.303933,
+      "end_epoch": 1792066942.9664059,
+      "count": 1,
+      "parent": null
+    }
+  },
+  "table": "========================================================================\n  STAGE TIMING BREAKDOWN \u2014 JOB: job_real_contract_short_9_16_1792066863\n  WALL CLOCK: 2026-10-15 17:51:04.279 -> 2026-10-15 17:52:22.966\n========================================================================\nSTAGE                        | TIME (s)   | TIME (ms)    | SHARE   \n------------------------------------------------------------------------\nharvest                      | 0.01       | 8.0          |    0.0%\nffprobe                      | 0.08       | 82.0         |    0.1%\nwatermark                    | 2.72       | 2717.0       |    3.5%\nstage_5_predict_framing      | 20.14      | 20140.0      |   25.6%\nreframe                      | 44.66      | 44663.0      |   56.8%\nstartup                      | 0.55       | 554.0        |    0.7%\nprepare                      | 9.69       | 9689.0       |   12.3%\nreserve                      | 0.08       | 76.0         |    0.1%\nprepare_sources              | 0.04       | 35.0         |    0.0%\n------------------------------------------------------------------------\nSUBTOTAL (EXCLUSIVE)         | 77.96      | 77960.0      |   99.1%\nUNACCOUNTED GAP              | 0.73       | 730.0        |    0.9%\n------------------------------------------------------------------------\nTOTAL WALL CLOCK TIME        | 78.69      | 78688.0      | 100.0%\n========================================================================"
+}

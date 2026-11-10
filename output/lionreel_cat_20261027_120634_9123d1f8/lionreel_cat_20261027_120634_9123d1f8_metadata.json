@@ -1,0 +1,570 @@
+{
+  "mode": "full",
+  "job_id": "lionreel_cat_20261027_120634_9123d1f8",
+  "title": "Wait for it... Watch What Happens When This Chaotic Cat Finds Out (Pure Comedy) #781",
+  "top_titles": [
+    {
+      "title": "Wait for it... Watch What Happens When This Chaotic Cat Finds Out (Pure Comedy)",
+      "template_id": "curiosity_gap_1",
+      "score": 100,
+      "checklist": [
+        {
+          "item": "Grammar, articles, and slot cohesion verified",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Title length acceptable (25-85 chars)",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Strong hook within first 40 characters",
+          "passed": true,
+          "pts": 20
+        },
+        {
+          "item": "Clearly identifies animal subject (cat)",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Clean typography & sensible punctuation",
+          "passed": true,
+          "pts": 10
+        },
+        {
+          "item": "Passes YouTube clickbait & misleading metadata policy",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Factual claim verification & truthfulness verified",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Metadata matches footage verified",
+          "passed": true,
+          "pts": 10
+        }
+      ],
+      "length": 79
+    },
+    {
+      "title": "In case you needed a smile: Watch What Happens When This Curious Furball Finds Out (Instant Regret)",
+      "template_id": "curiosity_gap_1",
+      "score": 88,
+      "checklist": [
+        {
+          "item": "Grammar, articles, and slot cohesion verified",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Title length suboptimal (99 chars)",
+          "passed": false,
+          "pts": 5
+        },
+        {
+          "item": "Strong hook within first 40 characters",
+          "passed": true,
+          "pts": 20
+        },
+        {
+          "item": "Animal subject not explicitly stated",
+          "passed": false,
+          "pts": 5
+        },
+        {
+          "item": "Clean typography & sensible punctuation",
+          "passed": true,
+          "pts": 10
+        },
+        {
+          "item": "Passes YouTube clickbait & misleading metadata policy",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Factual claim verification & truthfulness verified",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Metadata matches footage verified",
+          "passed": true,
+          "pts": 10
+        }
+      ],
+      "length": 99
+    },
+    {
+      "title": "Can Someone Please Translate What This Sneaky Kitty Is Saying?",
+      "template_id": "question_engagement_2",
+      "score": 88,
+      "checklist": [
+        {
+          "item": "Grammar, articles, and slot cohesion verified",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Title length optimal (35-70 chars)",
+          "passed": true,
+          "pts": 25
+        },
+        {
+          "item": "Hook could be placed earlier",
+          "passed": false,
+          "pts": 10
+        },
+        {
+          "item": "Clearly identifies animal subject (cat)",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Clean typography & sensible punctuation",
+          "passed": true,
+          "pts": 10
+        },
+        {
+          "item": "Passes YouTube clickbait & misleading metadata policy",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Factual claim verification & truthfulness verified",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Metadata matches footage verified",
+          "passed": true,
+          "pts": 10
+        }
+      ],
+      "length": 62
+    },
+    {
+      "title": "What Sound Is My Fluffy Cat Even Trying To Make Here?",
+      "template_id": "question_engagement_1",
+      "score": 88,
+      "checklist": [
+        {
+          "item": "Grammar, articles, and slot cohesion verified",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Title length optimal (35-70 chars)",
+          "passed": true,
+          "pts": 25
+        },
+        {
+          "item": "Hook could be placed earlier",
+          "passed": false,
+          "pts": 10
+        },
+        {
+          "item": "Clearly identifies animal subject (cat)",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Clean typography & sensible punctuation",
+          "passed": true,
+          "pts": 10
+        },
+        {
+          "item": "Passes YouTube clickbait & misleading metadata policy",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Factual claim verification & truthfulness verified",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Metadata matches footage verified",
+          "passed": true,
+          "pts": 10
+        }
+      ],
+      "length": 53
+    },
+    {
+      "title": "Is Your This Majestic Cat Normal Or Do They Do This Too?",
+      "template_id": "question_engagement_0",
+      "score": 88,
+      "checklist": [
+        {
+          "item": "Grammar, articles, and slot cohesion verified",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Title length optimal (35-70 chars)",
+          "passed": true,
+          "pts": 25
+        },
+        {
+          "item": "Hook could be placed earlier",
+          "passed": false,
+          "pts": 10
+        },
+        {
+          "item": "Clearly identifies animal subject (cat)",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Clean typography & sensible punctuation",
+          "passed": true,
+          "pts": 10
+        },
+        {
+          "item": "Passes YouTube clickbait & misleading metadata policy",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Factual claim verification & truthfulness verified",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Metadata matches footage verified",
+          "passed": true,
+          "pts": 10
+        }
+      ],
+      "length": 56
+    }
+  ],
+  "ranked_titles": [
+    {
+      "title": "Wait for it... Watch What Happens When This Chaotic Cat Finds Out (Pure Comedy)",
+      "template_id": "curiosity_gap_1",
+      "score": 100,
+      "checklist": [
+        {
+          "item": "Grammar, articles, and slot cohesion verified",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Title length acceptable (25-85 chars)",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Strong hook within first 40 characters",
+          "passed": true,
+          "pts": 20
+        },
+        {
+          "item": "Clearly identifies animal subject (cat)",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Clean typography & sensible punctuation",
+          "passed": true,
+          "pts": 10
+        },
+        {
+          "item": "Passes YouTube clickbait & misleading metadata policy",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Factual claim verification & truthfulness verified",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Metadata matches footage verified",
+          "passed": true,
+          "pts": 10
+        }
+      ],
+      "length": 79
+    },
+    {
+      "title": "In case you needed a smile: Watch What Happens When This Curious Furball Finds Out (Instant Regret)",
+      "template_id": "curiosity_gap_1",
+      "score": 88,
+      "checklist": [
+        {
+          "item": "Grammar, articles, and slot cohesion verified",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Title length suboptimal (99 chars)",
+          "passed": false,
+          "pts": 5
+        },
+        {
+          "item": "Strong hook within first 40 characters",
+          "passed": true,
+          "pts": 20
+        },
+        {
+          "item": "Animal subject not explicitly stated",
+          "passed": false,
+          "pts": 5
+        },
+        {
+          "item": "Clean typography & sensible punctuation",
+          "passed": true,
+          "pts": 10
+        },
+        {
+          "item": "Passes YouTube clickbait & misleading metadata policy",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Factual claim verification & truthfulness verified",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Metadata matches footage verified",
+          "passed": true,
+          "pts": 10
+        }
+      ],
+      "length": 99
+    },
+    {
+      "title": "Can Someone Please Translate What This Sneaky Kitty Is Saying?",
+      "template_id": "question_engagement_2",
+      "score": 88,
+      "checklist": [
+        {
+          "item": "Grammar, articles, and slot cohesion verified",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Title length optimal (35-70 chars)",
+          "passed": true,
+          "pts": 25
+        },
+        {
+          "item": "Hook could be placed earlier",
+          "passed": false,
+          "pts": 10
+        },
+        {
+          "item": "Clearly identifies animal subject (cat)",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Clean typography & sensible punctuation",
+          "passed": true,
+          "pts": 10
+        },
+        {
+          "item": "Passes YouTube clickbait & misleading metadata policy",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Factual claim verification & truthfulness verified",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Metadata matches footage verified",
+          "passed": true,
+          "pts": 10
+        }
+      ],
+      "length": 62
+    },
+    {
+      "title": "What Sound Is My Fluffy Cat Even Trying To Make Here?",
+      "template_id": "question_engagement_1",
+      "score": 88,
+      "checklist": [
+        {
+          "item": "Grammar, articles, and slot cohesion verified",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Title length optimal (35-70 chars)",
+          "passed": true,
+          "pts": 25
+        },
+        {
+          "item": "Hook could be placed earlier",
+          "passed": false,
+          "pts": 10
+        },
+        {
+          "item": "Clearly identifies animal subject (cat)",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Clean typography & sensible punctuation",
+          "passed": true,
+          "pts": 10
+        },
+        {
+          "item": "Passes YouTube clickbait & misleading metadata policy",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Factual claim verification & truthfulness verified",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Metadata matches footage verified",
+          "passed": true,
+          "pts": 10
+        }
+      ],
+      "length": 53
+    },
+    {
+      "title": "Is Your This Majestic Cat Normal Or Do They Do This Too?",
+      "template_id": "question_engagement_0",
+      "score": 88,
+      "checklist": [
+        {
+          "item": "Grammar, articles, and slot cohesion verified",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Title length optimal (35-70 chars)",
+          "passed": true,
+          "pts": 25
+        },
+        {
+          "item": "Hook could be placed earlier",
+          "passed": false,
+          "pts": 10
+        },
+        {
+          "item": "Clearly identifies animal subject (cat)",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Clean typography & sensible punctuation",
+          "passed": true,
+          "pts": 10
+        },
+        {
+          "item": "Passes YouTube clickbait & misleading metadata policy",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Factual claim verification & truthfulness verified",
+          "passed": true,
+          "pts": 15
+        },
+        {
+          "item": "Metadata matches footage verified",
+          "passed": true,
+          "pts": 10
+        }
+      ],
+      "length": 56
+    }
+  ],
+  "template_id": "curiosity_gap_1",
+  "quality_checklist": [
+    {
+      "item": "Grammar, articles, and slot cohesion verified",
+      "passed": true,
+      "pts": 15
+    },
+    {
+      "item": "Title length acceptable (25-85 chars)",
+      "passed": true,
+      "pts": 15
+    },
+    {
+      "item": "Strong hook within first 40 characters",
+      "passed": true,
+      "pts": 20
+    },
+    {
+      "item": "Clearly identifies animal subject (cat)",
+      "passed": true,
+      "pts": 15
+    },
+    {
+      "item": "Clean typography & sensible punctuation",
+      "passed": true,
+      "pts": 10
+    },
+    {
+      "item": "Passes YouTube clickbait & misleading metadata policy",
+      "passed": true,
+      "pts": 15
+    },
+    {
+      "item": "Factual claim verification & truthfulness verified",
+      "passed": true,
+      "pts": 15
+    },
+    {
+      "item": "Metadata matches footage verified",
+      "passed": true,
+      "pts": 10
+    }
+  ],
+  "quality_score": 100,
+  "description": "Curated moments of this curious cat captured on camera.\n\nEnjoy these genuine cat moments. All clips licensed and attributed below.\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nSources & Creative Commons Attribution:\n\u2022 Clip: CC-BY Creator (CC-BY)\n\u2022 Clip: CC-BY Creator (CC-BY)\n\u2022 Clip: LionReel Verified CC Archive (Creative Commons CC-BY 4.0)\n\u2022 Clip: LionReel Verified CC Archive (Creative Commons CC-BY 4.0)\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n#animals #funnycats #cutecat #catzoomies #catmemes",
+  "tags": "cutecat, catlife, felinefriends, catoftheday, catsofyoutube, kittylove, funnycats, catlover, catzoomies, wholesomepets, shorts, animals",
+  "hashtags": "#cats #catlife #catlover #wholesomepets #catmemes",
+  "tiktok": {
+    "caption": "Wait for it... Watch What Happens When This Chaotic Cat Finds Out (Pure Comedy) \ud83d\ude02\ud83d\udc3e Credit: CC-BY Creator #cat #kitten #funnycats #wholesomepets #felinefriends",
+    "hashtags": "#cat #kitten #funnycats #wholesomepets #felinefriends"
+  },
+  "instagram": {
+    "caption": "Wait for it... Watch What Happens When This Chaotic Cat Finds Out (Pure Comedy) \ud83d\udc31\u2728\n\nCredit: CC-BY Creator, LionReel Verified CC Archive\n\n#animals #cutecat #funnycats #kittylove #catmoments",
+    "hashtags": "#animals #cutecat #funnycats #kittylove #catmoments"
+  },
+  "credits": [
+    {
+      "clip_index": 1,
+      "source": "cache_825Za_ZishQ.mp4",
+      "license": "CC-BY",
+      "credit": "CC-BY Creator"
+    },
+    {
+      "clip_index": 2,
+      "source": "cache_Rr9701_s-Qs.mp4",
+      "license": "CC-BY",
+      "credit": "CC-BY Creator"
+    },
+    {
+      "clip_index": 3,
+      "source": "C:\\LionReel\\cache\\cache_825Za_ZishQ.mp4",
+      "license": "Creative Commons CC-BY 4.0",
+      "credit": "LionReel Verified CC Archive"
+    },
+    {
+      "clip_index": 4,
+      "source": "C:\\LionReel\\cache\\cache_OzAzzpR4JmY.mp4",
+      "license": "Creative Commons CC-BY 4.0",
+      "credit": "LionReel Verified CC Archive"
+    }
+  ]
+}

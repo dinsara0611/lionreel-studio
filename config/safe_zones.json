@@ -1,0 +1,97 @@
+{
+  "reference_canvas": {
+    "width": 1080,
+    "height": 1920,
+    "aspect_ratio": "9:16"
+  },
+  "platforms": {
+    "tiktok": {
+      "id": "tiktok",
+      "name": "TikTok",
+      "aspect_ratio": "9:16",
+      "safe_area_px": {
+        "top": 220,
+        "bottom": 380,
+        "left": 150,
+        "right": 150
+      },
+      "safe_margins_pct": {
+        "top": 11.46,
+        "bottom": 19.79,
+        "left": 13.89,
+        "right": 13.89
+      },
+      "zones": {
+        "header": { "top_px": 0, "bottom_px": 220, "label": "TikTok Header / Search" },
+        "caption": { "top_px": 1540, "bottom_px": 1920, "label": "Caption, Audio & UI" },
+        "right_rail": { "left_px": 930, "right_px": 1080, "top_px": 500, "bottom_px": 1500, "label": "Actions" }
+      }
+    },
+    "youtube_shorts": {
+      "id": "youtube_shorts",
+      "name": "YouTube Shorts",
+      "aspect_ratio": "9:16",
+      "safe_area_px": {
+        "top": 220,
+        "bottom": 380,
+        "left": 150,
+        "right": 150
+      },
+      "safe_margins_pct": {
+        "top": 11.46,
+        "bottom": 19.79,
+        "left": 13.89,
+        "right": 13.89
+      },
+      "zones": {
+        "header": { "top_px": 0, "bottom_px": 220, "label": "Shorts Header" },
+        "caption": { "top_px": 1540, "bottom_px": 1920, "label": "Channel, Title & Subscribe" },
+        "right_rail": { "left_px": 930, "right_px": 1080, "top_px": 600, "bottom_px": 1500, "label": "Actions" }
+      }
+    },
+    "instagram_reels": {
+      "id": "instagram_reels",
+      "name": "Instagram Reels",
+      "aspect_ratio": "9:16",
+      "safe_area_px": {
+        "top": 220,
+        "bottom": 380,
+        "left": 150,
+        "right": 150
+      },
+      "safe_margins_pct": {
+        "top": 11.46,
+        "bottom": 19.79,
+        "left": 13.89,
+        "right": 13.89
+      },
+      "zones": {
+        "header": { "top_px": 0, "bottom_px": 220, "label": "Reels Header" },
+        "caption": { "top_px": 1540, "bottom_px": 1920, "label": "Caption & Audio Tag" },
+        "right_rail": { "left_px": 930, "right_px": 1080, "top_px": 550, "bottom_px": 1500, "label": "Actions" }
+      }
+    },
+    "all": {
+      "id": "all",
+      "name": "All Platforms",
+      "aspect_ratio": "9:16",
+      "safe_area_px": {
+        "top": 220,
+        "bottom": 380,
+        "left": 150,
+        "right": 150
+      },
+      "safe_margins_pct": {
+        "top": 11.46,
+        "bottom": 19.79,
+        "left": 13.89,
+        "right": 13.89
+      },
+      "zones": {
+        "header": { "top_px": 0, "bottom_px": 220, "label": "Universal Header Safe Zone" },
+        "caption": { "top_px": 1540, "bottom_px": 1920, "label": "Universal Caption Safe Zone" },
+        "right_rail": { "left_px": 930, "right_px": 1080, "top_px": 500, "bottom_px": 1500, "label": "Universal Actions Safe Zone" }
+      }
+    }
+  }
+}

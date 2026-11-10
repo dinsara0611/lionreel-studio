@@ -1,0 +1,514 @@
+{
+  "_version": "1.0",
+  "_generator": "LionReel Automated Quality & Performance Reporter V97",
+  "_generated_at_utc": "2026-10-31T11:27:55.152627+00:00",
+  "_sources": {
+    "summary.job_id": {
+      "file": "job_config.json",
+      "path": "job_id"
+    },
+    "summary.duration": {
+      "file": "video.mp4",
+      "path": "ffprobe.duration"
+    },
+    "summary.resolution": {
+      "file": "video.mp4",
+      "path": "ffprobe.resolution"
+    },
+    "summary.delivered_clips": {
+      "file": "mapping.json",
+      "path": "len(clips)"
+    }
+  },
+  "job_id": "lionreel_cat_proof_short_01",
+  "build_id": "eb5af1dd1001",
+  "status": "FAILED",
+  "is_success": false,
+  "unified_verdict": {
+    "badge": "FAILED",
+    "color": "red",
+    "status_label": "FAILED / REJECTED",
+    "badge_class": "badge-failed",
+    "critical_errors": [
+      "Gate 9 Visual Sharpness failed: Min clip sharpness 19.5 is below floor 150.0",
+      "6B Clean Overlays failed"
+    ],
+    "not_run_gates": [],
+    "warnings": [
+      "Footage diversity: Only 2 unique sources utilized (Recommended >= 5).",
+      "Attribution notice: 2 clip(s) have unverified author names."
+    ],
+    "attention_items": [
+      "Gate 9 Sharpness: Minimum clip sharpness 19.5 below floor 150.0",
+      "Footage diversity: Only 2 unique sources utilized (Recommended >= 5).",
+      "Attribution notice: 2 clip(s) have unverified author names."
+    ],
+    "diversity_stats": {
+      "total_clips": 2,
+      "unique_sources": 2,
+      "unique_windows": 2,
+      "unique_footage_sec": 10.4,
+      "repeat_share_pct": 0.0,
+      "max_uses_per_window": 1,
+      "over_cap_clips": [],
+      "overlapping_windows": []
+    }
+  },
+  "clip_reconciliation": {
+    "delivered_clips": 2,
+    "planned_clips": 2,
+    "target_clips": 4,
+    "has_mismatch": true,
+    "diff_from_target": -2,
+    "diff_from_planned": 0,
+    "display_status": "Mismatch: Delivered 2 vs Target 4 (-2 clips)"
+  },
+  "diversity_stats": {
+    "total_clips": 2,
+    "unique_sources": 2,
+    "unique_windows": 2,
+    "unique_footage_sec": 10.4,
+    "repeat_share_pct": 0.0,
+    "max_uses_per_window": 1,
+    "over_cap_clips": [],
+    "overlapping_windows": []
+  },
+  "summary": {
+    "job_id": "lionreel_cat_proof_short_01",
+    "title": "Cat Compilation",
+    "build_id": "eb5af1dd1001",
+    "local_timestamp": "2026-10-31 16:57:55 (Sri Lanka Standard Time)",
+    "unified_verdict": {
+      "badge": "FAILED",
+      "color": "red",
+      "status_label": "FAILED / REJECTED",
+      "badge_class": "badge-failed",
+      "critical_errors": [
+        "Gate 9 Visual Sharpness failed: Min clip sharpness 19.5 is below floor 150.0",
+        "6B Clean Overlays failed"
+      ],
+      "not_run_gates": [],
+      "warnings": [
+        "Footage diversity: Only 2 unique sources utilized (Recommended >= 5).",
+        "Attribution notice: 2 clip(s) have unverified author names."
+      ],
+      "attention_items": [
+        "Gate 9 Sharpness: Minimum clip sharpness 19.5 below floor 150.0",
+        "Footage diversity: Only 2 unique sources utilized (Recommended >= 5).",
+        "Attribution notice: 2 clip(s) have unverified author names."
+      ],
+      "diversity_stats": {
+        "total_clips": 2,
+        "unique_sources": 2,
+        "unique_windows": 2,
+        "unique_footage_sec": 10.4,
+        "repeat_share_pct": 0.0,
+        "max_uses_per_window": 1,
+        "over_cap_clips": [],
+        "overlapping_windows": []
+      }
+    },
+    "result_badge": "FAILED",
+    "badge": "FAILED",
+    "status_label": "FAILED / REJECTED",
+    "fail_reason": "QA validation failed: 10-gate quality threshold not met",
+    "video_type": "compilation",
+    "aspect_ratio": "9:16",
+    "requested_duration_sec": 30.0,
+    "delivered_duration_sec": 0.0,
+    "duration_variance_sec": -30.0,
+    "requested_clips": 4,
+    "delivered_clips": 2,
+    "planned_clips": 2,
+    "repeat_share_pct": 0.0,
+    "freshness_card_line": "New footage: 100% / Reused from earlier videos: 0%",
+    "wall_clock_elapsed_sec": 49.85,
+    "qa_verdict": "REJECTED \u2014 QUALITY THRESHOLD NOT MET",
+    "deliverables_count": 2
+  },
+  "deliverables": [
+    {
+      "filename": "lionreel_cat_proof_short_01_timings.json",
+      "relative_path": "output/lionreel_cat_proof_short_01/lionreel_cat_proof_short_01_timings.json",
+      "size_bytes": 7591,
+      "size_mb": 0.01,
+      "extension": ".json",
+      "sha256": "a57a911be9b53f7dcf3a83fb1cb264d111e40c700b6de67d8cb9c18b233082b8"
+    },
+    {
+      "filename": "planner_decision.json",
+      "relative_path": "output/lionreel_cat_proof_short_01/planner_decision.json",
+      "size_bytes": 1166,
+      "size_mb": 0.0,
+      "extension": ".json",
+      "sha256": "772c244ca145ea8d91c910e7ad6d7863e1f97e3ac19be9edcb35dfedf84896f7"
+    }
+  ],
+  "time_allocation": {
+    "total_exclusive_seconds": 49.85,
+    "total_exclusive_minutes": 0.83,
+    "stages": [
+      {
+        "key": "startup",
+        "label": "System Startup & Initialization",
+        "seconds": 0.52,
+        "minutes": 0.01,
+        "measurement": "Runtime initialized (0.52s)",
+        "share_pct": 1.0
+      },
+      {
+        "key": "reserve",
+        "label": "Ledger Reservation & Selection",
+        "seconds": 0.03,
+        "minutes": 0.0,
+        "measurement": "2 clips reserved",
+        "share_pct": 0.1
+      },
+      {
+        "key": "prepare",
+        "label": "Source Download & Staging",
+        "seconds": 5.98,
+        "minutes": 0.1,
+        "measurement": "2 clips staged",
+        "share_pct": 12.0
+      },
+      {
+        "key": "reframe",
+        "label": "Pet Tracking & Framing Analysis",
+        "seconds": 27.58,
+        "minutes": 0.46,
+        "measurement": "1.2 fps analysis",
+        "share_pct": 55.3
+      },
+      {
+        "key": "render",
+        "label": "Reframe Rendering (9:16)",
+        "seconds": 0.24,
+        "minutes": 0.0,
+        "measurement": "3765.7 fps rendering",
+        "share_pct": 0.5
+      },
+      {
+        "key": "audio",
+        "label": "EBU R128 Audio Mastering",
+        "seconds": 14.93,
+        "minutes": 0.25,
+        "measurement": "R128 mastered (0.1x real-time)",
+        "share_pct": 30.0
+      },
+      {
+        "key": "concat",
+        "label": "Final Video Concat Assembly",
+        "seconds": 0.57,
+        "minutes": 0.01,
+        "measurement": "3.5 clips/s assembly",
+        "share_pct": 1.1
+      }
+    ],
+    "slowest_steps": [
+      {
+        "key": "reframe",
+        "label": "Pet Tracking & Framing Analysis",
+        "seconds": 27.58,
+        "share_pct": 55.3,
+        "measured_sentence": "Pet Tracking & Framing Analysis took 27.6s (55.3% of execution time)."
+      },
+      {
+        "key": "audio",
+        "label": "EBU R128 Audio Mastering",
+        "seconds": 14.93,
+        "share_pct": 30.0,
+        "measured_sentence": "EBU R128 Audio Mastering took 14.9s (30.0% of execution time)."
+      },
+      {
+        "key": "prepare",
+        "label": "Source Download & Staging",
+        "seconds": 5.98,
+        "share_pct": 12.0,
+        "measured_sentence": "Source Download & Staging took 6.0s (12.0% of execution time)."
+      }
+    ],
+    "throughput": {
+      "clips_per_minute": 2.41,
+      "windows_analyzed_per_minute": 4.81,
+      "windows_total_analyzed": 4
+    },
+    "recent_comparison": []
+  },
+  "plan_and_decisions": {
+    "ladder_steps_applied": [
+      "ladder_step_1_bank"
+    ],
+    "planner_logs": [
+      "[PLANNER] Contract target: 30.0s (4 clips @ ~7.5s). Patience budget: 300s.",
+      "[PLANNER] Bank contains 6 verified unique candidates for cat.",
+      "[PLANNER] Enforcing source cooldown: 4 fresh candidates available outside cooldown sources.",
+      "[PLANNER] Step 1 SUCCESS: 4 fresh unique clips cover 30.0s."
+    ],
+    "target_clip_duration_sec": 7.5,
+    "pool_status": "New footage: 100% / Reused from earlier videos: 0%"
+  },
+  "clips": [
+    {
+      "index": 1,
+      "clip_id": "c_cat_cache_Rr9701_s-Qs_12_17",
+      "timecode": "00:00",
+      "source_id": "Rr9701_s-Qs",
+      "start_s": 12.0,
+      "end_s": 17.2,
+      "duration_s": 5.2,
+      "use_count": null,
+      "source_title": "Rr9701_s-Qs",
+      "uploader": "Unknown Author",
+      "license": "Creative Commons (CC-BY 4.0)",
+      "source_window": "12.0s\u201317.2s",
+      "uses_flag": "Unique",
+      "framing_score": "not measured",
+      "sharpness": "not measured",
+      "origin": "Rendered fresh"
+    },
+    {
+      "index": 2,
+      "clip_id": "c_cat_cache_825Za_ZishQ_12_17",
+      "timecode": "00:05",
+      "source_id": "825Za_ZishQ",
+      "start_s": 12.0,
+      "end_s": 17.2,
+      "duration_s": 9.83,
+      "use_count": null,
+      "source_title": "825Za_ZishQ",
+      "uploader": "Unknown Author",
+      "license": "Creative Commons (CC-BY 4.0)",
+      "source_window": "12.0s\u201317.2s",
+      "uses_flag": "Unique",
+      "framing_score": "not measured",
+      "sharpness": "not measured",
+      "origin": "Rendered fresh"
+    }
+  ],
+  "clips_table": [
+    {
+      "index": 1,
+      "clip_id": "c_cat_cache_Rr9701_s-Qs_12_17",
+      "timecode": "00:00",
+      "source_id": "Rr9701_s-Qs",
+      "start_s": 12.0,
+      "end_s": 17.2,
+      "duration_s": 5.2,
+      "use_count": null,
+      "source_title": "Rr9701_s-Qs",
+      "uploader": "Unknown Author",
+      "license": "Creative Commons (CC-BY 4.0)",
+      "source_window": "12.0s\u201317.2s",
+      "uses_flag": "Unique",
+      "framing_score": "not measured",
+      "sharpness": "not measured",
+      "origin": "Rendered fresh"
+    },
+    {
+      "index": 2,
+      "clip_id": "c_cat_cache_825Za_ZishQ_12_17",
+      "timecode": "00:05",
+      "source_id": "825Za_ZishQ",
+      "start_s": 12.0,
+      "end_s": 17.2,
+      "duration_s": 9.83,
+      "use_count": null,
+      "source_title": "825Za_ZishQ",
+      "uploader": "Unknown Author",
+      "license": "Creative Commons (CC-BY 4.0)",
+      "source_window": "12.0s\u201317.2s",
+      "uses_flag": "Unique",
+      "framing_score": "not measured",
+      "sharpness": "not measured",
+      "origin": "Rendered fresh"
+    }
+  ],
+  "quality_checks": {
+    "gates": [
+      {
+        "gate": "1b. Exact Duration Contract",
+        "threshold": "+/- 1.0s diff from 30s",
+        "measured": "0.0s (-30.0s diff)",
+        "margin": "-29.00s",
+        "verdict": "\u274c FAIL",
+        "passed": false,
+        "status": "FAIL",
+        "repair": "Trim/extend timeline to contract duration"
+      },
+      {
+        "gate": "2. Stream Defects",
+        "threshold": "0 black, 0 frozen frames",
+        "measured": "0 black / 1 frozen",
+        "margin": "0 hits",
+        "verdict": "\u274c FAIL",
+        "passed": false,
+        "status": "FAIL",
+        "repair": "Excise corrupt video spans"
+      },
+      {
+        "gate": "6b. Clean Clips (Overlays)",
+        "threshold": "Clean footage (no burned-in text/overlays)",
+        "measured": "BLACK_BORDER (T:51 B:50 L:0 R:0)",
+        "margin": "<20% fail rate",
+        "verdict": "\u274c FAIL",
+        "passed": false,
+        "status": "FAIL",
+        "repair": "Reject text-polluted clips"
+      },
+      {
+        "gate": "9. Visual Sharpness",
+        "threshold": "LapVar >= 150.0 (every clip)",
+        "measured": "Min 19.5, Median 363.1",
+        "margin": "-130.5",
+        "verdict": "\u274c FAIL",
+        "passed": false,
+        "status": "FAIL",
+        "repair": "Unsharp masking or replace blurry clips"
+      },
+      {
+        "gate": "1. Stream Specs",
+        "threshold": "16:9 H264 High (>=2.5 Mbps)",
+        "measured": "1080x1920 h264 High",
+        "margin": "+0 kbps",
+        "verdict": "\u2705 PASS",
+        "passed": true,
+        "status": "PASS",
+        "repair": "None required"
+      },
+      {
+        "gate": "3. Broadcast Audio Loudness",
+        "threshold": "-14.0 LUFS (+/- 0.5), Peak <= -1.0 dBTP",
+        "measured": "-14.43 LUFS, -1.98 dBTP",
+        "margin": "+0.07 LU, +0.98 dBTP",
+        "verdict": "\u2705 PASS",
+        "passed": true,
+        "status": "PASS",
+        "repair": "None required"
+      },
+      {
+        "gate": "4. Pet Centering",
+        "threshold": "Compliance >= 85% of sampled frames",
+        "measured": "100.0% (16/16 frames)",
+        "margin": "+15.0%",
+        "verdict": "\u2705 PASS",
+        "passed": true,
+        "status": "PASS",
+        "repair": "None required"
+      },
+      {
+        "gate": "5. Layout Fill",
+        "threshold": "Full canvas cover (no letterbox)",
+        "measured": "FULL_FRAME_FILL_VERIFIED",
+        "margin": "0 px bars",
+        "verdict": "\u2705 PASS",
+        "passed": true,
+        "status": "PASS",
+        "repair": "None required"
+      },
+      {
+        "gate": "6. Watermark Cleanliness",
+        "threshold": "Clean corners (confidence <= 0.20)",
+        "measured": "Clean corners (no watermark detected)",
+        "margin": "+0.80",
+        "verdict": "\u2705 PASS",
+        "passed": true,
+        "status": "PASS",
+        "repair": "None required"
+      },
+      {
+        "gate": "7. Peak Quality Visibility",
+        "threshold": "100% visible at peak moments",
+        "measured": "100% visible at peak",
+        "margin": "+0.0%",
+        "verdict": "\u2705 PASS",
+        "passed": true,
+        "status": "PASS",
+        "repair": "None required"
+      },
+      {
+        "gate": "8. Real Footage Verification",
+        "threshold": "Real cat footage (negative prob <= 0.30)",
+        "measured": "Negative votes: 0",
+        "margin": "+0.70",
+        "verdict": "\u2705 PASS",
+        "passed": true,
+        "status": "PASS",
+        "repair": "None required"
+      },
+      {
+        "gate": "10. Safe-Zone Captions & Spacing",
+        "threshold": "0 safe-zone violations, max uses <= 8",
+        "measured": "Max window uses: 1x",
+        "margin": "+7 uses",
+        "verdict": "\u2705 PASS",
+        "passed": true,
+        "status": "PASS",
+        "repair": "None required"
+      }
+    ],
+    "has_contact_sheet": false,
+    "contact_sheet_data_uri": ""
+  },
+  "sources_and_credits": {
+    "unique_sources_count": 0,
+    "sources": []
+  },
+  "metadata_and_upload": {
+    "youtube": {
+      "title": "Cat Moments Compilation",
+      "title_char_count": 0,
+      "title_limit_status": "Valid (<= 100 chars)",
+      "description": "Hilarious cat moments compiled by LionReel Studio.",
+      "tags": [
+        "cats",
+        "funny",
+        "compilation"
+      ],
+      "hashtags": [
+        "#cats",
+        "#funnycats"
+      ]
+    },
+    "tiktok": {
+      "title": "Cat Compilation",
+      "caption": " #cats #funny",
+      "caption_limit_status": "Valid (<= 2200 chars)"
+    },
+    "instagram_reels": {
+      "caption": " #reels #cats",
+      "caption_limit_status": "Valid (<= 2200 chars)"
+    }
+  },
+  "environment": {
+    "platform": "Windows-11-10.0.26300-SP0",
+    "python_version": "3.12.10",
+    "python_executable": "C:/LionReel/venv/Scripts/python.exe",
+    "ffmpeg_version": "ffmpeg version 7.1-essentials_build-www.gyan.dev",
+    "encoder_hardware": "libx264",
+    "cpu_model": "Intel64 Family 6 Model 186 Stepping 3, GenuineIntel",
+    "cpu_cores_logical": 12,
+    "ram_total_gb": 16.0,
+    "ram_available_gb": 8.0,
+    "free_disk_gb": 150.6,
+    "total_disk_gb": 400.0,
+    "build_id": "eb5af1dd1001"
+  },
+  "issues_and_notes": [],
+  "diagnostic": {
+    "failing_stage": "Final MP4 assembly & 10-gate QA validation",
+    "reason_code": "QA validation failed: 10-gate quality threshold not met",
+    "last_30_log_lines": [],
+    "last_log_lines": [],
+    "checkpoint_state": "Checkpoint preserved at failure point",
+    "resumption_strategy": "Auto-resume from the last verified checkpoint via Retry Generation."
+  },
+  "failure_diagnostic": {
+    "failing_stage": "Final MP4 assembly & 10-gate QA validation",
+    "reason_code": "QA validation failed: 10-gate quality threshold not met",
+    "last_30_log_lines": [],
+    "last_log_lines": [],
+    "checkpoint_state": "Checkpoint preserved at failure point",
+    "resumption_strategy": "Auto-resume from the last verified checkpoint via Retry Generation."
+  }
+}

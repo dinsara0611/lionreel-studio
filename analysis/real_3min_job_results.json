@@ -1,0 +1,20 @@
+{
+  "job_id": "job_real_3min_cat_1792378985",
+  "master_mp4": "G:\\My Drive\\Cat make\\output\\job_real_3min_cat_1792378985\\job_real_3min_cat_1792378985.mp4",
+  "duration_s": 180.0,
+  "total_frames": 5398,
+  "fps": 29.98,
+  "fps_compliant": true,
+  "color_tags": "bt709",
+  "color_compliant": true,
+  "integrated_lufs": -14.36,
+  "lufs_compliant": true,
+  "margin_lufs": 0.14,
+  "true_peak_dbtp": -1.74,
+  "tp_compliant": true,
+  "margin_tp": 0.74,
+  "max_clip_jump_lu": 5.89,
+  "jumps_compliant": false,
+  "boundary_clicks": 1,
+  "clicks_compliant": false
+}

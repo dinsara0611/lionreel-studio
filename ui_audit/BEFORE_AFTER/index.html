@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LionReel Studio — Visual Polish Before &amp; After Gallery</title>
+    <style>
+        :root {
+            --bg: #07130c;
+            --surface: #0c1f14;
+            --border: #143823;
+            --text: #e6f4ec;
+            --accent: #18e87a;
+            --text-muted: #84a993;
+            --font: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        body {
+            margin: 0;
+            padding: 32px 24px;
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
+        }
+        .header {
+            max-width: 1400px;
+            margin: 0 auto 32px auto;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 20px;
+        }
+        h1 { margin: 0 0 8px 0; font-size: 1.8rem; color: #fff; }
+        h1 span { color: var(--accent); }
+        p { margin: 0; color: var(--text-muted); font-size: 0.95rem; }
+        .gallery-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+        .comparison-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .badge {
+            background: rgba(24, 232, 122, 0.15);
+            color: var(--accent);
+            border: 1px solid rgba(24, 232, 122, 0.3);
+            border-radius: 9999px;
+            padding: 2px 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .side-by-side {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .col {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .col-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+        }
+        .col-label.after {
+            color: var(--accent);
+        }
+        .img-wrap {
+            background: #000;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>LionReel <span>Studio</span> — Visual Consistency &amp; Icon Polish Gallery</h1>
+        <p>Comprehensive side-by-side comparison across desktop (1440×900) and mobile (390×844) in both Dark and Light themes. Zero emojis in interface chrome; vendored Lucide SVG icons; unified design tokens.</p>
+    </div>
+
+    <div class="gallery-grid">
+        
+            <div class="comparison-card">
+                <div class="card-title">
+                    <span>HEADER THEME 1440</span>
+                    <span class="badge">Dark &amp; Light Audited</span>
+                </div>
+                <h4 style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Dark Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/dark/header_theme_1440.png" alt="Before header_theme_1440 Dark" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/dark/header_theme_1440.png" alt="After header_theme_1440 Dark" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Light Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/light/header_theme_1440.png" alt="Before header_theme_1440 Light" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/light/header_theme_1440.png" alt="After header_theme_1440 Light" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="comparison-card">
+                <div class="card-title">
+                    <span>STEP1 CREATE ANIMAL CARDS 1440</span>
+                    <span class="badge">Dark &amp; Light Audited</span>
+                </div>
+                <h4 style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Dark Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/dark/step1_create_animal_cards_1440.png" alt="Before step1_create_animal_cards_1440 Dark" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/dark/step1_create_animal_cards_1440.png" alt="After step1_create_animal_cards_1440 Dark" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Light Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/light/step1_create_animal_cards_1440.png" alt="Before step1_create_animal_cards_1440 Light" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/light/step1_create_animal_cards_1440.png" alt="After step1_create_animal_cards_1440 Light" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="comparison-card">
+                <div class="card-title">
+                    <span>STEP2 SOURCES 1440</span>
+                    <span class="badge">Dark &amp; Light Audited</span>
+                </div>
+                <h4 style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Dark Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/dark/step2_sources_1440.png" alt="Before step2_sources_1440 Dark" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/dark/step2_sources_1440.png" alt="After step2_sources_1440 Dark" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Light Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/light/step2_sources_1440.png" alt="Before step2_sources_1440 Light" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/light/step2_sources_1440.png" alt="After step2_sources_1440 Light" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="comparison-card">
+                <div class="card-title">
+                    <span>STEP3 EDIT CONFIG 1440</span>
+                    <span class="badge">Dark &amp; Light Audited</span>
+                </div>
+                <h4 style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Dark Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/dark/step3_edit_config_1440.png" alt="Before step3_edit_config_1440 Dark" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/dark/step3_edit_config_1440.png" alt="After step3_edit_config_1440 Dark" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Light Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/light/step3_edit_config_1440.png" alt="Before step3_edit_config_1440 Light" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/light/step3_edit_config_1440.png" alt="After step3_edit_config_1440 Light" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="comparison-card">
+                <div class="card-title">
+                    <span>STEP3 SUMMARY BAR 1440</span>
+                    <span class="badge">Dark &amp; Light Audited</span>
+                </div>
+                <h4 style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Dark Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/dark/step3_summary_bar_1440.png" alt="Before step3_summary_bar_1440 Dark" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/dark/step3_summary_bar_1440.png" alt="After step3_summary_bar_1440 Dark" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Light Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/light/step3_summary_bar_1440.png" alt="Before step3_summary_bar_1440 Light" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/light/step3_summary_bar_1440.png" alt="After step3_summary_bar_1440 Light" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="comparison-card">
+                <div class="card-title">
+                    <span>STEP4 RENDER PROGRESS 1440</span>
+                    <span class="badge">Dark &amp; Light Audited</span>
+                </div>
+                <h4 style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Dark Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/dark/step4_render_progress_1440.png" alt="Before step4_render_progress_1440 Dark" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/dark/step4_render_progress_1440.png" alt="After step4_render_progress_1440 Dark" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Light Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/light/step4_render_progress_1440.png" alt="Before step4_render_progress_1440 Light" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/light/step4_render_progress_1440.png" alt="After step4_render_progress_1440 Light" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="comparison-card">
+                <div class="card-title">
+                    <span>STEP4 RENDER FAILED AUDIT 1440</span>
+                    <span class="badge">Dark &amp; Light Audited</span>
+                </div>
+                <h4 style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Dark Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/dark/step4_render_failed_audit_1440.png" alt="Before step4_render_failed_audit_1440 Dark" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/dark/step4_render_failed_audit_1440.png" alt="After step4_render_failed_audit_1440 Dark" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Light Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/light/step4_render_failed_audit_1440.png" alt="Before step4_render_failed_audit_1440 Light" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/light/step4_render_failed_audit_1440.png" alt="After step4_render_failed_audit_1440 Light" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="comparison-card">
+                <div class="card-title">
+                    <span>STEP5 EXPORT 1440</span>
+                    <span class="badge">Dark &amp; Light Audited</span>
+                </div>
+                <h4 style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Dark Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/dark/step5_export_1440.png" alt="Before step5_export_1440 Dark" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/dark/step5_export_1440.png" alt="After step5_export_1440 Dark" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Light Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/light/step5_export_1440.png" alt="Before step5_export_1440 Light" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/light/step5_export_1440.png" alt="After step5_export_1440 Light" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="comparison-card">
+                <div class="card-title">
+                    <span>MODAL SHORTCUTS 1440</span>
+                    <span class="badge">Dark &amp; Light Audited</span>
+                </div>
+                <h4 style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Dark Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/dark/modal_shortcuts_1440.png" alt="Before modal_shortcuts_1440 Dark" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/dark/modal_shortcuts_1440.png" alt="After modal_shortcuts_1440 Dark" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Light Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/light/modal_shortcuts_1440.png" alt="Before modal_shortcuts_1440 Light" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/light/modal_shortcuts_1440.png" alt="After modal_shortcuts_1440 Light" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="comparison-card">
+                <div class="card-title">
+                    <span>MODAL CONFIRM 1440</span>
+                    <span class="badge">Dark &amp; Light Audited</span>
+                </div>
+                <h4 style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Dark Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/dark/modal_confirm_1440.png" alt="Before modal_confirm_1440 Dark" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/dark/modal_confirm_1440.png" alt="After modal_confirm_1440 Dark" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Light Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/light/modal_confirm_1440.png" alt="Before modal_confirm_1440 Light" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/light/modal_confirm_1440.png" alt="After modal_confirm_1440 Light" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="comparison-card">
+                <div class="card-title">
+                    <span>TOAST NOTIFICATION 1440</span>
+                    <span class="badge">Dark &amp; Light Audited</span>
+                </div>
+                <h4 style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Dark Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/dark/toast_notification_1440.png" alt="Before toast_notification_1440 Dark" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/dark/toast_notification_1440.png" alt="After toast_notification_1440 Dark" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Light Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/light/toast_notification_1440.png" alt="Before toast_notification_1440 Light" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/light/toast_notification_1440.png" alt="After toast_notification_1440 Light" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="comparison-card">
+                <div class="card-title">
+                    <span>HEADER THEME 390</span>
+                    <span class="badge">Dark &amp; Light Audited</span>
+                </div>
+                <h4 style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Dark Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/dark/header_theme_390.png" alt="Before header_theme_390 Dark" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/dark/header_theme_390.png" alt="After header_theme_390 Dark" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Light Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/light/header_theme_390.png" alt="Before header_theme_390 Light" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/light/header_theme_390.png" alt="After header_theme_390 Light" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="comparison-card">
+                <div class="card-title">
+                    <span>STEP1 CREATE ANIMAL CARDS 390</span>
+                    <span class="badge">Dark &amp; Light Audited</span>
+                </div>
+                <h4 style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Dark Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/dark/step1_create_animal_cards_390.png" alt="Before step1_create_animal_cards_390 Dark" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/dark/step1_create_animal_cards_390.png" alt="After step1_create_animal_cards_390 Dark" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Light Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/light/step1_create_animal_cards_390.png" alt="Before step1_create_animal_cards_390 Light" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/light/step1_create_animal_cards_390.png" alt="After step1_create_animal_cards_390 Light" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="comparison-card">
+                <div class="card-title">
+                    <span>STEP2 SOURCES 390</span>
+                    <span class="badge">Dark &amp; Light Audited</span>
+                </div>
+                <h4 style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Dark Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/dark/step2_sources_390.png" alt="Before step2_sources_390 Dark" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/dark/step2_sources_390.png" alt="After step2_sources_390 Dark" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Light Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/light/step2_sources_390.png" alt="Before step2_sources_390 Light" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/light/step2_sources_390.png" alt="After step2_sources_390 Light" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="comparison-card">
+                <div class="card-title">
+                    <span>STEP3 EDIT CONFIG 390</span>
+                    <span class="badge">Dark &amp; Light Audited</span>
+                </div>
+                <h4 style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Dark Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/dark/step3_edit_config_390.png" alt="Before step3_edit_config_390 Dark" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/dark/step3_edit_config_390.png" alt="After step3_edit_config_390 Dark" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Light Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/light/step3_edit_config_390.png" alt="Before step3_edit_config_390 Light" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/light/step3_edit_config_390.png" alt="After step3_edit_config_390 Light" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="comparison-card">
+                <div class="card-title">
+                    <span>STEP3 SUMMARY BAR 390</span>
+                    <span class="badge">Dark &amp; Light Audited</span>
+                </div>
+                <h4 style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Dark Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/dark/step3_summary_bar_390.png" alt="Before step3_summary_bar_390 Dark" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/dark/step3_summary_bar_390.png" alt="After step3_summary_bar_390 Dark" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Light Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/light/step3_summary_bar_390.png" alt="Before step3_summary_bar_390 Light" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/light/step3_summary_bar_390.png" alt="After step3_summary_bar_390 Light" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="comparison-card">
+                <div class="card-title">
+                    <span>STEP4 RENDER PROGRESS 390</span>
+                    <span class="badge">Dark &amp; Light Audited</span>
+                </div>
+                <h4 style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Dark Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/dark/step4_render_progress_390.png" alt="Before step4_render_progress_390 Dark" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/dark/step4_render_progress_390.png" alt="After step4_render_progress_390 Dark" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Light Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/light/step4_render_progress_390.png" alt="Before step4_render_progress_390 Light" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/light/step4_render_progress_390.png" alt="After step4_render_progress_390 Light" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="comparison-card">
+                <div class="card-title">
+                    <span>STEP4 RENDER FAILED AUDIT 390</span>
+                    <span class="badge">Dark &amp; Light Audited</span>
+                </div>
+                <h4 style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Dark Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/dark/step4_render_failed_audit_390.png" alt="Before step4_render_failed_audit_390 Dark" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/dark/step4_render_failed_audit_390.png" alt="After step4_render_failed_audit_390 Dark" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Light Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/light/step4_render_failed_audit_390.png" alt="Before step4_render_failed_audit_390 Light" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/light/step4_render_failed_audit_390.png" alt="After step4_render_failed_audit_390 Light" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="comparison-card">
+                <div class="card-title">
+                    <span>STEP5 EXPORT 390</span>
+                    <span class="badge">Dark &amp; Light Audited</span>
+                </div>
+                <h4 style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Dark Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/dark/step5_export_390.png" alt="Before step5_export_390 Dark" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/dark/step5_export_390.png" alt="After step5_export_390 Dark" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Light Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/light/step5_export_390.png" alt="Before step5_export_390 Light" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/light/step5_export_390.png" alt="After step5_export_390 Light" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="comparison-card">
+                <div class="card-title">
+                    <span>MODAL SHORTCUTS 390</span>
+                    <span class="badge">Dark &amp; Light Audited</span>
+                </div>
+                <h4 style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Dark Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/dark/modal_shortcuts_390.png" alt="Before modal_shortcuts_390 Dark" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/dark/modal_shortcuts_390.png" alt="After modal_shortcuts_390 Dark" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Light Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/light/modal_shortcuts_390.png" alt="Before modal_shortcuts_390 Light" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/light/modal_shortcuts_390.png" alt="After modal_shortcuts_390 Light" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="comparison-card">
+                <div class="card-title">
+                    <span>MODAL CONFIRM 390</span>
+                    <span class="badge">Dark &amp; Light Audited</span>
+                </div>
+                <h4 style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Dark Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/dark/modal_confirm_390.png" alt="Before modal_confirm_390 Dark" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/dark/modal_confirm_390.png" alt="After modal_confirm_390 Dark" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Light Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/light/modal_confirm_390.png" alt="Before modal_confirm_390 Light" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/light/modal_confirm_390.png" alt="After modal_confirm_390 Light" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="comparison-card">
+                <div class="card-title">
+                    <span>TOAST NOTIFICATION 390</span>
+                    <span class="badge">Dark &amp; Light Audited</span>
+                </div>
+                <h4 style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Dark Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/dark/toast_notification_390.png" alt="Before toast_notification_390 Dark" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/dark/toast_notification_390.png" alt="After toast_notification_390 Dark" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 10px 0; color: var(--text-muted); font-size: 0.9rem;">Light Theme</h4>
+                <div class="side-by-side">
+                    <div class="col">
+                        <span class="col-label">Before (Audit Baseline)</span>
+                        <div class="img-wrap">
+                            <img src="before/light/toast_notification_390.png" alt="Before toast_notification_390 Light" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\'padding:20px;color:#888;\'>Baseline not present</span>'">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <span class="col-label after">After (Polished Unified Lucide Icons &amp; Tokens)</span>
+                        <div class="img-wrap">
+                            <img src="after/light/toast_notification_390.png" alt="After toast_notification_390 Light" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+    </div>
+</body>
+</html>

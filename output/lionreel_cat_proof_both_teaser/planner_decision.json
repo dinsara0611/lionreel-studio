@@ -1,0 +1,61 @@
+{
+  "job_id": "lionreel_cat_proof_both_teaser",
+  "animal_mode": "cat",
+  "video_type": "short",
+  "target_clips_count": 6,
+  "target_clip_sec": 7.5,
+  "initial_clip_sec": 7.5,
+  "contract_total_sec": 45.0,
+  "expected_total_sec": 45.02,
+  "strategy_used": "ladder_step_1_bank",
+  "ladder_steps_applied": [
+    "ladder_step_1_bank"
+  ],
+  "repeat_share_pct": 0.0,
+  "freshness": {
+    "new_windows": 3,
+    "reused_windows": 3,
+    "total_windows": 6,
+    "new_footage_pct": 50.0,
+    "reused_footage_pct": 50.0,
+    "reused_details": [
+      {
+        "clip_id": "c_cat_cache_825Za_ZishQ_12_17",
+        "source_id": "cache_825Za_ZishQ",
+        "start_s": 12.0,
+        "end_s": 17.2,
+        "earlier_job_id": "lionreel_cat_20261024_072956_02b769e2",
+        "reason": "Source moment overlap > 30% with finished production job 'lionreel_cat_20261024_072956_02b769e2' (clip c_cat_cache_825Za_ZishQ_12_17)"
+      },
+      {
+        "clip_id": "c_cache_OzAzzpR4JmY_290_365",
+        "source_id": "cache_OzAzzpR4JmY",
+        "start_s": 29.0,
+        "end_s": 36.5,
+        "earlier_job_id": "lionreel_cat_20261024_072956_02b769e2",
+        "reason": "Source moment overlap > 30% with finished production job 'lionreel_cat_20261024_072956_02b769e2' (clip c_cat_cache_OzAzzpR4JmY_32_37)"
+      },
+      {
+        "clip_id": "c_cat_cache_Rr9701_s-Qs_41_48",
+        "source_id": "cache_Rr9701_s-Qs",
+        "start_s": 41.0,
+        "end_s": 48.5,
+        "earlier_job_id": "lionreel_cat_20261024_093550_3a992383",
+        "reason": "Source moment overlap > 30% with finished production job 'lionreel_cat_20261024_093550_3a992383' (clip c_cat_cache_Rr9701_s-Qs_41_48)"
+      }
+    ],
+    "reused_from_jobs": [
+      "lionreel_cat_20261024_072956_02b769e2",
+      "lionreel_cat_20261024_093550_3a992383"
+    ],
+    "card_line": "New footage: 50% / Reused from earlier videos: 50% (Reused 3 clips from jobs lionreel_cat_20261024_072956_02b769e2, lionreel_cat_20261024_093550_3a992383: bank depleted)"
+  },
+  "freshness_card_line": "New footage: 50% / Reused from earlier videos: 50% (Reused 3 clips from jobs lionreel_cat_20261024_072956_02b769e2, lionreel_cat_20261024_093550_3a992383: bank depleted)",
+  "status_card_line": "New footage: 50% / Reused from earlier videos: 50% (Reused 3 clips from jobs lionreel_cat_20261024_072956_02b769e2, lionreel_cat_20261024_093550_3a992383: bank depleted)",
+  "log_messages": [
+    "[PLANNER] Contract target: 45.0s (6 clips @ ~7.5s). Patience budget: 300s.",
+    "[PLANNER] Bank contains 47 verified unique candidates for cat.",
+    "[PLANNER] Enforcing source cooldown: 7 fresh candidates available outside cooldown sources.",
+    "[PLANNER] Step 1 SUCCESS: 6 fresh unique clips cover 45.0s."
+  ]
+}

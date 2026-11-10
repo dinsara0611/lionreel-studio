@@ -1,0 +1,158 @@
+{
+  "video_file": "C:\\LionReel\\work\\lionreel_cat_proof_both_teaser\\lionreel_cat_proof_both_teaser.mp4",
+  "overall_passed": true,
+  "verdict": "PASSED \u2014 READY FOR UPLOAD",
+  "benchmark_config_hash": "1c8c1612e8b758fd9d1f7ba4608118096c55dc6a25ba5c22701893bcb82d852d",
+  "benchmark_thresholds": {
+    "min_sharpness_laplacian_540x960": 150.0,
+    "target_integrated_lufs": -14.0,
+    "target_true_peak_dbtp": -1.0
+  },
+  "gates": {
+    "gate_1_stream_specs": true,
+    "gate_1b_duration_contract": true,
+    "gate_2_stream_defects": true,
+    "gate_3_broadcast_loudness": true,
+    "gate_4_pet_centering": true,
+    "gate_5_layout_fill": true,
+    "gate_6_watermark_cleanliness": true,
+    "gate_6b_clean_overlays": true,
+    "gate_7_peak_quality": true,
+    "gate_8_real_footage": true,
+    "gate_9_visual_sharpness": true,
+    "gate_10_captions_and_spacing": true,
+    "gate_11_thumbnail": true
+  },
+  "thumbnail_gate": {
+    "is_long_video": false,
+    "passed": true,
+    "report_path": null,
+    "report_summary": null
+  },
+  "duration_contract": {
+    "expected_duration_s": 45.01,
+    "real_duration_s": 45.0,
+    "duration_diff_s": 0.01,
+    "passed": true
+  },
+  "burned_in_text_gate": {
+    "passed": true,
+    "skipped": false,
+    "reason": "CLEAN_NO_OVERLAYS"
+  },
+  "stream_specs": {
+    "passed": true,
+    "width": 1080,
+    "height": 1920,
+    "codec": "h264",
+    "profile": "High",
+    "bitrate_kbps": 13197,
+    "duration_sec": 45.0
+  },
+  "defects": {
+    "passed": true,
+    "black_hits": 0,
+    "freeze_hits": 0,
+    "details": []
+  },
+  "loudness": {
+    "passed": true,
+    "integrated_lufs": -14.24,
+    "true_peak_dbtp": -1.76,
+    "lra": 4.7,
+    "target_lufs": -14.0,
+    "target_true_peak": -1.0,
+    "margin_lufs": 0.26,
+    "margin_tp": 0.76,
+    "sample_rate": 48000,
+    "channels": 2,
+    "drift_ms": 0.0,
+    "lufs_ok": true,
+    "tp_ok": true,
+    "rate_ok": true,
+    "ch_ok": true,
+    "drift_ok": true
+  },
+  "pet_centering": {
+    "passed": true,
+    "compliance_ratio": 0.75,
+    "visibility_ratio": 1.0,
+    "horizontal_ratio": 1.0,
+    "vertical_ratio": 1.0,
+    "size_ratio": 1.0,
+    "passed_frames": 12,
+    "detected_frames": 12,
+    "sampled_frames": 16,
+    "layout_mode": "smart_crop",
+    "details": []
+  },
+  "layout_fill": {
+    "passed": true,
+    "reason": "FULL_FRAME_FILL_VERIFIED",
+    "checked_frames": 16
+  },
+  "watermark_gate": {
+    "passed": true,
+    "skipped": false,
+    "detected_corner": null,
+    "confidence": 0.0,
+    "reason": "Clean corners (no watermark detected)"
+  },
+  "peak_quality_gate": {
+    "passed": true,
+    "peak_vis_ratio": 1.0,
+    "peak_horiz_ratio": 1.0,
+    "evaluated_frames": 28,
+    "reason": "PEAK_FRAMING_VERIFIED"
+  },
+  "cartoon_classifier": {
+    "passed": true,
+    "mean_negative_probability": 0.0,
+    "negative_votes": 0,
+    "sampled_frames": 16
+  },
+  "sharpness": {
+    "passed": true,
+    "median_sharpness": 481.5,
+    "target_sharpness": 150.0,
+    "benchmark_floor": 150.0,
+    "min_sharpness": 315.8,
+    "max_sharpness": 1072.8,
+    "low_sharp_frame_ratio": 0.0
+  },
+  "captions": {
+    "passed": true,
+    "violations": 0,
+    "checked_frames": 16
+  },
+  "source_guard": {
+    "passed": true
+  },
+  "repeat_spacing_gate": {
+    "passed": true,
+    "clips_evaluated": 6,
+    "target_spacing": 5,
+    "consecutive_violations": [],
+    "spacing_violations": [],
+    "usage_violations": [],
+    "max_repeat_count": 1,
+    "repeat_share_pct": 0.0,
+    "repeat_share_str": "0% repeat (100% unique moments)"
+  },
+  "repeat_share_pct": 0.0,
+  "repeat_share_str": "0% repeat (100% unique moments)",
+  "contact_sheet": "C:\\LionReel\\work\\lionreel_cat_proof_both_teaser\\lionreel_cat_proof_both_teaser_contact_sheet.png",
+  "model_version": "learned_ranker_v1791599602",
+  "freshness": {
+    "new_windows": 6,
+    "reused_windows": 0,
+    "total_windows": 6,
+    "new_footage_pct": 100.0,
+    "reused_footage_pct": 0.0,
+    "reused_details": [],
+    "reused_from_jobs": [],
+    "card_line": "New footage: 100% / Reused from earlier videos: 0%"
+  },
+  "freshness_card_line": "New footage: 100% / Reused from earlier videos: 0%",
+  "status_card_line": "New footage: 100% / Reused from earlier videos: 0%"
+}

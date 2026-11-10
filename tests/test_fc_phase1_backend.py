@@ -1,0 +1,419 @@
+"""Full check, Phase 1: stuck jobs, shortage, counts, legal sourcing. Each test fails on the pre-fix code."""
+import ast
+import os
+import sqlite3
+import subprocess
+import sys
+import threading
+import time
+
+import pytest
+
+BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+@pytest.fixture
+def ledger(tmp_path):
+    import clip_ledger
+    return clip_ledger.ClipLedger(str(tmp_path / "ledger.db"))
+
+
+def _source(tmp_path, name="cache_AAAAAAAAAAA.mp4"):
+    p = tmp_path / name
+    p.write_bytes(b"x" * 2048)
+    return str(p)
+
+
+def _add(ledger, cid, src, start, end=None, verified=1, sharp=300.0, rejection=None):
+    return ledger.add_clip(clip_id=cid, source_id=os.path.splitext(os.path.basename(src))[0], source_url_or_path=src,
+                           license_name="Creative Commons Attribution license", start_s=start, end_s=end or start + 7.5,
+                           frame_phashes=[], is_verified=verified, sharpness=sharp, framing_score=0.9,
+                           animal_type="cat", rejection_reason=rejection)
+
+
+def _blocking_calls_without_timeout(path):
+    tree = ast.parse(open(path, encoding="utf8").read())
+    uses_wrapper = any(isinstance(n, ast.Import) and any(a.name == "timed_subprocess" for a in n.names) for n in ast.walk(tree))
+    missing = []
+    for n in ast.walk(tree):
+        if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute) and isinstance(n.func.value, ast.Name) \
+                and n.func.value.id == "subprocess" and n.func.attr in ("run", "call", "check_output", "check_call"):
+            if not any(k.arg == "timeout" for k in n.keywords):
+                missing.append(n.lineno)
+    return uses_wrapper, missing
+
+
+@pytest.mark.parametrize("module", ["lion_automate_v97.py", "harvest_worker.py"])
+def test_engine_blocking_calls_all_have_a_timeout(module):
+    uses_wrapper, missing = _blocking_calls_without_timeout(os.path.join(BASE, module))
+    assert uses_wrapper or not missing, f"{module}: no timeout on lines {missing}"
+
+
+def test_timed_subprocess_kills_a_hung_child(monkeypatch):
+    import timed_subprocess
+    monkeypatch.setattr(timed_subprocess, "FALLBACK_TIMEOUT_SEC", 1.0)
+    started = time.time()
+    with pytest.raises(subprocess.TimeoutExpired):
+        timed_subprocess.run([sys.executable, "-c", "import time; time.sleep(30)"])
+    assert time.time() - started < 8
+
+
+def test_timed_subprocess_picks_timeout_by_tool():
+    import timed_subprocess
+    assert timed_subprocess.default_timeout([r"C:\x\ffprobe.exe", "-v"]) == 60.0
+    assert timed_subprocess.default_timeout([r"C:\x\ffmpeg-win.exe", "-i"]) == 3600.0
+
+
+def test_render_function_does_not_shadow_shutil():
+    """A local import made shutil an unbound local, silently disabling clip checkpoints."""
+    tree = ast.parse(open(os.path.join(BASE, "lion_automate_v97.py"), encoding="utf8").read())
+    render = next(n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef) and n.name == "render_one_video")
+    inner = [n.lineno for n in ast.walk(render) if isinstance(n, ast.Import) and any(a.name == "shutil" for a in n.names)]
+    assert not inner, f"local import of shutil at {inner}"
+
+
+def test_no_undefined_names_in_project():
+    out = subprocess.run([sys.executable, "-m", "ruff", "check", "--select", "F821,F823", "--no-cache", "--output-format", "concise",
+                          *[f for f in os.listdir(BASE) if f.endswith(".py") and f != "lion_automate.py"]],
+                         cwd=BASE, capture_output=True, text=True)
+    assert out.returncode == 0, out.stdout[-800:]
+
+
+def test_counts_classes_add_up_and_all_callers_agree(ledger, tmp_path):
+    src = _source(tmp_path)
+    src2 = _source(tmp_path, "cache_BBBBBBBBBBB.mp4")
+    _add(ledger, "fresh1", src, 0)
+    _add(ledger, "fresh2", src, 100)
+    _add(ledger, "fresh3", src2, 40)
+    _add(ledger, "unv", src, 200, verified=0)
+    _add(ledger, "bad", src2, 300, verified=0, rejection="LOW_SHARPNESS (40.0 < 150.0)")
+    c = ledger.get_ledger_counts("cat")
+    classes = ("usable_now", "cooldown", "used", "reserved", "unverified", "needs_recheck", "rejected", "unavailable")
+    assert sum(c[k] for k in classes) == c["total_rows"] == 5
+    assert c["fresh_total"] == 3
+    status = ledger.get_pool_status("cat")
+    capacity = ledger.get_pool_ready_and_capacity("cat", target_clips=4)
+    assert status["verified_clips"] == capacity["ready"] == c["fresh_total"]
+    assert ledger.get_pool_unified_counts("cat")["fresh_total"] == c["fresh_total"]
+
+
+def test_count_does_not_depend_on_job_size(ledger, tmp_path):
+    src = _source(tmp_path)
+    for i in range(6):
+        _add(ledger, f"c{i}", src, i * 40.0)
+    assert ledger.get_pool_ready_and_capacity("cat", target_clips=4)["ready"] == \
+        ledger.get_pool_ready_and_capacity("cat", target_clips=24)["ready"]
+
+
+def test_planner_candidates_equal_ledger_fresh_set(ledger, tmp_path):
+    from fulfillment_planner import FulfillmentPlanner
+    src = _source(tmp_path)
+    _add(ledger, "a", src, 0)
+    _add(ledger, "b", src, 50)
+    planner = FulfillmentPlanner(ledger=ledger, reframer=None)
+    got = {c["clip_id"] for c in planner._fetch_verified_candidates("cat")}
+    windows = ledger.get_ledger_counts("cat", include_windows=True)["windows"]
+    assert got == {w["clip_id"] for w in windows["usable_now"] + windows["cooldown"]}
+
+
+def test_preflight_line(ledger, tmp_path):
+    _add(ledger, "a", _source(tmp_path), 0)
+    assert ledger.preflight_line(4).startswith("Need 4, have 1 usable")
+
+
+def test_rejected_window_blocks_overlap_over_30_percent_under_any_id(ledger, tmp_path):
+    src = _source(tmp_path)
+    _add(ledger, "rej", src, 10.0, 17.5, verified=0, rejection="LOW_SHARPNESS (40 < 150)")
+    _add(ledger, "same_moment_new_id", src, 13.0, 20.5)   # 60% overlap
+    _add(ledger, "other_moment", src, 16.5, 24.0)         # 13% overlap
+    windows = ledger.get_ledger_counts("cat", include_windows=True)["windows"]
+    assert "same_moment_new_id" in {w["clip_id"] for w in windows["rejected"]}
+    assert "other_moment" in {w["clip_id"] for w in windows["usable_now"]}
+
+
+def test_measurement_failure_gets_one_recheck_then_rejected(ledger, tmp_path):
+    _add(ledger, "m", _source(tmp_path), 0, verified=0)
+    assert ledger.record_candidate_evaluation_failure("m", score=0.0, reason="0.0%")["action"] == "needs_recheck"
+    assert ledger.get_ledger_counts("cat")["needs_recheck"] == 1
+    assert ledger.record_candidate_evaluation_failure("m", score=0.0, reason="0.0%")["action"] == "rejected"
+
+
+def test_reserve_wait_does_not_hold_the_write_lock(ledger, tmp_path):
+    """Sleeping inside the IMMEDIATE transaction blocked the harvester from saving new clips."""
+    src = _source(tmp_path)
+    _add(ledger, "only", src, 0)
+    errors = []
+
+    def wait_for_clips():
+        try:
+            ledger.reserve_clips_for_short(count=2, animal_type="cat", short_id="job1", min_required=2, patience_budget_sec=7.0)
+        except Exception as e:
+            errors.append(e)
+
+    t = threading.Thread(target=wait_for_clips, daemon=True)
+    t.start()
+    time.sleep(1.0)
+    conn = sqlite3.connect(ledger.db_path, timeout=0.5, isolation_level=None)
+    wrote = 0
+    for _ in range(4):
+        try:
+            conn.execute("BEGIN IMMEDIATE")
+            conn.execute("ROLLBACK")
+            wrote += 1
+        except sqlite3.OperationalError:
+            pass
+        time.sleep(0.8)
+    conn.close()
+    t.join(12)
+    assert wrote >= 3, f"writer got through only {wrote} of 4 times during the wait"
+
+
+def test_reuse_off_never_falls_back_to_used_moments(ledger, tmp_path):
+    src = _source(tmp_path)
+    _add(ledger, "fresh", src, 0)
+    with ledger._get_conn() as conn:
+        conn.execute("INSERT INTO finished_video_windows (job_id, video_index, source_id, source_url_or_path, start_s, end_s, is_production, channel, clip_id) "
+                     "VALUES ('oldjob', 1, 'cache_AAAAAAAAAAA', ?, 2.0, 9.5, 1, 'cat', 'older')", (src,))
+        conn.commit()
+    # 'fresh' overlaps a finished window; with reuse off it must not be offered
+    with pytest.raises(RuntimeError):
+        ledger.reserve_clips_for_short(count=1, animal_type="cat", short_id="job2", min_required=1, allow_reuse=False)
+
+
+def test_one_engine_per_job(tmp_path):
+    import engine_lock
+    ok, _ = engine_lock.acquire_engine_lock("job1", pid=os.getpid(), lock_dir=str(tmp_path), job_dir=str(tmp_path))
+    assert ok
+    other = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(20)"])
+    try:
+        ok2, msg = engine_lock.acquire_engine_lock("job1", pid=other.pid, lock_dir=str(tmp_path), job_dir=str(tmp_path))
+        assert not ok2, msg
+    finally:
+        other.kill()
+        engine_lock.release_engine_lock("job1", pid=os.getpid(), lock_dir=str(tmp_path), job_dir=str(tmp_path))
+
+
+def test_stop_ends_whole_process_tree_within_5s():
+    from watchdog_service import terminate_process_tree
+    parent = subprocess.Popen([sys.executable, "-c",
+                               "import subprocess,sys,time;subprocess.Popen([sys.executable,'-c','import time;time.sleep(60)']);time.sleep(60)"])
+    time.sleep(1.5)
+    started = time.time()
+    stopped, msg = terminate_process_tree(parent.pid, timeout_sec=5.0)
+    assert stopped, msg
+    assert time.time() - started < 5.0
+    assert parent.poll() is not None
+
+
+def test_unknown_licence_text_is_blocked_not_cc():
+    from source_utils import normalize_license_name
+    assert normalize_license_name("Standard YouTube License")[0] == "Standard YouTube License"
+    assert normalize_license_name("all rights reserved")[0] == "BLOCKED"
+    assert normalize_license_name("CC BY-SA 4.0 Sharealike")[0] == "CC BY-SA 4.0"
+    assert normalize_license_name("Creative Commons")[1] is None
+
+
+def test_harvest_refuses_video_without_shown_licence(monkeypatch, tmp_path):
+    import source_licenses as sl
+    assert sl.record_from_info({"id": "x", "license": None, "uploader": "Someone"})["status"] == sl.NOT_SHOWN
+    assert sl.record_from_info({"id": "x", "license": "Creative Commons Attribution license (reuse allowed)", "uploader": "Someone"})["status"] == sl.VERIFIED
+    src = open(os.path.join(BASE, "harvest_worker.py"), encoding="utf8").read()
+    assert 'license_name="Creative Commons CC-BY 4.0"' not in src
+    assert "ytsearch" not in src
+
+
+def test_no_invented_creator_defaults():
+    for f in ("lion_automate_v97.py", "metadata_generator.py"):
+        assert '"CC Creator"' not in open(os.path.join(BASE, f), encoding="utf8").read(), f
+
+
+def test_page_load_cannot_make_the_server_forget_a_running_job():
+    """Every page load calls clear-error. It used to wipe the job id while the engine ran."""
+    import web_server
+    proc = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(30)"])
+    saved = web_server.RUNNING_PROCESS, web_server.CURRENT_JOB_ID
+    try:
+        web_server.RUNNING_PROCESS, web_server.CURRENT_JOB_ID = proc, "job_running"
+        assert web_server.clear_last_job_state() is False
+        assert web_server.CURRENT_JOB_ID == "job_running"
+        proc.kill()
+        proc.wait()
+        assert web_server.clear_last_job_state() is True
+        assert web_server.CURRENT_JOB_ID is None
+    finally:
+        proc.kill()
+        web_server.RUNNING_PROCESS, web_server.CURRENT_JOB_ID = saved
+
+
+def test_render_rejection_blocks_the_moment_under_any_clip_id(ledger, tmp_path):
+    src = _source(tmp_path)
+    _add(ledger, "c_cat_cache_AAAAAAAAAAA_29_36", src, 29.0, 36.5)
+    _add(ledger, "c_cache_AAAAAAAAAAA_100", src, 100.0, 107.5)
+    assert ledger.reject_window(src, 29.0, 36.5, "POST_CROP_GATE_FAIL (Sharpness: 87.1)") == 1
+    windows = ledger.get_ledger_counts("cat", include_windows=True)["windows"]
+    assert "c_cat_cache_AAAAAAAAAAA_29_36" in {w["clip_id"] for w in windows["rejected"]}
+    assert "c_cache_AAAAAAAAAAA_100" in {w["clip_id"] for w in windows["usable_now"]}
+
+
+def test_cleanup_never_offers_the_only_copy_of_a_master(tmp_path):
+    from safe_cleanup import SafeCleanupManager
+    base, local = tmp_path / "proj", tmp_path / "local"
+    for d in (base / "finished", base / "output", local / "work" / "lionreel_cat_only", local / "work" / "lionreel_cat_saved"):
+        d.mkdir(parents=True)
+    (local / "work" / "lionreel_cat_only" / "lionreel_cat_only.mp4").write_bytes(b"x" * 4096)
+    (local / "work" / "lionreel_cat_saved" / "lionreel_cat_saved.mp4").write_bytes(b"x" * 4096)
+    (base / "finished" / "lionreel_cat_saved.mp4").write_bytes(b"x" * 4096)
+    mgr = SafeCleanupManager(base_dir=str(base), local_data_dir=str(local))
+    assert mgr._holds_only_copy_of_master(str(local / "work" / "lionreel_cat_only")) is True
+    assert mgr._holds_only_copy_of_master(str(local / "work" / "lionreel_cat_saved")) is False
+    listed = [f["path"] for g in mgr.scan_candidates()["groups"] for f in g["files"]]
+    assert not any("lionreel_cat_only" in p for p in listed)
+
+
+def test_harvest_sharpness_uses_the_canonical_measure(tmp_path):
+    """The old full-size reading rejected 9 of 10 windows that rendered above 150."""
+    src = open(os.path.join(BASE, "harvest_worker.py"), encoding="utf8").read()
+    assert "cv2.Laplacian" not in src.split("def run_real_harvest_sync")[1]
+    assert "measure_window_sharpness" in src
+
+
+def test_measure_window_sharpness_matches_canonical_on_a_crop(tmp_path):
+    import cv2
+    import numpy as np
+    from canonical_window import measure_window_sharpness, measure_canonical_sharpness
+    path = str(tmp_path / "w.mp4")
+    rng = np.random.default_rng(3)
+    frame = (rng.random((1080, 1920, 3)) * 255).astype(np.uint8)
+    out = cv2.VideoWriter(path, cv2.VideoWriter_fourcc(*"mp4v"), 30, (1920, 1080))
+    for _ in range(60):
+        out.write(frame)
+    out.release()
+    score = measure_window_sharpness(path, 0.0, 2.0)
+    assert score > 150 and abs(score - measure_canonical_sharpness(frame[:, 656:1263])) / score < 0.5
+
+
+def test_short_video_is_never_built_with_allow_shorter_off():
+    src = open(os.path.join(BASE, "lion_automate_v97.py"), encoding="utf8").read()
+    assert "Graceful fallback" not in src
+
+
+def test_qa_target_comes_from_stored_config(tmp_path):
+    import json
+    import qa_check
+    (tmp_path / "job_config.json").write_text(json.dumps({"mode": "short", "target_seconds": 30.0, "clip_count": 4}))
+    assert qa_check.load_job_config(str(tmp_path / "x.mp4"), str(tmp_path))["target_seconds"] == 30.0
+    source = open(os.path.join(BASE, "qa_check.py"), encoding="utf8").read()
+    assert 'target_dur = jcfg["target_seconds"]' in source
+
+
+def test_failure_message_leads_with_the_real_cause():
+    import verdict
+    gates = {g: True for g in verdict.REQUIRED_GATES}
+    gates["gate_1c_clip_count"] = False
+    clips = [{"uploader": "A", "license_status": "no licence shown", "clip_id": "c", "source_id": "s", "start_s": 0, "duration": 7}]
+    v = verdict.calculate_unified_verdict({"gates": gates}, clips, {})
+    assert "Clip Count" in v["attention_items"][0] and "icence" not in v["critical_errors"][0]
+
+
+def test_enlist_allows_a_fresh_window_from_a_cooldown_source(ledger, tmp_path):
+    from bank_enlist import evaluate_candidate_for_enlistment
+    src = _source(tmp_path)
+    _add(ledger, "fresh", src, 200)
+    with ledger._get_conn() as conn:
+        conn.execute("INSERT INTO finished_video_windows (job_id, video_index, source_id, source_url_or_path, start_s, end_s, is_production, channel, clip_id) "
+                     "VALUES ('oldjob', 1, 'cache_AAAAAAAAAAA', ?, 2.0, 9.5, 1, 'cat', 'older')", (src,))
+        conn.commit()
+    fresh = {"clip_id": "fresh", "source_id": "cache_AAAAAAAAAAA", "source_url_or_path": src, "start_s": 200.0, "end_s": 207.5}
+    used = dict(fresh, clip_id="x", start_s=3.0, end_s=10.5)
+    assert evaluate_candidate_for_enlistment(fresh, "job", "cat", ledger, [])["usable"] is True
+    assert "ALREADY_USED" in evaluate_candidate_for_enlistment(used, "job", "cat", ledger, [])["reason"]
+
+
+def test_contract_scan_skipped_until_code_changes(tmp_path, monkeypatch):
+    import scripts.check_contracts as cc
+    calls = []
+    monkeypatch.setattr(cc, "check_all_contracts", lambda **k: (calls.append(1), (5, []))[1])
+    code = tmp_path / "code"
+    (code / "scripts").mkdir(parents=True)
+    (code / "a.py").write_text("x = 1")
+    monkeypatch.setenv("LIONREEL_DATA_DIR", str(tmp_path))
+    cc.check_contracts_if_code_changed(str(code))
+    cc.check_contracts_if_code_changed(str(code))
+    assert len(calls) == 1
+    (code / "a.py").write_text("x = 22")
+    cc.check_contracts_if_code_changed(str(code))
+    assert len(calls) == 2
+
+
+def test_failed_contract_scan_is_never_remembered(tmp_path, monkeypatch):
+    import scripts.check_contracts as cc
+    calls = []
+    monkeypatch.setattr(cc, "check_all_contracts", lambda **k: (calls.append(1), (5, ["bad"]))[1])
+    code = tmp_path / "code"
+    (code / "scripts").mkdir(parents=True)
+    monkeypatch.setenv("LIONREEL_DATA_DIR", str(tmp_path))
+    assert cc.check_contracts_if_code_changed(str(code))[1] == ["bad"]
+    assert cc.check_contracts_if_code_changed(str(code))[1] == ["bad"]
+    assert len(calls) == 2
+
+
+def test_ledger_schema_setup_runs_once_per_database(tmp_path, monkeypatch):
+    import clip_ledger
+    path = str(tmp_path / "once.db")
+    calls = []
+    real = clip_ledger.ClipLedger._init_db
+    monkeypatch.setattr(clip_ledger.ClipLedger, "_init_db", lambda self: (calls.append(1), real(self))[1])
+    clip_ledger.ClipLedger(path)
+    clip_ledger.ClipLedger(path)
+    assert len(calls) == 1
+
+
+def test_finished_cache_sees_a_new_file(tmp_path, monkeypatch):
+    import web_server
+    monkeypatch.setattr(web_server, "FINISHED_DIR", str(tmp_path))
+    monkeypatch.setattr(web_server, "OUTPUT_DIR", str(tmp_path / "none"))
+    web_server.FINISHED_CACHE.clear()
+    web_server.store_finished_response("/api/finished", b"old")
+    assert web_server.cached_finished_response("/api/finished") == b"old"
+    (tmp_path / "new.mp4").write_bytes(b"x")
+    assert web_server.cached_finished_response("/api/finished") is None
+
+
+def test_bank_query_never_returns_a_used_moment_with_reuse_off(ledger, tmp_path):
+    src = _source(tmp_path)
+    _add(ledger, "fresh", src, 200)
+    _add(ledger, "overlaps_finished", src, 34.0, 41.5)
+    with ledger._get_conn() as conn:
+        conn.execute("INSERT INTO finished_video_windows (job_id, video_index, source_id, source_url_or_path, start_s, end_s, is_production, channel, clip_id) "
+                     "VALUES ('oldjob', 1, 'cache_AAAAAAAAAAA', ?, 32.0, 39.5, 1, 'cat', 'older')", (src,))
+        conn.commit()
+    assert {c["clip_id"] for c in ledger.get_verified_clips("cat")} == {"fresh"}
+    assert {c["clip_id"] for c in ledger.get_verified_clips("cat", allow_reuse=True)} == {"fresh", "overlaps_finished"}
+
+
+def test_reused_footage_with_reuse_off_fails_the_verdict():
+    import verdict
+    qa = {"gates": {g: True for g in verdict.REQUIRED_GATES}, "freshness": {"reused_windows": 2}}
+    assert verdict.calculate_unified_verdict(qa, [], {"allow_reuse": False})["badge"] == "FAILED"
+    assert verdict.calculate_unified_verdict(qa, [], {"allow_reuse": True})["badge"] == "PASSED"
+
+
+def test_stored_licence_label_is_never_presented_as_verified(tmp_path, monkeypatch):
+    import source_licenses as sl
+    monkeypatch.setattr(sl, "load_records", lambda: {"AAAAAAAAAAA": {"status": sl.NOT_SHOWN, "license": None}})
+    assert sl.license_of("cache_AAAAAAAAAAA.mp4", "Creative Commons CC-BY 4.0") == sl.NOT_SHOWN
+    assert sl.license_of("cache_BBBBBBBBBBB.mp4", "CC-BY") == "CC-BY (not verified)"
+    assert sl.license_of("cache_BBBBBBBBBBB.mp4") == sl.NOT_RECORDED
+
+
+def test_no_number_suffix_on_titles():
+    assert '#{random.randint' not in open(os.path.join(BASE, "lion_automate_v97.py"), encoding="utf8").read()
+
+
+def test_video_delete_goes_to_the_recycle_bin_not_permanent():
+    import web_server
+    source = web_server.delete_compilation_files.__code__.co_names
+    assert "move_to_trash" in source
+    text = open(os.path.join(BASE, "web_server.py"), encoding="utf8").read()
+    body = text[text.index("def delete_compilation_files"):text.index("def delete_compilation_files") + 3600]
+    assert "robust_remove(fp)" not in body and "robust_remove(job_dir)" not in body

@@ -1,0 +1,282 @@
+{
+  "success": true,
+  "available": true,
+  "job_id": "lionreel_cat_proof_both",
+  "is_long_video": true,
+  "duration_sec": 164.98,
+  "candidates": [
+    {
+      "id": "cand_1",
+      "timestamp_sec": 22.18,
+      "score": 98.7,
+      "total_score": 98.7,
+      "scores": {
+        "sharpness_lapvar": 80.2,
+        "head_fill_pct": 65.0,
+        "pet_height_pct": 65.0,
+        "eye_line_pct": 40.1,
+        "expression_score": 30.0,
+        "composite": 98.7
+      },
+      "provenance": {
+        "video_file": "lionreel_cat_proof_both.mp4",
+        "timestamp_sec": 22.18,
+        "clip_id": "c_cache_X_1JMCk7d6s_1000_1075",
+        "source_window": [
+          0.0,
+          7.5
+        ],
+        "decoder": "opencv_videocapture_pixel_decode"
+      },
+      "file_path": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_both\\thumbnails\\cand_frame_22s.jpg",
+      "file_path_4k": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_both\\thumbnails\\cand_frame_22s_master.jpg",
+      "relative_path": "output/lionreel_cat_proof_both/thumbnails/cand_frame_22s.jpg",
+      "has_double_cats": false,
+      "cat_box": [
+        127,
+        160,
+        1181,
+        1076
+      ]
+    },
+    {
+      "id": "cand_2",
+      "timestamp_sec": 52.13,
+      "score": 98.6,
+      "total_score": 98.6,
+      "scores": {
+        "sharpness_lapvar": 83.8,
+        "head_fill_pct": 65.0,
+        "pet_height_pct": 65.0,
+        "eye_line_pct": 40.0,
+        "expression_score": 30.0,
+        "composite": 98.6
+      },
+      "provenance": {
+        "video_file": "lionreel_cat_proof_both.mp4",
+        "timestamp_sec": 52.13,
+        "clip_id": "c_cache_paWE-GvDO1c_8250_8325",
+        "source_window": [
+          0.0,
+          7.5
+        ],
+        "decoder": "opencv_videocapture_pixel_decode"
+      },
+      "file_path": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_both\\thumbnails\\cand_frame_52s.jpg",
+      "file_path_4k": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_both\\thumbnails\\cand_frame_52s_master.jpg",
+      "relative_path": "output/lionreel_cat_proof_both/thumbnails/cand_frame_52s.jpg",
+      "has_double_cats": false,
+      "cat_box": [
+        762,
+        85,
+        1800,
+        1077
+      ]
+    },
+    {
+      "id": "cand_3",
+      "timestamp_sec": 33.0,
+      "score": 93.4,
+      "total_score": 93.4,
+      "scores": {
+        "sharpness_lapvar": 197.0,
+        "head_fill_pct": 65.0,
+        "pet_height_pct": 65.0,
+        "eye_line_pct": 32.5,
+        "expression_score": 30.0,
+        "composite": 93.4
+      },
+      "provenance": {
+        "video_file": "lionreel_cat_proof_both.mp4",
+        "timestamp_sec": 33.0,
+        "clip_id": "c_cache_X_1JMCk7d6s_1220_1295",
+        "source_window": [
+          0.0,
+          7.5
+        ],
+        "decoder": "opencv_videocapture_pixel_decode"
+      },
+      "file_path": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_both\\thumbnails\\cand_frame_33s.jpg",
+      "file_path_4k": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_both\\thumbnails\\cand_frame_33s_master.jpg",
+      "relative_path": "output/lionreel_cat_proof_both/thumbnails/cand_frame_33s.jpg",
+      "has_double_cats": false,
+      "cat_box": [
+        0,
+        0,
+        1920,
+        1040
+      ]
+    },
+    {
+      "id": "cand_4",
+      "timestamp_sec": 6.6,
+      "score": 73.8,
+      "total_score": 73.8,
+      "scores": {
+        "sharpness_lapvar": 8.5,
+        "head_fill_pct": 64.9,
+        "pet_height_pct": 64.9,
+        "eye_line_pct": 40.2,
+        "expression_score": 30.0,
+        "composite": 73.8
+      },
+      "provenance": {
+        "video_file": "lionreel_cat_proof_both.mp4",
+        "timestamp_sec": 6.6,
+        "clip_id": "c_cat_cache_DsCiaUgfC0E_568_575",
+        "source_window": [
+          0.0,
+          7.5
+        ],
+        "decoder": "opencv_videocapture_pixel_decode"
+      },
+      "file_path": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_both\\thumbnails\\cand_frame_6s.jpg",
+      "file_path_4k": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_both\\thumbnails\\cand_frame_6s_master.jpg",
+      "relative_path": "output/lionreel_cat_proof_both/thumbnails/cand_frame_6s.jpg",
+      "has_double_cats": false,
+      "cat_box": [
+        724,
+        190,
+        1177,
+        665
+      ]
+    },
+    {
+      "id": "cand_5",
+      "timestamp_sec": 44.54,
+      "score": 93.4,
+      "total_score": 93.4,
+      "scores": {
+        "sharpness_lapvar": 140.7,
+        "head_fill_pct": 65.0,
+        "pet_height_pct": 65.0,
+        "eye_line_pct": 32.6,
+        "expression_score": 30.0,
+        "composite": 93.4
+      },
+      "provenance": {
+        "video_file": "lionreel_cat_proof_both.mp4",
+        "timestamp_sec": 44.54,
+        "clip_id": "c_cache_X_1JMCk7d6s_1110_1185",
+        "source_window": [
+          0.0,
+          7.5
+        ],
+        "decoder": "opencv_videocapture_pixel_decode"
+      },
+      "file_path": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_both\\thumbnails\\cand_frame_44s.jpg",
+      "file_path_4k": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_both\\thumbnails\\cand_frame_44s_master.jpg",
+      "relative_path": "output/lionreel_cat_proof_both/thumbnails/cand_frame_44s.jpg",
+      "has_double_cats": false,
+      "cat_box": [
+        37,
+        1,
+        1920,
+        1011
+      ]
+    },
+    {
+      "id": "cand_6",
+      "timestamp_sec": 18.38,
+      "score": 95.8,
+      "total_score": 95.8,
+      "scores": {
+        "sharpness_lapvar": 58.9,
+        "head_fill_pct": 65.0,
+        "pet_height_pct": 65.0,
+        "eye_line_pct": 36.0,
+        "expression_score": 30.0,
+        "composite": 95.8
+      },
+      "provenance": {
+        "video_file": "lionreel_cat_proof_both.mp4",
+        "timestamp_sec": 18.38,
+        "clip_id": "c_cache_X_1JMCk7d6s_1000_1075",
+        "source_window": [
+          0.0,
+          7.5
+        ],
+        "decoder": "opencv_videocapture_pixel_decode"
+      },
+      "file_path": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_both\\thumbnails\\cand_frame_18s.jpg",
+      "file_path_4k": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_both\\thumbnails\\cand_frame_18s_master.jpg",
+      "relative_path": "output/lionreel_cat_proof_both/thumbnails/cand_frame_18s.jpg",
+      "has_double_cats": false,
+      "cat_box": [
+        260,
+        31,
+        1367,
+        1080
+      ]
+    }
+  ],
+  "active_index": 0,
+  "exports": {
+    "thumbnail_jpg": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_both\\thumbnail.jpg",
+    "thumbnail_report": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_both\\thumbnail_report.json",
+    "size_kb": 165.0,
+    "overall_passed": true,
+    "gates": {
+      "full_bleed": true,
+      "exact_16_9": true,
+      "exact_1280x720": true,
+      "size_under_2mb": true,
+      "no_bars": true,
+      "clean_no_text": true,
+      "has_provenance": true,
+      "long_video_only": true,
+      "ultra_hd_4k_available": true
+    },
+    "ultra_hd_4k": {
+      "path": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_both\\thumbnails\\thumbnail_4k_3840x2160.jpg",
+      "relative_path": "output/lionreel_cat_proof_both/thumbnails/thumbnail_4k_3840x2160.jpg",
+      "resolution": "3840x2160",
+      "size_bytes": 1131449,
+      "size_kb": 1104.9,
+      "chroma_subsampling": "4:4:4",
+      "quality_used": 94
+    },
+    "master": {
+      "path": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_both\\thumbnails\\thumbnail_master_1920x1080.jpg",
+      "relative_path": "output/lionreel_cat_proof_both/thumbnails/thumbnail_master_1920x1080.jpg",
+      "resolution": "1920x1080",
+      "size_bytes": 267093
+    },
+    "mobile_safe": {
+      "path": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_both\\thumbnail.jpg",
+      "relative_path": "output/lionreel_cat_proof_both/thumbnail.jpg",
+      "resolution": "1280x720",
+      "size_bytes": 168965
+    },
+    "test_and_compare": [
+      {
+        "id": "variant_a",
+        "template": "subject_right_text_left",
+        "path": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_both\\thumbnails\\thumbnail_variant_a_1280x720.jpg",
+        "relative_path": "output/lionreel_cat_proof_both/thumbnails/thumbnail_variant_a_1280x720.jpg",
+        "size_bytes": 114254,
+        "resolution": "1280x720"
+      },
+      {
+        "id": "variant_b",
+        "template": "bold_color_block",
+        "path": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_both\\thumbnails\\thumbnail_variant_b_1280x720.jpg",
+        "relative_path": "output/lionreel_cat_proof_both/thumbnails/thumbnail_variant_b_1280x720.jpg",
+        "size_bytes": 97143,
+        "resolution": "1280x720"
+      },
+      {
+        "id": "variant_c",
+        "template": "subject_center_text_top",
+        "path": "G:\\My Drive\\Cat make\\output\\lionreel_cat_proof_both\\thumbnails\\thumbnail_variant_c_1280x720.jpg",
+        "relative_path": "output/lionreel_cat_proof_both/thumbnails/thumbnail_variant_c_1280x720.jpg",
+        "size_bytes": 165907,
+        "resolution": "1280x720"
+      }
+    ],
+    "text_version": null
+  },
+  "hook_text": "FUNNY CAT ENERGY",
+  "thumbnail_dir": "My Drive/Cat make/output/lionreel_cat_proof_both/thumbnails",
+  "thumbnail_url": "/output/lionreel_cat_proof_both/thumbnail.jpg"
+}

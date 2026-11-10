@@ -1,0 +1,166 @@
+{
+  "categories": {
+    "curiosity_gap": {
+      "name": "Curiosity Gap",
+      "templates": [
+        "{hook} Nobody Expected What Happened When {subject} {action} {punchline}",
+        "{hook} Watch What Happens When {subject} Finds Out {punchline}",
+        "{hook} The Exact Second {subject} Realized What Happened {punchline}",
+        "{hook} Scientists Still Can't Explain Why {subject} Did This",
+        "{hook} Watch What {subject} Decided To Do Next",
+        "{hook} The One Thing {subject} Never Wanted Anyone To See",
+        "{hook} Why Does {subject} Always React Like This {punchline}",
+        "{hook} There Are Two Types Of {subject_plural}... And Then There's This"
+      ]
+    },
+    "high_energy_chaos": {
+      "name": "High Energy Chaos",
+      "templates": [
+        "{hook} {subject} Activated 3 AM Zoomies Mode {punchline}",
+        "{hook} Pure Unfiltered Chaos From {subject} {punchline}",
+        "{hook} When {subject} Chooses Violence At 2 PM {punchline}",
+        "{hook} Zero Thoughts Head Empty Just {subject} Zooming",
+        "{hook} The Drama Level On {subject} Is Off The Charts",
+        "{hook} {subject} Tried Parkour And Failed Spectacularly",
+        "{hook} Absolute Mayhem When {subject} Discovered The Laser",
+        "{hook} Instant Regret The Moment {subject} Jumped {punchline}"
+      ]
+    },
+    "heartwarming_cute": {
+      "name": "Heartwarming & Cute",
+      "templates": [
+        "{hook} The Sweetest Little {subject} You'll See Today",
+        "{hook} Tell Me {subject} Isn't The Cutest Baby In The World",
+        "{hook} Just {subject} Melting Everyone's Heart In 10 Seconds",
+        "{hook} The Way {subject} Demands Cuddles Is Everything",
+        "{hook} Daily Dose Of Serotonin Delivered By {subject}",
+        "{hook} How {subject} Asks For Love Without Making A Sound",
+        "{hook} A Tiny {subject} With The Biggest Personality",
+        "{hook} Pure Wholesome Moments With {subject} Sleeping Peacefully"
+      ]
+    },
+    "story_relatable": {
+      "name": "Story & Relatable",
+      "templates": [
+        "POV: Living With {subject} Every Single Morning {punchline}",
+        "When You Accidentally Wake Up {subject} From A Nap",
+        "How It Feels Trying To Work When {subject} Needs Attention",
+        "Me: 'Don't Do It.' {subject}: {punchline}",
+        "Life With {subject} In A Nutshell {punchline}",
+        "The Dramatic Reaction Of {subject} Over An Empty Food Bowl",
+        "When Your Boss Calls But {subject} Is In Charge",
+        "Expectation vs Reality: Adopting {subject} {punchline}"
+      ]
+    },
+    "question_engagement": {
+      "name": "Question & Engagement",
+      "templates": [
+        "Is Your {subject} Normal Or Do They Do This Too?",
+        "What Sound Is {subject} Even Trying To Make Here?",
+        "Can Someone Please Translate What {subject} Is Saying?",
+        "Would You Forgive {subject} For Doing This {punchline}",
+        "On A Scale Of 1-10, How Dramatic Is Your {subject}?",
+        "Who Allowed {subject} To Be This Relatable?",
+        "Does Anyone Else's {subject} Refuse To Follow Physics?",
+        "What Would You Name {subject} Based On This Video?"
+      ]
+    }
+  },
+  "fragments": {
+    "hooks": [
+      "Wait for it...",
+      "I was not prepared for this...",
+      "Nobody warned me...",
+      "Stop scrolling right now:",
+      "Proof that cats are liquid:",
+      "The definition of pure sass:",
+      "Actual live footage of:",
+      "Not a single thought:",
+      "In case you needed a smile:",
+      "Sound on for full effect:",
+      "Look at this tiny criminal:",
+      "Caught in 4K:",
+      "Warning: dangerously cute:",
+      "How did this even happen:",
+      "The ultimate plot twist:",
+      "Peak cat behavior detected:",
+      "My daily mood represented by:",
+      "Certified comedy gold:",
+      "This deserves an Oscar:",
+      "Wait until the very end:"
+    ],
+    "subjects_cat": [
+      "This Playful Cat",
+      "My Fluffy Cat",
+      "This Tiny Kitten",
+      "The Drama King",
+      "This Chaotic Cat",
+      "Our Resident Feline",
+      "This Curious Kitten",
+      "The Sleeping Tiger",
+      "This Little Explorer",
+      "This Sneaky Kitty",
+      "My Sweet Boy",
+      "This Curious Furball",
+      "The Quiet Kitten",
+      "This Majestic Cat",
+      "Our Little Lion"
+    ],
+    "subjects_cat_plural": [
+      "Cats",
+      "Kittens",
+      "Felines",
+      "Curious Cats",
+      "Playful Kittens"
+    ],
+    "subjects_dog": [
+      "This Golden Pup",
+      "Our Clumsy Dog",
+      "This Sweet Puppy",
+      "The Good Boy",
+      "This Energetic Dog",
+      "Our Little Guard Dog"
+    ],
+    "actions": [
+      "Attacked The Invisible Dot",
+      "Forgot How To Walk",
+      "Chased Its Own Tail",
+      "Slipped Off The Sofa",
+      "Demanded Breakfast At 4 AM",
+      "Stared Into The 5th Dimension",
+      "Spotted A Fly On The Wall",
+      "Attempted A High Jump",
+      "Fell Asleep Mid-Action",
+      "Realized The Box Was Too Small",
+      "Tried To Catch A Reflection",
+      "Defied The Laws Of Physics",
+      "Got Startled By Nothing",
+      "Protected The House From A Leaf",
+      "Demanded Scritches Immediately"
+    ],
+    "punchlines": [
+      "(Instant Regret)",
+      "(He Took That Personally)",
+      "(100% Drama)",
+      "(Watch The Reaction)",
+      "(Send Help)",
+      "(Zero Regrets)",
+      "(Pure Comedy)",
+      "(I Can't Even)",
+      "(Peak Chaos)",
+      "(Chef's Kiss)"
+    ],
+    "banned_phrases": [
+      "will go viral",
+      "viral video",
+      "watch before deleted",
+      "click here",
+      "sub for sub",
+      "100% guaranteed",
+      "shocking truth you won't believe",
+      "you won't believe",
+      "unbelievable ending",
+      "free money"
+    ]
+  }
+}

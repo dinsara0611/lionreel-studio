@@ -1,0 +1,33 @@
+{
+  "job_id": "lionreel_cat_proof_long_3m",
+  "animal_mode": "cat",
+  "video_type": "compilation",
+  "target_clips_count": 24,
+  "target_clip_sec": 7.5,
+  "initial_clip_sec": 7.5,
+  "contract_total_sec": 180.0,
+  "expected_total_sec": 180.0,
+  "strategy_used": "ladder_step_1_bank",
+  "ladder_steps_applied": [
+    "ladder_step_1_bank"
+  ],
+  "repeat_share_pct": 0.0,
+  "freshness": {
+    "new_windows": 24,
+    "reused_windows": 0,
+    "total_windows": 24,
+    "new_footage_pct": 100.0,
+    "reused_footage_pct": 0.0,
+    "reused_details": [],
+    "reused_from_jobs": [],
+    "card_line": "New footage: 100% / Reused from earlier videos: 0%"
+  },
+  "freshness_card_line": "New footage: 100% / Reused from earlier videos: 0%",
+  "status_card_line": "New footage: 100% / Reused from earlier videos: 0%",
+  "log_messages": [
+    "[PLANNER] Contract target: 180.0s (24 clips @ ~7.5s). Patience budget: 420s.",
+    "[PLANNER] Bank contains 51 verified unique candidates for cat.",
+    "[PLANNER] Long compilation mode: prioritizing fresh sources first and blending unused non-overlapping windows (51 available).",
+    "[PLANNER] Step 1 SUCCESS: 24 fresh unique clips cover 180.0s."
+  ]
+}

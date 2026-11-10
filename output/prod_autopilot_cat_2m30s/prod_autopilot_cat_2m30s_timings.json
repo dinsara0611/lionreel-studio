@@ -1,0 +1,61 @@
+{
+  "job_id": "prod_autopilot_cat_2m30s",
+  "wall_clock_start": "2026-10-12 11:27:23.812",
+  "wall_clock_end": "2026-10-12 11:27:29.729",
+  "total_wall_time_sec": 5.916,
+  "total_duration_sec": 5.916,
+  "sum_stages_sec": 5.891,
+  "unaccounted_sec": 0.025,
+  "unaccounted_pct": 0.42,
+  "stages": {
+    "startup": {
+      "duration_sec": 0.348,
+      "total_duration_sec": 0.348,
+      "exclusive_sec": 0.348,
+      "duration_ms": 348.0,
+      "percentage": 5.88,
+      "share_pct": 5.88,
+      "start_epoch": 1791784643.8127632,
+      "end_epoch": 1791784644.1607633,
+      "count": 1,
+      "parent": null
+    },
+    "prepare": {
+      "duration_sec": 5.427,
+      "total_duration_sec": 5.427,
+      "exclusive_sec": 5.427,
+      "duration_ms": 5427.1,
+      "percentage": 91.73,
+      "share_pct": 91.73,
+      "start_epoch": 1791784644.1604955,
+      "end_epoch": 1791784649.5890265,
+      "count": 1,
+      "parent": null
+    },
+    "harvest": {
+      "duration_sec": 0.006,
+      "total_duration_sec": 0.006,
+      "exclusive_sec": 0.006,
+      "duration_ms": 6.0,
+      "percentage": 0.1,
+      "share_pct": 0.1,
+      "start_epoch": 1791784649.6006677,
+      "end_epoch": 1791784649.6062925,
+      "count": 1,
+      "parent": null
+    },
+    "reserve": {
+      "duration_sec": 0.11,
+      "total_duration_sec": 0.11,
+      "exclusive_sec": 0.11,
+      "duration_ms": 110.2,
+      "percentage": 1.86,
+      "share_pct": 1.86,
+      "start_epoch": 1791784649.6062925,
+      "end_epoch": 1791784649.7160804,
+      "count": 1,
+      "parent": null
+    }
+  },
+  "table": "========================================================================\n  STAGE TIMING BREAKDOWN \u2014 JOB: prod_autopilot_cat_2m30s\n  WALL CLOCK: 2026-10-12 11:27:23.812 -> 2026-10-12 11:27:29.729\n========================================================================\nSTAGE                        | TIME (s)   | TIME (ms)    | SHARE   \n------------------------------------------------------------------------\nharvest                      | 0.01       | 6.0          |    0.1%\nstartup                      | 0.35       | 348.0        |    5.9%\nprepare                      | 5.43       | 5427.0       |   91.7%\nreserve                      | 0.11       | 110.0        |    1.9%\n------------------------------------------------------------------------\nSUBTOTAL (EXCLUSIVE)         | 5.89       | 5890.0       |   99.6%\nUNACCOUNTED GAP              | 0.03       | 30.0         |    0.4%\n------------------------------------------------------------------------\nTOTAL WALL CLOCK TIME        | 5.92       | 5916.0       | 100.0%\n========================================================================"
+}

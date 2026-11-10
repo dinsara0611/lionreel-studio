@@ -1,0 +1,13 @@
+{
+  "state": "filling",
+  "ready": 6,
+  "target": 40,
+  "target_sources": 15,
+  "sources_count": 5,
+  "chip_text": "Bank: 6 fresh clips, enough for 0 Short; filling, about 26 min to 40",
+  "pass_rate_per_hour": 0.0,
+  "verified_per_cpu_hour": 0.0,
+  "est_time_to_fill_s": 0.0,
+  "is_paused": false,
+  "last_updated": 1792989646.8774178
+}

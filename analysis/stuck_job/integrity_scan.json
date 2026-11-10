@@ -1,0 +1,708 @@
+[
+  {
+    "file": "C:\\LionReel\\cache\\cache_-dTa8gchZfc.mp4",
+    "status": "PASS",
+    "size": 25908361,
+    "mtime": "2026-10-09 14:51:15",
+    "sha256": "a7e0a69fb0c4a8a80ff8888e56e60c2f4307ba190a9b460934638dad42c16d3d"
+  },
+  {
+    "file": "C:\\LionReel\\cache\\cache_825Za_ZishQ.mp4",
+    "status": "PASS",
+    "size": 8412745,
+    "mtime": "2026-10-09 15:14:10",
+    "sha256": "b44e9afa1684e184046e32538a15e4b1baef7c5e9c4e464f0bbe0428fe8463fd"
+  },
+  {
+    "file": "C:\\LionReel\\cache\\cache_8R_7KCtShkU.mp4",
+    "status": "PASS",
+    "size": 2837486,
+    "mtime": "2026-10-04 14:45:07",
+    "sha256": "fd2cdd32951f34a11e3f6740853f1cdcbffe94f88353a3f5a4b759b7142b073f"
+  },
+  {
+    "file": "C:\\LionReel\\cache\\cache_ByH9LuSILxU.mp4",
+    "status": "PASS",
+    "size": 72116760,
+    "mtime": "2026-10-04 13:59:02",
+    "sha256": "7debc4b246c11a0ad19bc6b73380e0f007ab009aba85bd74acd6da215cd24ea5"
+  },
+  {
+    "file": "C:\\LionReel\\cache\\cache_HtLVwFo8YLw.mp4",
+    "status": "PASS",
+    "size": 21235951,
+    "mtime": "2026-10-09 14:52:02",
+    "sha256": "817423d5ad8b0cbffe1d8741cd2ebf6c25c9d79504bdcddb0e1c4a118bf7cc8a"
+  },
+  {
+    "file": "C:\\LionReel\\cache\\cache_OzAzzpR4JmY.mp4",
+    "status": "PASS",
+    "size": 18243251,
+    "mtime": "2026-10-09 14:51:51",
+    "sha256": "13f2e3fe51aa9f83ba9982ed70f82e45d8ba388f6ef63e5c83b3b64d0d1fcdf6"
+  },
+  {
+    "file": "C:\\LionReel\\cache\\cache_Rr9701_s-Qs.mp4",
+    "status": "PASS",
+    "size": 6493313,
+    "mtime": "2026-10-09 14:52:34",
+    "sha256": "7ba41a9bed78a5ad64722796be28a2b9f5863cf790fcdcdf358f3b42a090edbc"
+  },
+  {
+    "file": "C:\\LionReel\\cache\\cache_SB-qEYVdvXA.mp4",
+    "status": "PASS",
+    "size": 35401229,
+    "mtime": "2026-10-04 13:58:08",
+    "sha256": "aed900d5f9f1553835abac52499d47e29fc327c740f4237a2c3b8e1ff642117e"
+  },
+  {
+    "file": "C:\\LionReel\\cache\\cache_cMlweIcxyZQ.mp4",
+    "status": "PASS",
+    "size": 5808311,
+    "mtime": "2026-10-09 14:52:24",
+    "sha256": "ed90c69a6cbf42c33c99202048dc71b7f60ff2ee5640cac359bab01a612c264c"
+  },
+  {
+    "file": "C:\\LionReel\\cache\\cache_hY7m5jjJ9mM.mp4",
+    "status": "PASS",
+    "size": 155068191,
+    "mtime": "2026-10-04 14:45:42",
+    "sha256": "22ecbd7cb9b2f1c77731d1754bc8c11cb3ab7f4cdea64c8c11f69873d432582f"
+  },
+  {
+    "file": "C:\\LionReel\\cache\\cache_rHIm-jdjqoU.mp4",
+    "status": "PASS",
+    "size": 10158069,
+    "mtime": "2026-10-09 15:11:39",
+    "sha256": "7493cda5224b5d4b699f35893791572119d80c9ce0f19415b1b719181c7a482e"
+  },
+  {
+    "file": "C:\\LionReel\\cache\\cache_zCBhhLo6lIM.mp4",
+    "status": "PASS",
+    "size": 94035712,
+    "mtime": "2026-10-09 15:15:28",
+    "sha256": "561d5ba662ee1e17614891867a5a27302e2881ad60935183f9d612cf96a63117"
+  },
+  {
+    "file": "C:\\LionReel\\cache\\raw_ZXNIiZWklsk_1791108036.f616.mp4",
+    "status": "PASS",
+    "size": 43677101,
+    "mtime": "2026-10-04 15:34:50",
+    "sha256": "1b0a2b5a34590916b865b611022e9759ea571da8951345456c4ab403cd7a7e2f"
+  },
+  {
+    "file": "C:\\LionReel\\cache\\raw_ZXNIiZWklsk_1791108652.f616.mp4",
+    "status": "PASS",
+    "size": 43677101,
+    "mtime": "2026-10-04 15:46:53",
+    "sha256": "4345a9e279498a16b17d8b40e152bf062974cd09c24fc9a2a715970434b35617"
+  },
+  {
+    "file": "C:\\LionReel\\cache\\raw_x_rBfKdlGyQ_1791108652.mp4",
+    "status": "PASS",
+    "size": 68680376,
+    "mtime": "2026-10-04 15:45:41",
+    "sha256": "3a5b88ea64bc582b8387ffdf9e7ceeb5ee0619cce8973c6ec62dacc5d59e37b7"
+  },
+  {
+    "file": "C:\\LionReel\\cache\\sel_yt_1791105357_2.mp4",
+    "status": "PASS",
+    "size": 23409111,
+    "mtime": "2026-10-04 14:46:09",
+    "sha256": "d466f217e67dfbf4160c869d6025febc4d41a7a1ba760ff829e402a9ecbba5bc"
+  },
+  {
+    "file": "C:\\LionReel\\cache\\src_horiz_cat_chase_09.mp4",
+    "status": "PASS",
+    "size": 10869582,
+    "mtime": "2026-10-11 19:21:15",
+    "sha256": "46fca52d12c6e410e2411ca3b48d117e58264481d36d9a69518faec887fa44ff"
+  },
+  {
+    "file": "C:\\LionReel\\cache\\src_horiz_cat_garden_06.mp4",
+    "status": "PASS",
+    "size": 12704180,
+    "mtime": "2026-10-11 19:20:34",
+    "sha256": "62647de57bf715111ba8b9bd0e9643fbe5a628bb049bf9274a360145770edd88"
+  },
+  {
+    "file": "C:\\LionReel\\cache\\src_horiz_cat_relax_10.mp4",
+    "status": "PASS",
+    "size": 12593126,
+    "mtime": "2026-10-11 19:22:07",
+    "sha256": "cf91cab80e37bef825b04c9701f74e707a98e55379377283b7ad49de6425507d"
+  },
+  {
+    "file": "C:\\LionReel\\cache\\src_horiz_cat_window_07.mp4",
+    "status": "PASS",
+    "size": 10900916,
+    "mtime": "2026-10-11 19:20:47",
+    "sha256": "fdaa7cf73274a5b127d144ad81f2bb4917b18023bfda6d2c070249bd609b6c32"
+  },
+  {
+    "file": "C:\\LionReel\\cache\\src_vert_cat_curious_04.mp4",
+    "status": "PASS",
+    "size": 13808796,
+    "mtime": "2026-10-11 19:20:05",
+    "sha256": "ec764061bb86ba58a3f2dea0a5e65d3002ef6bdfe5b23add582eaa2b1444b984"
+  },
+  {
+    "file": "C:\\LionReel\\cache\\src_vert_cat_jump_02.mp4",
+    "status": "PASS",
+    "size": 14635130,
+    "mtime": "2026-10-11 19:19:36",
+    "sha256": "7e2c1c80cd953391309d9d64443d2be965c2914331f0364f5e4ea9a46a66ee5e"
+  },
+  {
+    "file": "C:\\LionReel\\cache\\src_vert_cat_nap_03.mp4",
+    "status": "PASS",
+    "size": 13200634,
+    "mtime": "2026-10-11 19:19:50",
+    "sha256": "6f298b7c676653615a1a0a0cd435f889bc1c28eed035212199457859cd133143"
+  },
+  {
+    "file": "C:\\LionReel\\cache\\src_vert_cat_play_01.mp4",
+    "status": "PASS",
+    "size": 13723676,
+    "mtime": "2026-10-11 19:19:22",
+    "sha256": "6e645bb56e23d2ea7db3955da8683e0501be1250974b829f88160c7725eb4d67"
+  },
+  {
+    "file": "C:\\LionReel\\cache\\src_vert_cat_stretch_05.mp4",
+    "status": "PASS",
+    "size": 15965769,
+    "mtime": "2026-10-11 19:20:20",
+    "sha256": "c029e65b0bf644adb2707d17d9b3af5d888b0912b2d7d568d0cbe33019e1c616"
+  },
+  {
+    "file": "C:\\LionReel\\work\\lionreel_cat_20261013_235102_dc973025\\clips\\clip_c_byh9_100_110.mp4",
+    "status": "PASS",
+    "size": 6590945,
+    "mtime": "2026-10-14 00:01:28",
+    "sha256": "c6101b0e4ac2281597f34db2e544ed05f9bcb16fe8ce0270bae8b4d78196865e"
+  },
+  {
+    "file": "C:\\LionReel\\work\\lionreel_cat_20261013_235102_dc973025\\clips\\clip_c_cache_ByH9LuSILxU_167_177_rep11.mp4",
+    "status": "PASS",
+    "size": 5266151,
+    "mtime": "2026-10-14 00:19:29",
+    "sha256": "2eaf6061768873493808026a58baa5ebd5b0385611749178ec2809ed58e59d03"
+  },
+  {
+    "file": "C:\\LionReel\\work\\lionreel_cat_20261013_235102_dc973025\\clips\\clip_c_cache_ByH9LuSILxU_270_275.mp4",
+    "status": "FAIL",
+    "error": "[h264 @ 0000019c42aa6300] Invalid NAL unit size (-570294196 > 5120).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[aac @ 0000019c42aad1c0] Number of scalefactor bands in group (53) exceeds limit (49).\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1632699283 > 30929).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 30933\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1632699283 > 30929).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1648325623 > 4734).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 4738\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1648325623 > 4734).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1836440400 > 5067).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 5071\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1836440400 > 5067).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-136031465 > 29796).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 29800\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-136031465 > 29796).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (738169394 > 3958).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 3962\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (738169394 > 3958).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1448778506 > 3458).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 3462\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1448778506 > 3458).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1805316637 > 37741).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 37745\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1805316637 > 37741).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-458778256 > 5874).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 5878\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-458778256 > 5874).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (196725947 > 6940).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 6944\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (196725947 > 6940).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (105235861 > 49213).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 49217\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (105235861 > 49213).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1483174310 > 14108).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 14112\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1483174310 > 14108).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1029021099 > 14765).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 14769\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1029021099 > 14765).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1836080817 > 56654).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 56658\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1836080817 > 56654).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-74218589 > 13765).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 13769\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-74218589 > 13765).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (492005987 > 12133).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 12137\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (492005987 > 12133).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-651475958 > 46474).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 46478\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-651475958 > 46474).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-182627324 > 11227).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 11231\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-182627324 > 11227).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (222083408 > 10281).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 10285\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (222083408 > 10281).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1309511234 > 38621).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 38625\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1309511234 > 38621).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (103293636 > 18158).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 18162\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (103293636 > 18158).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1737028311 > 19885).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 19889\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1737028311 > 19885).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1100396793 > 14232).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 14236\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1100396793 > 14232).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1080441921 > 933).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 937\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1080441921 > 933).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1551057764 > 836).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 840\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1551057764 > 836).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1139648998 > 20024).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 20028\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1139648998 > 20024).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (514391746 > 2272).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 2276\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (514391746 > 2272).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1971498758 > 3365).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 3369\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1971498758 > 3365).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1977557833 > 21794).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 21798\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1977557833 > 21794).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1141817642 > 2462).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 2466\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1141817642 > 2462).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-962196449 > 2891).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 2895\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-962196449 > 2891).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1679490697 > 18831).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 18835\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1679490697 > 18831).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-574776687 > 2338).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 2342\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-574776687 > 2338).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1370815102 > 2469).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 2473\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1370815102 > 2469).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-465041571 > 17586).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 17590\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-465041571 > 17586).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1325456777 > 1432).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 1436\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1325456777 > 1432).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-562936047 > 1055).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 1059\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-562936047 > 1055).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-835428381 > 21809).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 21813\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-835428381 > 21809).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1755554281 > 2770).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 2774\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1755554281 > 2770).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-895216260 > 3379).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 3383\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-895216260 > 3379).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (2089868452 > 18336).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 18340\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (2089868452 > 18336).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1956660615 > 1508).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 1512\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1956660615 > 1508).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-792755031 > 2237).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 2241\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-792755031 > 2237).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (771210057 > 16523).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 16527\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (771210057 > 16523).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1166960639 > 1834).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 1838\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1166960639 > 1834).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1502823223 > 1030).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 1034\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1502823223 > 1030).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-728130624 > 15406).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 15410\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-728130624 > 15406).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1709501744 > 2199).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 2203\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1709501744 > 2199).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1187190341 > 1924).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 1928\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1187190341 > 1924).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-37751682 > 18814).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 18818\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-37751682 > 18814).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1748374877 > 1416).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 1420\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1748374877 > 1416).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-564630546 > 1277).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 1281\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-564630546 > 1277).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-5063555 > 19941).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 19945\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-5063555 > 19941).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-520037300 > 1149).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 1153\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-520037300 > 1149).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1655105063 > 1649).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 1653\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1655105063 > 1649).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1797672516 > 16963).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 16967\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1797672516 > 16963).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1618181076 > 1609).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 1613\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1618181076 > 1609).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (105548705 > 2218).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 2222\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (105548705 > 2218).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1465165687 > 22060).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 22064\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1465165687 > 22060).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1721822718 > 1295).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 1299\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1721822718 > 1295).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-859988911 > 1746).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 1750\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-859988911 > 1746).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1851914219 > 22924).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 22928\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1851914219 > 22924).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-266675164 > 1511).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 1515\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-266675164 > 1511).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (928936898 > 1411).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 1415\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (928936898 > 1411).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1747313996 > 24961).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 24965\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1747313996 > 24961).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (880642642 > 3424).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 3428\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (880642642 > 3424).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1993933502 > 3592).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 3596\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1993933502 > 3592).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-552977612 > 21542).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 21546\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-552977612 > 21542).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (55939521 > 2698).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 2702\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (55939521 > 2698).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (941542427 > 1949).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 1953\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (941542427 > 1949).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-353013257 > 20957).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 20961\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-353013257 > 20957).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1486497711 > 2857).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 2861\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1486497711 > 2857).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-733394913 > 2081).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 2085\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-733394913 > 2081).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1064271765 > 16587).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 16591\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1064271765 > 16587).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (874769707 > 1013).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 1017\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (874769707 > 1013).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1668515552 > 626).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 630\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1668515552 > 626).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1822647449 > 18646).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 18650\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1822647449 > 18646).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (805755200 > 1965).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 1969\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (805755200 > 1965).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (568470304 > 2761).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 2765\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (568470304 > 2761).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-590827998 > 17949).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 17953\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-590827998 > 17949).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (611635032 > 1166).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 1170\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (611635032 > 1166).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-720813832 > 739).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 743\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-720813832 > 739).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (298306708 > 20089).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 20093\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (298306708 > 20089).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-312099568 > 1668).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 1672\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-312099568 > 1668).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (2018956747 > 2047).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 2051\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (2018956747 > 2047).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1584729012 > 20908).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 20912\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1584729012 > 20908).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1225132638 > 3197).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 3201\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1225132638 > 3197).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1912244534 > 2366).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 2370\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1912244534 > 2366).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (651305666 > 20814).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 20818\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (651305666 > 20814).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-2011902780 > 2154).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 2158\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-2011902780 > 2154).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-77281849 > 2507).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 2511\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-77281849 > 2507).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1842500814 > 20523).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 20527\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1842500814 > 20523).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (643892492 > 2366).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 2370\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (643892492 > 2366).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-2074057297 > 1766).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 1770\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-2074057297 > 1766).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1883259203 > 21982).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 21986\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1883259203 > 21982).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1362369190 > 1917).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 1921\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1362369190 > 1917).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1816111472 > 1866).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 1870\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1816111472 > 1866).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-641451486 > 21245).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 21249\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-641451486 > 21245).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (2055927949 > 2781).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 2785\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (2055927949 > 2781).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1292475853 > 2107).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 2111\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1292475853 > 2107).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (270947033 > 26993).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 26997\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (270947033 > 26993).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-629286297 > 4374).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 4378\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-629286297 > 4374).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1746906448 > 4099).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 4103\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1746906448 > 4099).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-2004821997 > 20570).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 20574\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-2004821997 > 20570).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1778260221 > 2959).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 2963\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1778260221 > 2959).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1523458133 > 2363).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 2367\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1523458133 > 2363).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-751130557 > 27287).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 27291\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-751130557 > 27287).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1718965097 > 3995).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 3999\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1718965097 > 3995).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-613268723 > 4524).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 4528\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-613268723 > 4524).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-260217959 > 31152).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 31156\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-260217959 > 31152).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1404554324 > 3290).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 3294\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1404554324 > 3290).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1833233501 > 3773).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 3777\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1833233501 > 3773).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1099022332 > 21534).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 21538\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1099022332 > 21534).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1698267571 > 2168).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 2172\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1698267571 > 2168).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-956981277 > 2672).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 2676\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-956981277 > 2672).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-158120891 > 20082).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 20086\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-158120891 > 20082).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-2127966433 > 2067).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 2071\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-2127966433 > 2067).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (989107539 > 2221).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 2225\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (989107539 > 2221).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1686029406 > 19268).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 19272\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1686029406 > 19268).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1763762130 > 3115).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 3119\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1763762130 > 3115).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-987427873 > 2341).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 2345\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-987427873 > 2341).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (290547950 > 22033).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 22037\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (290547950 > 22033).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1093321663 > 3778).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 3782\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1093321663 > 3778).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (427743281 > 2733).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 2737\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (427743281 > 2733).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1314584951 > 24290).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 24294\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1314584951 > 24290).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-91794518 > 3295).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 3299\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-91794518 > 3295).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1759926133 > 3380).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 3384\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1759926133 > 3380).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1927443713 > 22526).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 22530\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1927443713 > 22526).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (445828417 > 4231).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 4235\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (445828417 > 4231).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1905872091 > 3143).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 3147\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1905872091 > 3143).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1398155322 > 23848).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 23852\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1398155322 > 23848).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (608641112 > 2860).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 2864\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (608641112 > 2860).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1613389409 > 3308).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 3312\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1613389409 > 3308).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1395976230 > 25364).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 25368\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1395976230 > 25364).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (755687694 > 3796).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 3800\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (755687694 > 3796).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (82089729 > 4062).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 4066\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (82089729 > 4062).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-330377714 > 25760).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 25764\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-330377714 > 25760).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-276925642 > 3220).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 3224\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-276925642 > 3220).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (88345085 > 3305).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 3309\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (88345085 > 3305).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (416871720 > 27516).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 27520\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (416871720 > 27516).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1010231029 > 3813).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 3817\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1010231029 > 3813).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1744242741 > 3624).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 3628\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1744242741 > 3624).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-985823091 > 25348).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 25352\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-985823091 > 25348).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1493371284 > 4273).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 4277\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-1493371284 > 4273).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-530469560 > 4920).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 4924\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-530469560 > 4920).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-493735609 > 31960).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 31964\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-493735609 > 31960).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-306300026 > 4410).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 4414\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-306300026 > 4410).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (37305559 > 4013).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 4017\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (37305559 > 4013).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (540846923 > 25168).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 25172\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (540846923 > 25168).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1284030941 > 4639).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 4643\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (1284030941 > 4639).\n[h264 @ 0000019c42aa6300] Error splitting the input into NAL units.\n[h264 @ 0000019c42aa6300] Invalid NAL unit size (-232130433 > 4194).\n[h264 @ 0000019c42aa6300] missing picture in access unit with size 4198\n[aac @ 0000019c42aaf8c0] Number of scalefactor bands in group (53) exceeds limit (49).\n[aist#0:1/aac @ 0000019c42a9b2c0] [dec:aac @ 0000019c42b19540] Error submitting packet to decoder: Invalid data found when processing input\n[aist#0:1/aac @ 0000019c42a9b2c0] [dec:aac @ 0000019c42b19540] Error processing packet in decoder: Invalid data found when processing input\n[aist#0:1/aac @ 0000019c42a9b2c0] [dec:aac @ 0000019c42b19540] Task finished with error code: -1094995529 (Invalid data found when processing input)\n[aist#0:1/aac @ 0000019c42a9b2c0] [dec:aac @ 0000019c42b19540] Terminating thread with return code -1094995529 (Invalid data found when processing input)\n[h264 @ 0000019c42a998c0] Invalid NAL unit size (-570294196 > 5120).\n[h264 @ 0000019c42a998c0] Error splitting the input into NAL units.\n[aost#0:1/pcm_s16le @ 0000019c42f28fc0] Could not open encoder before EOF\n[aost#0:1/pcm_s16le @ 0000019c42f28fc0] Task finished with error code: -22 (Invalid argument)\n[aost#0:1/pcm_s16le @ 0000019c42f28fc0] Terminating thread with return code -22 (Invalid argument)\n[h264 @ 0000019c42a91140] Invalid NAL unit size (-1632699283 > 30929).\n[h264 @ 0000019c42a91140] Error splitting the input into NAL units.\n[h264 @ 0000019c42b14f80] Invalid NAL unit size (-1648325623 > 4734).\n[h264 @ 0000019c42b14f80] Error splitting the input into NAL units.\n[h264 @ 0000019c43330a80] Invalid NAL unit size (1836440400 > 5067).\n[h264 @ 0000019c43330a80] Error splitting the input into NAL units.\n[h264 @ 0000019c42b0f7c0] Invalid NAL unit size (-136031465 > 29796).\n[h264 @ 0000019c42b0f7c0] Error splitting the input into NAL units.\n[h264 @ 0000019c42a9a8c0] Invalid NAL unit size (738169394 > 3958).\n[h264 @ 0000019c42a9a8c0] Error splitting the input into NAL units.\n[h264 @ 0000019c430f3e00] Invalid NAL unit size (-1448778506 > 3458).\n[h264 @ 0000019c430f3e00] Error splitting the input into NAL units.\n[h264 @ 0000019c430f4900] Invalid NAL unit size (-1805316637 > 37741).\n[h264 @ 0000019c430f4900] Error splitting the input into NAL units.\n[h264 @ 0000019c42b24c00] Invalid NAL unit size (-458778256 > 5874).\n[h264 @ 0000019c42b24c00] Error splitting the input into NAL units.\n[h264 @ 0000019c42b255c0] Invalid NAL unit size (196725947 > 6940).\n[h264 @ 0000019c42b255c0] Error splitting the input into NAL units.\n[h264 @ 0000019c42b4c440] Invalid NAL unit size (105235861 > 49213).\n[h264 @ 0000019c42b4c440] Error splitting the input into NAL units.\n[h264 @ 0000019c42b4e800] Invalid NAL unit size (-1483174310 > 14108).\n[h264 @ 0000019c42b4e800] Error splitting the input into NAL units.\n[vist#0:0/h264 @ 0000019c42d135c0] [dec:h264 @ 0000019c42d3fdc0] Error submitting packet to decoder: Invalid data found when processing input\n[vist#0:0/h264 @ 0000019c42d135c0] [dec:h264 @ 0000019c42d3fdc0] Error processing packet in decoder: Invalid data found when processing input\n[vist#0:0/h264 @ 0000019c42d135c0] [dec:h264 @ 0000019c42d3fdc0] Task finished with error code: -1094995529 (Invalid data found when processing input)\n[vist#0:0/h264 @ 0000019c42d135c0] [dec:h264 @ 0000019c42d3fdc0] Terminating thread with return code -1094995529 (Invalid data found when processing input)\n[vost#0:0/wrapped_avframe @ 0000019c42f2a3c0] Could not open encoder before EOF\n[vost#0:0/wrapped_avframe @ 0000019c42f2a3c0] Task finished with error code: -22 (Invalid argument)\n[vost#0:0/wrapped_avframe @ 0000019c42f2a3c0] Terminating thread with return code -22 (Invalid argument)\n[h264 @ 0000019c42aae640] Invalid NAL unit size (1029021099 > 14765).\n[h264 @ 0000019c42aae640] Error splitting the input into NAL units.\n[out#0/null @ 0000019c42a9b480] Nothing was written into output file, because at least one of its streams received no packets.",
+    "size": 4023133,
+    "mtime": "2026-10-14 00:19:23",
+    "sha256": "42bd8c1cfff51ae78d3cb37aa0028eeed1adc2b414fffd34957d22767dac8bf7"
+  },
+  {
+    "file": "C:\\LionReel\\work\\lionreel_cat_20261013_235102_dc973025\\clips\\clip_c_cache_ByH9LuSILxU_300_305.mp4",
+    "status": "PASS",
+    "size": 6372078,
+    "mtime": "2026-10-14 00:11:03",
+    "sha256": "6881c8f236842b4872648a8fadd35ca5b79dd972171b2d2e73a81cc0b10cd73c"
+  },
+  {
+    "file": "C:\\LionReel\\work\\lionreel_cat_20261013_235102_dc973025\\clips\\clip_c_cache_Rr9701_s-Qs_2_12.mp4",
+    "status": "PASS",
+    "size": 6378352,
+    "mtime": "2026-10-14 00:15:15",
+    "sha256": "79d2a76e6e45a875a384b66e57fd49a2180e93d32fb84d6ea164ad4db651d0e1"
+  },
+  {
+    "file": "C:\\LionReel\\work\\lionreel_cat_20261013_235102_dc973025\\clips\\clip_c_cache_Rr9701_s-Qs_2_12_rep1.mp4",
+    "status": "PASS",
+    "size": 6372078,
+    "mtime": "2026-10-14 00:13:04",
+    "sha256": "6881c8f236842b4872648a8fadd35ca5b79dd972171b2d2e73a81cc0b10cd73c"
+  },
+  {
+    "file": "C:\\LionReel\\work\\lionreel_cat_20261013_235102_dc973025\\clips\\clip_c_cache_Rr9701_s-Qs_2_12_rep2.mp4",
+    "status": "PASS",
+    "size": 6784554,
+    "mtime": "2026-10-14 00:06:40",
+    "sha256": "69ec858aa5f38d30b3d54d3190a696ff8f83f70e00a0cdccb828f81da2b5ba33"
+  },
+  {
+    "file": "C:\\LionReel\\work\\lionreel_cat_20261013_235102_dc973025\\clips\\clip_c_rr_5_15.mp4",
+    "status": "PASS",
+    "size": 6784554,
+    "mtime": "2026-10-14 00:06:52",
+    "sha256": "69ec858aa5f38d30b3d54d3190a696ff8f83f70e00a0cdccb828f81da2b5ba33"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\cache_-dTa8gchZfc.mp4",
+    "status": "PASS",
+    "size": 25908361,
+    "mtime": "2026-10-09 14:51:15",
+    "sha256": "a7e0a69fb0c4a8a80ff8888e56e60c2f4307ba190a9b460934638dad42c16d3d"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\cache_825Za_ZishQ.mp4",
+    "status": "PASS",
+    "size": 8412745,
+    "mtime": "2026-10-09 15:14:10",
+    "sha256": "b44e9afa1684e184046e32538a15e4b1baef7c5e9c4e464f0bbe0428fe8463fd"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\cache_8R_7KCtShkU.mp4",
+    "status": "PASS",
+    "size": 2837486,
+    "mtime": "2026-10-04 14:45:07",
+    "sha256": "fd2cdd32951f34a11e3f6740853f1cdcbffe94f88353a3f5a4b759b7142b073f"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\cache_ByH9LuSILxU.mp4",
+    "status": "PASS",
+    "size": 72116760,
+    "mtime": "2026-10-04 13:59:02",
+    "sha256": "7debc4b246c11a0ad19bc6b73380e0f007ab009aba85bd74acd6da215cd24ea5"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\cache_F9-YYLrUx70.mp4",
+    "status": "PASS",
+    "size": 29969175,
+    "mtime": "2026-10-09 14:52:12",
+    "sha256": "a3afab75dc3d27fc7e94e65a28348035d7de3c70de5bcf1a0fdd2e6250c175c5"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\cache_HtLVwFo8YLw.mp4",
+    "status": "PASS",
+    "size": 21235951,
+    "mtime": "2026-10-09 14:52:02",
+    "sha256": "817423d5ad8b0cbffe1d8741cd2ebf6c25c9d79504bdcddb0e1c4a118bf7cc8a"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\cache_KWA1jfqvZmg.mp4",
+    "status": "PASS",
+    "size": 3866188,
+    "mtime": "2026-10-09 14:51:24",
+    "sha256": "7b03938739e41fd46001d404bd71d2a41c39cf150da22709a34d8e589a3570ba"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\cache_NYKzSArtwcs.mp4",
+    "status": "PASS",
+    "size": 1036723,
+    "mtime": "2026-10-09 15:10:35",
+    "sha256": "1344fdfefe1a950e84b4de91a005743e5f71f3fcaa9cf53c3e811d899e2d3d13"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\cache_OzAzzpR4JmY.mp4",
+    "status": "PASS",
+    "size": 18243251,
+    "mtime": "2026-10-09 14:51:51",
+    "sha256": "13f2e3fe51aa9f83ba9982ed70f82e45d8ba388f6ef63e5c83b3b64d0d1fcdf6"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\cache_Rr9701_s-Qs.mp4",
+    "status": "PASS",
+    "size": 6493313,
+    "mtime": "2026-10-09 14:52:34",
+    "sha256": "7ba41a9bed78a5ad64722796be28a2b9f5863cf790fcdcdf358f3b42a090edbc"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\cache_SB-qEYVdvXA.mp4",
+    "status": "PASS",
+    "size": 35401229,
+    "mtime": "2026-10-04 13:58:08",
+    "sha256": "aed900d5f9f1553835abac52499d47e29fc327c740f4237a2c3b8e1ff642117e"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\cache_cMlweIcxyZQ.mp4",
+    "status": "PASS",
+    "size": 5808311,
+    "mtime": "2026-10-09 14:52:24",
+    "sha256": "ed90c69a6cbf42c33c99202048dc71b7f60ff2ee5640cac359bab01a612c264c"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\cache_cVwLeDUCGeM.mp4",
+    "status": "PASS",
+    "size": 5168735,
+    "mtime": "2026-10-09 15:10:58",
+    "sha256": "398cd90776ccc0c46120330ab1a31af6afaf3e3a62ed10857f87876bd7f96cdc"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\cache_hY7m5jjJ9mM.mp4",
+    "status": "PASS",
+    "size": 155068191,
+    "mtime": "2026-10-04 14:45:42",
+    "sha256": "22ecbd7cb9b2f1c77731d1754bc8c11cb3ab7f4cdea64c8c11f69873d432582f"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\cache_rHIm-jdjqoU.mp4",
+    "status": "PASS",
+    "size": 10158069,
+    "mtime": "2026-10-09 15:11:39",
+    "sha256": "7493cda5224b5d4b699f35893791572119d80c9ce0f19415b1b719181c7a482e"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\cache_uz47bjCw6c8.mp4",
+    "status": "PASS",
+    "size": 1508662,
+    "mtime": "2026-10-09 15:10:45",
+    "sha256": "d1768857f3b5500f03f44cc2b1b9e8e7bb3b7f63ec203ed3b72c06316f2391c0"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\cache_wWiSkRQsXvE.mp4",
+    "status": "PASS",
+    "size": 1839290,
+    "mtime": "2026-10-09 14:51:32",
+    "sha256": "5d9ae36bdac77fb7253db1f6e1b7d5cd1b0e8b487562bb5c460acde4293c27b9"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\cache_zCBhhLo6lIM.mp4",
+    "status": "PASS",
+    "size": 94035712,
+    "mtime": "2026-10-09 15:15:28",
+    "sha256": "561d5ba662ee1e17614891867a5a27302e2881ad60935183f9d612cf96a63117"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_long_source_1.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 000001b55e0a4640] moov atom not found\n[in#0 @ 000001b55e0a4240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_long_source_1.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:51:09",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_long_source_2.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 0000024625ee4640] moov atom not found\n[in#0 @ 0000024625ee4240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_long_source_2.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:51:09",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_1.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 0000020d7e3b4640] moov atom not found\n[in#0 @ 0000020d7e3b4240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_1.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:47",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_10.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 000001b1ea794640] moov atom not found\n[in#0 @ 000001b1ea794240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_10.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:48",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_11.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 0000024cfa674640] moov atom not found\n[in#0 @ 0000024cfa674240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_11.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:48",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_12.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 000002637a674640] moov atom not found\n[in#0 @ 000002637a674240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_12.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:48",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_13.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 000001adf1d14640] moov atom not found\n[in#0 @ 000001adf1d14240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_13.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:48",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_14.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 000001e89c494640] moov atom not found\n[in#0 @ 000001e89c494240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_14.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:48",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_15.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 0000023bffdb4640] moov atom not found\n[in#0 @ 0000023bffdb4240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_15.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:48",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_16.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 0000027ed8ef4640] moov atom not found\n[in#0 @ 0000027ed8ef4240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_16.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:48",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_17.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 0000016d569d4640] moov atom not found\n[in#0 @ 0000016d569d4240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_17.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:48",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_18.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 00000296de5b4640] moov atom not found\n[in#0 @ 00000296de5b4240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_18.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:48",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_19.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 000002b377934640] moov atom not found\n[in#0 @ 000002b377934240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_19.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:48",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_2.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 0000023afa6b4640] moov atom not found\n[in#0 @ 0000023afa6b4240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_2.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:47",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_20.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 0000026dd6754640] moov atom not found\n[in#0 @ 0000026dd6754240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_20.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:48",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_21.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 0000026f29b54640] moov atom not found\n[in#0 @ 0000026f29b54240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_21.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:48",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_22.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 0000021dfdc54640] moov atom not found\n[in#0 @ 0000021dfdc54240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_22.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:48",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_23.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 00000213dbd14640] moov atom not found\n[in#0 @ 00000213dbd14240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_23.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:48",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_24.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 000001f2e35f4640] moov atom not found\n[in#0 @ 000001f2e35f4240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_24.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:48",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_25.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 000002f7bbcf4640] moov atom not found\n[in#0 @ 000002f7bbcf4240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_25.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:48",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_26.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 0000024491a94640] moov atom not found\n[in#0 @ 0000024491a94240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_26.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:48",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_27.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 0000027e788b4640] moov atom not found\n[in#0 @ 0000027e788b4240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_27.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:48",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_28.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 000001f93c354640] moov atom not found\n[in#0 @ 000001f93c354240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_28.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:48",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_29.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 000002a4e1674640] moov atom not found\n[in#0 @ 000002a4e1674240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_29.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:48",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_3.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 000002f75d7a4640] moov atom not found\n[in#0 @ 000002f75d7a4240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_3.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:47",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_30.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 000001e7af1b4640] moov atom not found\n[in#0 @ 000001e7af1b4240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_30.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:48",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_31.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 000001b45b074640] moov atom not found\n[in#0 @ 000001b45b074240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_31.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:48",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_32.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 000001d004b74640] moov atom not found\n[in#0 @ 000001d004b74240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_32.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:48",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_33.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 000001dbf1634640] moov atom not found\n[in#0 @ 000001dbf1634240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_33.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:48",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_34.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 0000022810034640] moov atom not found\n[in#0 @ 0000022810034240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_34.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:48",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_4.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 0000028d13d94640] moov atom not found\n[in#0 @ 0000028d13d94240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_4.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:47",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_5.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 000001dba3434640] moov atom not found\n[in#0 @ 000001dba3434240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_5.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:47",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_6.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 00000219953b4640] moov atom not found\n[in#0 @ 00000219953b4240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_6.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:47",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_7.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 0000022a56e34640] moov atom not found\n[in#0 @ 0000022a56e34240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_7.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:48",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_8.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 00000219e8e14640] moov atom not found\n[in#0 @ 00000219e8e14240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_8.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:48",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_source_9.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 00000244949e4640] moov atom not found\n[in#0 @ 00000244949e4240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_source_9.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:03:48",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_src_1.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 000001fe32b94640] moov atom not found\n[in#0 @ 000001fe32b94240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_src_1.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:51:09",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_src_2.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 000001bca9ad4640] moov atom not found\n[in#0 @ 000001bca9ad4240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_src_2.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:51:09",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_src_3.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 0000021229e44640] moov atom not found\n[in#0 @ 0000021229e44240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_src_3.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:51:09",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\dummy_src_4.mp4",
+    "status": "FAIL",
+    "error": "[mov,mp4,m4a,3gp,3g2,mj2 @ 00000246fda94640] moov atom not found\n[in#0 @ 00000246fda94240] Error opening input: Invalid data found when processing input\nError opening input file G:\\My Drive\\Cat make\\raw\\dummy_src_4.mp4.\nError opening input files: Invalid data found when processing input",
+    "size": 1024,
+    "mtime": "2026-10-12 05:51:09",
+    "sha256": "35ae5091b37e8f0f306833ef57a635f9dc06738d7f4e563a610eec2adb26fe28"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\raw_ZXNIiZWklsk_1791108036.f616.mp4",
+    "status": "PASS",
+    "size": 43677101,
+    "mtime": "2026-10-04 15:34:50",
+    "sha256": "1b0a2b5a34590916b865b611022e9759ea571da8951345456c4ab403cd7a7e2f"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\raw_ZXNIiZWklsk_1791108652.f616.mp4",
+    "status": "PASS",
+    "size": 43677101,
+    "mtime": "2026-10-04 15:46:53",
+    "sha256": "4345a9e279498a16b17d8b40e152bf062974cd09c24fc9a2a715970434b35617"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\raw_x_rBfKdlGyQ_1791108652.mp4",
+    "status": "PASS",
+    "size": 68680376,
+    "mtime": "2026-10-04 15:45:41",
+    "sha256": "3a5b88ea64bc582b8387ffdf9e7ceeb5ee0619cce8973c6ec62dacc5d59e37b7"
+  },
+  {
+    "file": "G:\\My Drive\\Cat make\\raw\\sel_yt_1791105357_2.mp4",
+    "status": "PASS",
+    "size": 23409111,
+    "mtime": "2026-10-04 14:46:09",
+    "sha256": "d466f217e67dfbf4160c869d6025febc4d41a7a1ba760ff829e402a9ecbba5bc"
+  }
+]

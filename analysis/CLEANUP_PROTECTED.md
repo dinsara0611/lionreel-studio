@@ -1,0 +1,315 @@
+# LionReel Studio — Protected Assets Specification (Phase 1)
+
+**Derived From**: Playwright HAR Network Trace, UI Freeze Manifest, Backend AST Import Graph, Runtime Databases & Production Deliverables.
+
+## 1. Frozen UI Assets (ui_freeze_manifest.json)
+- `gui/app.js` (SHA-256: 5a7d8f43e652efca..., Size: 598.1 KB)
+- `gui/fonts/fonts.css` (SHA-256: d97adf17e053aac0..., Size: 1.4 KB)
+- `gui/fonts/ibm-plex-mono-400-normal.woff2` (SHA-256: 08949f728dc52d52..., Size: 14.4 KB)
+- `gui/fonts/ibm-plex-mono-600-normal.woff2` (SHA-256: 0d1f0b8d0722224e..., Size: 15.3 KB)
+- `gui/fonts/ibm-plex-sans-400-normal.woff2` (SHA-256: e2291e842cf5af16..., Size: 44.6 KB)
+- `gui/fonts/ibm-plex-sans-600-normal.woff2` (SHA-256: e2291e842cf5af16..., Size: 44.6 KB)
+- `gui/index.html` (SHA-256: 1477b3ff79c30353..., Size: 307.8 KB)
+- `gui/lion_logo.png` (SHA-256: 2a4ad8f9e59ec25f..., Size: 27.1 KB)
+- `gui/lion_logo.svg` (SHA-256: 9cfa5ca0531fec74..., Size: 672 B)
+- `gui/style.css` (SHA-256: 1b64eab0587b5b3e..., Size: 217.6 KB)
+- `gui/tour_strings.js` (SHA-256: 603f89e227cf682a..., Size: 6.9 KB)
+
+## 2. Protected Directory Prefixes
+- `C:\LionReel\data`
+- `C:\LionReel\models`
+- `C:\LionReel\venv`
+- `config`
+- `data`
+- `finished`
+- `gui\fonts`
+- `scripts`
+- `tests`
+
+## 3. Core Backend Modules Traced via Import Graph
+- `auto_reframe.py`
+- `bank_enlist.py`
+- `canonical_window.py`
+- `clip_bank_filler.py`
+- `clip_ledger.py`
+- `deliverables_manager.py`
+- `edl_manager.py`
+- `engine_lock.py`
+- `feedback_manager.py`
+- `fulfillment_planner.py`
+- `funny_event_detector.py`
+- `harvest_worker.py`
+- `job_options.py`
+- `keep_work.py`
+- `lion_automate_v97.py`
+- `metadata_generator.py`
+- `overlay_text_detector.py`
+- `pet_detector.py`
+- `qa_check.py`
+- `report_generator.py`
+- `run_real_3min_job.py`
+- `safe_cleanup.py`
+- `scripts/analyze_backend_and_data_usage.py`
+- `scripts/audit_layout_a9.py`
+- `scripts/build_cleanup_plan.py`
+- `scripts/capture_export_suite.py`
+- `scripts/capture_feedback_ui_screenshots.py`
+- `scripts/capture_full_suite.py`
+- `scripts/capture_master_playwright_suite.py`
+- `scripts/capture_recording_frames.py`
+- `scripts/capture_render_screen_playwright.py`
+- `scripts/check_contracts.py`
+- `scripts/check_no_emoji.py`
+- `scripts/check_proof_files.py`
+- `scripts/check_ui_tells.py`
+- `scripts/create_desktop_shortcut.py`
+- `scripts/create_final_backup.py`
+- `scripts/diagnose_funny_moments.py`
+- `scripts/download_fonts.py`
+- `scripts/execute_final_cleanup_plan.py`
+- `scripts/execute_quarantine.py`
+- `scripts/find_ui_ids.py`
+- `scripts/generate_10_new_videos.py`
+- `scripts/generate_lucide_sprite.py`
+- `scripts/get_bank_stats.py`
+- `scripts/inject_sprite.py`
+- `scripts/make_gold_set.py`
+- `scripts/record_ui_har_and_manifest.py`
+- `scripts/record_ui_in_use_and_baseline.py`
+- `scripts/rerender_10_diagnosed.py`
+- `scripts/rescan_bank_clean_and_types.py`
+- `scripts/search_code.py`
+- `scripts/test_metadata_grammar.py`
+- `scripts/test_part_a_backend.py`
+- `scripts/test_part_a_ui.py`
+- `scripts/test_safe_cleanup_flow.py`
+- `scripts/verify_budgets.py`
+- `scripts/verify_screenshots_pixel_perfect.py`
+- `source_utils.py`
+- `stage_estimator.py`
+- `stage_state_machine.py`
+- `stage_timeouts.py`
+- `stage_timer.py`
+- `system_power.py`
+- `tests/test_acceptance_sandbox.py`
+- `tests/test_audio_video_quality.py`
+- `tests/test_autopilot_pipeline.py`
+- `tests/test_autopilot_sandbox_matrix.py`
+- `tests/test_back_to_back_jobs.py`
+- `tests/test_clip_bank_filler.py`
+- `tests/test_contract_ui_cli.py`
+- `tests/test_download_center.py`
+- `tests/test_edit_alignment.py`
+- `tests/test_edit_step_e2e.py`
+- `tests/test_export_fix3_contract.py`
+- `tests/test_export_screen_acceptance.py`
+- `tests/test_export_ui_contract.py`
+- `tests/test_fix11_loop_and_harvest.py`
+- `tests/test_fix14_ledger_and_waiting.py`
+- `tests/test_fix16_time_selection_e2e.py`
+- `tests/test_fix6_backend.py`
+- `tests/test_fresh_footage_contracts.py`
+- `tests/test_fresh_footage_shortage_suite.py`
+- `tests/test_fulfillment_planner.py`
+- `tests/test_funny_event_detector.py`
+- `tests/test_library_reconciliation.py`
+- `tests/test_long_video_compilation.py`
+- `tests/test_long_video_enhancements.py`
+- `tests/test_long_video_speedpass_fixes.py`
+- `tests/test_mode_contract_matrix.py`
+- `tests/test_mode_contracts.py`
+- `tests/test_pipeline_symptoms.py`
+- `tests/test_playwright_acceptance.py`
+- `tests/test_playwright_fix14.py`
+- `tests/test_playwright_long_video.py`
+- `tests/test_playwright_stuck_job.py`
+- `tests/test_preflight_dialog_harvest.py`
+- `tests/test_report_fix_contract.py`
+- `tests/test_report_generator.py`
+- `tests/test_safe_cleanup.py`
+- `tests/test_sandbox_long_thumbnails.py`
+- `tests/test_sandbox_stuck_repro.py`
+- `tests/test_shortage_fix2.py`
+- `tests/test_stage_estimator.py`
+- `tests/test_stage_order.py`
+- `tests/test_stage_timer_accuracy.py`
+- `tests/test_stage_timer_exclusive_and_shares.py`
+- `tests/test_stuck_job_watchdog.py`
+- `tests/test_three_fixes_verification.py`
+- `tests/test_thumbnail_4k.py`
+- `tests/test_thumbnail_contract_failing.py`
+- `tests/test_thumbnail_fix_suite.py`
+- `tests/test_thumbnail_maker.py`
+- `tests/test_title_grammar_300.py`
+- `tests/test_ui_polish_contract.py`
+- `tests/test_ui_report_download_thumb.py`
+- `tests/test_verdicts_sandbox.py`
+- `tests/test_waiting_state.py`
+- `tests/test_zero_touch_deadline.py`
+- `thumbnail_maker.py`
+- `video_type_classifier.py`
+- `watchdog_service.py`
+- `watermark_detector.py`
+- `web_server.py`
+
+## 4. Production Master Deliverables in finished/
+- `finished/lionreel_cat_20261016_065802_502f5dd4_thumbnail.jpg` (13.2 KB)
+- `finished/lionreel_cat_20261016_065802_502f5dd4_thumbnail_4k.jpg` (145.3 KB)
+- `finished/lionreel_cat_20261016_065802_502f5dd4_thumbnail_report.json` (1.2 KB)
+- `finished/lionreel_cat_20261016_132542_f0366ee8_thumbnails` (0 B)
+- `finished/lionreel_cat_20261018_220346_6b8cce5c.mp4` (27.51 MB)
+- `finished/lionreel_cat_20261018_220346_6b8cce5c_thumb.webp` (564.2 KB)
+- `finished/lionreel_cat_20261024_072357_be7449d6_timings.json` (4.7 KB)
+- `finished/lionreel_cat_20261024_082727_9a95e731_timings.json` (4.7 KB)
+- `finished/lionreel_cat_20261024_090859_ce205e86_timings.json` (4.7 KB)
+- `finished/lionreel_cat_20261024_131509_170b4df6_timings.json` (4.7 KB)
+- `finished/lionreel_cat_20261025_080210_0189586e_timings.json` (4.7 KB)
+- `finished/lionreel_cat_20261026_092004_9c9af4ac.mp4` (41.32 MB)
+- `finished/lionreel_cat_20261026_092004_9c9af4ac.txt` (47 B)
+- `finished/lionreel_cat_20261026_092004_9c9af4ac_contact_sheet.png` (1.69 MB)
+- `finished/lionreel_cat_20261026_092004_9c9af4ac_credits.json` (765 B)
+- `finished/lionreel_cat_20261026_092004_9c9af4ac_credits.txt` (373 B)
+- `finished/lionreel_cat_20261026_092004_9c9af4ac_mapping.json` (5.1 KB)
+- `finished/lionreel_cat_20261026_092004_9c9af4ac_metadata.json` (16.0 KB)
+- `finished/lionreel_cat_20261026_092004_9c9af4ac_metadata.txt` (751 B)
+- `finished/lionreel_cat_20261026_092004_9c9af4ac_qa_report.json` (4.3 KB)
+- `finished/lionreel_cat_20261026_092004_9c9af4ac_report.html` (2.29 MB)
+- `finished/lionreel_cat_20261026_092004_9c9af4ac_report.json` (2.28 MB)
+- `finished/lionreel_cat_20261026_092004_9c9af4ac_report.pdf` (2.92 MB)
+- `finished/lionreel_cat_20261026_092004_9c9af4ac_thumb.webp` (412.1 KB)
+- `finished/lionreel_cat_20261026_092004_9c9af4ac_timings.json` (7.1 KB)
+- `finished/lionreel_cat_20261026_092742_7caa7b9e_report.html` (35.5 KB)
+- `finished/lionreel_cat_20261026_092742_7caa7b9e_report.json` (24.4 KB)
+- `finished/lionreel_cat_20261026_092742_7caa7b9e_report.pdf` (167.9 KB)
+- `finished/lionreel_cat_20261026_092742_7caa7b9e_timings.json` (5.1 KB)
+- `finished/lionreel_cat_20261026_094626_3caa9944_report.html` (35.2 KB)
+- `finished/lionreel_cat_20261026_094626_3caa9944_report.json` (23.2 KB)
+- `finished/lionreel_cat_20261026_094626_3caa9944_report.pdf` (167.4 KB)
+- `finished/lionreel_cat_20261026_094626_3caa9944_timings.json` (5.1 KB)
+- `finished/lionreel_cat_20261026_101140_2a8bbf61_report.html` (35.3 KB)
+- `finished/lionreel_cat_20261026_101140_2a8bbf61_report.json` (23.6 KB)
+- `finished/lionreel_cat_20261026_101140_2a8bbf61_report.pdf` (167.9 KB)
+- `finished/lionreel_cat_20261026_101140_2a8bbf61_timings.json` (5.1 KB)
+- `finished/lionreel_cat_20261026_103627_b941172a_report.html` (35.3 KB)
+- `finished/lionreel_cat_20261026_103627_b941172a_report.json` (23.6 KB)
+- `finished/lionreel_cat_20261026_103627_b941172a_report.pdf` (167.3 KB)
+- `finished/lionreel_cat_20261026_103627_b941172a_timings.json` (5.1 KB)
+- `finished/lionreel_cat_20261027_113225_a24ea39e.mp4` (33.25 MB)
+- `finished/lionreel_cat_20261027_113225_a24ea39e.txt` (36 B)
+- `finished/lionreel_cat_20261027_113225_a24ea39e_contact_sheet.png` (1.40 MB)
+- `finished/lionreel_cat_20261027_113225_a24ea39e_credits.json` (819 B)
+- `finished/lionreel_cat_20261027_113225_a24ea39e_credits.txt` (421 B)
+- `finished/lionreel_cat_20261027_113225_a24ea39e_mapping.json` (5.7 KB)
+- `finished/lionreel_cat_20261027_113225_a24ea39e_metadata.json` (16.0 KB)
+- `finished/lionreel_cat_20261027_113225_a24ea39e_metadata.txt` (844 B)
+- `finished/lionreel_cat_20261027_113225_a24ea39e_qa_report.json` (5.0 KB)
+- `finished/lionreel_cat_20261027_113225_a24ea39e_report.html` (1.91 MB)
+- `finished/lionreel_cat_20261027_113225_a24ea39e_report.json` (1.89 MB)
+- `finished/lionreel_cat_20261027_113225_a24ea39e_report.pdf` (2.46 MB)
+- `finished/lionreel_cat_20261027_113225_a24ea39e_thumb.webp` (586.9 KB)
+- `finished/lionreel_cat_20261027_113225_a24ea39e_timings.json` (7.1 KB)
+- `finished/lionreel_cat_20261027_120634_9123d1f8.mp4` (33.19 MB)
+- `finished/lionreel_cat_20261027_120634_9123d1f8.txt` (93 B)
+- `finished/lionreel_cat_20261027_120634_9123d1f8_contact_sheet.png` (1.40 MB)
+- `finished/lionreel_cat_20261027_120634_9123d1f8_credits.json` (819 B)
+- `finished/lionreel_cat_20261027_120634_9123d1f8_credits.txt` (421 B)
+- `finished/lionreel_cat_20261027_120634_9123d1f8_mapping.json` (7.0 KB)
+- `finished/lionreel_cat_20261027_120634_9123d1f8_metadata.json` (16.1 KB)
+- `finished/lionreel_cat_20261027_120634_9123d1f8_metadata.txt` (908 B)
+- `finished/lionreel_cat_20261027_120634_9123d1f8_qa_report.json` (5.0 KB)
+- `finished/lionreel_cat_20261027_120634_9123d1f8_report.html` (1.91 MB)
+- `finished/lionreel_cat_20261027_120634_9123d1f8_report.json` (1.89 MB)
+- `finished/lionreel_cat_20261027_120634_9123d1f8_report.pdf` (2.46 MB)
+- `finished/lionreel_cat_20261027_120634_9123d1f8_thumb.webp` (586.0 KB)
+- `finished/lionreel_cat_20261027_120634_9123d1f8_timings.json` (7.1 KB)
+- `finished/lionreel_cat_20261027_121640_134848b6.mp4` (15.02 MB)
+- `finished/lionreel_cat_20261027_121640_134848b6.txt` (78 B)
+- `finished/lionreel_cat_20261027_121640_134848b6_contact_sheet.png` (1.23 MB)
+- `finished/lionreel_cat_20261027_121640_134848b6_credits.json` (459 B)
+- `finished/lionreel_cat_20261027_121640_134848b6_credits.txt` (232 B)
+- `finished/lionreel_cat_20261027_121640_134848b6_mapping.json` (3.9 KB)
+- `finished/lionreel_cat_20261027_121640_134848b6_metadata.json` (15.7 KB)
+- `finished/lionreel_cat_20261027_121640_134848b6_metadata.txt` (779 B)
+- `finished/lionreel_cat_20261027_121640_134848b6_qa_report.json` (4.4 KB)
+- `finished/lionreel_cat_20261027_121640_134848b6_report.html` (1.68 MB)
+- `finished/lionreel_cat_20261027_121640_134848b6_report.json` (1.66 MB)
+- `finished/lionreel_cat_20261027_121640_134848b6_report.pdf` (2.11 MB)
+- `finished/lionreel_cat_20261027_121640_134848b6_thumb.webp` (588.6 KB)
+- `finished/lionreel_cat_20261027_121640_134848b6_timings.json` (7.5 KB)
+- `finished/lionreel_cat_20261031_140120_aa8a4f98_timings.json` (5.1 KB)
+- `finished/lionreel_cat_20261031_141644_66461942_timings.json` (5.1 KB)
+- `finished/lionreel_cat_20261031_145930_5623c8dc_timings.json` (5.1 KB)
+- `finished/lionreel_cat_20261031_152021_452b6e92_timings.json` (5.1 KB)
+- `finished/lionreel_cat_20261031_153841_bcad3a4f_timings.json` (5.1 KB)
+- `finished/lionreel_cat_20261031_190833_b8c4cc3f_timings.json` (5.5 KB)
+- `finished/lionreel_cat_20261031_191844_886597df_timings.json` (6.6 KB)
+- `finished/lionreel_cat_proof_both.mp4` (234.57 MB)
+- `finished/lionreel_cat_proof_both.txt` (98 B)
+- `finished/lionreel_cat_proof_both_contact_sheet.png` (2.00 MB)
+- `finished/lionreel_cat_proof_both_credits.json` (3.8 KB)
+- `finished/lionreel_cat_proof_both_credits.txt` (1.9 KB)
+- `finished/lionreel_cat_proof_both_mapping.json` (22.0 KB)
+- `finished/lionreel_cat_proof_both_metadata.json` (19.6 KB)
+- `finished/lionreel_cat_proof_both_metadata.txt` (1.2 KB)
+- `finished/lionreel_cat_proof_both_qa_report.json` (4.6 KB)
+- `finished/lionreel_cat_proof_both_report.html` (2.73 MB)
+- `finished/lionreel_cat_proof_both_report.json` (2.72 MB)
+- `finished/lionreel_cat_proof_both_report.pdf` (3.18 MB)
+- `finished/lionreel_cat_proof_both_teaser.mp4` (70.80 MB)
+- `finished/lionreel_cat_proof_both_teaser.txt` (96 B)
+- `finished/lionreel_cat_proof_both_teaser_contact_sheet.png` (1.70 MB)
+- `finished/lionreel_cat_proof_both_teaser_credits.json` (1.1 KB)
+- `finished/lionreel_cat_proof_both_teaser_credits.txt` (591 B)
+- `finished/lionreel_cat_proof_both_teaser_mapping.json` (8.2 KB)
+- `finished/lionreel_cat_proof_both_teaser_metadata.json` (16.8 KB)
+- `finished/lionreel_cat_proof_both_teaser_metadata.txt` (1.0 KB)
+- `finished/lionreel_cat_proof_both_teaser_qa_report.json` (4.3 KB)
+- `finished/lionreel_cat_proof_both_teaser_report.html` (2.31 MB)
+- `finished/lionreel_cat_proof_both_teaser_report.json` (2.29 MB)
+- `finished/lionreel_cat_proof_both_teaser_report.pdf` (3.05 MB)
+- `finished/lionreel_cat_proof_both_teaser_thumb.webp` (417.0 KB)
+- `finished/lionreel_cat_proof_both_teaser_timings.json` (7.0 KB)
+- `finished/lionreel_cat_proof_both_thumb.webp` (913.8 KB)
+- `finished/lionreel_cat_proof_both_thumbnail.jpg` (165.0 KB)
+- `finished/lionreel_cat_proof_both_thumbnail_4k.jpg` (1.08 MB)
+- `finished/lionreel_cat_proof_both_thumbnail_report.json` (7.7 KB)
+- `finished/lionreel_cat_proof_both_timings.json` (7.5 KB)
+- `finished/lionreel_cat_proof_long_3m.mp4` (245.89 MB)
+- `finished/lionreel_cat_proof_long_3m.txt` (81 B)
+- `finished/lionreel_cat_proof_long_3m_contact_sheet.png` (1.52 MB)
+- `finished/lionreel_cat_proof_long_3m_credits.json` (4.3 KB)
+- `finished/lionreel_cat_proof_long_3m_credits.txt` (2.3 KB)
+- `finished/lionreel_cat_proof_long_3m_mapping.json` (23.6 KB)
+- `finished/lionreel_cat_proof_long_3m_metadata.json` (19.7 KB)
+- `finished/lionreel_cat_proof_long_3m_metadata.txt` (948 B)
+- `finished/lionreel_cat_proof_long_3m_qa_report.json` (13.3 KB)
+- `finished/lionreel_cat_proof_long_3m_report.html` (2.08 MB)
+- `finished/lionreel_cat_proof_long_3m_report.json` (2.08 MB)
+- `finished/lionreel_cat_proof_long_3m_report.pdf` (2.75 MB)
+- `finished/lionreel_cat_proof_long_3m_thumb.webp` (645.7 KB)
+- `finished/lionreel_cat_proof_long_3m_thumbnail.jpg` (125.9 KB)
+- `finished/lionreel_cat_proof_long_3m_thumbnail_4k.jpg` (816.1 KB)
+- `finished/lionreel_cat_proof_long_3m_thumbnail_report.json` (7.8 KB)
+- `finished/lionreel_cat_proof_long_3m_timings.json` (7.1 KB)
+- `finished/lionreel_cat_proof_short_01_report.html` (38.1 KB)
+- `finished/lionreel_cat_proof_short_01_report.json` (16.2 KB)
+- `finished/lionreel_cat_proof_short_01_report.pdf` (213.6 KB)
+- `finished/lionreel_cat_proof_short_01_timings.json` (7.4 KB)
+- `finished/lionreel_cat_proof_short_30s.mp4` (57.76 MB)
+- `finished/lionreel_cat_proof_short_30s.txt` (90 B)
+- `finished/lionreel_cat_proof_short_30s_contact_sheet.png` (2.03 MB)
+- `finished/lionreel_cat_proof_short_30s_credits.json` (894 B)
+- `finished/lionreel_cat_proof_short_30s_credits.txt` (502 B)
+- `finished/lionreel_cat_proof_short_30s_mapping.json` (5.2 KB)
+- `finished/lionreel_cat_proof_short_30s_metadata.json` (16.3 KB)
+- `finished/lionreel_cat_proof_short_30s_metadata.txt` (908 B)
+- `finished/lionreel_cat_proof_short_30s_qa_report.json` (5.0 KB)
+- `finished/lionreel_cat_proof_short_30s_report.html` (2.74 MB)
+- `finished/lionreel_cat_proof_short_30s_report.json` (2.72 MB)
+- `finished/lionreel_cat_proof_short_30s_report.pdf` (3.21 MB)
+- `finished/lionreel_cat_proof_short_30s_thumb.webp` (434.6 KB)
+- `finished/lionreel_cat_proof_short_30s_timings.json` (7.9 KB)
+- `finished/mapping.json` (8.2 KB)
+- `finished/metadata.json` (16.8 KB)
+- `finished/planner_decision.json` (2.7 KB)
+- `finished/qa_report.json` (5.7 KB)

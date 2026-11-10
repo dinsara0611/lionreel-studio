@@ -1,0 +1,220 @@
+{
+  "version": "1.0",
+  "types": {
+    "dubbed_talking": {
+      "name": "Dubbed & Talking Cats",
+      "description": "Voice-over dialogues, talking cat jokes, and speech-driven humor",
+      "clip_duration_range": [4.0, 10.0],
+      "default_clip_sec": 7.5,
+      "audio_recipe": {
+        "keep_original_audio": true,
+        "music_over_speech": false,
+        "per_clip_loudness_norm": true,
+        "target_lufs": -14.0,
+        "ducking_db": -18.0
+      },
+      "caption_style": {
+        "captions_enabled": false,
+        "font_size": 48,
+        "position": "bottom"
+      },
+      "framing_recipe": {
+        "mode": "head_and_mouth_focus",
+        "centering_tolerance": 0.20
+      },
+      "title_category": "question_engagement",
+      "hashtags": ["#talkingcat", "#catvoice", "#funnycat", "#catdub", "#talkingpet"],
+      "adjacent_types": ["double_cats", "derp_silly"]
+    },
+    "double_cats": {
+      "name": "Double Cats Interaction",
+      "description": "Two or more cats playing, fighting, cuddling, or reacting together",
+      "clip_duration_range": [6.0, 14.0],
+      "default_clip_sec": 10.0,
+      "audio_recipe": {
+        "keep_original_audio": true,
+        "music_over_speech": true,
+        "target_lufs": -14.0
+      },
+      "caption_style": {
+        "captions_enabled": true,
+        "font_size": 52,
+        "position": "bottom"
+      },
+      "framing_recipe": {
+        "mode": "group_framing",
+        "min_cats_visible_peak": 2,
+        "min_visibility_ratio_at_peak": 0.90,
+        "centering_tolerance": 0.30
+      },
+      "title_category": "curiosity_gap",
+      "hashtags": ["#twocats", "#catduo", "#catsplaying", "#catfight", "#catbffs"],
+      "adjacent_types": ["cat_human_moments", "fails_clumsy"]
+    },
+    "fails_clumsy": {
+      "name": "Clumsy Cat Fails",
+      "description": "Miscalibrated jumps, slippery floors, box topples, and athletic fails",
+      "clip_duration_range": [5.0, 12.0],
+      "default_clip_sec": 8.0,
+      "audio_recipe": {
+        "keep_original_audio": true,
+        "sound_effects_enabled": true,
+        "target_lufs": -14.0
+      },
+      "caption_style": {
+        "captions_enabled": true,
+        "font_size": 56,
+        "position": "bottom"
+      },
+      "framing_recipe": {
+        "mode": "action_trajectory",
+        "pre_event_setup_sec": 2.5,
+        "post_event_recovery_sec": 1.5
+      },
+      "title_category": "high_energy_chaos",
+      "hashtags": ["#catfail", "#clumsycat", "#catjumpfail", "#instantregret", "#catparkour"],
+      "adjacent_types": ["startled_reactions", "cats_vs_objects"]
+    },
+    "startled_reactions": {
+      "name": "Startled & Dramatic Reactions",
+      "description": "Dramatic flinches, spook jumps, toaster scares, and sudden shock reactions",
+      "clip_duration_range": [4.0, 9.0],
+      "default_clip_sec": 6.5,
+      "audio_recipe": {
+        "keep_original_audio": true,
+        "sound_effects_enabled": true,
+        "target_lufs": -14.0
+      },
+      "caption_style": {
+        "captions_enabled": true,
+        "font_size": 56,
+        "position": "bottom"
+      },
+      "framing_recipe": {
+        "mode": "sudden_displacement",
+        "pre_event_setup_sec": 2.0,
+        "post_event_recovery_sec": 1.2
+      },
+      "title_category": "high_energy_chaos",
+      "hashtags": ["#scaredcat", "#startledcat", "#catreaction", "#dramaticcat", "#funnyreaction"],
+      "adjacent_types": ["fails_clumsy", "cats_vs_objects"]
+    },
+    "cats_vs_objects": {
+      "name": "Cats vs Objects",
+      "description": "Cats fighting cucumbers, vacuums, ceiling fans, mirrors, lasers, and printers",
+      "clip_duration_range": [6.0, 13.0],
+      "default_clip_sec": 9.0,
+      "audio_recipe": {
+        "keep_original_audio": true,
+        "target_lufs": -14.0
+      },
+      "caption_style": {
+        "captions_enabled": true,
+        "font_size": 52,
+        "position": "bottom"
+      },
+      "framing_recipe": {
+        "mode": "subject_and_object_lock",
+        "keep_object_in_frame": true
+      },
+      "title_category": "curiosity_gap",
+      "hashtags": ["#catsvsobjects", "#catmirror", "#catlaser", "#cucumbercat", "#catvacuum"],
+      "adjacent_types": ["fails_clumsy", "derp_silly"]
+    },
+    "derp_silly": {
+      "name": "Derpy & Silly Moments",
+      "description": "Bleps, stuck tongues, sitting like humans, weird sleeping poses, zero thoughts",
+      "clip_duration_range": [5.0, 11.0],
+      "default_clip_sec": 7.5,
+      "audio_recipe": {
+        "keep_original_audio": true,
+        "bgm_style": "quirky_acoustic",
+        "target_lufs": -14.0
+      },
+      "caption_style": {
+        "captions_enabled": true,
+        "font_size": 52,
+        "position": "bottom"
+      },
+      "framing_recipe": {
+        "mode": "expressive_portrait"
+      },
+      "title_category": "story_relatable",
+      "hashtags": ["#derpcat", "#catblep", "#sillycat", "#cattongue", "#catlogic"],
+      "adjacent_types": ["kitten_cute", "dubbed_talking"]
+    },
+    "kitten_cute": {
+      "name": "Tiny Kitten Cute",
+      "description": "Teeny kittens squeaking, bottle feeding, tiny paws, falling asleep while eating",
+      "clip_duration_range": [5.0, 12.0],
+      "default_clip_sec": 8.0,
+      "audio_recipe": {
+        "keep_original_audio": true,
+        "preserve_mews": true,
+        "target_lufs": -14.0
+      },
+      "caption_style": {
+        "captions_enabled": true,
+        "font_size": 50,
+        "position": "bottom"
+      },
+      "framing_recipe": {
+        "mode": "close_up_macro",
+        "kitten_size_scale": 0.50
+      },
+      "title_category": "heartwarming_cute",
+      "hashtags": ["#tinykitten", "#cutekitten", "#kittenlove", "#babycat", "#purr"],
+      "adjacent_types": ["derp_silly", "cat_human_moments"]
+    },
+    "cat_human_moments": {
+      "name": "Cat & Human Bond",
+      "description": "Clingy cats, gentle headbutts, massage paws, following human around, cuddles",
+      "clip_duration_range": [6.0, 14.0],
+      "default_clip_sec": 9.5,
+      "audio_recipe": {
+        "keep_original_audio": true,
+        "target_lufs": -14.0
+      },
+      "caption_style": {
+        "captions_enabled": true,
+        "font_size": 50,
+        "position": "bottom"
+      },
+      "framing_recipe": {
+        "mode": "two_entity_bond",
+        "include_human_hand_or_face": true
+      },
+      "title_category": "heartwarming_cute",
+      "hashtags": ["#clingycat", "#catcuddles", "#cathumanbond", "#catmoments", "#wholesomecat"],
+      "adjacent_types": ["double_cats", "kitten_cute"]
+    },
+    "cat_dog": {
+      "name": "Cat & Dog Duo",
+      "description": "Cats and dogs being best friends, gentle grooming, playful teasing, duo comedy",
+      "clip_duration_range": [6.0, 15.0],
+      "default_clip_sec": 10.0,
+      "audio_recipe": {
+        "keep_original_audio": true,
+        "target_lufs": -14.0
+      },
+      "caption_style": {
+        "captions_enabled": true,
+        "font_size": 52,
+        "position": "bottom"
+      },
+      "framing_recipe": {
+        "mode": "cross_species_group",
+        "both_species_in_frame": true
+      },
+      "title_category": "curiosity_gap",
+      "hashtags": ["#catanddog", "#dogandcat", "#catdogduo", "#interspecieslove", "#petfriends"],
+      "adjacent_types": ["double_cats", "cat_human_moments"]
+    }
+  },
+  "default_type": "auto",
+  "mixed_mode": {
+    "enabled": true,
+    "group_in_blocks": true,
+    "min_block_size": 2
+  }
+}
