@@ -7556,7 +7556,7 @@ async function refreshLeftovers() {
     }
     const n = state.leftovers.count;
     btn.hidden = n === 0;
-    if (label) label.innerText = `Clean up ${n} ${n === 1 ? "leftover" : "leftovers"}`;
+    if (label) label.innerText = `Delete extra files (${n})`;
 }
 
 async function loadFinishedProjects() {
@@ -10155,9 +10155,9 @@ function setupUIEventListeners() {
         leftoversBtn.addEventListener("click", async () => {
             const info = state.leftovers || { count: 0, bytes: 0 };
             const ok = await showConfirmModal({
-                title: "Clean up leftovers",
-                message: `Move ${info.count} leftover ${info.count === 1 ? "file" : "files and folders"} (${formatCleanupBytes(info.bytes)}) to the Recycle Bin? These are reports, timings and folders from videos that no longer exist. Videos in the library are not touched.`,
-                confirmText: "Clean up",
+                title: "Delete extra files",
+                message: `Move ${info.count} leftover ${info.count === 1 ? "file" : "files and folders"} (${formatCleanupBytes(info.bytes)}) to the Recycle Bin? These are reports and timings you do not need, and files from videos that no longer exist. Your videos are not touched.`,
+                confirmText: "Delete extra files",
                 isDanger: true
             });
             if (!ok) return;

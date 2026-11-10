@@ -544,6 +544,7 @@ def delete_compilation_files(filename):
 # Files the engine used to copy into finished/ without the job name in them
 LOOSE_JOB_FILES = ("mapping.json", "metadata.json", "qa_report.json", "planner_decision.json", "timings.json")
 JOB_NAME_PREFIXES = ("lionreel_", "lion_", "job_")
+EXTRA_FILE_SUFFIXES = ("_report.html", "_report.json", "_report.pdf", "_timings.json")
 
 
 def existing_video_stems():
@@ -613,6 +614,11 @@ def find_leftover_files():
                 items.append(("finished", f, fp))
             elif f.startswith(JOB_NAME_PREFIXES) and not f.endswith(".mp4") and not owned(f):
                 items.append(("finished", f, fp))
+            elif os.path.isfile(fp) and f.endswith(EXTRA_FILE_SUFFIXES):
+                # Duplicate of a file that also sits in output/<video>/: not needed in finished/
+                stem = next((s for s in stems if f.startswith(s + "_")), None)
+                if stem and stem != active and os.path.isfile(os.path.join(OUTPUT_DIR, stem, f)):
+                    items.append(("finished", f, fp))
     if os.path.isdir(OUTPUT_DIR):
         for sub in sorted(os.listdir(OUTPUT_DIR)):
             sub_p = os.path.join(OUTPUT_DIR, sub)
