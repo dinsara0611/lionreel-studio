@@ -271,3 +271,28 @@ def test_heartbeat_writer_never_removes_the_file(tmp_path):
     w.flush()
     assert (tmp_path / "heartbeat.json").is_file()
     assert not [f for f in tmp_path.iterdir() if ".tmp." in f.name]
+
+
+def _job_without_heartbeat(tmp_path, age_s):
+    import json, os, time
+    job = tmp_path / "job2"
+    job.mkdir()
+    jr = job / "job_result.json"
+    jr.write_text(json.dumps({"job_id": "job2", "status": "running", "stage_index": 1, "stage_name": "x"}))
+    old = time.time() - age_s
+    os.utime(jr, (old, old))
+    return str(job)
+
+
+def test_slow_startup_before_first_heartbeat_is_not_a_stall(tmp_path, monkeypatch):
+    # Seen in a real job: 97 s of planner verification before the engine wrote its first heartbeat
+    import watchdog_service as wd
+    monkeypatch.setattr(wd.time, "sleep", lambda s: None)
+    assert wd.check_job_health(_job_without_heartbeat(tmp_path, 100), max_stale_sec=60.0)["healthy"] is True
+
+
+def test_no_heartbeat_for_a_long_time_is_still_a_stall(tmp_path, monkeypatch):
+    import watchdog_service as wd
+    monkeypatch.setattr(wd.time, "sleep", lambda s: None)
+    r = wd.check_job_health(_job_without_heartbeat(tmp_path, 400), max_stale_sec=60.0)
+    assert r["healthy"] is False and r["status"] == "stuck"

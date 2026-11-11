@@ -15,6 +15,9 @@ import subprocess
 from engine_lock import is_pid_alive, release_engine_lock
 from stage_timeouts import get_stage_timeout_sec, check_stage_timeout, StageTimeoutError
 
+NO_HEARTBEAT_GRACE_SEC = 300.0
+
+
 class HeartbeatWriter:
     """
     Background daemon thread that periodically writes heartbeat state
@@ -188,7 +191,8 @@ def check_job_health(job_dir: str, max_stale_sec: float = 60.0) -> dict:
     if not hb_timestamp and os.path.exists(jr_path):
         mtime = os.path.getmtime(jr_path)
         age = now_epoch - mtime
-        if age > max_stale_sec:
+        # The engine verifies the planner's clips before its first heartbeat (measured 97 s): allow for that
+        if age > max(max_stale_sec, NO_HEARTBEAT_GRACE_SEC):
             reason = f"No heartbeat emitted for {age:.0f}s since job creation in stage {stage_id} '{stage_name}'"
             _mark_job_stuck(job_dir, job_result, reason, stage_id, stage_name)
             return {
