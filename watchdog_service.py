@@ -60,11 +60,7 @@ class HeartbeatWriter:
         try:
             with open(tmp_file, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2)
-            if os.path.exists(hb_file):
-                try:
-                    os.remove(hb_file)
-                except Exception:
-                    pass
+            # Atomic swap: the file is never missing, so the watchdog never reads a gap
             os.replace(tmp_file, hb_file)
         except Exception:
             pass
@@ -126,13 +122,15 @@ def check_job_health(job_dir: str, max_stale_sec: float = 60.0) -> dict:
         }
 
     # Check heartbeat
+    # A heartbeat that cannot be read right now is retried: a missed read must not look like a stall
     hb_data = {}
-    if os.path.exists(hb_path):
+    for _attempt in range(5):
         try:
             with open(hb_path, "r", encoding="utf-8") as f:
                 hb_data = json.load(f)
+            break
         except Exception:
-            pass
+            time.sleep(0.2)
 
     pid = hb_data.get("pid")
     if not pid and os.path.exists(lock_path):
