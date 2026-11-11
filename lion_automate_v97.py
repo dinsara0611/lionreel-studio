@@ -300,6 +300,44 @@ def evaluate_stage_a_candidate_gate(plan: dict, min_sharpness_floor: float = 150
     return plan
 
 
+def video_fps_is_constant_30(video_path):
+    """True when ffprobe reports r_frame_rate and avg_frame_rate of exactly 30 fps. None when it cannot be read."""
+    try:
+        res = subprocess.run([FFPROBE_EXE, "-v", "error", "-select_streams", "v:0",
+                              "-show_entries", "stream=r_frame_rate,avg_frame_rate",
+                              "-of", "json", video_path], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
+        st = json.loads(res.stdout)["streams"][0]
+
+        def ratio(t):
+            n, d = str(t).split("/")
+            return float(n) / float(d)
+        return abs(ratio(st["r_frame_rate"]) - 30.0) <= 0.001 and abs(ratio(st["avg_frame_rate"]) - 30.0) <= 0.002
+    except Exception:
+        return None
+
+
+def make_constant_30fps(video_path):
+    """Re-times the video to exactly 30 fps CFR (audio untouched), in place. Returns True when the file is constant 30 fps afterwards."""
+    if video_fps_is_constant_30(video_path):
+        return True
+    tmp_out = video_path + ".cfr30.mp4"
+    cmd = [FFMPEG_EXE, "-y", "-i", video_path,
+           "-vf", "fps=30,setparams=color_primaries=bt709:color_trc=bt709:colorspace=bt709",
+           "-c:v", "libx264", "-preset", "fast", "-crf", "12", "-profile:v", "high", "-pix_fmt", "yuv420p",
+           "-r", "30", "-fps_mode", "cfr",
+           "-color_primaries", "bt709", "-color_trc", "bt709", "-colorspace", "bt709",
+           "-c:a", "copy", tmp_out]
+    res = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+    if res.returncode == 0 and os.path.exists(tmp_out) and os.path.getsize(tmp_out) > 1000 and video_fps_is_constant_30(tmp_out):
+        shutil.move(tmp_out, video_path)
+        return True
+    try:
+        os.remove(tmp_out)
+    except OSError:
+        pass
+    return False
+
+
 def get_video_duration(video_path):
     # 1. ffprobe
     try:
@@ -4594,6 +4632,13 @@ class LionReelV97Pipeline:
                                 log(f"  [AUTO-REPAIR {repair_attempts}] Trimmed master to contract target {contract_target_sec:.1f}s", "INFO")
                     except Exception as e_dur_rep:
                         log(f"  [AUTO-REPAIR {repair_attempts}] Duration re-align error: {e_dur_rep}", "WARN")
+
+                # Re-assembling can leave the frame rate slightly off 30 fps: re-time it before QA
+                try:
+                    if not make_constant_30fps(local_master_path):
+                        log(f"  [AUTO-REPAIR {repair_attempts}] Frame rate could not be made constant 30 fps; QA will report it.", "WARN")
+                except Exception as e_cfr:
+                    log(f"  [AUTO-REPAIR {repair_attempts}] Frame rate re-time error: {e_cfr}", "WARN")
 
                 # Re-run QA gate validation
                 qa_passed, qa_report = run_full_qa(local_master_path, layout_mode=layout_mode, clip_mapping=clip_mapping_data, work_job_dir=work_job_dir, expected_aspect=aspect_ratio, target_dur=contract_target_sec)
