@@ -650,6 +650,17 @@ def known_unusable(record: dict, min_seconds: float) -> str:
 # One 7.5 s window needs 12.5 s of source; short single-moment clips are welcome
 MIN_SOURCE_SECONDS = 20.0
 
+# A job uses at most a few clips per source, so a source is sampled, not scanned end to end.
+# Measured: one 11-minute source took the whole 1800 s harvest budget for 63 windows and 4 verified.
+MAX_WINDOWS_PER_SOURCE = 24
+MAX_VERIFIED_PER_SOURCE = 4
+
+
+def source_window_step(total_dur: float, max_windows: int = MAX_WINDOWS_PER_SOURCE) -> float:
+    """Seconds between window starts: 10 s for short sources, wider for long ones so the whole video is sampled."""
+    usable = max(0.0, float(total_dur or 0) - 12.5)
+    return max(10.0, usable / max_windows)
+
 
 def run_real_harvest_sync(
     animal_mode: str = "cat",
@@ -882,9 +893,16 @@ def run_real_harvest_sync(
                     continue
 
                 # Propose candidate window starts (e.g. 10s, 20s, 30s)
-                step = 10.0
+                # One source gives a job a few clips at most, so sample it evenly instead of scanning all of it
+                step = source_window_step(total_dur)
                 curr_start = 5.0
-                while curr_start + 7.5 <= total_dur and windows_verified < target_needed:
+                src_cut = 0
+                src_verified_before = windows_verified
+                while (curr_start + 7.5 <= total_dur and windows_verified < target_needed
+                       and src_cut < MAX_WINDOWS_PER_SOURCE
+                       and windows_verified - src_verified_before < MAX_VERIFIED_PER_SOURCE
+                       and time.time() - t0 <= max_seconds):
+                    src_cut += 1
                     c_win = get_canonical_window(f"cache_{vid_id}", curr_start, target_duration=7.5)
                     windows_cut += 1
                     cid = c_win["clip_id"]
@@ -921,7 +939,11 @@ def run_real_harvest_sync(
                     pet_ratio = analysis.get("pet_ratio", 0.0)
 
                     if pet_ratio < 0.80:
-                        rej_msg = f"LOW_PET_PRESENCE ({pet_ratio*100:.0f}% < 80%)"
+                        # Say the real reason: a window the analysis turned down for framing has no pet ratio at all
+                        if "pet_ratio" not in analysis and analysis.get("reason"):
+                            rej_msg = str(analysis["reason"])
+                        else:
+                            rej_msg = f"LOW_PET_PRESENCE ({pet_ratio*100:.0f}% < 80%)"
                         rejects_by_reason[rej_msg] = rejects_by_reason.get(rej_msg, 0) + 1
                         ledger.add_clip(
                             clip_id=cid,

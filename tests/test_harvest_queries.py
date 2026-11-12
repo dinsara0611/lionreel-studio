@@ -52,3 +52,11 @@ def test_a_video_never_looked_up_is_not_ruled_out():
 def test_short_sharp_single_moment_clip_is_accepted():
     # Seen in a real harvest: a 30 s 2560x1440 clip was skipped as TOO_SHORT under the old 60 s floor
     assert sl.worth_downloading(record(width=2560, height=1440, duration=30), hw.MIN_SOURCE_SECONDS) == (True, "OK")
+
+
+def test_long_source_is_sampled_not_scanned():
+    # An 11-minute source took a whole 1800 s harvest for 63 windows; now at most 24 windows cover it
+    assert hw.source_window_step(60.0) == 10.0
+    step = hw.source_window_step(640.0)
+    assert step > 10.0 and (640.0 - 12.5) / step <= hw.MAX_WINDOWS_PER_SOURCE + 0.001
+    assert hw.MAX_VERIFIED_PER_SOURCE <= 4
