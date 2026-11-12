@@ -1245,9 +1245,9 @@ function renderWizardStep() {
 
     if (stage === 1) {
         hideSummaryBar();
-        if (tag) tag.innerText = "Step 1 of 4 • Choose Collection";
+        if (tag) tag.innerText = "Step 1 of 4 • Choose the animals";
         if (title) title.innerText = "What kind of compilation are you making?";
-        if (desc) desc.innerText = "Select an animal focus to optimize automated moment detection, color grade, and music pacing.";
+        if (desc) desc.innerText = "LionReel tunes moment picking and music pace to the animals you choose.";
         if (nextBtn) nextBtn.innerHTML = `<span>Continue</span> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
     } else if (stage === 2) {
         hideSummaryBar();
@@ -1257,10 +1257,10 @@ function renderWizardStep() {
         if (nextBtn) nextBtn.innerHTML = `<span>Set up the video</span> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
         renderSourceBank();
     } else if (stage === 3) {
-        if (tag) tag.innerText = "Step 3 of 4 • Compilation Engine Parameters";
-        if (title) title.innerText = "Fine-tune pacing and viral output";
-        if (desc) desc.innerText = "Adjust clip duration, total count, audio mixing, and 9:16 vertical re-framing.";
-        if (nextBtn) nextBtn.innerHTML = `<span>Review Sequence</span> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
+        if (tag) tag.innerText = "Step 3 of 4 • Length and pace";
+        if (title) title.innerText = "Set the length, pace and shape";
+        if (desc) desc.innerText = "Choose how long the video runs, how fast it cuts and which screen it is made for.";
+        if (nextBtn) nextBtn.innerHTML = `<span>Check the plan</span> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
         updateDynamicChipLabels(state.config.SHORT_CLIP_SEC);
         updateLiveSummary();
         // CHANGE 1: Summary Bar popup entrance on wizard-step-3
@@ -1361,7 +1361,28 @@ function hideSummaryBar() {
     summaryBox.style.display = "none";
 }
 
+// One place that makes the clip time slider, number, preset chips and pacing label agree with the saved value
+function syncClipTimeControls() {
+    const sec = parseFloat(state.config.SHORT_CLIP_SEC) || 7.5;
+    const slider = document.getElementById("slider-clip-duration");
+    const label = document.getElementById("val-clip-duration");
+    const pacing = document.getElementById("label-clip-pacing-desc");
+    if (slider && parseFloat(slider.value) !== sec) slider.value = sec;
+    if (label) label.innerText = `${sec.toFixed(1)}s`;
+    if (pacing) {
+        if (sec <= 4.0) pacing.innerText = "Pacing: snappy fast cuts";
+        else if (sec <= 6.5) pacing.innerText = "Pacing: dynamic flow";
+        else if (sec <= 8.5) pacing.innerText = `Pacing: ${sec.toFixed(1)}s viral sweet spot`;
+        else pacing.innerText = "Pacing: extended story arc";
+    }
+    document.querySelectorAll(".clip-sec-preset-chip").forEach(chip => {
+        const s = parseFloat(chip.getAttribute("data-sec"));
+        chip.classList.toggle("active", Math.abs(s - sec) < 0.2);
+    });
+}
+
 function updateLiveSummary() {
+    syncClipTimeControls();
     const videoType = state.config.VIDEO_TYPE || "short";
     const aspect = state.config.ASPECT_RATIO || "9:16";
     const longMin = parseFloat(state.config.TARGET_DURATION_MIN) || 5.0;
@@ -1377,17 +1398,17 @@ function updateLiveSummary() {
 
     if (badgeSummary) {
         if (aspect === "16:9") {
-            badgeSummary.innerText = "16:9 WIDESCREEN";
+            badgeSummary.innerText = "16:9 widescreen";
             badgeSummary.className = "badge";
             badgeSummary.style.background = "var(--info-soft)";
             badgeSummary.style.color = "var(--info)";
         } else if (aspect === "1:1") {
-            badgeSummary.innerText = "1:1 SQUARE";
+            badgeSummary.innerText = "1:1 square";
             badgeSummary.className = "badge";
             badgeSummary.style.background = "var(--warning-soft)";
             badgeSummary.style.color = "var(--warn)";
         } else {
-            badgeSummary.innerText = "9:16 VERTICAL";
+            badgeSummary.innerText = "9:16 vertical";
             badgeSummary.className = "badge badge-emerald";
             badgeSummary.style.background = "";
             badgeSummary.style.color = "";
@@ -3401,7 +3422,7 @@ function setRenderCardState(cardState, payload = {}) {
 
     } else if (cardState === "stopped") {
         if (headline) headline.innerText = "Compilation stopped";
-        if (subtitle) subtitle.innerText = payload.subtitle || "Job execution was stopped. Click Retry Generation to start again.";
+        if (subtitle) subtitle.innerText = payload.subtitle || "Job execution was stopped. Choose Try again to start over.";
         if (liveBadge) {
             liveBadge.className = "live-clock-badge paused";
             if (liveText) liveText.innerText = "STOPPED";
@@ -6657,14 +6678,14 @@ async function runEngineStatusCheck() {
                 }
                 const headline = document.getElementById("render-headline");
                 if (headline) {
-                    headline.innerHTML = `<svg class="icon icon-md text-amber" style="vertical-align: -3px; margin-right: 8px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>Job Stalled (Watchdog)`;
+                    headline.innerHTML = `<svg class="icon icon-md text-amber" style="vertical-align: -3px; margin-right: 8px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>Job stopped responding`;
                 }
                 const subtitle = document.getElementById("render-subtitle");
                 if (subtitle) {
                     subtitle.innerText = data.stuckReason || "Job process halted without heartbeat. Use Clean up to release locks.";
                 }
                 const stageNameEl = document.getElementById("render-stage-name");
-                if (stageNameEl) stageNameEl.innerText = "Stalled (Watchdog)";
+                if (stageNameEl) stageNameEl.innerText = "Stopped responding";
 
                 const remainWrap = document.getElementById("render-telemetry-remaining");
                 if (remainWrap) remainWrap.style.display = "none";
@@ -7255,7 +7276,7 @@ async function runEngineStatusCheck() {
                 }
 
                 // Buttons on a failed job:
-                // Remove "Edit this video", "Run in Background", and Stop button (Task 10)
+                // Remove "Edit this video", "Run in background", and Stop button (Task 10)
                 const editBtn = document.getElementById("btn-render-edit-video");
                 if (editBtn) editBtn.style.display = "none";
                 const bgBtn = document.getElementById("btn-render-bg");
@@ -7297,7 +7318,7 @@ async function runEngineStatusCheck() {
                     }
                 } else {
                     if (retryBtn) {
-                        retryBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg><span>Retry Generation</span>`;
+                        retryBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg><span>Try again</span>`;
                         retryBtn.style.display = "inline-flex";
                         retryBtn.onclick = () => {
                             state.currentJobId = null;
@@ -7317,10 +7338,10 @@ async function runEngineStatusCheck() {
                 stopLogsPolling();
                 stopLiveRenderClock("STOPPED");
                 setRenderCardState("stopped", {
-                    subtitle: "Job execution was stopped. Click Retry Generation to start again."
+                    subtitle: "Job execution was stopped. Choose Try again to start over."
                 });
                 if (retryBtn) {
-                    retryBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg><span>Retry Generation</span>`;
+                    retryBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg><span>Try again</span>`;
                     retryBtn.onclick = () => { state.currentJobId = null; startRenderPipeline(); };
                 }
             }
@@ -9801,7 +9822,7 @@ function setupUIEventListeners() {
         });
     }
 
-    // Force Stop Action
+    // Force stop Action
     const forceStopBtn = document.getElementById("btn-render-force-stop");
     if (forceStopBtn) {
         forceStopBtn.addEventListener("click", async () => {
@@ -10805,6 +10826,12 @@ function showToast(message, type = "info") {
         <span class="toast-icon-wrap" style="display: flex; align-items: center;">${svgIcons[type] || svgIcons.info}</span>
         <span class="toast-text">${escapeHtml(cleanMsg)}</span>
     `;
+
+    // The same message twice in a row is shown once, and at most 3 toasts stay on screen
+    const shown = [...container.querySelectorAll(".toast")];
+    if (shown.length && shown[shown.length - 1].dataset.msg === cleanMsg) return;
+    shown.slice(0, Math.max(0, shown.length - 2)).forEach(t => t.remove());
+    toast.dataset.msg = cleanMsg;
 
     container.appendChild(toast);
     requestAnimationFrame(() => toast.classList.add("show"));
