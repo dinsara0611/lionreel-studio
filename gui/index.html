@@ -32,7 +32,7 @@
         })();
     </script>
     
-    <link rel="stylesheet" href="style.css?v=2026_v103_loading_film">
+    <link rel="stylesheet" href="style.css?v=2026_v104_clip_bank">
     <style>
         /* CRITICAL EXPORT PAGE OVERFLOW CONTAINMENT */
         .export-workspace-grid {
@@ -347,10 +347,6 @@
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
                                     <span>New compilation</span>
                                 </button>
-                            <button id="hero-btn-sample" class="btn btn-secondary btn-md">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                                    <span>Use sample project</span>
-                                </button>
                         </div>
                     </div>
                     <div class="reel" aria-label="Recent videos">
@@ -625,116 +621,32 @@
                     </div>
                 </div>
 
-                <!-- STEP 2: Add Video Sources -->
+                <!-- STEP 2: Where the clips come from (real clip bank numbers) -->
                 <div id="wizard-step-2" class="wizard-step-content" style="display: none;">
-                    <div style="display: flex; flex-direction: column; gap: 14px;">
-                        <!-- Source Search Bar -->
-                        <div class="source-search-bar">
-                            <div class="search-input-box">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                                <input type="text" id="source-search-input" class="search-input-field" placeholder="Search YouTube or enter video topic (e.g. 'cat funny zoomies', 'dog head tilts')…">
+                    <div class="source-bank" id="source-bank" aria-live="polite">
+                        <div class="source-bank-main">
+                            <div class="source-bank-count">
+                                <span id="source-bank-ready" class="source-bank-number">–</span>
+                                <span id="source-bank-ready-label" class="source-bank-number-label">clips ready</span>
                             </div>
-                            <button id="btn-source-search" class="btn btn-primary btn-md">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                                <span>Search</span>
-                            </button>
+                            <div id="source-bank-reel" class="source-bank-reel" aria-hidden="true"></div>
+                            <p id="source-bank-verdict" class="source-bank-verdict">Reading the clip bank…</p>
                         </div>
-
-                        <!-- Trending Query Chips -->
-                        <div class="suggestion-chips">
-                            <span style="font-size: 0.875rem; color: var(--text-muted); font-weight: 600;">Trending:</span>
-                            <span class="suggestion-chip" data-query="cat 3am zoomies">Cat 3am zoomies</span>
-                            <span class="suggestion-chip" data-query="guilty dog face">Guilty dog face</span>
-                            <span class="suggestion-chip" data-query="sleeping kittens">Sleeping kittens</span>
-                            <span class="suggestion-chip" data-query="golden retriever puppy">Golden retriever puppy</span>
-                            <span class="suggestion-chip" data-query="cat vs dog funny">Cat vs dog funny</span>
-                        </div>
-
-                        <!-- Source Method Tabs -->
-                        <div class="source-method-tabs">
-                            <button class="tab-btn active" id="tab-auto">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: -2px; margin-right: 4px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                                <span>Autonomous AI Discovery</span>
-                            </button>
-                            <button class="tab-btn" id="tab-curated">Studio Library (<span id="source-count-badge">6</span>)</button>
-                            <button class="tab-btn" id="tab-youtube">Custom YouTube Link</button>
-                            <button class="tab-btn" id="tab-upload">Upload Local Video</button>
-                        </div>
-
-                        <!-- Panel 0: Autonomous AI YouTube Discovery -->
-                        <div id="panel-auto" style="padding: 24px; background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border);">
-                            <div style="display: flex; flex-direction: column; gap: 14px;">
-                                <div style="display: flex; align-items: center; gap: 12px;">
-                                    <div style="width: 36px; height: 36px; border-radius: 8px; background: var(--green-surface); color: var(--primary-emerald); display: flex; align-items: center; justify-content: center;">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                                    </div>
-                                    <div>
-                                        <div style="font-size: 0.96rem; font-weight: 700; color: var(--text-main);">Fully Autonomous AI YouTube Sourcing & Slicing</div>
-                                        <div style="font-size: 0.875rem; color: var(--text-muted);">LionReel live-scrapes trending YouTube clips for your chosen animal category, extracts the peak laughter moments, runs 12 quality checks, and compiles a viral Short automatically.</div>
-                                    </div>
-                                </div>
-                                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px;">
-                                    <span class="badge badge-emerald">Live Viral Query Rotation</span>
-                                    <span class="badge badge-emerald">Strict Cat & Dog Only</span>
-                                    <span class="badge badge-emerald">Peak Laugh Moment Detection</span>
-                                    <span class="badge badge-emerald">Zero Manual Trimming Needed</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Panel 1: Curated Videos Grid -->
-                        <div id="panel-curated" style="display: none;">
-                            <div id="candidates-grid" class="candidates-grid">
-                                <!-- Populated dynamically via JS -->
-                            </div>
-                        </div>
-
-                        <!-- Panel 2: YouTube / Online Video URL Import -->
-                        <div id="panel-youtube" style="display: none; padding: 24px; background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border);">
-                            <div style="display: flex; flex-direction: column; gap: 14px;">
-                                <div style="display: flex; align-items: center; gap: 8px;">
-                                    <div style="width: 28px; height: 28px; border-radius: 6px; background: rgba(255, 0, 0, 0.12); color: #ff3333; display: flex; align-items: center; justify-content: center;">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-                                    </div>
-                                    <div>
-                                        <div style="font-size: 0.92rem; font-weight: 700;">Import from YouTube, Shorts, or Direct MP4</div>
-                                        <div style="font-size: 0.875rem; color: var(--text-muted);">Paste any video link to automatically fetch and queue for slicing.</div>
-                                    </div>
-                                </div>
-                                <div style="display: flex; gap: 8px;">
-                                    <input type="url" id="custom-video-url-input" class="search-input-field" style="border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 14px;" placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/...">
-                                    <button type="button" id="btn-add-custom-url" class="btn btn-primary btn-md" style="white-space: nowrap;">
-                                        <span>Add to Reel</span>
-                                    </button>
-                                </div>
-                                <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-                                    <span style="font-size: 0.875rem; color: var(--text-muted); font-weight: 600;">Sample URLs:</span>
-                                    <button type="button" class="btn-sample-url suggestion-chip" data-sample="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4">Sample Blaze MP4</button>
-                                    <button type="button" class="btn-sample-url suggestion-chip" data-sample="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4">Sample Bunny MP4</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Panel 3: Local Video Upload Dropzone -->
-                        <div id="panel-upload" style="display: none; padding: 28px; background: var(--bg-card); border-radius: var(--radius-lg); border: 2px dashed var(--border); text-align: center;">
-                            <input type="file" id="file-upload-input" accept="video/mp4,video/quicktime,video/webm" style="display: none;">
-                            <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
-                                <div style="width: 44px; height: 44px; border-radius: 50%; background: rgba(24, 232, 122, 0.12); color: var(--primary-emerald); display: flex; align-items: center; justify-content: center;">
-                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                                </div>
-                                <div>
-                                    <div style="font-size: 0.95rem; font-weight: 700;">Drop your local video here, or browse files</div>
-                                    <div style="font-size: 0.875rem; color: var(--text-muted); margin-top: 2px;">Supports MP4, MOV, and WebM (up to 1080p / 4K)</div>
-                                </div>
-                                <button type="button" id="btn-browse-local-files" class="btn btn-secondary btn-md" style="margin-top: 4px;">
-                                    <span>Browse Local Files</span>
-                                </button>
-                                <div id="upload-status-box" style="display: none; margin-top: 8px; padding: 10px 16px; background: rgba(24, 232, 122, 0.08); border: 1px solid var(--border-active); border-radius: var(--radius-md); font-size: 0.875rem; color: var(--primary-emerald); align-items: center; justify-content: center; gap: 8px;">
-                                    <span class="live-clock-pulse" style="display: inline-block;"></span>
-                                    <span id="upload-status-text">Uploading local video...</span>
-                                </div>
-                            </div>
-                        </div>
+                        <dl class="source-bank-facts">
+                            <div><dt>Resting after recent use</dt><dd id="source-bank-cooldown">not measured</dd></div>
+                            <div><dt>Already used</dt><dd id="source-bank-used">not measured</dd></div>
+                            <div><dt>Videos with ready clips</dt><dd id="source-bank-sources">not measured</dd></div>
+                            <div><dt>Turned down by quality checks</dt><dd id="source-bank-rejected">not measured</dd></div>
+                        </dl>
+                    </div>
+                    <div class="source-bank-how">
+                        <h3>How LionReel picks clips</h3>
+                        <ul>
+                            <li>It takes clips from your bank that passed the sharpness, pet and text checks.</li>
+                            <li>It only uses videos whose page shows a Creative Commons licence.</li>
+                            <li>When the bank is short, it looks for more videos while the job runs. That takes longer.</li>
+                        </ul>
+                        <button type="button" id="btn-source-bank-add" class="btn btn-secondary btn-md">Add more sources now</button>
                     </div>
                 </div>
 
@@ -1266,29 +1178,17 @@
 
                 <!-- STEP 4: Review Reel & Launch -->
                 <div id="wizard-step-4" class="wizard-step-content" style="display: none;">
-                    <div style="display: flex; flex-direction: column; gap: 16px;">
-                        <div style="display: flex; align-items: center; justify-content: space-between;">
-                            <div>
-                                <h3 style="font-size: 1.1rem; font-weight: 700;">Selected Clips Sequence (<span id="review-selected-count">6</span>)</h3>
-                                <p style="font-size: 0.875rem; color: var(--text-muted);">Clips will be sliced, balanced, and compiled in this exact order.</p>
-                            </div>
-                            <div style="display: flex; gap: 8px;">
-                                <button id="btn-review-reset-all" class="btn btn-secondary btn-sm" style="color: var(--error); border-color: rgba(239, 68, 68, 0.35);" title="Remove all selected clips">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                                    <span>Reset All Clips</span>
-                                </button>
-                                <button id="btn-review-add-more" class="btn btn-secondary btn-sm">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                                    <span>Add More Clips</span>
-                                </button>
-                            </div>
-                            </div>
-                        </div>
-
-                        <!-- Review Clips Grid -->
-                        <div id="review-clips-grid" class="review-clips-grid">
-                            <!-- Populated dynamically via JS -->
-                        </div>
+                    <div class="job-sheet">
+                        <dl class="job-sheet-list">
+                            <div><dt>Animals</dt><dd id="job-sheet-animal">not set</dd></div>
+                            <div><dt>Format</dt><dd id="job-sheet-format">not set</dd></div>
+                            <div><dt>Clips</dt><dd id="job-sheet-clips">not set</dd></div>
+                            <div><dt>Length</dt><dd id="job-sheet-length">not set</dd></div>
+                            <div><dt>Shape</dt><dd id="job-sheet-shape">not set</dd></div>
+                            <div><dt>Clips ready in the bank</dt><dd id="job-sheet-ready">not measured</dd></div>
+                        </dl>
+                        <p id="job-sheet-verdict" class="source-bank-verdict">Reading the clip bank…</p>
+                        <p class="job-sheet-note">LionReel chooses the clips and their order while the job runs. The finished video is checked before it reaches your library, and you can review every clip in the Edit step afterwards.</p>
                     </div>
                 </div>
 
@@ -1305,7 +1205,7 @@
                             <span>Fine-Tune in Editor</span>
                         </button>
                         <button id="btn-wizard-next" class="btn btn-primary btn-md">
-                            <span>Continue to Sources</span>
+                            <span>Continue</span>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                         </button>
                     </div>
@@ -3273,6 +3173,6 @@
 
     <!-- Application Script -->
     <script src="tour_strings.js"></script>
-    <script src="app.js?v=2026_v103_loading_film"></script>
+    <script src="app.js?v=2026_v104_clip_bank"></script>
 </body>
 </html>

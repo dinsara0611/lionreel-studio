@@ -4243,19 +4243,18 @@ body.light-mode .render-config-strip {
     border-radius: var(--radius-lg);
 }
 
+/* Messages sit under the header so they never cover the Back and Continue buttons */
 .toast-container {
     position: fixed;
-    bottom: 24px;
+    top: calc(var(--header-height) + 12px);
     right: 24px;
     display: flex;
     flex-direction: column;
+    align-items: flex-end;
     gap: 8px;
+    max-width: min(420px, calc(100vw - 24px));
     z-index: 999999;
     pointer-events: none;
-    transition: bottom var(--motion-fast) var(--ease-standard);
-}
-body:has(#render-floating-pill:not([style*="display: none"])) .toast-container {
-    bottom: 84px;
 }
 
 .toast {
@@ -4271,7 +4270,7 @@ body:has(#render-floating-pill:not([style*="display: none"])) .toast-container {
     display: flex;
     align-items: center;
     gap: 10px;
-    transform: translateY(14px);
+    transform: translateY(-8px);
     opacity: 0;
     transition: opacity 0.22s var(--ease-out), transform 0.22s var(--ease-out);
 }
@@ -4337,7 +4336,8 @@ body:has(#render-floating-pill:not([style*="display: none"])) .toast-container {
     .toast-container {
         right: 12px;
         left: 12px;
-        bottom: 16px;
+        max-width: none;
+        align-items: stretch;
     }
 }
 
@@ -10073,4 +10073,167 @@ button.film-frame:hover {
 /* Status words stay steady so their contrast never dips */
 .stage-badge.pulse {
     animation: none;
+}
+
+
+/* ==========================================================================
+   SOURCES STEP: THE CLIP BANK
+   One film frame per clip the video needs; a frame is filled when the bank holds it.
+   ========================================================================== */
+.source-bank {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: var(--space-6);
+    padding: var(--space-6);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    text-align: left;
+}
+.source-bank-count {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+}
+.source-bank-number {
+    font-family: var(--font-heading);
+    font-size: 4rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+}
+.source-bank-number-label {
+    font-size: 1.07rem;
+    color: var(--text-muted);
+}
+.source-bank-reel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: var(--space-4) 0;
+    padding: 10px;
+    background: var(--media-surface);
+    border-radius: var(--radius-sm);
+    min-height: 62px;
+}
+.source-bank-frame {
+    width: 30px;
+    height: 42px;
+    border-radius: 3px;
+    border: 1px dashed var(--border-strong);
+    background: transparent;
+}
+.source-bank-frame.is-ready {
+    border: 1px solid var(--accent);
+    background: var(--accent);
+}
+.source-bank-verdict {
+    margin: 0;
+    max-width: 62ch;
+    font-size: 0.935rem;
+    line-height: 1.55;
+    color: var(--text);
+    padding-left: var(--space-3);
+    border-left: 3px solid var(--accent);
+}
+.source-bank-verdict[data-tone="warn"] {
+    border-left-color: var(--state-warning);
+}
+.source-bank-facts {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.source-bank-facts > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-4);
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+}
+.source-bank-facts > div:last-child {
+    border-bottom: none;
+}
+.source-bank-facts dt {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+.source-bank-facts dd {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+}
+.source-bank-how {
+    margin-top: var(--space-5);
+    text-align: left;
+}
+.source-bank-how h3 {
+    margin: 0 0 var(--space-2);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+}
+.source-bank-how ul {
+    margin: 0 0 var(--space-4);
+    padding-left: 1.2em;
+    max-width: 70ch;
+    color: var(--text-muted);
+    font-size: 0.935rem;
+    line-height: 1.6;
+}
+@media (max-width: 760px) {
+    .source-bank {
+        grid-template-columns: 1fr;
+        padding: var(--space-4);
+        gap: var(--space-4);
+    }
+    .source-bank-number {
+        font-size: 3rem;
+    }
+}
+
+/* Last wizard step: the job sheet */
+.job-sheet {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: var(--space-6);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    text-align: left;
+}
+.job-sheet-list {
+    margin: 0 0 var(--space-5);
+}
+.job-sheet-list > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-4);
+    padding: 11px 0;
+    border-bottom: 1px solid var(--border);
+}
+.job-sheet-list dt {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+.job-sheet-list dd {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 1.07rem;
+    font-weight: 600;
+    color: var(--text);
+    text-align: right;
+}
+.job-sheet-note {
+    margin: var(--space-4) 0 0;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: var(--text-muted);
 }
