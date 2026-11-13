@@ -650,6 +650,20 @@ def known_unusable(record: dict, min_seconds: float) -> str:
 # One 7.5 s window needs 12.5 s of source; short single-moment clips are welcome
 MIN_SOURCE_SECONDS = 20.0
 
+# Old-reading rechecks are a one-time clean-up: they must not hold up a job for minutes.
+# Measured: 4.5 min spent rechecking to recover one window before a job could start downloading.
+RECHECK_MAX_SECONDS = 60.0
+
+
+def harvest_target(missing: int) -> int:
+    """
+    Windows to verify when a job is `missing` clips. About a third of harvested windows fail at render,
+    so a small margin is added; the render stage replenishes again if more fail. The old rule
+    (3 x missing + 2) made a job 2 clips short download four sources (about 4 minutes each) for 8 windows.
+    """
+    missing = max(1, int(missing))
+    return missing + max(1, (missing + 1) // 2)
+
 # A job uses at most a few clips per source, so a source is sampled, not scanned end to end.
 # Measured: one 11-minute source took the whole 1800 s harvest budget for 63 windows and 4 verified.
 MAX_WINDOWS_PER_SOURCE = 24
@@ -736,7 +750,8 @@ def run_real_harvest_sync(
     wm_detector = WatermarkDetector()
 
     # Windows wrongly rejected by the old sharpness reading are the cheapest footage there is
-    windows_rechecked = recheck_sharpness_rejects(ledger, detector, animal_mode, target_needed, t0, max_seconds, _log)
+    windows_rechecked = recheck_sharpness_rejects(ledger, detector, animal_mode, target_needed, t0,
+                                                  min(max_seconds, RECHECK_MAX_SECONDS), _log)
     if windows_rechecked >= target_needed:
         _log(f"Recheck recovered {windows_rechecked} windows, no download needed.")
         return {"success": True, "queries_run": 0, "videos_found": 0, "windows_cut": 0, "windows_verified": windows_rechecked,

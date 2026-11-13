@@ -60,3 +60,12 @@ def test_long_source_is_sampled_not_scanned():
     step = hw.source_window_step(640.0)
     assert step > 10.0 and (640.0 - 12.5) / step <= hw.MAX_WINDOWS_PER_SOURCE + 0.001
     assert hw.MAX_VERIFIED_PER_SOURCE <= 4
+
+
+def test_harvest_target_is_small():
+    # A job 2 clips short used to look for 8 windows (four 4-minute downloads); now 3
+    assert hw.harvest_target(1) == 2
+    assert hw.harvest_target(2) == 3
+    assert hw.harvest_target(6) == 9
+    assert hw.harvest_target(0) == 2
+    assert hw.RECHECK_MAX_SECONDS <= 60

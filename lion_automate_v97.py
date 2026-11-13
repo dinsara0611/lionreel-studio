@@ -2637,12 +2637,12 @@ class LionReelV97Pipeline:
             timer.start_stage("harvest")
             if usable_count < target_clips_count:
                 deficit = target_clips_count - usable_count
-                log(f"Bank deficit detected ({usable_count} usable < {target_clips_count} needed). Running real harvest for {deficit} clips...", "INFO")
-                from harvest_worker import run_real_harvest_sync
-                # Some windows fail at render, so one clip short needs more than one window found
+                from harvest_worker import run_real_harvest_sync, harvest_target
+                log(f"Bank deficit detected ({usable_count} usable < {target_clips_count} needed). Running real harvest for {deficit} clips (finding {harvest_target(deficit)} windows)...", "INFO")
+                # Some windows fail at render, so a small margin is found; the render stage replenishes if more fail
                 h_res = run_real_harvest_sync(
                     animal_mode=animal_mode,
-                    target_needed=deficit * 3 + 2,
+                    target_needed=harvest_target(deficit),
                     cat_video_type=video_cat_type,
                     dry_run=False,
                     logger=log
@@ -3860,9 +3860,9 @@ class LionReelV97Pipeline:
                         # Search now instead of idling: nothing else adds footage during the wait
                         if not is_test_job:
                             try:
-                                from harvest_worker import run_real_harvest_sync
+                                from harvest_worker import run_real_harvest_sync, harvest_target
                                 still_needed = max(1, target_clips_count - len(rendered_candidates_pool))
-                                run_real_harvest_sync(animal_mode=animal_mode, target_needed=still_needed * 3 + 2, cat_video_type=video_cat_type,
+                                run_real_harvest_sync(animal_mode=animal_mode, target_needed=harvest_target(still_needed), cat_video_type=video_cat_type,
                                                       dry_run=False, max_seconds=patience_budget, logger=log)
                             except Exception as e_wait_h:
                                 log(f"Harvest during wait failed: {e_wait_h}", "WARN")

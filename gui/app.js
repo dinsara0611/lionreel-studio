@@ -6013,7 +6013,7 @@ function parseEngineTelemetry(chunk) {
             state.liveStatusMsg = "Mixing beat-matched background music with -14 LUFS ducking...";
         }
 
-        const tqdmMatch = line.match(/t:\s*(\d+)%/);
+        const tqdmMatch = line.match(/(?:^|[\s|])t:\s*(\d+)%/);
         if (tqdmMatch) {
             state.renderStageIndex = 9;
             const rPct = parseInt(tqdmMatch[1]);
@@ -6768,11 +6768,17 @@ async function runEngineStatusCheck() {
                             planLine += ` (${data.predictedFinishClock})`;
                         }
                     }
-                    const poolStatus = `Pool: ${gotClips}/${targetClips} clips ready`;
+                    // While the engine is searching for footage, say so with the counts from its log
+                    const hv = data.harvest;
+                    const poolStatus = hv
+                        ? `Finding footage: ${hv.found} of ${hv.target} windows found, ${hv.sources_downloaded} ${hv.sources_downloaded === 1 ? "video" : "videos"} downloaded${hv.downloading ? ", downloading another" : ""}`
+                        : `Pool: ${gotClips}/${targetClips} clips ready`;
                     const repeatNote = (data.repeatShareStr && !data.repeatShareStr.includes("0.0%")) ? ` • ${data.repeatShareStr}` : "";
                     const cleanStage = (data.stageName || "Rendering").replace(/^Stage\s+\d+\/\d+:\s*/i, "");
                     const timeRangeStr = (data.etaFormatted && !data.etaFormatted.toLowerCase().includes("waiting") && data.etaFormatted !== "--:--") ? ` (est. ${data.etaFormatted})` : "";
-                    autopilotMsg.innerText = `${planLine} • ${poolStatus}${repeatNote} • Stage ${state.renderStageIndex}/10: ${cleanStage}${timeRangeStr}`;
+                    autopilotMsg.innerText = hv
+                        ? `${planLine} • ${poolStatus} • the time estimate starts once the footage is found`
+                        : `${planLine} • ${poolStatus}${repeatNote} • Stage ${state.renderStageIndex}/10: ${cleanStage}${timeRangeStr}`;
                 }
 
                 // Autopilot UI Rule: Keep ONLY Stop on progress card during render
