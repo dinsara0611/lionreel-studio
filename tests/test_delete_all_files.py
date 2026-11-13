@@ -115,3 +115,23 @@ def test_delete_all_leaves_nothing_but_unrelated_files(lib, monkeypatch):
     assert os.listdir(tmp / "output") == []
     assert released == [LIVE]
     assert ws.existing_video_stems() == set()
+
+
+def test_duplicate_reports_of_a_live_video_are_extra_files(lib):
+    # The live video keeps a copy of its reports in output/<job>/, so the finished/ copies are not needed
+    tmp, _ = lib
+    out = tmp / "output" / LIVE
+    for suffix in ("_report.html", "_report.json", "_report.pdf", "_timings.json"):
+        touch(str(out / f"{LIVE}{suffix}"))
+    got = names(ws.find_leftover_files())
+    for suffix in ("_report.html", "_report.json", "_report.pdf", "_timings.json"):
+        assert f"finished/{LIVE}{suffix}" in got
+    assert not any(n.endswith(".mp4") for n in got)
+    ws.clean_leftover_files()
+    assert all(os.path.isfile(out / f"{LIVE}{s}") for s in ("_report.html", "_report.pdf"))
+    assert os.path.isfile(out / f"{LIVE}.mp4")
+
+
+def test_report_without_an_output_copy_is_kept(lib):
+    # The finished/ copy is the only one: do not list it
+    assert f"finished/{LIVE}_report.pdf" not in names(ws.find_leftover_files())

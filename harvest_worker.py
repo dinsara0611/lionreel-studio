@@ -204,7 +204,9 @@ def fast_analyze_source_segment(source_path: str, start_s: float, dur_s: float, 
 
         # 2. Pet detection check
         dets = detector.detect(small, conf_threshold=0.22)
-        matching = [d for d in dets if d["class_name"] in (animal_mode, "cat", "dog")]
+        # Only the animal this video is about counts: a dog is not pet presence in a cat video
+        from pet_detector import wanted_pet_classes
+        matching = [d for d in dets if d["class_name"] in wanted_pet_classes(animal_mode)]
         if matching:
             pet_detections += 1
             primary = matching[0]
@@ -599,12 +601,87 @@ def recheck_sharpness_rejects(ledger, detector, animal_mode, target_needed, t0, 
     return verified
 
 
+# Plain search words. The platform's own Creative Commons filter does the licence filtering; adding
+# "creative commons cc-by" to the words was measured to return mostly 720p videos, which are then rejected.
+HARVEST_QUERIES = {
+    "cat": {
+        "funny": ["funny cat", "funny cats compilation", "cat being silly"],
+        "fails": ["cat fails", "cat jump fail", "clumsy cat"],
+        "kitten": ["cute kittens playing", "kitten", "kittens compilation"],
+        "chaotic": ["cat zoomies", "crazy cat", "cat chaos"],
+        "playful": ["cat playing with toy", "playful cat", "cats playing"],
+        "": ["funny cat", "cat compilation", "cute cat", "kitten playing", "cat playing", "cats at home", "my cat"],
+    },
+    "dog": {
+        "": ["funny dog", "dog compilation", "cute puppy", "puppy playing", "dog playing", "dogs at home", "my dog"],
+    },
+}
+
+
+def harvest_queries(animal_mode: str = "cat", cat_video_type: str = "all", rotate: int = None) -> list:
+    """
+    Search words for one harvest. The list is rotated by the hour so back-to-back jobs do not ask
+    the platform the same first question every time.
+    """
+    animal = "dog" if str(animal_mode or "").lower().startswith("dog") else "cat"
+    table = HARVEST_QUERIES[animal]
+    typed = table.get(str(cat_video_type or "").lower(), [])
+    general = table[""]
+    if rotate is None:
+        rotate = int(time.time() // 3600)
+    k = rotate % len(general)
+    out = []
+    for q in typed + general[k:] + general[:k]:
+        if q not in out:
+            out.append(q)
+    return out
+
+
+def known_unusable(record: dict, min_seconds: float) -> str:
+    """Reason a video already looked up before cannot be used, or '' when it is worth another look."""
+    if not record or not record.get("height"):
+        return ""
+    if record.get("status") != source_licenses.VERIFIED or not record.get("creator"):
+        return "NOT_CC_LICENSED"
+    usable, why_not = source_licenses.worth_downloading(record, min_seconds)
+    return "" if usable else why_not
+
+
+# One 7.5 s window needs 12.5 s of source; short single-moment clips are welcome
+MIN_SOURCE_SECONDS = 20.0
+
+# Old-reading rechecks are a one-time clean-up: they must not hold up a job for minutes.
+# Measured: 4.5 min spent rechecking to recover one window before a job could start downloading.
+RECHECK_MAX_SECONDS = 60.0
+
+
+def harvest_target(missing: int) -> int:
+    """
+    Windows to verify when a job is `missing` clips. About a third of harvested windows fail at render,
+    so a small margin is added; the render stage replenishes again if more fail. The old rule
+    (3 x missing + 2) made a job 2 clips short download four sources (about 4 minutes each) for 8 windows.
+    """
+    missing = max(1, int(missing))
+    return missing + max(1, (missing + 1) // 2)
+
+# A job uses at most a few clips per source, so a source is sampled, not scanned end to end.
+# Measured: one 11-minute source took the whole 1800 s harvest budget for 63 windows and 4 verified.
+MAX_WINDOWS_PER_SOURCE = 24
+MAX_VERIFIED_PER_SOURCE = 4
+
+
+def source_window_step(total_dur: float, max_windows: int = MAX_WINDOWS_PER_SOURCE) -> float:
+    """Seconds between window starts: 10 s for short sources, wider for long ones so the whole video is sampled."""
+    usable = max(0.0, float(total_dur or 0) - 12.5)
+    return max(10.0, usable / max_windows)
+
+
 def run_real_harvest_sync(
     animal_mode: str = "cat",
     target_needed: int = 4,
     cat_video_type: str = "all",
     dry_run: bool = False,
-    max_search_results: int = 12,
+    max_search_results: int = 30,
     max_downloads: int = None,
     max_seconds: float = 1800.0,
     logger=None
@@ -625,24 +702,7 @@ def run_real_harvest_sync(
         else:
             print(f"[HARVEST-SYNC] {msg}", flush=True)
 
-    # Cat video queries per type
-    CAT_QUERIES = {
-        "funny": ["funny cat creative commons cc-by", "hilarious cats creative commons"],
-        "fails": ["cat fails creative commons cc-by", "funny cat jump fail creative commons"],
-        "kitten": ["cute kittens playing creative commons cc-by", "kitten adventures creative commons"],
-        "chaotic": ["chaotic cat zoomies creative commons", "crazy cats funny moments creative commons"],
-        "playful": ["playful cat toys creative commons cc-by", "cats playing creative commons"]
-    }
-
-    if cat_video_type.lower() in CAT_QUERIES:
-        queries = CAT_QUERIES[cat_video_type.lower()]
-    else:
-        queries = [
-            "funny cat creative commons cc-by",
-            "cat fails creative commons cc-by",
-            "playful cat creative commons cc-by",
-            "cute kittens playing creative commons cc-by"
-        ]
+    queries = harvest_queries(animal_mode, cat_video_type)
 
     if dry_run:
         time.sleep(0.15)
@@ -690,7 +750,8 @@ def run_real_harvest_sync(
     wm_detector = WatermarkDetector()
 
     # Windows wrongly rejected by the old sharpness reading are the cheapest footage there is
-    windows_rechecked = recheck_sharpness_rejects(ledger, detector, animal_mode, target_needed, t0, max_seconds, _log)
+    windows_rechecked = recheck_sharpness_rejects(ledger, detector, animal_mode, target_needed, t0,
+                                                  min(max_seconds, RECHECK_MAX_SECONDS), _log)
     if windows_rechecked >= target_needed:
         _log(f"Recheck recovered {windows_rechecked} windows, no download needed.")
         return {"success": True, "queries_run": 0, "videos_found": 0, "windows_cut": 0, "windows_verified": windows_rechecked,
@@ -749,6 +810,12 @@ def run_real_harvest_sync(
             if os.path.exists(cache_file) or ledger.is_blocked_source(cache_file):
                 continue
 
+            # Already looked up on an earlier harvest and unusable: skip without asking the platform again
+            known_reason = known_unusable(source_licenses.lookup(vid_id), MIN_SOURCE_SECONDS)
+            if known_reason:
+                rejects_by_reason["KNOWN_" + known_reason] = rejects_by_reason.get("KNOWN_" + known_reason, 0) + 1
+                continue
+
             videos_found += 1
             # Legal gate: the video page itself must show a Creative Commons licence
             try:
@@ -762,7 +829,7 @@ def run_real_harvest_sync(
                 rejects_by_reason["NOT_CC_LICENSED"] = rejects_by_reason.get("NOT_CC_LICENSED", 0) + 1
                 _log(f"Skipped {vid_id}: no Creative Commons licence shown ({lic_record.get('license')})")
                 continue
-            usable, why_not = source_licenses.worth_downloading(lic_record)
+            usable, why_not = source_licenses.worth_downloading(lic_record, MIN_SOURCE_SECONDS)
             if not usable:
                 rejects_by_reason[why_not] = rejects_by_reason.get(why_not, 0) + 1
                 _log(f"Skipped {vid_id}: {why_not} ({lic_record.get('width')}x{lic_record.get('height')}, {lic_record.get('duration')}s)")
@@ -841,9 +908,16 @@ def run_real_harvest_sync(
                     continue
 
                 # Propose candidate window starts (e.g. 10s, 20s, 30s)
-                step = 10.0
+                # One source gives a job a few clips at most, so sample it evenly instead of scanning all of it
+                step = source_window_step(total_dur)
                 curr_start = 5.0
-                while curr_start + 7.5 <= total_dur and windows_verified < target_needed:
+                src_cut = 0
+                src_verified_before = windows_verified
+                while (curr_start + 7.5 <= total_dur and windows_verified < target_needed
+                       and src_cut < MAX_WINDOWS_PER_SOURCE
+                       and windows_verified - src_verified_before < MAX_VERIFIED_PER_SOURCE
+                       and time.time() - t0 <= max_seconds):
+                    src_cut += 1
                     c_win = get_canonical_window(f"cache_{vid_id}", curr_start, target_duration=7.5)
                     windows_cut += 1
                     cid = c_win["clip_id"]
@@ -880,7 +954,11 @@ def run_real_harvest_sync(
                     pet_ratio = analysis.get("pet_ratio", 0.0)
 
                     if pet_ratio < 0.80:
-                        rej_msg = f"LOW_PET_PRESENCE ({pet_ratio*100:.0f}% < 80%)"
+                        # Say the real reason: a window the analysis turned down for framing has no pet ratio at all
+                        if "pet_ratio" not in analysis and analysis.get("reason"):
+                            rej_msg = str(analysis["reason"])
+                        else:
+                            rej_msg = f"LOW_PET_PRESENCE ({pet_ratio*100:.0f}% < 80%)"
                         rejects_by_reason[rej_msg] = rejects_by_reason.get(rej_msg, 0) + 1
                         ledger.add_clip(
                             clip_id=cid,

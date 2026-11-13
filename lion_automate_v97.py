@@ -300,6 +300,44 @@ def evaluate_stage_a_candidate_gate(plan: dict, min_sharpness_floor: float = 150
     return plan
 
 
+def video_fps_is_constant_30(video_path):
+    """True when ffprobe reports r_frame_rate and avg_frame_rate of exactly 30 fps. None when it cannot be read."""
+    try:
+        res = subprocess.run([FFPROBE_EXE, "-v", "error", "-select_streams", "v:0",
+                              "-show_entries", "stream=r_frame_rate,avg_frame_rate",
+                              "-of", "json", video_path], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
+        st = json.loads(res.stdout)["streams"][0]
+
+        def ratio(t):
+            n, d = str(t).split("/")
+            return float(n) / float(d)
+        return abs(ratio(st["r_frame_rate"]) - 30.0) <= 0.001 and abs(ratio(st["avg_frame_rate"]) - 30.0) <= 0.002
+    except Exception:
+        return None
+
+
+def make_constant_30fps(video_path):
+    """Re-times the video to exactly 30 fps CFR (audio untouched), in place. Returns True when the file is constant 30 fps afterwards."""
+    if video_fps_is_constant_30(video_path):
+        return True
+    tmp_out = video_path + ".cfr30.mp4"
+    cmd = [FFMPEG_EXE, "-y", "-i", video_path,
+           "-vf", "fps=30,setparams=color_primaries=bt709:color_trc=bt709:colorspace=bt709",
+           "-c:v", "libx264", "-preset", "fast", "-crf", "12", "-profile:v", "high", "-pix_fmt", "yuv420p",
+           "-r", "30", "-fps_mode", "cfr",
+           "-color_primaries", "bt709", "-color_trc", "bt709", "-colorspace", "bt709",
+           "-c:a", "copy", tmp_out]
+    res = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+    if res.returncode == 0 and os.path.exists(tmp_out) and os.path.getsize(tmp_out) > 1000 and video_fps_is_constant_30(tmp_out):
+        shutil.move(tmp_out, video_path)
+        return True
+    try:
+        os.remove(tmp_out)
+    except OSError:
+        pass
+    return False
+
+
 def get_video_duration(video_path):
     # 1. ffprobe
     try:
@@ -520,7 +558,19 @@ ENGLISH_CAPTIONS = [
     "Why walk when you can slide dramatically",
     "A series of unfortunate feline events",
     "Legend says he is still plotting revenge",
-    "Certified goofy goober energy"
+    "Certified goofy goober energy",
+    "Pays no rent, runs the house",
+    "This face gets away with everything",
+    "Tiny body, enormous opinions",
+    "Main character energy",
+    "No thoughts, just vibes",
+    "Somebody is very pleased with themselves",
+    "Would you look at this little menace",
+    "Unbothered and thriving",
+    "The boss has entered the room",
+    "Small, fluffy and in charge",
+    "Too cute to be told off",
+    "Living their best life"
 ]
 
 SINHALA_CAPTIONS = [
@@ -573,12 +623,16 @@ def strip_emojis(text: str) -> str:
     )
     return emoji_pattern.sub("", text).strip()
 
-def get_unique_caption(language: str = "en", allow_emoji: bool = False, cooldown_captions=None, used_in_job=None) -> str:
+def get_unique_caption(language: str = "en", allow_emoji: bool = False, cooldown_captions=None, used_in_job=None, hook: bool = False) -> str:
     """
     Selects a caption that has not been used in the last 3 jobs of the channel
     nor in the current job.
     """
-    pool = SINHALA_CAPTIONS if language == "si" else ENGLISH_CAPTIONS
+    import human_edit
+    if hook:
+        pool = human_edit.HOOK_CAPTIONS_SI if language == "si" else human_edit.HOOK_CAPTIONS
+    else:
+        pool = SINHALA_CAPTIONS if language == "si" else (human_edit.general_captions(ENGLISH_CAPTIONS) or ENGLISH_CAPTIONS)
     cooldown = set(cooldown_captions or [])
     used = set(used_in_job or [])
     excluded = {c.strip().lower() for c in cooldown.union(used) if c}
@@ -819,7 +873,7 @@ def load_caption_font(font_path, size):
     return font
 
 
-def render_safe_zone_caption(clip_path, out_path, caption_text, font_lang="en"):
+def render_safe_zone_caption(clip_path, out_path, caption_text, font_lang="en", show_seconds=None):
     """
     Renders safe-zone caption overlay on a single clip:
     - Guaranteed inside x 150-930, y 220-1450 (platform safe zones)
@@ -963,6 +1017,9 @@ def render_safe_zone_caption(clip_path, out_path, caption_text, font_lang="en"):
 
     # Composite via FFmpeg with fade-in (0.15s) and fade-out before cut, ensuring even dimensions, square pixel SAR, 30 CFR and pure BT.709
     fade_out_start = max(0.1, dur - 0.3)
+    if show_seconds:
+        # A punchline, not a subtitle: it fades after show_seconds and the footage plays clean
+        fade_out_start = max(0.1, min(fade_out_start, float(show_seconds)))
     filter_complex = (
         f"[1:v]format=rgba,fade=t=in:st=0.1:d=0.15:alpha=1,fade=t=out:st={fade_out_start:.2f}:d=0.2:alpha=1[ovl];"
         f"[0:v][ovl]overlay=0:0:shortest=1,scale=trunc(iw/2)*2:trunc(ih/2)*2,setsar=1,setparams=color_primaries=bt709:color_trc=bt709:colorspace=bt709"
@@ -1936,6 +1993,24 @@ class LionReelV97Pipeline:
         if text_res.get("passed") is None:
             log(f"  [TEXT CHECK] Clip {cid}: source text check not run ({text_res.get('reason')}); final QA checks it again", "WARN")
 
+        # Right animal: a cat video must not carry dog footage (or the other way round)
+        species_mode = cand.get("animal_type") or cand.get("animal_mode") or getattr(self, "current_animal_mode", None)
+        if species_mode:
+            from pet_detector import check_window_species
+            try:
+                sp_res = check_window_species(local_src, start_s, dur_s, species_mode, detector=getattr(self.reframer, "detector", None))
+            except Exception as e_sp:
+                sp_res = {"passed": None, "reason": f"Check crashed: {e_sp}"}
+            if sp_res.get("passed") is False:
+                cand["result"] = "REJECT"
+                cand["reason"] = sp_res.get("reason")
+                cand["actual_score"] = 0.0
+                if not cand.get("grown_window"):
+                    self.ledger.reject_window(src_path, start_s, start_s + dur_s, cand["reason"])
+                return False, cid, None, cand
+            if sp_res.get("passed") is None:
+                log(f"  [ANIMAL CHECK] Clip {cid}: not run ({sp_res.get('reason')})", "WARN")
+
         quarantine_dir = os.path.join(work_job_dir, "quarantine")
         reusable, r_msg = False, ""
         if os.path.exists(checkpoint_clip):
@@ -2562,12 +2637,12 @@ class LionReelV97Pipeline:
             timer.start_stage("harvest")
             if usable_count < target_clips_count:
                 deficit = target_clips_count - usable_count
-                log(f"Bank deficit detected ({usable_count} usable < {target_clips_count} needed). Running real harvest for {deficit} clips...", "INFO")
-                from harvest_worker import run_real_harvest_sync
-                # Some windows fail at render, so one clip short needs more than one window found
+                from harvest_worker import run_real_harvest_sync, harvest_target
+                log(f"Bank deficit detected ({usable_count} usable < {target_clips_count} needed). Running real harvest for {deficit} clips (finding {harvest_target(deficit)} windows)...", "INFO")
+                # Some windows fail at render, so a small margin is found; the render stage replenishes if more fail
                 h_res = run_real_harvest_sync(
                     animal_mode=animal_mode,
-                    target_needed=deficit * 3 + 2,
+                    target_needed=harvest_target(deficit),
                     cat_video_type=video_cat_type,
                     dry_run=False,
                     logger=log
@@ -3785,9 +3860,9 @@ class LionReelV97Pipeline:
                         # Search now instead of idling: nothing else adds footage during the wait
                         if not is_test_job:
                             try:
-                                from harvest_worker import run_real_harvest_sync
+                                from harvest_worker import run_real_harvest_sync, harvest_target
                                 still_needed = max(1, target_clips_count - len(rendered_candidates_pool))
-                                run_real_harvest_sync(animal_mode=animal_mode, target_needed=still_needed * 3 + 2, cat_video_type=video_cat_type,
+                                run_real_harvest_sync(animal_mode=animal_mode, target_needed=harvest_target(still_needed), cat_video_type=video_cat_type,
                                                       dry_run=False, max_seconds=patience_budget, logger=log)
                             except Exception as e_wait_h:
                                 log(f"Harvest during wait failed: {e_wait_h}", "WARN")
@@ -4222,6 +4297,25 @@ class LionReelV97Pipeline:
             except Exception as e_cc:
                 log(f"[WARN] Failed fetching recent captions: {e_cc}", "WARN")
 
+            # Edit order: open on the most active clip, end on the next most active, spread sources apart
+            try:
+                import human_edit
+                if len(processed_clip_paths) == len(clip_mapping_data) and len(processed_clip_paths) >= 2:
+                    edit_items = [{"path": p_e, "mapping": m_e, "source_id": m_e.get("source_id"),
+                                   "motion": human_edit.opening_motion(p_e)}
+                                  for p_e, m_e in zip(processed_clip_paths, clip_mapping_data)]
+                    edit_items = human_edit.order_like_an_editor(edit_items)
+                    processed_clip_paths = [it["path"] for it in edit_items]
+                    clip_mapping_data = [it["mapping"] for it in edit_items]
+                    for new_idx, it in enumerate(edit_items):
+                        it["mapping"]["clip_index"] = new_idx + 1
+                        it["mapping"]["opening_motion"] = it["motion"]
+                    log("  [EDIT ORDER] " + ", ".join(
+                        f"{it['mapping'].get('clip_id')} (motion {it['motion'] if it['motion'] is not None else 'not measured'})"
+                        for it in edit_items), "INFO")
+            except Exception as e_order:
+                log(f"[WARN] Edit order step skipped: {e_order}", "WARN")
+
             job_used_caps = set()
             for c_idx, clip_p in enumerate(processed_clip_paths):
                 allow_emoji = False
@@ -4232,10 +4326,11 @@ class LionReelV97Pipeline:
                             allow_emoji = bool(cfg_data.get("ALLOW_EMOJI", False))
                 except Exception:
                     pass
-                cap_text = get_unique_caption(language=language, allow_emoji=allow_emoji, cooldown_captions=recent_cooldown_caps, used_in_job=job_used_caps)
+                cap_text = get_unique_caption(language=language, allow_emoji=allow_emoji, cooldown_captions=recent_cooldown_caps, used_in_job=job_used_caps, hook=(c_idx == 0))
                 job_used_caps.add(cap_text)
                 cap_out = os.path.join(work_job_dir, f"{job_id}_c{c_idx:02d}_cap.mp4")
-                cap_ok = render_safe_zone_caption(clip_p, cap_out, cap_text, font_lang=language)
+                import human_edit
+                cap_ok = render_safe_zone_caption(clip_p, cap_out, cap_text, font_lang=language, show_seconds=human_edit.CAPTION_SECONDS)
                 if cap_ok and os.path.exists(cap_out):
                     processed_clip_paths[c_idx] = cap_out
                     captions_rendered_cnt += 1
@@ -4594,6 +4689,13 @@ class LionReelV97Pipeline:
                                 log(f"  [AUTO-REPAIR {repair_attempts}] Trimmed master to contract target {contract_target_sec:.1f}s", "INFO")
                     except Exception as e_dur_rep:
                         log(f"  [AUTO-REPAIR {repair_attempts}] Duration re-align error: {e_dur_rep}", "WARN")
+
+                # Re-assembling can leave the frame rate slightly off 30 fps: re-time it before QA
+                try:
+                    if not make_constant_30fps(local_master_path):
+                        log(f"  [AUTO-REPAIR {repair_attempts}] Frame rate could not be made constant 30 fps; QA will report it.", "WARN")
+                except Exception as e_cfr:
+                    log(f"  [AUTO-REPAIR {repair_attempts}] Frame rate re-time error: {e_cfr}", "WARN")
 
                 # Re-run QA gate validation
                 qa_passed, qa_report = run_full_qa(local_master_path, layout_mode=layout_mode, clip_mapping=clip_mapping_data, work_job_dir=work_job_dir, expected_aspect=aspect_ratio, target_dur=contract_target_sec)

@@ -239,3 +239,60 @@ class TestStuckJobWatchdog(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+def test_heartbeat_gap_is_not_a_stall(tmp_path, monkeypatch):
+    """A heartbeat file that is briefly unreadable must not mark a running job as stuck."""
+    import json, os, time
+    import watchdog_service as wd
+    job = tmp_path / "job1"
+    job.mkdir()
+    jr = job / "job_result.json"
+    jr.write_text(json.dumps({"job_id": "job1", "status": "running", "stage_index": 1, "stage_name": "x"}))
+    old = time.time() - 400
+    os.utime(jr, (old, old))
+    hb = job / "heartbeat.json"
+    real_sleep = time.sleep
+
+    def sleep_then_write(sec):
+        # The writer finishes its swap while the watchdog waits
+        hb.write_text(json.dumps({"stage_id": 1, "stage_name": "x", "timestamp": time.time(), "pid": os.getpid()}))
+        real_sleep(0)
+    monkeypatch.setattr(wd.time, "sleep", sleep_then_write)
+    res = wd.check_job_health(str(job), max_stale_sec=60.0)
+    assert res["healthy"] is True and res["status"] == "running"
+    assert json.loads(jr.read_text())["status"] == "running"
+
+
+def test_heartbeat_writer_never_removes_the_file(tmp_path):
+    import watchdog_service as wd
+    w = wd.HeartbeatWriter(job_id="j", job_dir=str(tmp_path), interval_sec=5.0)
+    w.flush()
+    w.flush()
+    assert (tmp_path / "heartbeat.json").is_file()
+    assert not [f for f in tmp_path.iterdir() if ".tmp." in f.name]
+
+
+def _job_without_heartbeat(tmp_path, age_s):
+    import json, os, time
+    job = tmp_path / "job2"
+    job.mkdir()
+    jr = job / "job_result.json"
+    jr.write_text(json.dumps({"job_id": "job2", "status": "running", "stage_index": 1, "stage_name": "x"}))
+    old = time.time() - age_s
+    os.utime(jr, (old, old))
+    return str(job)
+
+
+def test_slow_startup_before_first_heartbeat_is_not_a_stall(tmp_path, monkeypatch):
+    # Seen in a real job: 97 s of planner verification before the engine wrote its first heartbeat
+    import watchdog_service as wd
+    monkeypatch.setattr(wd.time, "sleep", lambda s: None)
+    assert wd.check_job_health(_job_without_heartbeat(tmp_path, 100), max_stale_sec=60.0)["healthy"] is True
+
+
+def test_no_heartbeat_for_a_long_time_is_still_a_stall(tmp_path, monkeypatch):
+    import watchdog_service as wd
+    monkeypatch.setattr(wd.time, "sleep", lambda s: None)
+    r = wd.check_job_health(_job_without_heartbeat(tmp_path, 400), max_stale_sec=60.0)
+    assert r["healthy"] is False and r["status"] == "stuck"

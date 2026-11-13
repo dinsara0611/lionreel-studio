@@ -148,165 +148,8 @@ function syncVerificationsUI() {
     syncFilterWarnings();
 }
 
-// Curated Sample Sources — Verified 100% Cat, Dog, and Cat & Dog Duo Clips (Zero Wild Animals)
-const CURATED_SOURCES = [
-    {
-        id: "cat_ref_01",
-        title: "Funny Cats Master Reference (Hilarious Cat Chaos)",
-        channel: "LionStudio HD",
-        duration: 65,
-        resolution: "1080x1920 Full HD",
-        views: "Studio Master",
-        qualityScore: 100,
-        thumbnail: "https://images.unsplash.com/photo-1548802673-380ab8ebc7b7?w=640&q=80",
-        videoUrl: "own_footage/Funny Cats.mp4",
-        category: "cat"
-    },
-    {
-        id: "cat_01",
-        title: "Fastest Cat Slaps in the West (Zero Regrets)",
-        channel: "ViralWhiskers",
-        duration: 17,
-        resolution: "1080p 60fps",
-        views: "26.7M",
-        qualityScore: 99,
-        thumbnail: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=640&q=80",
-        videoUrl: "https://www.youtube.com/watch?v=8R_7KCtShkU",
-        category: "cat"
-    },
-    {
-        id: "cat_02",
-        title: "Cat Stares In Mirror and Questions Own Existence",
-        channel: "MeowDaily",
-        duration: 52,
-        resolution: "1080p",
-        views: "46.2M",
-        qualityScore: 96,
-        thumbnail: "https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=640&q=80",
-        videoUrl: "https://www.youtube.com/watch?v=SB-qEYVdvXA",
-        category: "cat"
-    },
-    {
-        id: "cat_03",
-        title: "Cats Will Make You Laugh Your Head Off (Pure Chaos)",
-        channel: "TigerPaws",
-        duration: 42,
-        resolution: "1080p",
-        views: "30.1M",
-        qualityScore: 97,
-        thumbnail: "https://images.unsplash.com/photo-1543852786-1cf6624b9987?w=640&q=80",
-        videoUrl: "https://www.youtube.com/watch?v=hY7m5jjJ9mM",
-        category: "cat"
-    },
-    {
-        id: "cat_04",
-        title: "Orange Tabby Master of Stealth Attack on Slippers",
-        channel: "GingerCats",
-        duration: 41,
-        resolution: "1080p",
-        views: "82.3M",
-        qualityScore: 95,
-        thumbnail: "https://images.unsplash.com/photo-1574158622682-e40e69881006?w=640&q=80",
-        videoUrl: "https://www.youtube.com/watch?v=ByH9LuSILxU",
-        category: "cat"
-    },
-    {
-        id: "dog_01",
-        title: "Denver Official Guilty Dog (Classic Viral Comedy)",
-        channel: "GuiltyDog",
-        duration: 48,
-        resolution: "1080p",
-        views: "57.6M",
-        qualityScore: 99,
-        thumbnail: "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=640&q=80",
-        videoUrl: "https://www.youtube.com/watch?v=B8ISzf2pryI",
-        category: "dog"
-    },
-    {
-        id: "dog_02",
-        title: "Siberian Husky Having a Dramatic Temper Tantrum",
-        channel: "HuskyDaily",
-        duration: 59,
-        resolution: "1080p",
-        views: "35.5M",
-        qualityScore: 98,
-        thumbnail: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=640&q=80",
-        videoUrl: "https://www.youtube.com/watch?v=i82528KGDdo",
-        category: "dog"
-    },
-    {
-        id: "dog_03",
-        title: "Golden Retriever Hilarious & Adorable Reactions",
-        channel: "GoldenSquad",
-        duration: 55,
-        resolution: "1080p Full HD",
-        views: "18.4M",
-        qualityScore: 98,
-        thumbnail: "https://images.unsplash.com/photo-1552053831-71594a27632d?w=640&q=80",
-        videoUrl: "https://www.youtube.com/watch?v=Je09ps-3DTw",
-        category: "dog"
-    },
-    {
-        id: "dog_04",
-        title: "Ultimate Talking Dog Tease (The Maple Bacon Video)",
-        channel: "TalkingAnimals",
-        duration: 50,
-        resolution: "720p HD",
-        views: "213M",
-        qualityScore: 99,
-        thumbnail: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=640&q=80",
-        videoUrl: "https://www.youtube.com/watch?v=nGeKSiCQkPw",
-        category: "dog"
-    },
-    {
-        id: "mix_01",
-        title: "Tiny Kitten Attacks Giant Husky (Absolute Chaos)",
-        channel: "PawsLove",
-        duration: 45,
-        resolution: "4K UHD 60fps",
-        views: "2.44M",
-        qualityScore: 99,
-        thumbnail: "https://images.unsplash.com/photo-1537151625747-768eb6cf92b2?w=640&q=80",
-        videoUrl: "https://www.youtube.com/watch?v=Aa0DbmzP6zY",
-        category: "mix"
-    },
-    {
-        id: "mix_02",
-        title: "German Shepherd Confused by Attack of Tiny Kittens",
-        channel: "AnimalDuo",
-        duration: 52,
-        resolution: "4K UHD",
-        views: "3.35M",
-        qualityScore: 99,
-        thumbnail: "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=640&q=80",
-        videoUrl: "https://www.youtube.com/watch?v=yK847E_MoM4",
-        category: "mix"
-    },
-    {
-        id: "mix_03",
-        title: "Cats and Dogs Playing Together Funny (Dynamic Duo)",
-        channel: "PetFriends",
-        duration: 46,
-        resolution: "720p HD",
-        views: "1.82M",
-        qualityScore: 97,
-        thumbnail: "https://images.unsplash.com/photo-1548767797-d8c844163c4c?w=640&q=80",
-        videoUrl: "https://www.youtube.com/watch?v=q9JFcvkhrZk",
-        category: "mix"
-    },
-    {
-        id: "mix_04",
-        title: "Funny Dog and Cat Moments (Wholesome Friendship)",
-        channel: "CutePaws",
-        duration: 46,
-        resolution: "720p HD",
-        views: "1.25M",
-        qualityScore: 96,
-        thumbnail: "https://images.unsplash.com/photo-1543852786-1cf6624b9987?w=640&q=80",
-        videoUrl: "https://www.youtube.com/watch?v=8zCx5yH-MqM",
-        category: "mix"
-    }
-];
+// No sample sources: clips come from the verified bank while a job runs
+const CURATED_SOURCES = [];
 
 let appBootStartTime = Date.now();
 let appBootWatchdog = null;
@@ -1006,6 +849,142 @@ function navigateToStep(stepNum, optTargetFile = null) {
     }
 }
 
+// Sources step: real numbers from the ledger's one count function, never invented
+function sourceBankAnimal() {
+    const a = state.activeCategory || (state.config && state.config.VIDEO_MODE) || "cat";
+    return a === "mixed" ? "mix" : a;
+}
+
+async function renderSourceBank() {
+    const set = (id, text) => { const el = document.getElementById(id); if (el) el.innerText = text; };
+    const animal = sourceBankAnimal();
+    const names = { cat: "cats", dog: "dogs", mix: "cats and dogs" };
+    const reel = document.getElementById("source-bank-reel");
+    const verdict = document.getElementById("source-bank-verdict");
+    let counts = null;
+    try {
+        const res = await fetch(`${API_BASE}/api/pool?animal=${encodeURIComponent(animal)}`);
+        if (res.ok) counts = (await res.json()).counts || null;
+    } catch (e) { counts = null; }
+    const num = (v) => (typeof v === "number" ? String(v) : "not measured");
+    if (!counts || typeof counts.usable_now !== "number") {
+        set("source-bank-ready", "–");
+        set("source-bank-ready-label", `clips ready for ${names[animal] || animal}`);
+        ["cooldown", "used", "sources", "rejected"].forEach(k => set(`source-bank-${k}`, "not measured"));
+        if (reel) reel.innerHTML = "";
+        if (verdict) {
+            verdict.innerText = "The clip bank could not be read. Check that the app is still running, then open this step again.";
+            verdict.dataset.tone = "warn";
+        }
+        return;
+    }
+    const ready = counts.usable_now;
+    const need = parseInt(state.config.TARGET_CLIPS) || null;
+    set("source-bank-ready", String(ready));
+    set("source-bank-ready-label", `${ready === 1 ? "clip" : "clips"} ready for ${names[animal] || animal}`);
+    set("source-bank-cooldown", num(counts.cooldown));
+    set("source-bank-used", num(counts.used));
+    set("source-bank-sources", num(counts.usable_sources));
+    set("source-bank-rejected", num(counts.rejected));
+    if (reel) {
+        // One frame per clip the video needs: filled when the bank already holds it
+        const total = Math.min(Math.max(need || ready, ready), 24);
+        let html = "";
+        for (let i = 0; i < total; i++) html += `<span class="source-bank-frame${i < ready ? " is-ready" : ""}"></span>`;
+        reel.innerHTML = html;
+    }
+    if (verdict) {
+        if (need && ready >= need) {
+            verdict.innerText = `Enough for the ${need}-clip video you have set up. The job can start rendering straight away.`;
+            verdict.dataset.tone = "ok";
+        } else if (need) {
+            const short = need - ready;
+            verdict.innerText = `Your current setup needs ${need} clips, so ${short} more must be found. The job will look for new Creative Commons videos first, which adds waiting time. You can change the clip count in the next step.`;
+            verdict.dataset.tone = "warn";
+        } else {
+            verdict.innerText = "Set the clip count in the next step to see whether this is enough.";
+            verdict.dataset.tone = "ok";
+        }
+    }
+}
+
+// Last wizard step: what the job will make, from the saved settings and the ledger count
+async function renderJobSheet() {
+    const set = (id, text) => { const el = document.getElementById(id); if (el) el.innerText = text; };
+    const cfg = state.config || {};
+    const animal = sourceBankAnimal();
+    const vType = cfg.VIDEO_TYPE || "short";
+    const clipSec = parseFloat(cfg.SHORT_CLIP_SEC) || null;
+    const longMin = parseFloat(cfg.TARGET_DURATION_MIN) || null;
+    const aspect = cfg.ASPECT_RATIO || "9:16";
+    let clips = parseInt(cfg.TARGET_CLIPS) || null;
+    if (vType !== "short" && longMin && clipSec) clips = Math.max(2, Math.round((longMin * 60) / clipSec));
+    const totalSec = (clips && clipSec) ? clips * clipSec : null;
+    const lengthText = totalSec === null ? "not set" : (totalSec >= 90 ? `${(totalSec / 60).toFixed(1)} minutes` : `${Math.round(totalSec)} seconds`);
+
+    set("job-sheet-animal", { cat: "Cats", dog: "Dogs", mix: "Cats and dogs" }[animal] || animal);
+    set("job-sheet-format", vType === "long" ? "Long video" : (vType === "both" ? "Long video and a short" : "Short"));
+    set("job-sheet-clips", (clips && clipSec) ? `${clips} clips of ${clipSec.toFixed(1)} seconds` : "not set");
+    set("job-sheet-length", lengthText);
+    set("job-sheet-shape", aspect === "16:9" ? "Wide, 1920 by 1080" : (aspect === "1:1" ? "Square, 1080 by 1080" : "Vertical, 1080 by 1920"));
+
+    const verdict = document.getElementById("job-sheet-verdict");
+    let ready = null;
+    try {
+        const res = await fetch(`${API_BASE}/api/pool?animal=${encodeURIComponent(animal)}`);
+        if (res.ok) {
+            const c = (await res.json()).counts || {};
+            if (typeof c.usable_now === "number") ready = c.usable_now;
+        }
+    } catch (e) { ready = null; }
+    set("job-sheet-ready", ready === null ? "not measured" : String(ready));
+    if (!verdict) return;
+    if (ready === null || !clips) {
+        verdict.innerText = "The clip bank could not be read, so the waiting time is not known.";
+        verdict.dataset.tone = "warn";
+    } else if (ready >= clips) {
+        verdict.innerText = "The bank holds enough clips. Rendering starts straight away.";
+        verdict.dataset.tone = "ok";
+    } else {
+        verdict.innerText = `The bank is ${clips - ready} ${clips - ready === 1 ? "clip" : "clips"} short. The job first looks for new Creative Commons videos, so it will take longer. If it cannot find enough, it stops and says so.`;
+        verdict.dataset.tone = "warn";
+    }
+}
+
+let sourceHarvestTimer = null;
+async function startSourceHarvest(btn) {
+    const animal = sourceBankAnimal();
+    const label = btn ? btn.innerText : "";
+    if (btn) { btn.disabled = true; btn.innerText = "Starting the search…"; }
+    try {
+        const res = await fetch(`${API_BASE}/api/harvest/start`, {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ animal })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.success) throw new Error(data.error || `the app answered ${res.status}`);
+        showToast("Looking for new Creative Commons videos. Clips that pass the checks join the bank.", "success");
+    } catch (e) {
+        showToast(`The search did not start: ${e.message}`, "error");
+        if (btn) { btn.disabled = false; btn.innerText = label; }
+        return;
+    }
+    if (sourceHarvestTimer) clearInterval(sourceHarvestTimer);
+    sourceHarvestTimer = setInterval(async () => {
+        let h = null;
+        try { h = await (await fetch(`${API_BASE}/api/harvest/status?t=${Date.now()}`)).json(); } catch (e) { h = null; }
+        if (h && h.is_harvesting) {
+            if (btn) btn.innerText = `Searching: ${h.sources_scanned ?? 0} videos checked, ${h.windows_verified ?? 0} clips added`;
+        } else {
+            clearInterval(sourceHarvestTimer);
+            sourceHarvestTimer = null;
+            if (btn) { btn.disabled = false; btn.innerText = label; }
+        }
+        renderSourceBank();
+        loadPoolStatus();
+    }, 5000);
+}
+
 async function loadPoolStatus(animalType) {
     try {
         const cat = animalType || state.activeCategory || (state.config && state.config.VIDEO_MODE) || "cat";
@@ -1116,8 +1095,10 @@ window.addEventListener("hashchange", handleUrlHash);
 function initCuratedSources() {
     state.sources = [...CURATED_SOURCES];
     const cat = (state.activeCategory === "mixed" ? "mix" : (state.activeCategory || state.config.VIDEO_MODE || "cat"));
+    // Older versions saved made-up sample clips in the browser: drop them
+    try { localStorage.removeItem("lionreel_selected_clips"); } catch (e) {}
     try {
-        const saved = localStorage.getItem("lionreel_selected_clips");
+        const saved = null;
         if (saved) {
             const parsed = JSON.parse(saved);
             if (Array.isArray(parsed) && parsed.length > 0) {
@@ -1260,67 +1241,37 @@ function renderWizardStep() {
     const editorBtn = document.getElementById("btn-wizard-open-editor");
 
     if (backBtn) backBtn.style.visibility = (stage > 1) ? "visible" : "hidden";
-    if (editorBtn) editorBtn.style.display = (stage === 4) ? "inline-flex" : "none";
+    if (editorBtn) editorBtn.style.display = "none"; // the editor opens on real clips after a render
 
     if (stage === 1) {
         hideSummaryBar();
-        if (tag) tag.innerText = "Step 1 of 4 • Choose Collection";
+        if (tag) tag.innerText = "Step 1 of 4 • Choose the animals";
         if (title) title.innerText = "What kind of compilation are you making?";
-        if (desc) desc.innerText = "Select an animal focus to optimize automated moment detection, color grade, and music pacing.";
-        if (nextBtn) nextBtn.innerHTML = `<span>Continue to Sources</span> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
+        if (desc) desc.innerText = "LionReel tunes moment picking and music pace to the animals you choose.";
+        if (nextBtn) nextBtn.innerHTML = `<span>Continue</span> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
     } else if (stage === 2) {
         hideSummaryBar();
-        if (tag) tag.innerText = "Step 2 of 4 • Source Video Discovery";
-        if (title) title.innerText = "Choose your high-energy moments";
-        if (desc) desc.innerText = "Search YouTube, paste URLs, or select from curated 4K/1080p clips.";
-        if (nextBtn) nextBtn.innerHTML = `<span>Configure Output</span> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
-        // Ensure queued clips strictly match the active collection
-        const cat = (state.activeCategory === "mixed" ? "mix" : (state.activeCategory || state.config.VIDEO_MODE || "cat"));
-        state.selectedClips = (state.selectedClips || []).filter(s => {
-            const sc = (s.category || "").toLowerCase();
-            if (cat === "cat") return sc === "cat" || sc === "feline";
-            if (cat === "dog") return sc === "dog" || sc === "canine";
-            return sc === "mix" || sc === "mixed";
-        });
-        if (state.selectedClips.length === 0) {
-            state.selectedClips = state.sources.filter(s => {
-                if (cat === "cat") return s.category === "cat";
-                if (cat === "dog") return s.category === "dog";
-                return s.category === "mix" || s.category === "mixed";
-            }).slice(0, 4);
-        }
-        saveSelectedClips();
-        renderCandidatesGrid();
-        updateTimelineClipCount();
+        if (tag) tag.innerText = "Step 2 of 4 • Clip bank";
+        if (title) title.innerText = "Where the clips come from";
+        if (desc) desc.innerText = "LionReel picks the clips itself. This is what your bank holds right now.";
+        if (nextBtn) nextBtn.innerHTML = `<span>Set up the video</span> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
+        renderSourceBank();
     } else if (stage === 3) {
-        if (tag) tag.innerText = "Step 3 of 4 • Compilation Engine Parameters";
-        if (title) title.innerText = "Fine-tune pacing and viral output";
-        if (desc) desc.innerText = "Adjust clip duration, total count, audio mixing, and 9:16 vertical re-framing.";
-        if (nextBtn) nextBtn.innerHTML = `<span>Review Sequence</span> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
+        if (tag) tag.innerText = "Step 3 of 4 • Length and pace";
+        if (title) title.innerText = "Set the length, pace and shape";
+        if (desc) desc.innerText = "Choose how long the video runs, how fast it cuts and which screen it is made for.";
+        if (nextBtn) nextBtn.innerHTML = `<span>Check the plan</span> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
         updateDynamicChipLabels(state.config.SHORT_CLIP_SEC);
         updateLiveSummary();
         // CHANGE 1: Summary Bar popup entrance on wizard-step-3
         initSummaryBarEntrance();
     } else if (stage === 4) {
         hideSummaryBar();
-        if (tag) tag.innerText = "Step 4 of 4 • Review & Launch Compilation";
-        const vType = state.config.VIDEO_TYPE || "short";
-        if (vType === "long") {
-            const min = parseFloat(state.config.TARGET_DURATION_MIN) || 5.0;
-            if (title) title.innerText = `Ready to compile ${min.toFixed(1)} min Long Video`;
-            if (desc) desc.innerText = `Review the viral moments for your ${min.toFixed(1)}-minute full YouTube compilation.`;
-            if (nextBtn) nextBtn.innerHTML = `<span>Start ${min.toFixed(1)}m Long Video Compilation</span> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>`;
-        } else if (vType === "both") {
-            const min = parseFloat(state.config.TARGET_DURATION_MIN) || 5.0;
-            if (title) title.innerText = `Ready to compile Dual Formats (${min.toFixed(1)}m Long + Short)`;
-            if (desc) desc.innerText = `LionReel will compile the full ${min.toFixed(1)}-minute video and export a companion viral Short.`;
-            if (nextBtn) nextBtn.innerHTML = `<span>Start Dual Compilation (Long + Short)</span> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>`;
-        } else {
-            if (title) title.innerText = "Ready to create your viral reel";
-            if (desc) desc.innerText = "Review the selected clip order or jump directly to the interactive timeline editor.";
-            if (nextBtn) nextBtn.innerHTML = `<span>Start Processing Reel</span> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>`;
-        }
-        renderReviewClipsGrid();
+        if (tag) tag.innerText = "Step 4 of 4 • Check and start";
+        if (title) title.innerText = "This is the video LionReel will make";
+        if (desc) desc.innerText = "Go back to change anything. Starting the job begins the search, the cuts and the checks.";
+        if (nextBtn) nextBtn.innerHTML = `<span>Start the job</span> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>`;
+        renderJobSheet();
     }
 }
 
@@ -1410,7 +1361,28 @@ function hideSummaryBar() {
     summaryBox.style.display = "none";
 }
 
+// One place that makes the clip time slider, number, preset chips and pacing label agree with the saved value
+function syncClipTimeControls() {
+    const sec = parseFloat(state.config.SHORT_CLIP_SEC) || 7.5;
+    const slider = document.getElementById("slider-clip-duration");
+    const label = document.getElementById("val-clip-duration");
+    const pacing = document.getElementById("label-clip-pacing-desc");
+    if (slider && parseFloat(slider.value) !== sec) slider.value = sec;
+    if (label) label.innerText = `${sec.toFixed(1)}s`;
+    if (pacing) {
+        if (sec <= 4.0) pacing.innerText = "Pacing: snappy fast cuts";
+        else if (sec <= 6.5) pacing.innerText = "Pacing: dynamic flow";
+        else if (sec <= 8.5) pacing.innerText = `Pacing: ${sec.toFixed(1)}s viral sweet spot`;
+        else pacing.innerText = "Pacing: extended story arc";
+    }
+    document.querySelectorAll(".clip-sec-preset-chip").forEach(chip => {
+        const s = parseFloat(chip.getAttribute("data-sec"));
+        chip.classList.toggle("active", Math.abs(s - sec) < 0.2);
+    });
+}
+
 function updateLiveSummary() {
+    syncClipTimeControls();
     const videoType = state.config.VIDEO_TYPE || "short";
     const aspect = state.config.ASPECT_RATIO || "9:16";
     const longMin = parseFloat(state.config.TARGET_DURATION_MIN) || 5.0;
@@ -1426,17 +1398,17 @@ function updateLiveSummary() {
 
     if (badgeSummary) {
         if (aspect === "16:9") {
-            badgeSummary.innerText = "16:9 WIDESCREEN";
+            badgeSummary.innerText = "16:9 widescreen";
             badgeSummary.className = "badge";
             badgeSummary.style.background = "var(--info-soft)";
             badgeSummary.style.color = "var(--info)";
         } else if (aspect === "1:1") {
-            badgeSummary.innerText = "1:1 SQUARE";
+            badgeSummary.innerText = "1:1 square";
             badgeSummary.className = "badge";
             badgeSummary.style.background = "var(--warning-soft)";
             badgeSummary.style.color = "var(--warn)";
         } else {
-            badgeSummary.innerText = "9:16 VERTICAL";
+            badgeSummary.innerText = "9:16 vertical";
             badgeSummary.className = "badge badge-emerald";
             badgeSummary.style.background = "";
             badgeSummary.style.color = "";
@@ -1502,8 +1474,8 @@ function renderReviewClipsGrid() {
                 <div style="font-size: 0.875rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(clip.title)}</div>
                 <div style="font-size: 0.875rem; color: var(--text-muted);">${clip.duration}s • ${clip.resolution || '1080p'}</div>
                 <div style="display: flex; gap: 4px; align-items: center; margin-top: 3px; flex-wrap: wrap;">
-                    <span class="badge badge-emerald" style="font-size: 0.875rem; padding: 1px 5px;">${clip.license || 'CC-BY 4.0'}</span>
-                    <span style="font-size: 0.875rem; color: var(--text-muted); max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${escapeHtml(clip.author || clip.source || 'CC Archive')}">${escapeHtml(clip.author || clip.source || 'CC Archive')}</span>
+                    <span class="badge badge-emerald" style="font-size: 0.875rem; padding: 1px 5px;">${clip.license || 'not recorded'}</span>
+                    <span style="font-size: 0.875rem; color: var(--text-muted); max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${escapeHtml(clip.author || clip.source || 'not recorded')}">${escapeHtml(clip.author || clip.source || 'not recorded')}</span>
                 </div>
             </div>
         </div>
@@ -2773,7 +2745,7 @@ function loadActiveClipIntoPlayer() {
 
     if (titleEl) titleEl.innerText = `Source: ${clip.source_id || clip.title || 'Clip'}`;
     const creator = clip.channel || clip.author || "Verified CC Creator";
-    const licenseText = clip.license || "CC-BY 4.0";
+    const licenseText = clip.license || "not recorded";
     const resText = clip.resolution || "1080p";
     if (channelEl) channelEl.innerHTML = `<span>By <strong>${escapeHtml(creator)}</strong></span> · <span>${escapeHtml(licenseText)}</span> · <span class="badge" style="font-size: 0.875rem; padding:1px 4px;">${escapeHtml(resText)}</span>`;
 
@@ -3450,7 +3422,7 @@ function setRenderCardState(cardState, payload = {}) {
 
     } else if (cardState === "stopped") {
         if (headline) headline.innerText = "Compilation stopped";
-        if (subtitle) subtitle.innerText = payload.subtitle || "Job execution was stopped. Click Retry Generation to start again.";
+        if (subtitle) subtitle.innerText = payload.subtitle || "Job execution was stopped. Choose Try again to start over.";
         if (liveBadge) {
             liveBadge.className = "live-clock-badge paused";
             if (liveText) liveText.innerText = "STOPPED";
@@ -3537,30 +3509,9 @@ async function startRenderPipeline(skipPreflight = false) {
             state.config.OWN_FOOTAGE_FILE = "";
         }
 
-        // Pass user-selected clips from timeline whenever clips are selected
-        if (state.selectedClips && state.selectedClips.length > 0 && state.config.SOURCE_MODE !== "own_footage" && state.config.SOURCE_MODE !== "custom_url") {
-            state.config.SOURCE_MODE = "curated";
-            const cat = (state.config.VIDEO_MODE || state.activeCategory || "cat").toLowerCase();
-            const effectiveCat = (cat === "mixed" || cat === "wildlife") ? "mix" : cat;
-            const filteredClips = state.selectedClips.filter(c => {
-                const sc = (c.category || "").toLowerCase();
-                if (effectiveCat === "cat") return sc === "cat" || sc === "feline";
-                if (effectiveCat === "dog") return sc === "dog" || sc === "canine";
-                return sc === "mix" || sc === "mixed";
-            });
-            const finalClips = filteredClips.length > 0 ? filteredClips : state.selectedClips;
-            state.config.SELECTED_CLIPS = finalClips.map(c => ({
-                id: c.id,
-                title: c.title,
-                videoUrl: c.videoUrl,
-                duration: c.duration,
-                category: c.category,
-                trimStart: c.trimStart || 0,
-                trimEnd: c.trimEnd || null
-            }));
-        } else if (state.config.SOURCE_MODE !== "own_footage" && state.config.SOURCE_MODE !== "custom_url") {
-            state.config.SELECTED_CLIPS = [];
-        }
+        // The engine picks clips from the verified bank itself
+        state.config.SOURCE_MODE = "classic";
+        state.config.SELECTED_CLIPS = [];
 
         // Ensure LAYOUT_MODE is explicitly synced from select element or state
         const selectLayoutModeEl = document.getElementById("select-layout-mode");
@@ -6062,7 +6013,7 @@ function parseEngineTelemetry(chunk) {
             state.liveStatusMsg = "Mixing beat-matched background music with -14 LUFS ducking...";
         }
 
-        const tqdmMatch = line.match(/t:\s*(\d+)%/);
+        const tqdmMatch = line.match(/(?:^|[\s|])t:\s*(\d+)%/);
         if (tqdmMatch) {
             state.renderStageIndex = 9;
             const rPct = parseInt(tqdmMatch[1]);
@@ -6727,14 +6678,14 @@ async function runEngineStatusCheck() {
                 }
                 const headline = document.getElementById("render-headline");
                 if (headline) {
-                    headline.innerHTML = `<svg class="icon icon-md text-amber" style="vertical-align: -3px; margin-right: 8px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>Job Stalled (Watchdog)`;
+                    headline.innerHTML = `<svg class="icon icon-md text-amber" style="vertical-align: -3px; margin-right: 8px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>Job stopped responding`;
                 }
                 const subtitle = document.getElementById("render-subtitle");
                 if (subtitle) {
                     subtitle.innerText = data.stuckReason || "Job process halted without heartbeat. Use Clean up to release locks.";
                 }
                 const stageNameEl = document.getElementById("render-stage-name");
-                if (stageNameEl) stageNameEl.innerText = "Stalled (Watchdog)";
+                if (stageNameEl) stageNameEl.innerText = "Stopped responding";
 
                 const remainWrap = document.getElementById("render-telemetry-remaining");
                 if (remainWrap) remainWrap.style.display = "none";
@@ -6817,11 +6768,17 @@ async function runEngineStatusCheck() {
                             planLine += ` (${data.predictedFinishClock})`;
                         }
                     }
-                    const poolStatus = `Pool: ${gotClips}/${targetClips} clips ready`;
+                    // While the engine is searching for footage, say so with the counts from its log
+                    const hv = data.harvest;
+                    const poolStatus = hv
+                        ? `Finding footage: ${hv.found} of ${hv.target} windows found, ${hv.sources_downloaded} ${hv.sources_downloaded === 1 ? "video" : "videos"} downloaded${hv.downloading ? ", downloading another" : ""}`
+                        : `Pool: ${gotClips}/${targetClips} clips ready`;
                     const repeatNote = (data.repeatShareStr && !data.repeatShareStr.includes("0.0%")) ? ` • ${data.repeatShareStr}` : "";
                     const cleanStage = (data.stageName || "Rendering").replace(/^Stage\s+\d+\/\d+:\s*/i, "");
                     const timeRangeStr = (data.etaFormatted && !data.etaFormatted.toLowerCase().includes("waiting") && data.etaFormatted !== "--:--") ? ` (est. ${data.etaFormatted})` : "";
-                    autopilotMsg.innerText = `${planLine} • ${poolStatus}${repeatNote} • Stage ${state.renderStageIndex}/10: ${cleanStage}${timeRangeStr}`;
+                    autopilotMsg.innerText = hv
+                        ? `${planLine} • ${poolStatus} • the time estimate starts once the footage is found`
+                        : `${planLine} • ${poolStatus}${repeatNote} • Stage ${state.renderStageIndex}/10: ${cleanStage}${timeRangeStr}`;
                 }
 
                 // Autopilot UI Rule: Keep ONLY Stop on progress card during render
@@ -7325,7 +7282,7 @@ async function runEngineStatusCheck() {
                 }
 
                 // Buttons on a failed job:
-                // Remove "Edit this video", "Run in Background", and Stop button (Task 10)
+                // Remove "Edit this video", "Run in background", and Stop button (Task 10)
                 const editBtn = document.getElementById("btn-render-edit-video");
                 if (editBtn) editBtn.style.display = "none";
                 const bgBtn = document.getElementById("btn-render-bg");
@@ -7367,7 +7324,7 @@ async function runEngineStatusCheck() {
                     }
                 } else {
                     if (retryBtn) {
-                        retryBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg><span>Retry Generation</span>`;
+                        retryBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg><span>Try again</span>`;
                         retryBtn.style.display = "inline-flex";
                         retryBtn.onclick = () => {
                             state.currentJobId = null;
@@ -7387,10 +7344,10 @@ async function runEngineStatusCheck() {
                 stopLogsPolling();
                 stopLiveRenderClock("STOPPED");
                 setRenderCardState("stopped", {
-                    subtitle: "Job execution was stopped. Click Retry Generation to start again."
+                    subtitle: "Job execution was stopped. Choose Try again to start over."
                 });
                 if (retryBtn) {
-                    retryBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg><span>Retry Generation</span>`;
+                    retryBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg><span>Try again</span>`;
                     retryBtn.onclick = () => { state.currentJobId = null; startRenderPipeline(); };
                 }
             }
@@ -7556,7 +7513,7 @@ async function refreshLeftovers() {
     }
     const n = state.leftovers.count;
     btn.hidden = n === 0;
-    if (label) label.innerText = `Clean up ${n} ${n === 1 ? "leftover" : "leftovers"}`;
+    if (label) label.innerText = `Delete extra files (${n})`;
 }
 
 async function loadFinishedProjects() {
@@ -8487,8 +8444,8 @@ function setupUIEventListeners() {
     const exportNewBtn = document.getElementById("btn-export-new");
     const heroMockup = document.getElementById("hero-mockup-frame");
 
-    if (heroNewBtn) heroNewBtn.addEventListener("click", () => { const curType = (state.config && state.config.VIDEO_TYPE) || "short"; setVideoType(curType, false); state.wizardStage = 1; navigateToStep(2); showToast("New Compilation Wizard started", "info"); });
-    if (emptyNewBtn) emptyNewBtn.addEventListener("click", () => { setVideoType("long", false); state.wizardStage = 1; navigateToStep(2); showToast("New Compilation Wizard started", "info"); });
+    if (heroNewBtn) heroNewBtn.addEventListener("click", () => { const curType = (state.config && state.config.VIDEO_TYPE) || "short"; setVideoType(curType, false); state.wizardStage = 1; navigateToStep(2); });
+    if (emptyNewBtn) emptyNewBtn.addEventListener("click", () => { setVideoType("long", false); state.wizardStage = 1; navigateToStep(2); });
     if (exportNewBtn) exportNewBtn.addEventListener("click", () => { setVideoType("long", false); state.wizardStage = 1; navigateToStep(2); showToast("Ready to create next compilation", "info"); });
     if (heroPurgeBtn) heroPurgeBtn.addEventListener("click", () => purgeTempAndOldFiles());
     if (heroCleanBtn) heroCleanBtn.addEventListener("click", () => cleanStudioAndClipHistory());
@@ -8496,8 +8453,10 @@ function setupUIEventListeners() {
     // Pool Add Sources Buttons
     const poolAddBtn = document.getElementById("btn-pool-add-sources");
     const poolWarnAddBtn = document.getElementById("btn-pool-warning-add");
-    if (poolAddBtn) poolAddBtn.addEventListener("click", () => { state.wizardStage = 2; navigateToStep(2); showToast("Add fresh footage to clip pool", "info"); });
-    if (poolWarnAddBtn) poolWarnAddBtn.addEventListener("click", () => { state.wizardStage = 2; navigateToStep(2); showToast("Add fresh footage to clip pool", "info"); });
+    if (poolAddBtn) poolAddBtn.addEventListener("click", () => startSourceHarvest(poolAddBtn));
+    if (poolWarnAddBtn) poolWarnAddBtn.addEventListener("click", () => startSourceHarvest(poolWarnAddBtn));
+    const bankAddBtn = document.getElementById("btn-source-bank-add");
+    if (bankAddBtn) bankAddBtn.addEventListener("click", () => startSourceHarvest(bankAddBtn));
 
     if (heroSampleBtn) {
         heroSampleBtn.addEventListener("click", () => {
@@ -8509,7 +8468,7 @@ function setupUIEventListeners() {
 
     if (heroMockup) {
         heroMockup.addEventListener("click", () => {
-            openPreviewModal(state.sources[0] || CURATED_SOURCES[0]);
+            if (state.sources[0]) openPreviewModal(state.sources[0]);
         });
     }
 
@@ -8554,7 +8513,6 @@ function setupUIEventListeners() {
             updateLiveSummary();
             syncConfigToServer();
             loadPoolStatus(targetMode);
-            showToast(`Collection set to ${targetMode.toUpperCase()} (${state.selectedClips.length} clips queued)`, "success");
         });
     });
 
@@ -8569,7 +8527,6 @@ function setupUIEventListeners() {
             if (state.wizardStage < 4) {
                 state.wizardStage++;
                 renderWizardStep();
-                showToast(`Advanced to Stage ${state.wizardStage}`, "info");
             } else {
                 startRenderPipeline();
             }
@@ -9871,7 +9828,7 @@ function setupUIEventListeners() {
         });
     }
 
-    // Force Stop Action
+    // Force stop Action
     const forceStopBtn = document.getElementById("btn-render-force-stop");
     if (forceStopBtn) {
         forceStopBtn.addEventListener("click", async () => {
@@ -10155,9 +10112,9 @@ function setupUIEventListeners() {
         leftoversBtn.addEventListener("click", async () => {
             const info = state.leftovers || { count: 0, bytes: 0 };
             const ok = await showConfirmModal({
-                title: "Clean up leftovers",
-                message: `Move ${info.count} leftover ${info.count === 1 ? "file" : "files and folders"} (${formatCleanupBytes(info.bytes)}) to the Recycle Bin? These are reports, timings and folders from videos that no longer exist. Videos in the library are not touched.`,
-                confirmText: "Clean up",
+                title: "Delete extra files",
+                message: `Move ${info.count} leftover ${info.count === 1 ? "file" : "files and folders"} (${formatCleanupBytes(info.bytes)}) to the Recycle Bin? These are reports and timings you do not need, and files from videos that no longer exist. Your videos are not touched.`,
+                confirmText: "Delete extra files",
                 isDanger: true
             });
             if (!ok) return;
@@ -10217,181 +10174,6 @@ function setupUIEventListeners() {
             showToast(`Removed clip from timeline (Undo available)`, "info");
         });
     }
-
-    // Source Method Tabs (Autonomous AI / Curated / YouTube / Upload)
-    const tabAuto = document.getElementById("tab-auto");
-    const tabCurated = document.getElementById("tab-curated");
-    const tabYoutube = document.getElementById("tab-youtube");
-    const tabUpload = document.getElementById("tab-upload");
-    const panelAuto = document.getElementById("panel-auto");
-    const panelCurated = document.getElementById("panel-curated");
-    const panelYoutube = document.getElementById("panel-youtube");
-    const panelUpload = document.getElementById("panel-upload");
-
-    function switchSourceTab(activeTab, activePanel, modeName, toastMsg) {
-        [tabAuto, tabCurated, tabYoutube, tabUpload].forEach(t => t && t.classList.remove("active"));
-        [panelAuto, panelCurated, panelYoutube, panelUpload].forEach(p => p && (p.style.display = "none"));
-        if (activeTab) activeTab.classList.add("active");
-        if (activePanel) activePanel.style.display = "block";
-        if (modeName) {
-            state.config.SOURCE_MODE = modeName;
-            syncConfigToServer();
-        }
-        if (toastMsg) {
-            showToast(toastMsg, "success");
-        }
-    }
-
-    if (tabAuto) tabAuto.addEventListener("click", () => switchSourceTab(tabAuto, panelAuto, "classic", "Method: Autonomous AI YouTube Discovery selected"));
-    if (tabCurated) tabCurated.addEventListener("click", () => switchSourceTab(tabCurated, panelCurated, "curated", "Method: Curated Studio Library selected"));
-    if (tabYoutube) tabYoutube.addEventListener("click", () => switchSourceTab(tabYoutube, panelYoutube, "custom_url", "Method: Custom YouTube URL Mode selected"));
-    if (tabUpload) tabUpload.addEventListener("click", () => switchSourceTab(tabUpload, panelUpload, "own_footage", "Method: Local Video Upload Mode selected"));
-
-    // Custom Video URL Importer (Method 2)
-    const addUrlBtn = document.getElementById("btn-add-custom-url");
-    const customUrlInput = document.getElementById("custom-video-url-input");
-
-    if (addUrlBtn && customUrlInput) {
-        addUrlBtn.addEventListener("click", async () => {
-            const url = customUrlInput.value.trim();
-            if (!url) {
-                showToast("Please enter a valid video link or MP4 URL", "warning");
-                return;
-            }
-            state.config.SOURCE_MODE = "custom_url";
-            state.config.CUSTOM_URL = url;
-            await syncConfigToServer();
-
-            const isYt = url.includes("youtu");
-            const newClip = {
-                id: "custom_" + Date.now(),
-                title: isYt ? "YouTube Clip (" + url.slice(-8) + ")" : "Imported Video Clip",
-                channel: isYt ? "YouTube Source" : "Web Video",
-                duration: 35,
-                resolution: "1080p 60fps",
-                views: "New",
-                qualityScore: 98,
-                thumbnail: "https://images.unsplash.com/photo-1543852786-1cf6624b9987?w=640&q=80",
-                videoUrl: url.endsWith(".mp4") ? url : "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-                category: state.activeCategory
-            };
-            state.sources.unshift(newClip);
-            state.selectedClips.push(newClip);
-            renderCandidatesGrid();
-            renderReviewClipsGrid();
-            updateTimelineClipCount();
-            customUrlInput.value = "";
-            showToast("Custom Video URL configured & added to reel", "success");
-            switchSourceTab(tabCurated, panelCurated);
-        });
-    }
-
-    // Sample URL quick buttons
-    document.querySelectorAll(".btn-sample-url").forEach(btn => {
-        btn.addEventListener("click", () => {
-            if (customUrlInput) {
-                customUrlInput.value = btn.getAttribute("data-sample") || "";
-                if (addUrlBtn) addUrlBtn.click();
-            }
-        });
-    });
-
-    // Local Video File Upload (Method 3)
-    const browseBtn = document.getElementById("btn-browse-local-files");
-    const fileInput = document.getElementById("file-upload-input");
-    const uploadStatusBox = document.getElementById("upload-status-box");
-    const uploadStatusText = document.getElementById("upload-status-text");
-
-    async function handleFileUpload(file) {
-        if (!file) return;
-        const filename = file.name;
-        if (uploadStatusBox) {
-            uploadStatusBox.style.display = "flex";
-            if (uploadStatusText) uploadStatusText.innerText = `Uploading "${filename}" (${(file.size / (1024 * 1024)).toFixed(1)} MB)...`;
-        }
-        showToast(`Uploading "${filename}" to studio backend...`, "info");
-
-        try {
-            const uploadRes = await fetch(`${API_BASE}/api/upload?filename=${encodeURIComponent(filename)}`, {
-                method: "POST",
-                headers: { "Content-Type": file.type || "application/octet-stream" },
-                body: file
-            });
-
-            if (uploadRes.ok) {
-                const upData = await uploadRes.json();
-                state.config.SOURCE_MODE = "own_footage";
-                state.config.OWN_FOOTAGE_FILE = upData.filename || filename;
-                await syncConfigToServer();
-
-                if (uploadStatusBox) {
-                    uploadStatusBox.style.display = "flex";
-                    if (uploadStatusText) uploadStatusText.innerText = `"${filename}" uploaded and staged successfully`;
-                }
-
-                const objUrl = URL.createObjectURL(file);
-                const newClip = {
-                    id: "upload_" + Date.now(),
-                    title: filename.replace(/\.[^/.]+$/, ""),
-                    channel: "Local Upload (Own Footage)",
-                    duration: 25,
-                    resolution: "1080p Local",
-                    views: "Local",
-                    qualityScore: 99,
-                    thumbnail: "https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=640&q=80",
-                    videoUrl: objUrl,
-                    category: state.activeCategory
-                };
-                state.sources.unshift(newClip);
-                state.selectedClips.push(newClip);
-                renderCandidatesGrid();
-                renderReviewClipsGrid();
-                updateTimelineClipCount();
-                showToast(`Local video "${filename}" uploaded & selected`, "success");
-                setTimeout(() => {
-                    if (uploadStatusBox) uploadStatusBox.style.display = "none";
-                    switchSourceTab(tabCurated, panelCurated);
-                }, 1800);
-            } else {
-                showToast(`Upload failed (${uploadRes.statusText})`, "error");
-                if (uploadStatusBox) uploadStatusBox.style.display = "none";
-            }
-        } catch (err) {
-            console.error("Upload error:", err);
-            showToast("Upload network error, please retry", "error");
-            if (uploadStatusBox) uploadStatusBox.style.display = "none";
-        }
-    }
-
-    if (browseBtn && fileInput) {
-        browseBtn.addEventListener("click", () => fileInput.click());
-        fileInput.addEventListener("change", () => {
-            if (fileInput.files && fileInput.files[0]) {
-                handleFileUpload(fileInput.files[0]);
-            }
-        });
-    }
-
-    if (panelUpload) {
-        panelUpload.addEventListener("dragover", (e) => {
-            e.preventDefault();
-            panelUpload.style.borderColor = "var(--primary-emerald)";
-            panelUpload.style.background = "rgba(24, 232, 122, 0.08)";
-        });
-        panelUpload.addEventListener("dragleave", () => {
-            panelUpload.style.borderColor = "var(--border)";
-            panelUpload.style.background = "var(--bg-card)";
-        });
-        panelUpload.addEventListener("drop", (e) => {
-            e.preventDefault();
-            panelUpload.style.borderColor = "var(--border)";
-            panelUpload.style.background = "var(--bg-card)";
-            if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
-                handleFileUpload(e.dataTransfer.files[0]);
-            }
-        });
-    }
-
 
 
     // Clean Studio State, Clip History & Candidate Thumbnails
@@ -11050,6 +10832,12 @@ function showToast(message, type = "info") {
         <span class="toast-icon-wrap" style="display: flex; align-items: center;">${svgIcons[type] || svgIcons.info}</span>
         <span class="toast-text">${escapeHtml(cleanMsg)}</span>
     `;
+
+    // The same message twice in a row is shown once, and at most 3 toasts stay on screen
+    const shown = [...container.querySelectorAll(".toast")];
+    if (shown.length && shown[shown.length - 1].dataset.msg === cleanMsg) return;
+    shown.slice(0, Math.max(0, shown.length - 2)).forEach(t => t.remove());
+    toast.dataset.msg = cleanMsg;
 
     container.appendChild(toast);
     requestAnimationFrame(() => toast.classList.add("show"));
@@ -12067,7 +11855,7 @@ async function openThumbnailMaker(jobId) {
                     if (freshData.candidates && freshData.candidates.length > 0) {
                         thumbCandidates = freshData.candidates;
                         thumbSelectedCandidateIdx = 0;
-                        renderCandidatesGrid();
+                        renderThumbCandidatesGrid();
                         triggerLiveThumbnailRender();
                         showToast("Sampled 6 fresh candidate moments", "success");
                     } else {
@@ -12121,7 +11909,7 @@ async function openThumbnailMaker(jobId) {
         };
     }
 
-    renderCandidatesGrid();
+    renderThumbCandidatesGrid();
     triggerLiveThumbnailRender();
 }
 
@@ -12152,7 +11940,7 @@ function updateProvenanceCard(c) {
     `;
 }
 
-function renderCandidatesGrid() {
+function renderThumbCandidatesGrid() {
     const grid = document.getElementById("thumb-candidates-grid");
     if (!grid) return;
 
