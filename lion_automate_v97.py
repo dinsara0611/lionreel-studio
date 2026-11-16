@@ -2625,9 +2625,12 @@ class LionReelV97Pipeline:
             # Connects to clip ledger, cleans stale reservations, reserves candidate clips.
             # =========================================================================
             # TASK 3: Bank Preflight
-            pool_cap = self.ledger.get_pool_ready_and_capacity(animal_mode, target_clips=target_clips_count, allow_reuse=allow_reuse)
+            # The planner has already reserved this job's clips; they count as this job's footage.
+            # Counting them as reserved made a job with 6 of 6 clips planned harvest for 2 more.
+            pool_cap = self.ledger.get_pool_ready_and_capacity(animal_mode, target_clips=target_clips_count, allow_reuse=allow_reuse,
+                                                               current_job_id=job_id)
             usable_count = pool_cap.get("ready", 0)
-            preflight_text = self.ledger.preflight_line(target_clips_count, animal_mode)
+            preflight_text = self.ledger.preflight_line(target_clips_count, animal_mode, current_job_id=job_id)
             if usable_count < target_clips_count:
                 log(f"PREFLIGHT: {preflight_text}. Finding more footage.", "INFO")
             else:
@@ -3851,7 +3854,8 @@ class LionReelV97Pipeline:
                     elif len(rendered_candidates_pool) < target_clips_count:
                         patience_budget = float(planner_decision_data.get("patience_budget_sec", 420.0))
                         wait_state = self.init_or_load_wait_checkpoint(job_id, work_job_dir, initial_budget=patience_budget)
-                        cap_init = self.ledger.get_pool_ready_and_capacity(animal_mode, target_clips=target_clips_count, allow_reuse=allow_reuse)
+                        cap_init = self.ledger.get_pool_ready_and_capacity(animal_mode, target_clips=target_clips_count, allow_reuse=allow_reuse,
+                                                                           current_job_id=job_id)
                         baseline_ready = cap_init["ready"]
                         wait_state["baseline_ready"] = baseline_ready
                         wait_state["last_verified_count"] = baseline_ready
@@ -3917,7 +3921,7 @@ class LionReelV97Pipeline:
                             if not hasattr(self, "_bgm"):
                                 self._bgm = BankGrowthManager(initial_count=wait_state.get("last_verified_count", baseline_ready))
 
-                            cap_curr = self.ledger.get_pool_ready_and_capacity(animal_mode, target_clips=target_clips_count, allow_reuse=allow_reuse)
+                            cap_curr = self.ledger.get_pool_ready_and_capacity(animal_mode, target_clips=target_clips_count, allow_reuse=allow_reuse, current_job_id=job_id)
                             curr_ver = cap_curr["ready"]
                             growth_event = self._bgm.handle_growth(curr_ver)
 

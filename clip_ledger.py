@@ -842,14 +842,16 @@ class ClipLedger:
     def get_pool_health(self, animal_type='cat') -> dict:
         return self.get_pool_status(animal_type)
 
-    def get_pool_ready_and_capacity(self, animal_type='cat', target_clips=100, allow_reuse: bool = False, exclude_recent_videos: int = 5) -> dict:
+    def get_pool_ready_and_capacity(self, animal_type='cat', target_clips=100, allow_reuse: bool = False, exclude_recent_videos: int = 5,
+                                    current_job_id: str = None) -> dict:
         """
         Requirement 5 & Fix 2: ONE definition of ready and real capacity.
         ready = verified-good unique windows that satisfy diversity rules (at most 3 per source, 30s apart)
                 AND are fresh (not used in last `exclude_recent_videos` videos).
         capacity = min(ready, usable_sources * 3).
         """
-        counts = self.get_ledger_counts(animal_type, include_windows=True)
+        # Clips this job has already reserved are its own footage, not someone else's reservation
+        counts = self.get_ledger_counts(animal_type, current_job_id=current_job_id, include_windows=True)
         valid_rows = counts["windows"]["usable_now"] + counts["windows"]["cooldown"]
         if allow_reuse:
             valid_rows = valid_rows + counts["windows"]["used"]
@@ -1002,8 +1004,8 @@ class ClipLedger:
     def get_pool_unified_counts(self, animal_type: str = "cat", channel: str = None, current_job_id: str = None, last_n_jobs: int = 3, is_test_env: bool = False) -> dict:
         return self.get_ledger_counts(animal_type, channel=channel, current_job_id=current_job_id, last_n_jobs=last_n_jobs)
 
-    def preflight_line(self, needed: int, animal_type: str = "cat") -> str:
-        c = self.get_ledger_counts(animal_type)
+    def preflight_line(self, needed: int, animal_type: str = "cat", current_job_id: str = None) -> str:
+        c = self.get_ledger_counts(animal_type, current_job_id=current_job_id)
         line = f"Need {needed}, have {c['usable_now']} usable"
         if c["cooldown"]:
             line += f" (+{c['cooldown']} on source cooldown)"
