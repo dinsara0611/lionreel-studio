@@ -70,6 +70,16 @@ def compute_phash(frame) -> str:
     bits = (dct_low > med).flatten()
     return "".join("1" if b else "0" for b in bits)
 
+def source_key(value) -> str:
+    """
+    One name per source video, however it was written: 'C:\\cache\\cache_ABC.mp4', 'cache_ABC' and 'ABC'
+    are the same video. Two finished videos used the same moment because one stored 'ABC' and the
+    other 'cache_ABC', and the old comparison treated them as different sources.
+    """
+    base = os.path.splitext(os.path.basename(str(value or "").strip()))[0].lower()
+    return base[len("cache_"):] if base.startswith("cache_") else base
+
+
 def is_same_moment(src1: str, start1: float, end1: float, src2: str, start2: float, end2: float, overlap_thresh: float = 0.30) -> bool:
     """
     Checks if two clip windows represent the same moment in the same source video.
@@ -80,11 +90,7 @@ def is_same_moment(src1: str, start1: float, end1: float, src2: str, start2: flo
     if not src1 or not src2:
         return False
 
-    def norm_s(s):
-        base = os.path.basename(str(s).strip())
-        return os.path.splitext(base)[0].lower()
-
-    if norm_s(src1) != norm_s(src2):
+    if source_key(src1) != source_key(src2):
         return False
 
     dur1 = float(end1) - float(start1)
@@ -1019,7 +1025,7 @@ class ClipLedger:
 
     @staticmethod
     def _source_key(value) -> str:
-        return os.path.splitext(os.path.basename(str(value or "").strip()))[0].lower()
+        return source_key(value)
 
     @classmethod
     def _index_by_source(cls, windows: list) -> dict:
