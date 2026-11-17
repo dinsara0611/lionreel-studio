@@ -885,6 +885,20 @@ def run_real_harvest_sync(
                     rejects_by_reason["BLOCKED_WATERMARK"] = rejects_by_reason.get("BLOCKED_WATERMARK", 0) + 1
                     _log(f"Source {vid_id} rejected by watermark gate: {rej}")
                     continue
+                # Channel names, logos and titles that stay put for the whole video, wherever they sit
+                try:
+                    from persistent_mark import check_source_marks_cached
+                    mark_res = check_source_marks_cached(target_video)
+                except Exception as e_mark:
+                    mark_res = {"passed": None, "reason": f"Check crashed: {e_mark}"}
+                if mark_res.get("passed") is False:
+                    rej = f"BLOCKED_CHANNEL_MARK: {mark_res.get('reason')}"
+                    ledger.mark_source_blocked(target_video, rej)
+                    rejects_by_reason["BLOCKED_CHANNEL_MARK"] = rejects_by_reason.get("BLOCKED_CHANNEL_MARK", 0) + 1
+                    _log(f"Source {vid_id} rejected by channel mark gate: {rej}")
+                    continue
+                if mark_res.get("passed") is None:
+                    _log(f"Source {vid_id}: channel mark check not run ({mark_res.get('reason')}); the render step checks it again")
                 try:
                     from qa_check import check_cartoon_classifier
                     cartoon_res = check_cartoon_classifier(target_video, n_samples=12)

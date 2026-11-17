@@ -1976,6 +1976,22 @@ class LionReelV97Pipeline:
             cand["actual_score"] = 0.0
             return False, cid, None, cand
 
+        # A channel name or logo that stays on screen for the whole source video. Footage already in the
+        # bank was harvested before this check existed, so it is checked here, once per source.
+        try:
+            from persistent_mark import check_source_marks_cached
+            mark_res = check_source_marks_cached(local_src)
+        except Exception as e_mark:
+            mark_res = {"passed": None, "reason": f"Check crashed: {e_mark}"}
+        if mark_res.get("passed") is False:
+            cand["result"] = "REJECT"
+            cand["reason"] = f"CHANNEL_MARK ({mark_res.get('reason')})"
+            cand["actual_score"] = 0.0
+            self.ledger.reject_window(src_path, start_s, start_s + dur_s, cand["reason"])
+            return False, cid, None, cand
+        if mark_res.get("passed") is None:
+            log(f"  [MARK CHECK] Clip {cid}: channel mark check not run ({mark_res.get('reason')})", "WARN")
+
         # Burned-in source text (captions, handles, comment bubbles) sits still while the footage moves
         from overlay_text_detector import check_window_still_text
         try:
