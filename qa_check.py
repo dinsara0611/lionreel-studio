@@ -1030,7 +1030,7 @@ def check_source_guard(video_path):
         if not blocked_hashes:
             return {"passed": True}
 
-        from clip_ledger import _compute_phash, _hamming_distance
+        from clip_ledger import compute_phash as _compute_phash, hamming_distance as _hamming_distance
         cap = cv2.VideoCapture(video_path)
         total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         matched = False
@@ -1057,7 +1057,8 @@ def check_source_guard(video_path):
             "blocked_match": matched
         }
     except Exception as e:
-        return {"passed": True, "error": str(e)}
+        # A guard that crashed did not check anything: not run, never a pass
+        return {"passed": None, "reason": f"NOT_RUN: {e}", "error": str(e)}
 
 def check_repeat_spacing_gate(video_path, clip_mapping=None, work_job_dir=None):
     """

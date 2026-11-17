@@ -70,6 +70,16 @@ def compute_phash(frame) -> str:
     bits = (dct_low > med).flatten()
     return "".join("1" if b else "0" for b in bits)
 
+def source_key(value) -> str:
+    """
+    One name per source video, however it was written: 'C:\\cache\\cache_ABC.mp4', 'cache_ABC' and 'ABC'
+    are the same video. Two finished videos used the same moment because one stored 'ABC' and the
+    other 'cache_ABC', and the old comparison treated them as different sources.
+    """
+    base = os.path.splitext(os.path.basename(str(value or "").strip()))[0].lower()
+    return base[len("cache_"):] if base.startswith("cache_") else base
+
+
 def is_same_moment(src1: str, start1: float, end1: float, src2: str, start2: float, end2: float, overlap_thresh: float = 0.30) -> bool:
     """
     Checks if two clip windows represent the same moment in the same source video.
@@ -80,11 +90,7 @@ def is_same_moment(src1: str, start1: float, end1: float, src2: str, start2: flo
     if not src1 or not src2:
         return False
 
-    def norm_s(s):
-        base = os.path.basename(str(s).strip())
-        return os.path.splitext(base)[0].lower()
-
-    if norm_s(src1) != norm_s(src2):
+    if source_key(src1) != source_key(src2):
         return False
 
     dur1 = float(end1) - float(start1)
@@ -836,14 +842,16 @@ class ClipLedger:
     def get_pool_health(self, animal_type='cat') -> dict:
         return self.get_pool_status(animal_type)
 
-    def get_pool_ready_and_capacity(self, animal_type='cat', target_clips=100, allow_reuse: bool = False, exclude_recent_videos: int = 5) -> dict:
+    def get_pool_ready_and_capacity(self, animal_type='cat', target_clips=100, allow_reuse: bool = False, exclude_recent_videos: int = 5,
+                                    current_job_id: str = None) -> dict:
         """
         Requirement 5 & Fix 2: ONE definition of ready and real capacity.
         ready = verified-good unique windows that satisfy diversity rules (at most 3 per source, 30s apart)
                 AND are fresh (not used in last `exclude_recent_videos` videos).
         capacity = min(ready, usable_sources * 3).
         """
-        counts = self.get_ledger_counts(animal_type, include_windows=True)
+        # Clips this job has already reserved are its own footage, not someone else's reservation
+        counts = self.get_ledger_counts(animal_type, current_job_id=current_job_id, include_windows=True)
         valid_rows = counts["windows"]["usable_now"] + counts["windows"]["cooldown"]
         if allow_reuse:
             valid_rows = valid_rows + counts["windows"]["used"]
@@ -996,8 +1004,8 @@ class ClipLedger:
     def get_pool_unified_counts(self, animal_type: str = "cat", channel: str = None, current_job_id: str = None, last_n_jobs: int = 3, is_test_env: bool = False) -> dict:
         return self.get_ledger_counts(animal_type, channel=channel, current_job_id=current_job_id, last_n_jobs=last_n_jobs)
 
-    def preflight_line(self, needed: int, animal_type: str = "cat") -> str:
-        c = self.get_ledger_counts(animal_type)
+    def preflight_line(self, needed: int, animal_type: str = "cat", current_job_id: str = None) -> str:
+        c = self.get_ledger_counts(animal_type, current_job_id=current_job_id)
         line = f"Need {needed}, have {c['usable_now']} usable"
         if c["cooldown"]:
             line += f" (+{c['cooldown']} on source cooldown)"
@@ -1019,7 +1027,7 @@ class ClipLedger:
 
     @staticmethod
     def _source_key(value) -> str:
-        return os.path.splitext(os.path.basename(str(value or "").strip()))[0].lower()
+        return source_key(value)
 
     @classmethod
     def _index_by_source(cls, windows: list) -> dict:

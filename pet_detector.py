@@ -380,3 +380,80 @@ def fast_pet_presence_check(video_path: str, start_s: float, end_s: float, detec
     cap.release()
     return any_pet, max_conf
 
+
+
+# ---------------------------------------------------------------------------
+# Right animal for the video: a cat video shows cats, a dog video shows dogs
+# ---------------------------------------------------------------------------
+SPECIES_SAMPLES = 10
+SPECIES_MIN_WANTED_SHARE = 0.50   # the wanted animal must be in at least half the sampled frames
+SPECIES_MAX_WRONG_SHARE = 0.25    # frames that show only the other animal
+SPECIES_WRONG_CONF = 0.50         # a weak wrong-class box is treated as a misread, not as the other animal
+
+
+def wanted_pet_classes(animal_mode):
+    """Detector class names that belong in a video of this kind."""
+    mode = str(animal_mode or "").lower()
+    if mode in ("cat", "feline"):
+        return ("cat",)
+    if mode in ("dog", "canine"):
+        return ("dog",)
+    return ("cat", "dog")
+
+
+def judge_species_frames(frame_classes, animal_mode):
+    """
+    frame_classes: one list per sampled frame of (class_name, conf) detections.
+    Returns {"passed": bool|None, "reason", "wanted_share", "wrong_share", "frames"}.
+    passed is None when no frame could be judged.
+    """
+    wanted = wanted_pet_classes(animal_mode)
+    frames = len(frame_classes)
+    if frames == 0:
+        return {"passed": None, "reason": "NO_FRAMES_READ", "wanted_share": None, "wrong_share": None, "frames": 0}
+    wanted_n = wrong_n = 0
+    for dets in frame_classes:
+        has_wanted = any(name in wanted for name, _ in dets)
+        has_wrong = any(name not in wanted and conf >= SPECIES_WRONG_CONF for name, conf in dets)
+        if has_wanted:
+            wanted_n += 1
+        elif has_wrong:
+            wrong_n += 1
+    wanted_share, wrong_share = wanted_n / frames, wrong_n / frames
+    label = "/".join(wanted)
+    if wrong_share >= SPECIES_MAX_WRONG_SHARE:
+        reason = f"WRONG_ANIMAL (another animal fills {wrong_share*100:.0f}% of frames, {label} wanted)"
+        passed = False
+    elif wanted_share < SPECIES_MIN_WANTED_SHARE:
+        reason = f"WRONG_ANIMAL ({label} in only {wanted_share*100:.0f}% of frames)"
+        passed = False
+    else:
+        reason = f"RIGHT_ANIMAL ({label} in {wanted_share*100:.0f}% of frames)"
+        passed = True
+    return {"passed": passed, "reason": reason, "wanted_share": round(wanted_share, 3),
+            "wrong_share": round(wrong_share, 3), "frames": frames}
+
+
+def check_window_species(video_path, start_s, dur_s, animal_mode, detector=None, n_samples=SPECIES_SAMPLES):
+    """Samples a source window and checks it shows the animal the video is about."""
+    if not video_path or not os.path.isfile(video_path):
+        return {"passed": None, "reason": "SOURCE_NOT_FOUND", "wanted_share": None, "wrong_share": None, "frames": 0}
+    if detector is None:
+        detector = PetDetector()
+    cap = cv2.VideoCapture(video_path)
+    if not cap.isOpened():
+        return {"passed": None, "reason": "SOURCE_NOT_READABLE", "wanted_share": None, "wrong_share": None, "frames": 0}
+    frame_classes = []
+    try:
+        for i in range(n_samples):
+            cap.set(cv2.CAP_PROP_POS_MSEC, (float(start_s) + (i + 0.5) * float(dur_s) / n_samples) * 1000.0)
+            ok, frame = cap.read()
+            if not ok or frame is None:
+                continue
+            h, w = frame.shape[:2]
+            if h > 480:
+                frame = cv2.resize(frame, (max(2, int(w * 480.0 / h)), 480), interpolation=cv2.INTER_LINEAR)
+            frame_classes.append([(d["class_name"], float(d.get("conf", 0.0))) for d in detector.detect(frame, conf_threshold=0.25)])
+    finally:
+        cap.release()
+    return judge_species_frames(frame_classes, animal_mode)

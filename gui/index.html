@@ -32,7 +32,7 @@
         })();
     </script>
     
-    <link rel="stylesheet" href="style.css?v=2026_v103_loading_film">
+    <link rel="stylesheet" href="style.css?v=2026_v104_clip_bank">
     <style>
         /* CRITICAL EXPORT PAGE OVERFLOW CONTAINMENT */
         .export-workspace-grid {
@@ -347,10 +347,6 @@
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
                                     <span>New compilation</span>
                                 </button>
-                            <button id="hero-btn-sample" class="btn btn-secondary btn-md">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                                    <span>Use sample project</span>
-                                </button>
                         </div>
                     </div>
                     <div class="reel" aria-label="Recent videos">
@@ -552,7 +548,7 @@
                             <span>Delete all</span>
                         </button>
                         <button type="button" id="btn-clean-leftovers" class="btn btn-secondary btn-sm library-leftovers-btn" hidden title="Reports, timings and folders left from videos that are gone">
-                            <span id="leftovers-label">Clean up leftovers</span>
+                            <span id="leftovers-label">Delete extra files</span>
                         </button>
                     </div>
 
@@ -585,9 +581,9 @@
             <div class="wizard-container">
 
                 <div class="wizard-header">
-                    <div class="wizard-step-tag" id="wizard-step-tag">Step 1 of 4 • Choose Collection</div>
+                    <div class="wizard-step-tag" id="wizard-step-tag">Step 1 of 4 • Choose the animals</div>
                     <h2 class="wizard-title" id="wizard-title">What kind of compilation are you making?</h2>
-                    <p class="wizard-desc" id="wizard-desc">Select an animal focus to optimize automated moment detection, color grade, and music pacing.</p>
+                    <p class="wizard-desc" id="wizard-desc">LionReel tunes moment picking and music pace to the animals you choose.</p>
                 </div>
 
                 <!-- STEP 1: Select Animal Collection -->
@@ -598,9 +594,9 @@
                             <div class="collection-icon-wrap">
                                 <svg class="icon icon-lg" aria-hidden="true"><use href="#icon-cat"></use></svg>
                             </div>
-                            <div class="collection-title">Feline Collection</div>
+                            <div class="collection-title">Cats</div>
                             <div class="collection-desc">3am zoomies, laser chases, dramatic knocks, purring cuddles, and viral reactions.</div>
-                            <div class="badge badge-emerald" style="width: fit-content; font-size: 0.875rem; margin-top: auto;">Auto-Tuned for Cats</div>
+                            <div class="badge badge-emerald" style="width: fit-content; font-size: 0.875rem; margin-top: auto;">Tuned for cats</div>
                         </div>
 
                         <!-- Card 2: Canine -->
@@ -608,9 +604,9 @@
                             <div class="collection-icon-wrap">
                                 <svg class="icon icon-lg" aria-hidden="true"><use href="#icon-dog"></use></svg>
                             </div>
-                            <div class="collection-title">Canine Collection</div>
+                            <div class="collection-title">Dogs</div>
                             <div class="collection-desc">Guilty faces, park excitement, tail wags, head tilts, and goofy dog comedy.</div>
-                            <div class="badge badge-emerald" style="width: fit-content; font-size: 0.875rem; margin-top: auto;">Auto-Tuned for Dogs</div>
+                            <div class="badge badge-emerald" style="width: fit-content; font-size: 0.875rem; margin-top: auto;">Tuned for dogs</div>
                         </div>
 
                         <!-- Card 3: Cats & Dogs Duo -->
@@ -618,123 +614,39 @@
                             <div class="collection-icon-wrap">
                                 <svg class="icon icon-lg" aria-hidden="true"><use href="#icon-paw-print"></use></svg>
                             </div>
-                            <div class="collection-title">Cats &amp; Dogs Duo</div>
+                            <div class="collection-title">Cats and dogs</div>
                             <div class="collection-desc">Hilarious pet friendships, slap fights, treat heists, and chaotic cat &amp; dog teamwork.</div>
-                            <div class="badge badge-emerald" style="width: fit-content; font-size: 0.875rem; margin-top: auto;">Cat &amp; Dog Duo Mix</div>
+                            <div class="badge badge-emerald" style="width: fit-content; font-size: 0.875rem; margin-top: auto;">Cat and dog mix</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- STEP 2: Add Video Sources -->
+                <!-- STEP 2: Where the clips come from (real clip bank numbers) -->
                 <div id="wizard-step-2" class="wizard-step-content" style="display: none;">
-                    <div style="display: flex; flex-direction: column; gap: 14px;">
-                        <!-- Source Search Bar -->
-                        <div class="source-search-bar">
-                            <div class="search-input-box">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                                <input type="text" id="source-search-input" class="search-input-field" placeholder="Search YouTube or enter video topic (e.g. 'cat funny zoomies', 'dog head tilts')…">
+                    <div class="source-bank" id="source-bank" aria-live="polite">
+                        <div class="source-bank-main">
+                            <div class="source-bank-count">
+                                <span id="source-bank-ready" class="source-bank-number">–</span>
+                                <span id="source-bank-ready-label" class="source-bank-number-label">clips ready</span>
                             </div>
-                            <button id="btn-source-search" class="btn btn-primary btn-md">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                                <span>Search</span>
-                            </button>
+                            <div id="source-bank-reel" class="source-bank-reel" aria-hidden="true"></div>
+                            <p id="source-bank-verdict" class="source-bank-verdict">Reading the clip bank…</p>
                         </div>
-
-                        <!-- Trending Query Chips -->
-                        <div class="suggestion-chips">
-                            <span style="font-size: 0.875rem; color: var(--text-muted); font-weight: 600;">Trending:</span>
-                            <span class="suggestion-chip" data-query="cat 3am zoomies">Cat 3am zoomies</span>
-                            <span class="suggestion-chip" data-query="guilty dog face">Guilty dog face</span>
-                            <span class="suggestion-chip" data-query="sleeping kittens">Sleeping kittens</span>
-                            <span class="suggestion-chip" data-query="golden retriever puppy">Golden retriever puppy</span>
-                            <span class="suggestion-chip" data-query="cat vs dog funny">Cat vs dog funny</span>
-                        </div>
-
-                        <!-- Source Method Tabs -->
-                        <div class="source-method-tabs">
-                            <button class="tab-btn active" id="tab-auto">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: -2px; margin-right: 4px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                                <span>Autonomous AI Discovery</span>
-                            </button>
-                            <button class="tab-btn" id="tab-curated">Studio Library (<span id="source-count-badge">6</span>)</button>
-                            <button class="tab-btn" id="tab-youtube">Custom YouTube Link</button>
-                            <button class="tab-btn" id="tab-upload">Upload Local Video</button>
-                        </div>
-
-                        <!-- Panel 0: Autonomous AI YouTube Discovery -->
-                        <div id="panel-auto" style="padding: 24px; background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border);">
-                            <div style="display: flex; flex-direction: column; gap: 14px;">
-                                <div style="display: flex; align-items: center; gap: 12px;">
-                                    <div style="width: 36px; height: 36px; border-radius: 8px; background: var(--green-surface); color: var(--primary-emerald); display: flex; align-items: center; justify-content: center;">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                                    </div>
-                                    <div>
-                                        <div style="font-size: 0.96rem; font-weight: 700; color: var(--text-main);">Fully Autonomous AI YouTube Sourcing & Slicing</div>
-                                        <div style="font-size: 0.875rem; color: var(--text-muted);">LionReel live-scrapes trending YouTube clips for your chosen animal category, extracts the peak laughter moments, runs 12 quality checks, and compiles a viral Short automatically.</div>
-                                    </div>
-                                </div>
-                                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px;">
-                                    <span class="badge badge-emerald">Live Viral Query Rotation</span>
-                                    <span class="badge badge-emerald">Strict Cat & Dog Only</span>
-                                    <span class="badge badge-emerald">Peak Laugh Moment Detection</span>
-                                    <span class="badge badge-emerald">Zero Manual Trimming Needed</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Panel 1: Curated Videos Grid -->
-                        <div id="panel-curated" style="display: none;">
-                            <div id="candidates-grid" class="candidates-grid">
-                                <!-- Populated dynamically via JS -->
-                            </div>
-                        </div>
-
-                        <!-- Panel 2: YouTube / Online Video URL Import -->
-                        <div id="panel-youtube" style="display: none; padding: 24px; background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border);">
-                            <div style="display: flex; flex-direction: column; gap: 14px;">
-                                <div style="display: flex; align-items: center; gap: 8px;">
-                                    <div style="width: 28px; height: 28px; border-radius: 6px; background: rgba(255, 0, 0, 0.12); color: #ff3333; display: flex; align-items: center; justify-content: center;">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-                                    </div>
-                                    <div>
-                                        <div style="font-size: 0.92rem; font-weight: 700;">Import from YouTube, Shorts, or Direct MP4</div>
-                                        <div style="font-size: 0.875rem; color: var(--text-muted);">Paste any video link to automatically fetch and queue for slicing.</div>
-                                    </div>
-                                </div>
-                                <div style="display: flex; gap: 8px;">
-                                    <input type="url" id="custom-video-url-input" class="search-input-field" style="border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 14px;" placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/...">
-                                    <button type="button" id="btn-add-custom-url" class="btn btn-primary btn-md" style="white-space: nowrap;">
-                                        <span>Add to Reel</span>
-                                    </button>
-                                </div>
-                                <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-                                    <span style="font-size: 0.875rem; color: var(--text-muted); font-weight: 600;">Sample URLs:</span>
-                                    <button type="button" class="btn-sample-url suggestion-chip" data-sample="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4">Sample Blaze MP4</button>
-                                    <button type="button" class="btn-sample-url suggestion-chip" data-sample="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4">Sample Bunny MP4</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Panel 3: Local Video Upload Dropzone -->
-                        <div id="panel-upload" style="display: none; padding: 28px; background: var(--bg-card); border-radius: var(--radius-lg); border: 2px dashed var(--border); text-align: center;">
-                            <input type="file" id="file-upload-input" accept="video/mp4,video/quicktime,video/webm" style="display: none;">
-                            <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
-                                <div style="width: 44px; height: 44px; border-radius: 50%; background: rgba(24, 232, 122, 0.12); color: var(--primary-emerald); display: flex; align-items: center; justify-content: center;">
-                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                                </div>
-                                <div>
-                                    <div style="font-size: 0.95rem; font-weight: 700;">Drop your local video here, or browse files</div>
-                                    <div style="font-size: 0.875rem; color: var(--text-muted); margin-top: 2px;">Supports MP4, MOV, and WebM (up to 1080p / 4K)</div>
-                                </div>
-                                <button type="button" id="btn-browse-local-files" class="btn btn-secondary btn-md" style="margin-top: 4px;">
-                                    <span>Browse Local Files</span>
-                                </button>
-                                <div id="upload-status-box" style="display: none; margin-top: 8px; padding: 10px 16px; background: rgba(24, 232, 122, 0.08); border: 1px solid var(--border-active); border-radius: var(--radius-md); font-size: 0.875rem; color: var(--primary-emerald); align-items: center; justify-content: center; gap: 8px;">
-                                    <span class="live-clock-pulse" style="display: inline-block;"></span>
-                                    <span id="upload-status-text">Uploading local video...</span>
-                                </div>
-                            </div>
-                        </div>
+                        <dl class="source-bank-facts">
+                            <div><dt>Resting after recent use</dt><dd id="source-bank-cooldown">not measured</dd></div>
+                            <div><dt>Already used</dt><dd id="source-bank-used">not measured</dd></div>
+                            <div><dt>Videos with ready clips</dt><dd id="source-bank-sources">not measured</dd></div>
+                            <div><dt>Turned down by quality checks</dt><dd id="source-bank-rejected">not measured</dd></div>
+                        </dl>
+                    </div>
+                    <div class="source-bank-how">
+                        <h3>How LionReel picks clips</h3>
+                        <ul>
+                            <li>It takes clips from your bank that passed the sharpness, pet and text checks.</li>
+                            <li>It only uses videos whose page shows a Creative Commons licence.</li>
+                            <li>When the bank is short, it looks for more videos while the job runs. That takes longer.</li>
+                        </ul>
+                        <button type="button" id="btn-source-bank-add" class="btn btn-secondary btn-md">Add more sources now</button>
                     </div>
                 </div>
 
@@ -747,7 +659,7 @@
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
                                     <label class="config-label" style="margin-bottom: 0; font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
                                         <span class="step-num" style="width: 22px; height: 22px; font-size: 0.875rem; background: var(--green-surface); color: var(--accent); border: 1px solid var(--border-active);">1</span>
-                                        <span>Video Format &amp; Length Mode</span>
+                                        <span>Video format and length</span>
                                         <span class="badge badge-emerald" id="badge-video-type">Short Reel (30s-60s)</span>
                                     </label>
                                     <span style="font-size: 0.875rem; color: var(--text-muted);" id="video-type-subtext">Optimized for TikTok, Shorts &amp; Reels</span>
@@ -784,8 +696,8 @@
                             <div id="panel-long-video-controls" class="config-item" style="grid-column: 1 / -1; display: none;">
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                     <label class="config-label" for="slider-long-duration" style="margin-bottom: 0; font-weight: 700; color: var(--info); display: flex; align-items: center; gap: 8px;">
-                                        <span>Target Long Video Duration</span>
-                                        <span class="badge" style="font-size: 0.875rem; background: var(--info-soft); color: var(--info);">Adjustable Time</span>
+                                        <span>Long video length</span>
+                                        <span class="badge" style="font-size: 0.875rem; background: var(--info-soft); color: var(--info);">Adjustable</span>
                                     </label>
                                     <div style="display: flex; align-items: center; gap: 8px;">
                                         <div class="value-stepper-wrap">
@@ -861,8 +773,8 @@
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                     <label class="config-label" style="margin-bottom: 0; display: flex; align-items: center; gap: 6px;">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
-                                        <span>Clip Count (Derived)</span>
-                                        <span class="badge" style="font-size: 0.875rem; background: var(--surface); color: var(--text-muted); border: 1px solid var(--border); padding: 1px 6px;">Read-Only</span>
+                                        <span>Clip count</span>
+                                        <span class="badge" style="font-size: 0.875rem; background: var(--surface); color: var(--text-muted); border: 1px solid var(--border); padding: 1px 6px;">Worked out for you</span>
                                     </label>
                                     <span class="stepper-value" id="val-long-derived-clips" style="color: var(--info); font-size: 1.02rem;">40 clips</span>
                                 </div>
@@ -890,8 +802,8 @@
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                     <label class="config-label" for="slider-clip-duration" style="margin-bottom: 0; display: flex; align-items: center; gap: 6px;">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                                        <span>Clip Time (s)</span>
-                                        <span class="badge" style="font-size: 0.875rem; background: var(--info-soft); color: var(--info); border: 1px solid var(--border); padding: 1px 6px;">Per Moment</span>
+                                        <span>Clip length</span>
+                                        <span class="badge" style="font-size: 0.875rem; background: var(--info-soft); color: var(--info); border: 1px solid var(--border); padding: 1px 6px;">Per clip</span>
                                     </label>
                                     <div class="value-stepper-wrap">
                                         <button type="button" id="btn-step-dur-minus" class="stepper-btn stepper-btn-blue" title="Decrease Duration" aria-label="Decrease duration">−</button>
@@ -903,7 +815,7 @@
                                 <div class="clip-sec-chips-grid" style="margin-bottom: 8px;">
                                     <button type="button" class="clip-sec-preset-chip" data-sec="3.5">3.5s (Fast)</button>
                                     <button type="button" class="clip-sec-preset-chip" data-sec="5.0">5.0s (Snappy)</button>
-                                    <button type="button" class="clip-sec-preset-chip active" data-sec="7.5">7.5s (Viral • Std)</button>
+                                    <button type="button" class="clip-sec-preset-chip active" data-sec="7.5">7.5s (standard)</button>
                                     <button type="button" class="clip-sec-preset-chip" data-sec="10.0">10.0s (Story)</button>
                                     <button type="button" class="clip-sec-preset-chip" data-sec="12.0">12.0s (Long)</button>
                                 </div>
@@ -919,24 +831,24 @@
                             <div class="config-item">
                                 <label class="config-label" for="select-pace-profile" style="display: flex; align-items: center; gap: 8px;">
                                     <span class="step-num" style="width: 22px; height: 22px; font-size: 0.875rem; background: var(--green-surface); color: var(--accent); border: 1px solid var(--border-active);">2</span>
-                                    <span>Compilation Pace &amp; Transition Profile</span>
+                                    <span>Pace and transitions</span>
                                 </label>
                                 <select id="select-pace-profile" class="form-select">
-                                    <option value="balanced" selected>Balanced Flow (Dynamic cuts + crossfades)</option>
-                                    <option value="fast">Fast Viral (Snappy cuts + beat match)</option>
-                                    <option value="cinematic">Cinematic Mood (Smooth cuts + ambient sound)</option>
+                                    <option value="balanced" selected>Balanced (dynamic cuts, crossfades)</option>
+                                    <option value="fast">Fast (snappy cuts, beat match)</option>
+                                    <option value="cinematic">Cinematic (smooth cuts, ambient sound)</option>
                                 </select>
                             </div>
 
                             <div class="config-item">
                                 <label class="config-label" for="select-moment-cut" style="display: flex; align-items: center; gap: 8px;">
-                                    <span>Viral Moment &amp; Energy Slicing Engine</span>
+                                    <span>How moments are picked</span>
                                 </label>
                                 <select id="select-moment-cut" class="form-select">
-                                    <option value="peak_viral" selected>Peak Viral Moment (Audio Peak + Motion Burst + Subject Lock)</option>
-                                    <option value="fast_action">High Action Burst (Maximum Subject Movement)</option>
-                                    <option value="cute_reaction">Cute Pet Reaction (Subject Lock + Audio Spike)</option>
-                                    <option value="balanced_flow">Balanced Flow (Golden Ratio Cut)</option>
+                                    <option value="peak_viral" selected>Peak moment (sound, motion and subject)</option>
+                                    <option value="fast_action">High action (most movement)</option>
+                                    <option value="cute_reaction">Cute reaction (subject and sound)</option>
+                                    <option value="balanced_flow">Balanced flow</option>
                                 </select>
                                 <span style="font-size: 0.875rem; color: var(--text-muted); margin-top: 4px; display: block;">
                                     AI scans each video to cut only the funniest, highest-energy part — skipping boring intros and ending credits.
@@ -950,7 +862,7 @@
                                         <label class="config-label" for="toggle-allow-shorter" style="margin-bottom: 2px; display: flex; align-items: center; gap: 6px; cursor: pointer;">
                                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                                             <span>Allow shorter video if clips run out</span>
-                                            <span class="badge" style="font-size: 0.875rem; background: var(--surface); color: var(--text-muted); border: 1px solid var(--border); padding: 1px 6px;">Safety Gate</span>
+                                            <span class="badge" style="font-size: 0.875rem; background: var(--surface); color: var(--text-muted); border: 1px solid var(--border); padding: 1px 6px;">Safety</span>
                                         </label>
                                         <span style="font-size: 0.875rem; color: var(--text-muted); display: block;">
                                             When OFF (default), fails safely if pool cannot provide the requested clip count.
@@ -970,7 +882,7 @@
                                         <label class="config-label" for="toggle-allow-reuse" style="margin-bottom: 2px; display: flex; align-items: center; gap: 6px; cursor: pointer;">
                                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
                                             <span>Allow reuse of footage from earlier videos</span>
-                                            <span class="badge" style="font-size: 0.875rem; background: var(--surface); color: var(--text-muted); border: 1px solid var(--border); padding: 1px 6px;">Freshness Policy</span>
+                                            <span class="badge" style="font-size: 0.875rem; background: var(--surface); color: var(--text-muted); border: 1px solid var(--border); padding: 1px 6px;">Freshness</span>
                                         </label>
                                         <span style="font-size: 0.875rem; color: var(--text-muted); display: block;">
                                             When OFF (default), video uses only brand-new, unseen moments. When ON, allows reusing moments from older finished videos.
@@ -988,7 +900,7 @@
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
                                     <label class="config-label" style="margin-bottom: 0; display: flex; align-items: center; gap: 8px;">
                                         <span class="step-num" style="width: 22px; height: 22px; font-size: 0.875rem; background: var(--green-surface); color: var(--accent); border: 1px solid var(--border-active);">3</span>
-                                        <span>Target Clip Dimensions &amp; Aspect Ratio</span>
+                                        <span>Shape and size</span>
                                         <span class="badge badge-emerald" id="badge-current-aspect-res">1080×1920 (9:16 Vertical)</span>
                                     </label>
                                     <!-- Video Type & Framing relocated next to Dimensions -->
@@ -1018,7 +930,7 @@
                                 </div>
                                 <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                                     <button type="button" id="btn-format-916" class="format-btn active">
-                                        <div style="font-weight: 700;">9:16 Vertical Reel</div>
+                                        <div style="font-weight: 700;">9:16 vertical</div>
                                         <div style="font-size: 0.875rem; opacity: 0.85;">1080×1920 • YouTube Shorts, TikTok &amp; IG Reels</div>
                                     </button>
                                     <button type="button" id="btn-format-169" class="format-btn">
@@ -1026,7 +938,7 @@
                                         <div style="font-size: 0.875rem; opacity: 0.85;">1920×1080 • YouTube Standard, Desktop &amp; TV</div>
                                     </button>
                                     <button type="button" id="btn-format-11" class="format-btn">
-                                        <div style="font-weight: 700;">1:1 Square Feed</div>
+                                        <div style="font-weight: 700;">1:1 square</div>
                                         <div style="font-size: 0.875rem; opacity: 0.85;">1080×1080 • Instagram &amp; Facebook Feed</div>
                                     </button>
                                 </div>
@@ -1042,13 +954,13 @@
                                 <div>
                                     <div style="font-size: 0.95rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
                                         <span class="step-num" style="width: 22px; height: 22px; font-size: 0.875rem; background: var(--green-surface); color: var(--accent); border: 1px solid var(--border-active);">4</span>
-                                        <span>11 Automated Quality Verifications &amp; Content Filters</span>
+                                        <span>11 quality checks and content filters</span>
                                         <span class="badge badge-emerald" id="setup-active-verif-badge">10 / 11 Active</span>
                                     </div>
                                     <p style="font-size: 0.875rem; color: var(--text-muted); margin-top: 2px;">Enforce AI criteria, cartoon filters, ad-block, and audio/video enhancements. Uncheck any check to cleanly bypass it.</p>
                                 </div>
                                 <div style="display: flex; gap: 8px; flex-shrink: 0;">
-                                    <button type="button" id="btn-verif-select-all" class="btn btn-secondary btn-sm" style="padding: 3px 10px; font-size: 0.875rem;">Select All</button>
+                                    <button type="button" id="btn-verif-select-all" class="btn btn-secondary btn-sm" style="padding: 3px 10px; font-size: 0.875rem;">Select all</button>
                                     <button type="button" id="btn-verif-reset-default" class="btn btn-secondary btn-sm" style="padding: 3px 10px; font-size: 0.875rem;">Recommended</button>
                                 </div>
                             </div>
@@ -1132,7 +1044,7 @@
                                         <div class="setup-verif-title-row">
                                             <span class="setup-verif-num">5</span>
                                             <span class="setup-verif-name">Auto Color Grading</span>
-                                            <span class="badge" style="font-size: 0.875rem; padding: 1px 5px; background: rgba(255, 255, 255, 0.08); color: var(--text-muted); border: 1px solid var(--border);">OPTIONAL</span>
+                                            <span class="badge" style="font-size: 0.875rem; padding: 1px 5px; background: rgba(255, 255, 255, 0.08); color: var(--text-muted); border: 1px solid var(--border);">Optional</span>
                                         </div>
                                         <span class="setup-verif-desc" title="CLAHE adaptive contrast and tone mapping">Adaptive contrast and tone balance (Optional)</span>
                                     </div>
@@ -1194,7 +1106,7 @@
                                             <div class="setup-verif-title-row">
                                                 <span class="setup-verif-num">9</span>
                                                 <span class="setup-verif-name">AI Video Detector</span>
-                                                <span class="badge badge-emerald" style="font-size: 0.875rem; padding: 1px 5px;">AI-SHIELD</span>
+                                                <span class="badge badge-emerald" style="font-size: 0.875rem; padding: 1px 5px;">AI shield</span>
                                             </div>
                                             <span class="setup-verif-desc">Block Sora, Runway, Kling &amp; synthetic CGI</span>
                                         </div>
@@ -1231,7 +1143,7 @@
                                             <div class="setup-verif-title-row">
                                                 <span class="setup-verif-num">11</span>
                                                 <span class="setup-verif-name">Ad &amp; Promo Filter</span>
-                                                <span class="badge" style="font-size: 0.875rem; padding: 1px 5px; background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3);">ANTI-AD</span>
+                                                <span class="badge" style="font-size: 0.875rem; padding: 1px 5px; background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3);">Ad filter</span>
                                             </div>
                                             <span class="setup-verif-desc">Block text posts, sponsor slides &amp; promo banners</span>
                                         </div>
@@ -1260,35 +1172,23 @@
                             <div class="summary-headline" id="summary-headline" aria-live="polite">Short Reel · 4 clips × 7.5s · ~30 s runtime</div>
                             <div class="summary-sub" id="summary-sub">Shorts, Reels &amp; TikTok · 1080×1920 · 9:16 Vertical · 30 fps CFR</div>
                         </div>
-                        <span class="badge badge-emerald" id="badge-format-summary" tabindex="0">9:16 VERTICAL</span>
+                        <span class="badge badge-emerald" id="badge-format-summary" tabindex="0">9:16 vertical</span>
                     </div>
                 </div>
 
                 <!-- STEP 4: Review Reel & Launch -->
                 <div id="wizard-step-4" class="wizard-step-content" style="display: none;">
-                    <div style="display: flex; flex-direction: column; gap: 16px;">
-                        <div style="display: flex; align-items: center; justify-content: space-between;">
-                            <div>
-                                <h3 style="font-size: 1.1rem; font-weight: 700;">Selected Clips Sequence (<span id="review-selected-count">6</span>)</h3>
-                                <p style="font-size: 0.875rem; color: var(--text-muted);">Clips will be sliced, balanced, and compiled in this exact order.</p>
-                            </div>
-                            <div style="display: flex; gap: 8px;">
-                                <button id="btn-review-reset-all" class="btn btn-secondary btn-sm" style="color: var(--error); border-color: rgba(239, 68, 68, 0.35);" title="Remove all selected clips">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                                    <span>Reset All Clips</span>
-                                </button>
-                                <button id="btn-review-add-more" class="btn btn-secondary btn-sm">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                                    <span>Add More Clips</span>
-                                </button>
-                            </div>
-                            </div>
-                        </div>
-
-                        <!-- Review Clips Grid -->
-                        <div id="review-clips-grid" class="review-clips-grid">
-                            <!-- Populated dynamically via JS -->
-                        </div>
+                    <div class="job-sheet">
+                        <dl class="job-sheet-list">
+                            <div><dt>Animals</dt><dd id="job-sheet-animal">not set</dd></div>
+                            <div><dt>Format</dt><dd id="job-sheet-format">not set</dd></div>
+                            <div><dt>Clips</dt><dd id="job-sheet-clips">not set</dd></div>
+                            <div><dt>Length</dt><dd id="job-sheet-length">not set</dd></div>
+                            <div><dt>Shape</dt><dd id="job-sheet-shape">not set</dd></div>
+                            <div><dt>Clips ready in the bank</dt><dd id="job-sheet-ready">not measured</dd></div>
+                        </dl>
+                        <p id="job-sheet-verdict" class="source-bank-verdict">Reading the clip bank…</p>
+                        <p class="job-sheet-note">LionReel chooses the clips and their order while the job runs. The finished video is checked before it reaches your library, and you can review every clip in the Edit step afterwards.</p>
                     </div>
                 </div>
 
@@ -1302,10 +1202,10 @@
                     <div style="display: flex; gap: 10px;">
                         <button id="btn-wizard-open-editor" class="btn btn-secondary btn-md" style="display: none;">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                            <span>Fine-Tune in Editor</span>
+                            <span>Fine-tune in editor</span>
                         </button>
                         <button id="btn-wizard-next" class="btn btn-primary btn-md">
-                            <span>Continue to Sources</span>
+                            <span>Continue</span>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                         </button>
                     </div>
@@ -1949,11 +1849,11 @@
                         </button>
                         <button id="btn-render-retry" class="btn btn-primary btn-sm" style="display: none;">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px; vertical-align: -2px;"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-                            Retry Generation
+                            Try again
                         </button>
                         <button id="btn-render-bg" class="btn btn-secondary btn-sm">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px; vertical-align: -2px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                            Run in Background
+                            Run in background
                         </button>
                         <button id="btn-render-cancel" class="btn btn-secondary btn-sm btn-render-danger">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px; vertical-align: -2px;"><circle cx="12" cy="12" r="10"></circle><rect x="9" y="9" width="6" height="6"></rect></svg>
@@ -1961,7 +1861,7 @@
                         </button>
                         <button id="btn-render-force-stop" class="btn btn-danger btn-sm" style="display: none;">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px; vertical-align: -2px;"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
-                            Force Stop
+                            Force stop
                         </button>
                     </div>
 
@@ -3273,6 +3173,6 @@
 
     <!-- Application Script -->
     <script src="tour_strings.js"></script>
-    <script src="app.js?v=2026_v103_loading_film"></script>
+    <script src="app.js?v=2026_v104_clip_bank"></script>
 </body>
 </html>
