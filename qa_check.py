@@ -722,6 +722,11 @@ def check_visual_sharpness(video_path, n_samples=24):
         "low_sharp_frame_ratio": round(low_sharp_ratio, 2)
     }
 
+# A clip where the pet runs off both sides of the vertical frame shows a body part, not the cat
+CUT_OFF_EDGE = 0.02
+CUT_OFF_MAX_SHARE = 0.50
+
+
 def verify_single_pass_post_crop_gate(video_path: str, plan: dict = None, layout_mode: str = "smart_crop", n_samples: int = 12, detector=None) -> tuple:
     """
     Fast single-pass post-crop QA gate:
@@ -779,6 +784,7 @@ def verify_single_pass_post_crop_gate(video_path: str, plan: dict = None, layout
 
     sharpness_scores = []
     low_sharp_count = 0
+    cut_off_frames = 0
 
     negative_votes = 0
 
@@ -861,6 +867,10 @@ def verify_single_pass_post_crop_gate(video_path: str, plan: dict = None, layout
                         is_centered_x = True
                     is_centered_y = (0.12 <= cy <= 0.88) if w >= h else (0.15 <= cy <= 0.85)
                     is_valid_height = (0.08 <= box_h_frac <= 1.00)
+
+                # The cat is wider than the vertical frame: both sides of its body are cut off
+                if not is_blur_fit and h > w and bx1 <= w * CUT_OFF_EDGE and bx2 >= w * (1.0 - CUT_OFF_EDGE):
+                    cut_off_frames += 1
 
                 if is_centered_x: horiz_passed_frames += 1
                 if is_centered_y: vert_passed_frames += 1
@@ -946,7 +956,10 @@ def verify_single_pass_post_crop_gate(video_path: str, plan: dict = None, layout
     cartoon_passed = neg_ratio < 0.25
     text_passed = (text_violations / eval_count <= 0.15)
 
-    passed = fill_passed and cent_passed and sharp_passed and cartoon_passed and text_passed
+    cut_off_ratio = cut_off_frames / float(det_eval) if detected_frames > 0 else 0.0
+    whole_pet_passed = cut_off_ratio < CUT_OFF_MAX_SHARE
+
+    passed = fill_passed and cent_passed and sharp_passed and cartoon_passed and text_passed and whole_pet_passed
 
     fail_reasons = []
     if not text_passed:
@@ -962,6 +975,8 @@ def verify_single_pass_post_crop_gate(video_path: str, plan: dict = None, layout
         fail_reasons.append(f"Sharpness: {med_sharp:.1f} (low_ratio: {low_sharp_ratio:.2f})")
     if not cartoon_passed:
         fail_reasons.append(f"CGI/Cartoon: {neg_ratio:.1%}")
+    if not whole_pet_passed:
+        fail_reasons.append(f"PET_CUT_OFF: the cat fills the frame edge to edge in {cut_off_frames}/{detected_frames} frames")
 
     reason = (
         f"Centering: {compliance_ratio:.1%} "

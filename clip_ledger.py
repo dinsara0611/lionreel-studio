@@ -70,6 +70,9 @@ def compute_phash(frame) -> str:
     bits = (dct_low > med).flatten()
     return "".join("1" if b else "0" for b in bits)
 
+MAX_CLIPS_PER_SOURCE_SHORT = 2
+
+
 def source_key(value) -> str:
     """
     One name per source video, however it was written: 'C:\\cache\\cache_ABC.mp4', 'cache_ABC' and 'ABC'
@@ -852,9 +855,11 @@ class ClipLedger:
         """
         # Clips this job has already reserved are its own footage, not someone else's reservation
         counts = self.get_ledger_counts(animal_type, current_job_id=current_job_id, include_windows=True)
-        valid_rows = counts["windows"]["usable_now"] + counts["windows"]["cooldown"]
+        # Sources used in the last few videos are resting: with reuse off a job may not take them,
+        # or every video looks like the one before it
+        valid_rows = list(counts["windows"]["usable_now"])
         if allow_reuse:
-            valid_rows = valid_rows + counts["windows"]["used"]
+            valid_rows = valid_rows + counts["windows"]["cooldown"] + counts["windows"]["used"]
 
         by_source = {}
         for r in valid_rows:
@@ -881,7 +886,15 @@ class ClipLedger:
                     selected_for_src.append(c)
             ready_clips.extend(selected_for_src)
 
-        ready_count = len(valid_rows)
+        # Overlapping windows are one moment: a job cannot use both, so they count once
+        distinct = []
+        for r in sorted(valid_rows, key=lambda c: (source_key(c.get("source_url_or_path") or c.get("source_id")), float(c.get("start_s") or 0))):
+            sid = r.get("source_url_or_path") or r.get("source_id")
+            st, en = float(r.get("start_s") or 0), float(r.get("end_s") or (float(r.get("start_s") or 0) + 7.5))
+            if not any(is_same_moment(sid, st, en, d.get("source_url_or_path") or d.get("source_id"),
+                                      float(d.get("start_s") or 0), float(d.get("end_s") or 0)) for d in distinct):
+                distinct.append(r)
+        ready_count = len(distinct)
         capacity = min(len(ready_clips), usable_sources * max_per_src)
         needed_sources = max(1, (int(target_clips) + max_per_src - 1) // max_per_src)
         can_supply = capacity >= int(target_clips)
@@ -1330,8 +1343,9 @@ class ClipLedger:
                 
                 # Ordered source keys: when allow_reuse is False, strictly use fresh sources first
                 if not allow_reuse:
+                    # Resting sources stay out of short videos: the job finds new footage instead
                     ordered_source_keys = list(sources_fresh)
-                    if not ordered_source_keys or actual_count > 8:
+                    if actual_count > 8:
                         ordered_source_keys = list(sources_fresh) + [s for s in sources_cooldown if s not in sources_fresh]
                 else:
                     ordered_source_keys = list(sources_fresh) + [s for s in sources_cooldown if s not in sources_fresh]
@@ -1345,6 +1359,9 @@ class ClipLedger:
 
                 # Rule 5: max 50% from one source in Short or Long compilations
                 max_clips_per_source = max(1, actual_count // 2)
+                if actual_count <= 8:
+                    # Two clips of the same cat is a pair; three is the same video again
+                    max_clips_per_source = min(max_clips_per_source, MAX_CLIPS_PER_SOURCE_SHORT)
 
                 selected = []
                 selected_hashes = []
