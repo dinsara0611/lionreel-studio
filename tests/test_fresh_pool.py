@@ -49,3 +49,12 @@ def test_at_most_two_clips_of_one_source(tmp_path):
                                          min_required=1, patience_budget_sec=0)
     from_a = [c for c in got if "A" in str(c.get("source_id"))]
     assert len(from_a) <= 2 and len(got) == 4
+
+
+def test_planner_keeps_two_clips_per_source_in_a_short_video(tmp_path):
+    from fulfillment_planner import FulfillmentPlanner
+    ledger = make_ledger(tmp_path, [(f"a{i}", "A", 20 + i * 40) for i in range(6)] + [("b1", "B", 10), ("b2", "B", 60)])
+    plan = FulfillmentPlanner(ledger=ledger).plan_fulfillment("test_job", "cat", 45.0, 7.5, is_test=True)
+    from collections import Counter
+    per_src = Counter(str(c.get("source_id")) for c in plan.clips)
+    assert per_src and max(per_src.values()) <= 2, per_src

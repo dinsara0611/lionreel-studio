@@ -60,6 +60,9 @@ class FulfillmentPlan:
         needed = self.target_clips_count
         return f"Building your video: {ready_count} of {needed} clips ready, finding more automatically"
 
+from clip_ledger import MAX_CLIPS_PER_SOURCE_SHORT
+
+
 class FulfillmentPlanner:
     def __init__(self, ledger: Optional[ClipLedger] = None, config: Optional[Dict[str, Any]] = None, reframer: Any = None, **kwargs):
         self.ledger = ledger or ClipLedger()
@@ -262,7 +265,9 @@ class FulfillmentPlanner:
                 freshness_card_line=freshness["card_line"]
             )
 
-        selected_step1 = self._select_diverse_windows(verified_candidates, max_per_source=3, min_gap_s=10.0)
+        # Short videos: at most 2 clips of one source, the same rule the reservation keeps
+        short_cap = MAX_CLIPS_PER_SOURCE_SHORT if (needed_clips <= 8 and not allow_reuse) else None
+        selected_step1 = self._select_diverse_windows(verified_candidates, max_per_source=short_cap or 3, min_gap_s=10.0)
 
         # Calculate if Step 1 satisfies the contract
         total_step1_sec = sum(c.get("dur_s", initial_clip_sec) for c in selected_step1[:needed_clips])
@@ -306,7 +311,7 @@ class FulfillmentPlanner:
         # STEP 3: Raise to Up to 14 Windows Per Long Source (>= 3-10s apart)
         # ---------------------------------------------------------------------
         ladder_applied.append("ladder_step_3_multi_window")
-        max_p_source = max(8, int(math.ceil(needed_clips * 0.65)))
+        max_p_source = short_cap or max(8, int(math.ceil(needed_clips * 0.65)))
         selected_step3 = self._select_diverse_windows(verified_candidates, max_per_source=max_p_source, min_gap_s=10.0)
         if len(selected_step3) < needed_clips:
             selected_step3 = self._select_diverse_windows(verified_candidates, max_per_source=max_p_source, min_gap_s=3.0)
