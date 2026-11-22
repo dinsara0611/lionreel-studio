@@ -944,6 +944,11 @@ class ClipLedger:
                 WHERE rejection_reason IS NOT NULL AND rejection_reason != '' AND rejection_reason != 'MEASUREMENT_FAILED'
             """).fetchall()]
 
+        try:
+            from persistent_mark import marked_source_keys
+            marked = marked_source_keys()
+        except Exception:
+            marked = set()
         finished_index = self._index_by_source(finished)
         rejected_index = self._index_by_source(rejected_windows)
         hashed_finished = [w for w in finished if w.get("frame_hashes")]
@@ -969,7 +974,8 @@ class ClipLedger:
 
             if src_path not in source_ok:
                 exists = os.path.exists(src_path) or is_test or "dummy" in src_path or "src_" in src_name
-                source_ok[src_path] = exists and not self.is_blocked_source(src_path)
+                # A source carrying a channel name or logo is not usable footage
+                source_ok[src_path] = exists and not self.is_blocked_source(src_path) and source_key(src_path or src_name) not in marked
 
             if st_val == "needs_recheck" or (rej == "MEASUREMENT_FAILED" and retry < 1):
                 cls = "needs_recheck"
@@ -1249,6 +1255,13 @@ class ClipLedger:
                 ) | set(str(s).lower() for s in exclude_sources)
 
                 exclude_clip_ids = set(kwargs.get("exclude_clip_ids") or [])
+                try:
+                    from persistent_mark import marked_source_keys
+                    marked = marked_source_keys()
+                except Exception:
+                    marked = set()
+                if marked:
+                    eligible = [c for c in eligible if source_key(c.get("source_url_or_path") or c.get("source_id")) not in marked]
 
                 if exclude_clip_ids:
                     eligible = [c for c in eligible if c.get("clip_id") not in exclude_clip_ids]

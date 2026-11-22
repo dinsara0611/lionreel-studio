@@ -160,3 +160,42 @@ def check_source_marks_cached(video_path):
         except Exception:
             pass
     return res
+
+
+def marked_source_keys():
+    """Source keys measured as carrying a channel mark. Unmeasured sources are not in it."""
+    import json
+    try:
+        with open(_cache_path(), "r", encoding="utf-8") as f:
+            cache = json.load(f)
+    except Exception:
+        return set()
+    return {k for k, v in cache.items() if isinstance(v, dict) and v.get("passed") is False}
+
+
+def measure_sources(paths, max_seconds=180.0, log=None):
+    """
+    Measures sources not measured yet, oldest first, within a time budget, so a job knows which
+    bank footage carries a channel mark before it plans. Returns how many were measured.
+    """
+    import json
+    import time
+    from clip_ledger import source_key
+    try:
+        with open(_cache_path(), "r", encoding="utf-8") as f:
+            done = {k for k, v in json.load(f).items() if isinstance(v, dict) and v.get("passed") is not None}
+    except Exception:
+        done = set()
+    t0, measured, seen = time.time(), 0, set()
+    for p in paths:
+        key = source_key(p)
+        if not p or key in done or key in seen or not os.path.isfile(p):
+            continue
+        seen.add(key)
+        if time.time() - t0 > max_seconds:
+            break
+        res = check_source_marks_cached(p)
+        measured += 1
+        if log and res.get("passed") is False:
+            log(f"  [MARK CHECK] {os.path.basename(p)} carries a channel mark; its clips are left out")
+    return measured

@@ -1878,6 +1878,24 @@ class LionReelV97Pipeline:
         log(f"Current pool status: {pool_status['status_label']}")
 
     def _render_and_gate_candidate(self, cand, work_job_dir, clip_checkpoints_dir, target_clip_sec, layout_mode, job_id, clip_idx, aspect_ratio="9:16", out_w=1080, out_h=1920):
+        """A clip refused once in a job is not rendered again in the same job."""
+        failed = getattr(self, "_failed_clip_ids", None)
+        if not isinstance(failed, dict) or failed.get("job_id") != job_id:
+            failed = {"job_id": job_id, "ids": {}}
+            self._failed_clip_ids = failed
+        cid0 = cand.get("clip_id") or (cand.get("clip_info") or {}).get("clip_id")
+        if cid0 and cid0 in failed["ids"]:
+            cand["result"] = "REJECT"
+            cand["reason"] = f"ALREADY_REFUSED_IN_THIS_JOB ({failed['ids'][cid0]})"
+            cand["actual_score"] = 0.0
+            return False, cid0, None, cand
+        out = LionReelV97Pipeline._render_and_gate_once(self, cand, work_job_dir, clip_checkpoints_dir, target_clip_sec, layout_mode,
+                                                        job_id, clip_idx, aspect_ratio, out_w, out_h)
+        if not out[0] and cid0 and (out[3] or {}).get("reason"):
+            failed["ids"][cid0] = out[3]["reason"]
+        return out
+
+    def _render_and_gate_once(self, cand, work_job_dir, clip_checkpoints_dir, target_clip_sec, layout_mode, job_id, clip_idx, aspect_ratio="9:16", out_w=1080, out_h=1920):
         cinfo = cand.get("clip_info") or cand
         src_path = cand.get("source_url_or_path") or cinfo.get("source_url_or_path") or cinfo.get("source_path")
         if source_licenses.status_of(src_path) == source_licenses.NOT_SHOWN:
@@ -2555,6 +2573,16 @@ class LionReelV97Pipeline:
         except Exception as e_clean:
             log(f"[WARN] Failed cleaning stale reservations: {e_clean}", "WARN")
         is_test_job = (not is_prod) or bool(cfg.get("IS_TEST", False) or os.environ.get("IS_TEST"))
+        # Know which bank sources carry a channel mark before planning, so none is planned and refused later
+        try:
+            from persistent_mark import measure_sources
+            bank_paths = [w.get("source_url_or_path") for w in
+                          self.ledger.get_ledger_counts(animal_mode, include_windows=True)["windows"]["usable_now"]]
+            n_measured = measure_sources(bank_paths, max_seconds=180.0, log=log)
+            if n_measured:
+                log(f"  [MARK CHECK] Measured {n_measured} bank source(s) for channel marks before planning", "INFO")
+        except Exception as e_mk:
+            log(f"[WARN] Channel mark pre-check not run: {e_mk}", "WARN")
         from fulfillment_planner import FulfillmentPlanner
         planner = FulfillmentPlanner(ledger=self.ledger, reframer=self.reframer)
         fulfillment_plan = planner.plan_fulfillment(

@@ -95,3 +95,40 @@ def test_marked_video_fails_and_the_result_is_remembered(marked_video, tmp_path,
     assert cache["abc"]["passed"] is False
     monkeypatch.setattr(pm, "check_source_marks", lambda p: pytest.fail("a measured source is not measured again"))
     assert pm.check_source_marks_cached(marked_video)["passed"] is False
+
+
+def test_marked_sources_are_left_out_of_the_pool(tmp_path, monkeypatch):
+    import sqlite3
+    from clip_ledger import ClipLedger
+    monkeypatch.setattr(pm, "_cache_path", lambda: str(tmp_path / "source_marks.json"))
+    (tmp_path / "source_marks.json").write_text(json.dumps({"marked": {"passed": False, "reason": "CHANNEL_MARK", "marks": []}}))
+    ledger = ClipLedger(db_path=str(tmp_path / "ledger.db"))
+    with sqlite3.connect(ledger.db_path) as conn:
+        for src in ("marked", "clean"):
+            p = tmp_path / f"cache_{src}.mp4"
+            p.write_bytes(b"x")
+            conn.execute("INSERT INTO clips (clip_id, source_id, source_url_or_path, start_s, end_s, is_verified, times_used, animal_type, status) "
+                         "VALUES (?, ?, ?, 10, 17.5, 1, 0, 'cat', 'verified')", (f"c_{src}", f"cache_{src}", str(p)))
+        conn.commit()
+    counts = ledger.get_ledger_counts("cat", include_windows=True)
+    assert [r["clip_id"] for r in counts["windows"]["usable_now"]] == ["c_clean"]
+    got = ledger.reserve_clips_for_short(count=2, animal_type="cat", short_id="j", allow_reuse=False, min_required=1, patience_budget_sec=0)
+    assert [c["clip_id"] for c in got] == ["c_clean"]
+
+
+def test_a_refused_clip_is_not_rendered_twice_in_one_job(monkeypatch):
+    from types import SimpleNamespace
+    import lion_automate_v97 as engine
+    calls = []
+
+    def once(self, cand, *a, **k):
+        calls.append(cand["clip_id"])
+        cand["reason"] = "PET_CUT_OFF"
+        return False, cand["clip_id"], None, cand
+    monkeypatch.setattr(engine.LionReelV97Pipeline, "_render_and_gate_once", once)
+    host = SimpleNamespace()
+    for _ in range(3):
+        engine.LionReelV97Pipeline._render_and_gate_candidate(host, {"clip_id": "c1"}, "w", "c", 7.5, "smart_crop", "job1", 0)
+    assert calls == ["c1"]
+    engine.LionReelV97Pipeline._render_and_gate_candidate(host, {"clip_id": "c1"}, "w", "c", 7.5, "smart_crop", "job2", 0)
+    assert calls == ["c1", "c1"]
