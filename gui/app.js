@@ -43,7 +43,7 @@ const state = {
     logOffset: 0,
     rawLogs: "",
     modeSettings: {
-        short: { TARGET_CLIPS: 4, SHORT_CLIP_SEC: 7.5, ASPECT_RATIO: "9:16", LAYOUT_MODE: "smart_crop" },
+        short: { TARGET_CLIPS: 4, SHORT_CLIP_SEC: 7.5, ASPECT_RATIO: "9:16", LAYOUT_MODE: "auto" },
         long: { TARGET_DURATION_MIN: 5.0, SHORT_CLIP_SEC: 7.5, ASPECT_RATIO: "16:9", LAYOUT_MODE: "smart_crop" },
         both: { TARGET_DURATION_MIN: 5.0, SHORT_CLIP_SEC: 7.5, ASPECT_RATIO: "16:9", LAYOUT_MODE: "smart_crop" }
     },
@@ -66,7 +66,7 @@ const state = {
         CHECK_DUPLICATES: true,
         APPLY_COLOR_GRADING: false,
         APPLY_SMART_CROP: true,
-        LAYOUT_MODE: "smart_crop",
+        LAYOUT_MODE: "auto",
         ADD_BACKGROUND_MUSIC: true,
         CHECK_AUDIO_LEVELS: true,
         ENFORCE_ASPECT_RATIO: true,
@@ -8337,7 +8337,7 @@ async function loadConfig() {
             // Sync relocated Framing (Layout Mode) and Video Type
             const selectLayoutMode = document.getElementById("select-layout-mode");
             if (selectLayoutMode) {
-                selectLayoutMode.value = state.config.LAYOUT_MODE || "smart_crop";
+                selectLayoutMode.value = state.config.LAYOUT_MODE || "auto";
             }
             const selectCatVideoType = document.getElementById("select-cat-video-type");
             if (selectCatVideoType) {

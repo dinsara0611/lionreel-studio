@@ -327,7 +327,7 @@ class AutoReframeEngine:
                 }
 
         # Determine buffered analysis window
-        if allow_slide and layout_mode == "smart_crop":
+        if allow_slide and layout_mode in ("smart_crop", "auto"):
             buf_start = max(0.0, start_s - max_slide_s)
             buf_end = min(total_sec, start_s + dur_s + max_slide_s)
         else:
@@ -523,7 +523,11 @@ class AutoReframeEngine:
         # (The old test compared the median width with 1.95 x the whole frame width and never fired.)
         if pet_widths and not is_vertical_direct and mode == "smart_crop":
             wide_share = sum(1 for pw in pet_widths if pw >= PET_WIDER_THAN_CROP * float(crop_w)) / float(len(pet_widths))
-            if wide_share >= 0.5:
+            if wide_share >= 0.5 and layout_mode == "auto":
+                # Auto framing: show the whole cat, the full frame centred on blurred sides
+                mode = "blur_fit"
+                crop_w, crop_h = orig_w, orig_h
+            elif wide_share >= 0.5:
                 med_pet_w = float(np.median(pet_widths))
                 return {
                     "status": "reject",
@@ -758,7 +762,7 @@ class AutoReframeEngine:
             clean_targets_y = list(np.interp(all_idx, valid_indices, [raw_targets_y[k] for k in valid_indices]))
             clean_heights = list(np.interp(all_idx, valid_indices, [pet_heights[k] if pet_heights[k] is not None else 0.35 for k in valid_indices]))
 
-            if (two_pets_far_apart / max(1, len(idxs))) > 0.25 and layout_mode == "smart_crop":
+            if (two_pets_far_apart / max(1, len(idxs))) > 0.25 and layout_mode in ("smart_crop", "auto"):
                 return {
                     "status": "reject",
                     "reason": "REJECT_TWO_PETS_FAR_APART",
@@ -1032,7 +1036,7 @@ class AutoReframeEngine:
             base_plan["best_dur_s"] = dur_s
             return base_plan
 
-        if not allow_slide or layout_mode != "smart_crop":
+        if not allow_slide or layout_mode not in ("smart_crop", "auto"):
             base_plan["best_offset"] = 0.0
             base_plan["best_start_s"] = start_s
             base_plan["best_dur_s"] = dur_s
