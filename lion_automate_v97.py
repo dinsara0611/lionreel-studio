@@ -78,6 +78,18 @@ CONFIG_FILE = os.path.join(BASE_DIR, "config.json")
 BENCHMARK_CONFIG = os.path.join(BASE_DIR, "config", "benchmark.json")
 BLOCKED_SOURCES_FILE = os.path.join(BASE_DIR, "config", "blocked_sources.json")
 
+# A short is still worth publishing from this length: below it the job keeps searching instead
+AUTO_SHORTER_MIN_SECONDS = 30.0
+AUTO_SHORTER_MIN_CLIPS = 4
+
+
+def auto_shorter_ok(clips_ready: int, clips_needed: int, clip_sec: float) -> bool:
+    """When a short job's search runs out, finish with the clips it has if that still makes a real short."""
+    return (int(clips_needed) <= 8 and int(clips_ready) < int(clips_needed)
+            and int(clips_ready) >= AUTO_SHORTER_MIN_CLIPS
+            and int(clips_ready) * float(clip_sec) >= AUTO_SHORTER_MIN_SECONDS)
+
+
 def record_shorter_delivery(work_job_dir: str, clips: int, clip_sec: float) -> None:
     """Allow shorter is on and footage ran out: QA checks against what the user agreed to."""
     cfg_path = os.path.join(work_job_dir, "job_config.json")
@@ -4061,7 +4073,13 @@ class LionReelV97Pipeline:
                                     )
                                     target_clips_count = len(rendered_candidates_pool)
                                     break
-                                elif allow_shorter and len(rendered_candidates_pool) >= 2:
+                                elif (allow_shorter and len(rendered_candidates_pool) >= 2) or auto_shorter_ok(
+                                        len(rendered_candidates_pool), target_clips_count, target_clip_sec):
+                                    if not allow_shorter:
+                                        # Best path chosen automatically: a complete shorter video beats a stopped job.
+                                        # Reuse stays off, so no old footage comes back.
+                                        log(f"  [AUTO PATH] Search time used up with {len(rendered_candidates_pool)} of {target_clips_count} clips: "
+                                            f"making a {len(rendered_candidates_pool) * target_clip_sec:.1f}s video now instead of stopping", "INFO")
                                     record_shorter_delivery(work_job_dir, len(rendered_candidates_pool), target_clip_sec)
                                     log(f"  [PATIENCE EXCEEDED] Shortage wait limit reached: assembling video with {len(rendered_candidates_pool)} available clips (allow_shorter=True).", "INFO")
                                     target_clips_count = len(rendered_candidates_pool)
