@@ -7039,7 +7039,9 @@ async function runEngineStatusCheck() {
                     if (elapsedEl) elapsedEl.innerText = formatDuration(Math.round(finalElapsed));
                 }
 
-                const reasonCode = data.reasonCode || (data.jobResult && data.jobResult.reason_code) || (data.exitCode === 2 ? "INVALID_ARGUMENTS" : "CRASH");
+                // Exit code 3 is the engine stopping to wait for footage, not a crash
+                const isWaitingStop = data.exitCode === 3 || (data.jobResult && /waiting/i.test(String(data.jobResult.status || "")));
+                const reasonCode = data.reasonCode || (data.jobResult && data.jobResult.reason_code) || (data.exitCode === 2 ? "INVALID_ARGUMENTS" : (isWaitingStop ? "NEEDS_FOOTAGE" : "CRASH"));
                 const exitCodeVal = data.exitCode !== null && data.exitCode !== undefined ? data.exitCode : (data.jobResult && data.jobResult.exit_code);
                 const logTail = data.details || (data.jobResult && (data.jobResult.details || data.jobResult.traceback)) || data.errorDetails || "";
                 const buildId = data.buildId || (data.jobResult && data.jobResult.build_id) || "v97";
