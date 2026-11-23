@@ -203,6 +203,42 @@ def compute_pool_capacity(verified_windows: int, usable_sources: int, target_cli
     }
 
 
+def load_saved_job_config(job_id):
+    """The job settings saved when the job started (work/<job>/job_config.json), or None."""
+    try:
+        with open(os.path.join(WORK_DIR, job_id, "job_config.json"), "r", encoding="utf-8") as f:
+            cfg = json.load(f)
+        return cfg if isinstance(cfg, dict) else None
+    except Exception:
+        return None
+
+
+def auto_resume_readiness(job_id, ledger=None):
+    """
+    Whether a job waiting for footage can start again: the clips it needs are in the bank now.
+    Counts come from the one count function, with this job's own reserved clips counted as its own.
+    Returns {"ready": bool, "have", "need", "sources", "sources_needed", "cfg"}; ready is False when the
+    saved settings cannot be read, so a job is never restarted with guessed settings.
+    """
+    cfg = load_saved_job_config(job_id)
+    if not cfg:
+        return {"ready": False, "reason": "NO_SAVED_SETTINGS", "cfg": None}
+    need = int(cfg.get("clips") or cfg.get("clip_count") or 0)
+    if need <= 0:
+        return {"ready": False, "reason": "NO_CLIP_COUNT", "cfg": cfg}
+    if ledger is None:
+        from clip_ledger import ClipLedger
+        ledger = ClipLedger()
+    from clip_ledger import MAX_CLIPS_PER_SOURCE_SHORT
+    cap = ledger.get_pool_ready_and_capacity(str(cfg.get("animal_mode") or "cat"), target_clips=need,
+                                             allow_reuse=bool(cfg.get("allow_reuse")), current_job_id=job_id)
+    per_source = MAX_CLIPS_PER_SOURCE_SHORT if (need <= 8 and not cfg.get("allow_reuse")) else 3
+    sources_needed = max(1, -(-need // per_source))
+    have, sources = int(cap.get("ready", 0)), int(cap.get("usable_sources", 0))
+    return {"ready": have >= need and sources >= sources_needed, "have": have, "need": need,
+            "sources": sources, "sources_needed": sources_needed, "cfg": cfg}
+
+
 def should_auto_resume_job(job_id: str, status: str) -> bool:
     """
     Requirement 2 & 3:
@@ -544,7 +580,49 @@ def delete_compilation_files(filename):
 # Files the engine used to copy into finished/ without the job name in them
 LOOSE_JOB_FILES = ("mapping.json", "metadata.json", "qa_report.json", "planner_decision.json", "timings.json")
 JOB_NAME_PREFIXES = ("lionreel_", "lion_", "job_")
+EXTRA_FILE_SUFFIXES = ("_report.html", "_report.json", "_report.pdf", "_timings.json")
 
+
+
+_HARVEST_START = re.compile(r"STARTING REAL HARVEST \| Target Needed: (\d+)")
+_HARVEST_DOWNLOADING = re.compile(r"Downloading legal CC source: (\S+?)\.\.\.")
+
+
+def harvest_progress(log_lines):
+    """
+    What the newest footage search in a job log is doing, read only from the log lines.
+    Returns None when no search has started. Counts come from the lines themselves, never estimated.
+    """
+    start = None
+    for i in range(len(log_lines) - 1, -1, -1):
+        m = _HARVEST_START.search(log_lines[i])
+        if m:
+            start = (i, int(m.group(1)))
+            break
+    if start is None:
+        return None
+    idx, target = start
+    after = log_lines[idx + 1:]
+    seen = set()
+    found = sources = 0
+    downloading = None
+    finished = False
+    for line in after:
+        if "HARVEST FINISHED" in line:
+            finished = True
+        if " VERIFIED" in line and "Window " in line:
+            key = line.split("Window ", 1)[1].split(" ", 1)[0]
+            if key not in seen:
+                seen.add(key)
+                found += 1
+        m = _HARVEST_DOWNLOADING.search(line)
+        if m:
+            downloading = m.group(1)
+        if "Downloaded successfully" in line:
+            sources += 1
+            downloading = None
+    return {"active": not finished, "found": found, "target": target,
+            "sources_downloaded": sources, "downloading": downloading}
 
 def existing_video_stems():
     """Stems of every video the library can show: finished/*.mp4 and output/<job>/*.mp4."""
@@ -613,6 +691,11 @@ def find_leftover_files():
                 items.append(("finished", f, fp))
             elif f.startswith(JOB_NAME_PREFIXES) and not f.endswith(".mp4") and not owned(f):
                 items.append(("finished", f, fp))
+            elif os.path.isfile(fp) and f.endswith(EXTRA_FILE_SUFFIXES):
+                # Duplicate of a file that also sits in output/<video>/: not needed in finished/
+                stem = next((s for s in stems if f.startswith(s + "_")), None)
+                if stem and stem != active and os.path.isfile(os.path.join(OUTPUT_DIR, stem, f)):
+                    items.append(("finished", f, fp))
     if os.path.isdir(OUTPUT_DIR):
         for sub in sorted(os.listdir(OUTPUT_DIR)):
             sub_p = os.path.join(OUTPUT_DIR, sub)
@@ -1217,6 +1300,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
 
             # Recent log tail (last 5 non-empty lines)
             recent_logs = []
+            harvest_info = None
             if job_id:
                 log_p = os.path.join(WORK_DIR, job_id, "job.log")
                 if os.path.exists(log_p):
@@ -1224,8 +1308,10 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                         with open(log_p, "r", encoding="utf-8", errors="ignore") as f_lg:
                             lines = [l.strip() for l in f_lg.readlines() if l.strip()]
                             recent_logs = lines[-5:]
+                            harvest_info = harvest_progress(lines)
                     except Exception:
                         pass
+            harvesting_now = bool(harvest_info and harvest_info.get("active") and (is_running or is_waiting))
 
             # Amber prediction warning if elapsed > predicted high
             is_over_predicted = False
@@ -1238,7 +1324,10 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 high_m, high_s = int(pred_high // 60), int(pred_high % 60)
                 expected_str = f"{low_m}–{high_m} min" if (low_m or high_m) else f"{pred_low:.0f}–{pred_high:.0f}s"
                 waiting_for_detail = current_stage_name or "processing"
-                if computed_status in ("waiting_for_clips", "needs_sources", "waiting") or is_waiting:
+                if harvesting_now:
+                    waiting_for_detail = (f"new footage ({harvest_info['found']} of {harvest_info['target']} windows found, "
+                                          f"{harvest_info['sources_downloaded']} videos downloaded)")
+                elif computed_status in ("waiting_for_clips", "needs_sources", "waiting") or is_waiting:
                     waiting_for_detail = f"footage ({c_ready}/{c_needed} clips ready)"
                 elif computed_status == "stuck":
                     waiting_for_detail = stuck_info.get("reason") if stuck_info else "engine heartbeat"
@@ -1272,6 +1361,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 "stuckJobInfo": stuck_info,
                 "stuckReason": (stuck_info.get("reason") if stuck_info else (job_res.get("stuck_reason") if job_res else None)),
                 "recentLogs": recent_logs,
+                "harvest": harvest_info if harvesting_now else None,
                 "isOverPredicted": is_over_predicted,
                 "predictionWarning": prediction_warning,
                 "estimator": estimator_telemetry,
@@ -4219,21 +4309,15 @@ if __name__ == "__main__":
                 if not should_auto_resume_job(job_id, job_status):
                     continue
 
-                target_clips = int(res_data.get("clips_needed") or res_data.get("target_clips") or 100)
-                min_sources_needed = max(1, (target_clips + 2) // 3)
-
                 import job_options
                 if job_options.is_job_process_alive(job_id):
                     continue
 
-                from clip_ledger import ClipLedger
-                ledger = ClipLedger()
-                cap_res = ledger.get_pool_ready_and_capacity("cat", target_clips=target_clips)
-                ready_windows = cap_res.get("ready", 0)
-                usable_sources = cap_res.get("usable_sources", 0)
-
-                if ready_windows >= target_clips and usable_sources >= min_sources_needed:
-                    print(f"[AUTO-RESUME] Bank now has {ready_windows} verified windows across {usable_sources} sources (needed {target_clips} clips, {min_sources_needed} sources). Resuming job {job_id}...")
+                # The old code read a clip count the waiting result never has (so it waited for 100 clips)
+                # and called a settings loader that does not exist, so no job ever resumed
+                rd = auto_resume_readiness(job_id)
+                if rd["ready"]:
+                    print(f"[AUTO-RESUME] Bank now has {rd['have']} fresh clips across {rd['sources']} sources (job needs {rd['need']} across {rd['sources_needed']}). Restarting {job_id}.", flush=True)
                     work_job_dir = os.path.join(WORK_DIR, job_id)
                     os.makedirs(work_job_dir, exist_ok=True)
                     job_log_file = os.path.join(work_job_dir, "job.log")
@@ -4248,7 +4332,7 @@ if __name__ == "__main__":
                         python_exe = sys.executable or "python"
                     RUNNING_PROCESS_START_TIME = time.time()
                     import job_options
-                    job_cfg = job_options.load_job_config(job_id)
+                    job_cfg = rd["cfg"]
                     if job_cfg:
                         cli_args = job_options.build_cli_args(job_cfg, job_id, RUNNING_PROCESS_START_TIME)
                         cmd = [python_exe, "-u", "lion_automate_v97.py"] + cli_args

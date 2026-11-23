@@ -254,7 +254,7 @@ def get_layout_gate_rules(layout_mode: str = "smart_crop") -> dict:
             "vert_strip_range": (0.30, 0.62)
         }
 
-def check_pet_centering(video_path, n_samples=24, has_vertical_slack=False, layout_mode="smart_crop", is_clamped=True):
+def check_pet_centering(video_path, n_samples=24, has_vertical_slack=False, layout_mode="smart_crop", is_clamped=True, blur_fit_spans=None):
     """
     QA Gate 4:
     Verifies pet centering across the video clip.
@@ -284,7 +284,8 @@ def check_pet_centering(video_path, n_samples=24, has_vertical_slack=False, layo
     vert_passed_frames = 0
     size_passed_frames = 0
     details = []
-    is_blur_fit = (layout_mode == "blur_fit")
+    whole_layout_blur = (layout_mode == "blur_fit")
+    fps_pc = cap.get(cv2.CAP_PROP_FPS) or 30.0
 
     for i in range(n_samples):
         pos = int(total_frames * (i + 0.5) / n_samples)
@@ -294,6 +295,7 @@ def check_pet_centering(video_path, n_samples=24, has_vertical_slack=False, layo
             continue
         sampled_frames += 1
         h, w = frame.shape[:2]
+        is_blur_fit = whole_layout_blur or _in_spans(pos / fps_pc, blur_fit_spans)
         pets = detector.detect(frame, conf_threshold=0.22)
         if not pets:
             continue
@@ -389,7 +391,22 @@ def check_pet_centering(video_path, n_samples=24, has_vertical_slack=False, layo
         "details": details[:5]
     }
 
-def check_layout_fill(video_path, n_samples=16, layout_mode="smart_crop"):
+def blur_fit_spans_from_mapping(clip_mapping):
+    """(start, end) seconds of clips shown whole with blurred sides, in output order, from the clip mapping."""
+    spans, t = [], 0.0
+    for c in sorted(clip_mapping or [], key=lambda c: int(c.get("clip_index") or 0)):
+        dur = float(c.get("output_duration") or c.get("duration") or c.get("dur_s") or 0.0)
+        if str(c.get("crop_mode") or "").startswith("blur_fit"):
+            spans.append((t, t + dur))
+        t += dur
+    return spans
+
+
+def _in_spans(t, spans):
+    return any(a <= t < b for a, b in (spans or ()))
+
+
+def check_layout_fill(video_path, n_samples=16, layout_mode="smart_crop", blur_fit_spans=None):
     """
     QA Gate 4b (Layout-Aware):
     In Smart crop mode:
@@ -409,7 +426,10 @@ def check_layout_fill(video_path, n_samples=16, layout_mode="smart_crop"):
     strip_centering_violations = 0
     strip_width_violations = 0
     checked_frames = 0
-    is_blur_fit = (layout_mode in ("blur_fit", "blur_fit_16_9"))
+    blur_fit_frames = 0
+    # Auto layout mixes clips: each sample is judged by the layout of the clip it falls in
+    whole_layout_blur = (layout_mode in ("blur_fit", "blur_fit_16_9"))
+    fps_lf = cap.get(cv2.CAP_PROP_FPS) or 30.0
 
     try:
         from overlay_text_detector import check_frame_black_borders
@@ -424,6 +444,10 @@ def check_layout_fill(video_path, n_samples=16, layout_mode="smart_crop"):
             continue
         h, w = frame.shape[:2]
         
+        is_blur_fit = whole_layout_blur or _in_spans(pos / fps_lf, blur_fit_spans)
+        if is_blur_fit:
+            blur_fit_frames += 1
+
         # Real border pixel measurement (row-by-row and col-by-col)
         has_black = False
         if check_frame_black_borders:
@@ -456,7 +480,7 @@ def check_layout_fill(video_path, n_samples=16, layout_mode="smart_crop"):
         is_blur_top = (var_top < 3.5 and (var_top / var_mid) < 0.06)
         is_blur_bot = (var_bot < 3.5 and (var_bot / var_mid) < 0.06)
         
-        if is_blur_top and is_blur_bot:
+        if is_blur_top and is_blur_bot and not is_blur_fit:
             blur_violations += 1
 
         if is_blur_fit:
@@ -485,17 +509,21 @@ def check_layout_fill(video_path, n_samples=16, layout_mode="smart_crop"):
     if black_violations / eval_count > 0.15:
         return {"passed": False, "reason": "BLACK_LETTERBOX_DETECTED", "violations": black_violations}
 
-    if is_blur_fit:
+    if blur_fit_frames:
         if strip_centering_violations / eval_count > 0.15:
             return {"passed": False, "reason": "BLUR_FIT_STRIP_OFF_CENTER", "violations": strip_centering_violations}
         if strip_width_violations / eval_count > 0.15:
             return {"passed": False, "reason": "BLUR_FIT_STRIP_TOO_NARROW (<55% width)", "violations": strip_width_violations}
-        return {"passed": True, "reason": "BLUR_FIT_LAYOUT_VERIFIED", "checked_frames": checked_frames}
+        if whole_layout_blur:
+            return {"passed": True, "reason": "BLUR_FIT_LAYOUT_VERIFIED", "checked_frames": checked_frames}
 
     # In smart_crop mode (or default): reject blurred bars!
     if blur_violations / eval_count > 0.15:
         return {"passed": False, "reason": "BLURRED_BARS_DETECTED (Blur-fit layout)", "violations": blur_violations}
 
+    if blur_fit_frames:
+        return {"passed": True, "reason": f"AUTO_LAYOUT_VERIFIED ({blur_fit_frames} of {checked_frames} samples shown whole)",
+                "checked_frames": checked_frames, "blur_fit_frames": blur_fit_frames}
     return {"passed": True, "reason": "FULL_FRAME_FILL_VERIFIED", "checked_frames": checked_frames}
 
 def check_peak_quality_gate(video_path, layout_mode="smart_crop"):
@@ -722,6 +750,11 @@ def check_visual_sharpness(video_path, n_samples=24):
         "low_sharp_frame_ratio": round(low_sharp_ratio, 2)
     }
 
+# A clip where the pet runs off both sides of the vertical frame shows a body part, not the cat
+CUT_OFF_EDGE = 0.02
+CUT_OFF_MAX_SHARE = 0.50
+
+
 def verify_single_pass_post_crop_gate(video_path: str, plan: dict = None, layout_mode: str = "smart_crop", n_samples: int = 12, detector=None) -> tuple:
     """
     Fast single-pass post-crop QA gate:
@@ -779,6 +812,7 @@ def verify_single_pass_post_crop_gate(video_path: str, plan: dict = None, layout
 
     sharpness_scores = []
     low_sharp_count = 0
+    cut_off_frames = 0
 
     negative_votes = 0
 
@@ -861,6 +895,10 @@ def verify_single_pass_post_crop_gate(video_path: str, plan: dict = None, layout
                         is_centered_x = True
                     is_centered_y = (0.12 <= cy <= 0.88) if w >= h else (0.15 <= cy <= 0.85)
                     is_valid_height = (0.08 <= box_h_frac <= 1.00)
+
+                # The cat is wider than the vertical frame: both sides of its body are cut off
+                if not is_blur_fit and h > w and bx1 <= w * CUT_OFF_EDGE and bx2 >= w * (1.0 - CUT_OFF_EDGE):
+                    cut_off_frames += 1
 
                 if is_centered_x: horiz_passed_frames += 1
                 if is_centered_y: vert_passed_frames += 1
@@ -946,7 +984,10 @@ def verify_single_pass_post_crop_gate(video_path: str, plan: dict = None, layout
     cartoon_passed = neg_ratio < 0.25
     text_passed = (text_violations / eval_count <= 0.15)
 
-    passed = fill_passed and cent_passed and sharp_passed and cartoon_passed and text_passed
+    cut_off_ratio = cut_off_frames / float(det_eval) if detected_frames > 0 else 0.0
+    whole_pet_passed = cut_off_ratio < CUT_OFF_MAX_SHARE
+
+    passed = fill_passed and cent_passed and sharp_passed and cartoon_passed and text_passed and whole_pet_passed
 
     fail_reasons = []
     if not text_passed:
@@ -962,6 +1003,8 @@ def verify_single_pass_post_crop_gate(video_path: str, plan: dict = None, layout
         fail_reasons.append(f"Sharpness: {med_sharp:.1f} (low_ratio: {low_sharp_ratio:.2f})")
     if not cartoon_passed:
         fail_reasons.append(f"CGI/Cartoon: {neg_ratio:.1%}")
+    if not whole_pet_passed:
+        fail_reasons.append(f"PET_CUT_OFF: the cat fills the frame edge to edge in {cut_off_frames}/{detected_frames} frames")
 
     reason = (
         f"Centering: {compliance_ratio:.1%} "
@@ -1030,7 +1073,7 @@ def check_source_guard(video_path):
         if not blocked_hashes:
             return {"passed": True}
 
-        from clip_ledger import _compute_phash, _hamming_distance
+        from clip_ledger import compute_phash as _compute_phash, hamming_distance as _hamming_distance
         cap = cv2.VideoCapture(video_path)
         total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         matched = False
@@ -1057,7 +1100,8 @@ def check_source_guard(video_path):
             "blocked_match": matched
         }
     except Exception as e:
-        return {"passed": True, "error": str(e)}
+        # A guard that crashed did not check anything: not run, never a pass
+        return {"passed": None, "reason": f"NOT_RUN: {e}", "error": str(e)}
 
 def check_repeat_spacing_gate(video_path, clip_mapping=None, work_job_dir=None):
     """
@@ -1556,14 +1600,15 @@ def run_full_qa(video_path, report_path=None, contact_sheet_path=None, layout_mo
     # Gate 4: Pet Centering, percent is passed frames over sampled frames
     is_long_video = job_mode in ("long", "compilation", "both") and not is_teaser if job_mode else dur >= 179.0
     n_center_samples = 24 if dur >= 179.0 else 16
-    centering = run_gate(check_pet_centering, video_path, n_center_samples, layout_mode=layout_mode)
+    whole_cat_spans = blur_fit_spans_from_mapping(clip_mapping) if layout_mode == "auto" else None
+    centering = run_gate(check_pet_centering, video_path, n_center_samples, layout_mode=layout_mode, blur_fit_spans=whole_cat_spans)
     if _gate_status(centering) is not None and centering.get("sampled_frames"):
         centering["centering_pct"] = round(100.0 * centering["passed_frames"] / centering["sampled_frames"], 1)
         centering["passed"] = centering["centering_pct"] >= 85.0
     print(f"  Gate 4: Pet Centering Gate: {centering.get('centering_pct')}% ({centering.get('passed_frames')}/{centering.get('sampled_frames')} frames) -> {_label(_gate_status(centering))}")
 
     # Gate 5: Layout Fill Gate (no pure black bars/letterbox)
-    layout_fill = run_gate(check_layout_fill, video_path, 16, layout_mode=layout_mode)
+    layout_fill = run_gate(check_layout_fill, video_path, 16, layout_mode=layout_mode, blur_fit_spans=whole_cat_spans)
     print(f"  Gate 5: Layout Fill Gate: {layout_fill.get('reason', 'layout ok')} -> {_label(_gate_status(layout_fill))}")
 
     # Gate 6: Watermark / Corner Logo Gate

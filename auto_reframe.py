@@ -147,6 +147,10 @@ def decode_frames_ffmpeg_pipe(video_path, start_s, dur_s, n_frames=8, target_w=3
 
 
 
+
+# Same edge rule as the clip gate (2% each side): a pet this wide fills the crop edge to edge
+PET_WIDER_THAN_CROP = 0.96
+
 class OneEuroFilter:
     """
     Adaptive low-pass filter designed for human/camera motion tracking:
@@ -323,7 +327,7 @@ class AutoReframeEngine:
                 }
 
         # Determine buffered analysis window
-        if allow_slide and layout_mode == "smart_crop":
+        if allow_slide and layout_mode in ("smart_crop", "auto"):
             buf_start = max(0.0, start_s - max_slide_s)
             buf_end = min(total_sec, start_s + dur_s + max_slide_s)
         else:
@@ -514,13 +518,20 @@ class AutoReframeEngine:
                 "failing_frames": []
             }
 
-        # Step 4a: Feasibility check (extreme full-frame close-ups only)
-        if pet_widths and not is_vertical_direct and mode not in ("vertical_direct", "blur_fit", "blur_fit_16_9"):
-            med_pet_w = float(np.median(pet_widths))
-            if med_pet_w > 1.95 * float(orig_w):
+        # Step 4a: Feasibility check. A pet wider than the crop in most frames comes out with both sides of
+        # its body cut off; the clip gate refuses that after a 20-30 s render, so refuse it here instead.
+        # (The old test compared the median width with 1.95 x the whole frame width and never fired.)
+        if pet_widths and not is_vertical_direct and mode == "smart_crop":
+            wide_share = sum(1 for pw in pet_widths if pw >= PET_WIDER_THAN_CROP * float(crop_w)) / float(len(pet_widths))
+            if wide_share >= 0.5 and layout_mode == "auto":
+                # Auto framing: show the whole cat, the full frame centred on blurred sides
+                mode = "blur_fit"
+                crop_w, crop_h = orig_w, orig_h
+            elif wide_share >= 0.5:
+                med_pet_w = float(np.median(pet_widths))
                 return {
                     "status": "reject",
-                    "reason": f"FRAMING_INFEASIBLE (Median pet box width {med_pet_w:.1f}px > 92% crop {crop_w}px)",
+                    "reason": f"PET_WIDER_THAN_FRAME (pet at least {PET_WIDER_THAN_CROP:.0%} of the {crop_w}px crop in {wide_share:.0%} of frames, median {med_pet_w:.0f}px)",
                     "framing_score": 0.0,
                     "sharpness": round(med_sharp, 1),
                     "pet_detected_ratio": 0.0,
@@ -751,7 +762,7 @@ class AutoReframeEngine:
             clean_targets_y = list(np.interp(all_idx, valid_indices, [raw_targets_y[k] for k in valid_indices]))
             clean_heights = list(np.interp(all_idx, valid_indices, [pet_heights[k] if pet_heights[k] is not None else 0.35 for k in valid_indices]))
 
-            if (two_pets_far_apart / max(1, len(idxs))) > 0.25 and layout_mode == "smart_crop":
+            if (two_pets_far_apart / max(1, len(idxs))) > 0.25 and layout_mode in ("smart_crop", "auto"):
                 return {
                     "status": "reject",
                     "reason": "REJECT_TWO_PETS_FAR_APART",
@@ -1025,7 +1036,7 @@ class AutoReframeEngine:
             base_plan["best_dur_s"] = dur_s
             return base_plan
 
-        if not allow_slide or layout_mode != "smart_crop":
+        if not allow_slide or layout_mode not in ("smart_crop", "auto"):
             base_plan["best_offset"] = 0.0
             base_plan["best_start_s"] = start_s
             base_plan["best_dur_s"] = dur_s

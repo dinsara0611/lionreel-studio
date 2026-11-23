@@ -60,6 +60,9 @@ class FulfillmentPlan:
         needed = self.target_clips_count
         return f"Building your video: {ready_count} of {needed} clips ready, finding more automatically"
 
+from clip_ledger import MAX_CLIPS_PER_SOURCE_SHORT
+
+
 class FulfillmentPlanner:
     def __init__(self, ledger: Optional[ClipLedger] = None, config: Optional[Dict[str, Any]] = None, reframer: Any = None, **kwargs):
         self.ledger = ledger or ClipLedger()
@@ -128,7 +131,9 @@ class FulfillmentPlanner:
                 and str(c.get("source_id") or "").lower() not in cooldown_sources
             ]
             if not allow_reuse:
-                if len(usable_now_candidates) < needed_clips and len(verified_candidates) > len(usable_now_candidates):
+                # Short videos never take resting sources (used in the last 3 videos): the job searches
+                # for new footage instead. Long videos need too many clips to keep that rule.
+                if needed_clips > 8 and len(usable_now_candidates) < needed_clips and len(verified_candidates) > len(usable_now_candidates):
                     remaining_pool = [c for c in verified_candidates if c not in usable_now_candidates]
                     usable_now_candidates = list(usable_now_candidates) + remaining_pool
                     verified_candidates = usable_now_candidates
@@ -165,7 +170,7 @@ class FulfillmentPlanner:
                                 if os.path.splitext(os.path.basename(str(c.get("source_url_or_path") or c.get("source_id") or "")))[0].lower() not in cooldown_sources
                                 and str(c.get("source_id") or "").lower() not in cooldown_sources
                             ]
-                            if len(usable_now_candidates) < needed_clips and len(verified_candidates) > len(usable_now_candidates):
+                            if allow_reuse and len(usable_now_candidates) < needed_clips and len(verified_candidates) > len(usable_now_candidates):
                                 usable_now_candidates = list(usable_now_candidates) + [c for c in verified_candidates if c not in usable_now_candidates]
                             usable_now = len(usable_now_candidates)
                 except Exception as e_v:
@@ -260,7 +265,9 @@ class FulfillmentPlanner:
                 freshness_card_line=freshness["card_line"]
             )
 
-        selected_step1 = self._select_diverse_windows(verified_candidates, max_per_source=3, min_gap_s=10.0)
+        # Short videos: at most 2 clips of one source, the same rule the reservation keeps
+        short_cap = MAX_CLIPS_PER_SOURCE_SHORT if (needed_clips <= 8 and not allow_reuse) else None
+        selected_step1 = self._select_diverse_windows(verified_candidates, max_per_source=short_cap or 3, min_gap_s=10.0)
 
         # Calculate if Step 1 satisfies the contract
         total_step1_sec = sum(c.get("dur_s", initial_clip_sec) for c in selected_step1[:needed_clips])
@@ -304,7 +311,7 @@ class FulfillmentPlanner:
         # STEP 3: Raise to Up to 14 Windows Per Long Source (>= 3-10s apart)
         # ---------------------------------------------------------------------
         ladder_applied.append("ladder_step_3_multi_window")
-        max_p_source = max(8, int(math.ceil(needed_clips * 0.65)))
+        max_p_source = short_cap or max(8, int(math.ceil(needed_clips * 0.65)))
         selected_step3 = self._select_diverse_windows(verified_candidates, max_per_source=max_p_source, min_gap_s=10.0)
         if len(selected_step3) < needed_clips:
             selected_step3 = self._select_diverse_windows(verified_candidates, max_per_source=max_p_source, min_gap_s=3.0)
@@ -373,9 +380,28 @@ class FulfillmentPlanner:
                     trigger_background_harvest_if_needed(animal_mode, min_low_water_mark=needed_clips * 4)
                 except Exception as e_h:
                     logs.append(f"[PLANNER] Harvest worker notification: {e_h}")
-            err_msg = f"NO_NEW_CLIPS_AVAILABLE: Insufficient new footage in bank for {animal_mode} ({len(verified_candidates)} fresh clips available, needed {needed_clips}) and 'Allow reuse of footage from earlier videos' is OFF. Starting automatic harvest for new sources."
-            logs.append(f"[PLANNER] SAFE_STOP: {err_msg}")
-            raise RuntimeError(err_msg)
+            # Some fresh windows overlap or share a source, so fewer distinct clips exist than rows.
+            # That is a shortage: the engine searches for footage instead of failing the job.
+            chosen = selected_step3[:needed_clips]
+            final_clips = self._tune_clip_durations(chosen, contract_sec) if chosen else []
+            freshness = compute_footage_freshness(final_clips, ledger=self.ledger, current_job_id=job_id, channel=animal_mode)
+            logs.append(f"[PLANNER] Shortage: {len(verified_candidates)} fresh windows give {len(selected_step3)} distinct clips of {needed_clips} needed. Searching for footage.")
+            return FulfillmentPlan(
+                contract_total_sec=contract_sec,
+                expected_total_sec=round(sum(c["dur_s"] for c in final_clips), 2),
+                target_clips_count=needed_clips,
+                target_clip_sec=initial_clip_sec,
+                clips=final_clips,
+                strategy_used="shortage_harvest_pending",
+                ladder_steps_applied=ladder_applied + ["shortage_active_harvest"],
+                repeat_share_pct=0.0,
+                log_messages=logs,
+                status_card_line=plain_plan_sentence,
+                plain_plan_sentence=plain_plan_sentence,
+                feasibility_line=feasibility_line,
+                freshness=freshness,
+                freshness_card_line=freshness["card_line"]
+            )
 
         ladder_applied.append("ladder_step_5_repeat_cycle")
         logs.append("[PLANNER] Unique pool exhausted and allow_reuse is ON. Executing Step 5 repeat cycle with clean IDs, offset >= 3.0s and spacing >= min(8, unique-1).")

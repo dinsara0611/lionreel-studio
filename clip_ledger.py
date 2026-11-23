@@ -70,6 +70,19 @@ def compute_phash(frame) -> str:
     bits = (dct_low > med).flatten()
     return "".join("1" if b else "0" for b in bits)
 
+MAX_CLIPS_PER_SOURCE_SHORT = 2
+
+
+def source_key(value) -> str:
+    """
+    One name per source video, however it was written: 'C:\\cache\\cache_ABC.mp4', 'cache_ABC' and 'ABC'
+    are the same video. Two finished videos used the same moment because one stored 'ABC' and the
+    other 'cache_ABC', and the old comparison treated them as different sources.
+    """
+    base = os.path.splitext(os.path.basename(str(value or "").strip()))[0].lower()
+    return base[len("cache_"):] if base.startswith("cache_") else base
+
+
 def is_same_moment(src1: str, start1: float, end1: float, src2: str, start2: float, end2: float, overlap_thresh: float = 0.30) -> bool:
     """
     Checks if two clip windows represent the same moment in the same source video.
@@ -80,11 +93,7 @@ def is_same_moment(src1: str, start1: float, end1: float, src2: str, start2: flo
     if not src1 or not src2:
         return False
 
-    def norm_s(s):
-        base = os.path.basename(str(s).strip())
-        return os.path.splitext(base)[0].lower()
-
-    if norm_s(src1) != norm_s(src2):
+    if source_key(src1) != source_key(src2):
         return False
 
     dur1 = float(end1) - float(start1)
@@ -836,17 +845,21 @@ class ClipLedger:
     def get_pool_health(self, animal_type='cat') -> dict:
         return self.get_pool_status(animal_type)
 
-    def get_pool_ready_and_capacity(self, animal_type='cat', target_clips=100, allow_reuse: bool = False, exclude_recent_videos: int = 5) -> dict:
+    def get_pool_ready_and_capacity(self, animal_type='cat', target_clips=100, allow_reuse: bool = False, exclude_recent_videos: int = 5,
+                                    current_job_id: str = None) -> dict:
         """
         Requirement 5 & Fix 2: ONE definition of ready and real capacity.
         ready = verified-good unique windows that satisfy diversity rules (at most 3 per source, 30s apart)
                 AND are fresh (not used in last `exclude_recent_videos` videos).
         capacity = min(ready, usable_sources * 3).
         """
-        counts = self.get_ledger_counts(animal_type, include_windows=True)
-        valid_rows = counts["windows"]["usable_now"] + counts["windows"]["cooldown"]
+        # Clips this job has already reserved are its own footage, not someone else's reservation
+        counts = self.get_ledger_counts(animal_type, current_job_id=current_job_id, include_windows=True)
+        # Sources used in the last few videos are resting: with reuse off a job may not take them,
+        # or every video looks like the one before it
+        valid_rows = list(counts["windows"]["usable_now"])
         if allow_reuse:
-            valid_rows = valid_rows + counts["windows"]["used"]
+            valid_rows = valid_rows + counts["windows"]["cooldown"] + counts["windows"]["used"]
 
         by_source = {}
         for r in valid_rows:
@@ -873,7 +886,15 @@ class ClipLedger:
                     selected_for_src.append(c)
             ready_clips.extend(selected_for_src)
 
-        ready_count = len(valid_rows)
+        # Overlapping windows are one moment: a job cannot use both, so they count once
+        distinct = []
+        for r in sorted(valid_rows, key=lambda c: (source_key(c.get("source_url_or_path") or c.get("source_id")), float(c.get("start_s") or 0))):
+            sid = r.get("source_url_or_path") or r.get("source_id")
+            st, en = float(r.get("start_s") or 0), float(r.get("end_s") or (float(r.get("start_s") or 0) + 7.5))
+            if not any(is_same_moment(sid, st, en, d.get("source_url_or_path") or d.get("source_id"),
+                                      float(d.get("start_s") or 0), float(d.get("end_s") or 0)) for d in distinct):
+                distinct.append(r)
+        ready_count = len(distinct)
         capacity = min(len(ready_clips), usable_sources * max_per_src)
         needed_sources = max(1, (int(target_clips) + max_per_src - 1) // max_per_src)
         can_supply = capacity >= int(target_clips)
@@ -923,6 +944,11 @@ class ClipLedger:
                 WHERE rejection_reason IS NOT NULL AND rejection_reason != '' AND rejection_reason != 'MEASUREMENT_FAILED'
             """).fetchall()]
 
+        try:
+            from persistent_mark import marked_source_keys
+            marked = marked_source_keys()
+        except Exception:
+            marked = set()
         finished_index = self._index_by_source(finished)
         rejected_index = self._index_by_source(rejected_windows)
         hashed_finished = [w for w in finished if w.get("frame_hashes")]
@@ -948,7 +974,8 @@ class ClipLedger:
 
             if src_path not in source_ok:
                 exists = os.path.exists(src_path) or is_test or "dummy" in src_path or "src_" in src_name
-                source_ok[src_path] = exists and not self.is_blocked_source(src_path)
+                # A source carrying a channel name or logo is not usable footage
+                source_ok[src_path] = exists and not self.is_blocked_source(src_path) and source_key(src_path or src_name) not in marked
 
             if st_val == "needs_recheck" or (rej == "MEASUREMENT_FAILED" and retry < 1):
                 cls = "needs_recheck"
@@ -996,8 +1023,8 @@ class ClipLedger:
     def get_pool_unified_counts(self, animal_type: str = "cat", channel: str = None, current_job_id: str = None, last_n_jobs: int = 3, is_test_env: bool = False) -> dict:
         return self.get_ledger_counts(animal_type, channel=channel, current_job_id=current_job_id, last_n_jobs=last_n_jobs)
 
-    def preflight_line(self, needed: int, animal_type: str = "cat") -> str:
-        c = self.get_ledger_counts(animal_type)
+    def preflight_line(self, needed: int, animal_type: str = "cat", current_job_id: str = None) -> str:
+        c = self.get_ledger_counts(animal_type, current_job_id=current_job_id)
         line = f"Need {needed}, have {c['usable_now']} usable"
         if c["cooldown"]:
             line += f" (+{c['cooldown']} on source cooldown)"
@@ -1019,7 +1046,7 @@ class ClipLedger:
 
     @staticmethod
     def _source_key(value) -> str:
-        return os.path.splitext(os.path.basename(str(value or "").strip()))[0].lower()
+        return source_key(value)
 
     @classmethod
     def _index_by_source(cls, windows: list) -> dict:
@@ -1228,6 +1255,13 @@ class ClipLedger:
                 ) | set(str(s).lower() for s in exclude_sources)
 
                 exclude_clip_ids = set(kwargs.get("exclude_clip_ids") or [])
+                try:
+                    from persistent_mark import marked_source_keys
+                    marked = marked_source_keys()
+                except Exception:
+                    marked = set()
+                if marked:
+                    eligible = [c for c in eligible if source_key(c.get("source_url_or_path") or c.get("source_id")) not in marked]
 
                 if exclude_clip_ids:
                     eligible = [c for c in eligible if c.get("clip_id") not in exclude_clip_ids]
@@ -1322,8 +1356,9 @@ class ClipLedger:
                 
                 # Ordered source keys: when allow_reuse is False, strictly use fresh sources first
                 if not allow_reuse:
+                    # Resting sources stay out of short videos: the job finds new footage instead
                     ordered_source_keys = list(sources_fresh)
-                    if not ordered_source_keys or actual_count > 8:
+                    if actual_count > 8:
                         ordered_source_keys = list(sources_fresh) + [s for s in sources_cooldown if s not in sources_fresh]
                 else:
                     ordered_source_keys = list(sources_fresh) + [s for s in sources_cooldown if s not in sources_fresh]
@@ -1337,6 +1372,9 @@ class ClipLedger:
 
                 # Rule 5: max 50% from one source in Short or Long compilations
                 max_clips_per_source = max(1, actual_count // 2)
+                if actual_count <= 8:
+                    # Two clips of the same cat is a pair; three is the same video again
+                    max_clips_per_source = min(max_clips_per_source, MAX_CLIPS_PER_SOURCE_SHORT)
 
                 selected = []
                 selected_hashes = []
